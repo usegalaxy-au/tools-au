@@ -128,6 +128,8 @@ jobs:
         nchunks=$(wc -l < changed_tools.list)
         if [ "$nchunks" -gt "$MAX_CHUNKS" ]; then
             nchunks=$MAX_CHUNKS
+        elif [ "$nchunks" -eq "0" ]
+            nchunks=1
         fi
 <<<<<<<
 <<<<<<<
