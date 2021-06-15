@@ -71,7 +71,7 @@
         cnsMemory=\${GALAXY_MEMORY_MB:-4096}M
         oeaMemory=\${GALAXY_MEMORY_MB:-4096}M
         oeaThreads=\${GALAXY_SLOTS:-4}
-        useGrid=false
+        useGrid=true
 
         #for $haplotype in $haplotypes:
             -haplotype${haplotype.haplotype_name} '${haplotype.haplotype_input}'
