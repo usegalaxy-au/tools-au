@@ -1,4 +1,4 @@
-<tool id="local_canu" name="Copy of Canu assembler" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
+<tool id="local_canu" name="Copy of Canu assembler" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@+ga@GA_VERSION_SUFFIX@">
     <description>Assembler optimized for long error-prone reads such as PacBio, Oxford Nanopore</description>
     <xrefs>
         <xref type="bio.tools">canu</xref>
@@ -6,6 +6,7 @@
     <macros>
         <token name="@TOOL_VERSION@">2.1.1</token>
         <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@GA_VERSION_SUFFIX@">0</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">canu</requirement>
