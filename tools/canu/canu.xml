@@ -22,10 +22,10 @@
     #end for
 
     if [[ \$GALAXY_SLOTS = 126 ]]; then
-        GALAXY_MEMORY_MB=4018565
+        GALAXY_MEMORY_MB=4018565;
     elif [[ \$GALAXY_SLOTS = 64 ]] || [[ \$GALAXY_SLOTS = 32 ]]; then
-        GALAXY_MEMORY_MB=1004641
-    fi && echo GALAXY_MEMORY_MB set to \$GALAXY_MEMORY_MB &&
+        GALAXY_MEMORY_MB=1004641;
+    fi && echo "GALAXY_MEMORY_MB set to \$GALAXY_MEMORY_MB" &&
 
     canu
         #if $stage != 'all':
