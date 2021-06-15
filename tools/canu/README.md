@@ -1,0 +1,1 @@
+canu wrapper copied from https://github.com/bgruening/galaxytools to test local modifications
