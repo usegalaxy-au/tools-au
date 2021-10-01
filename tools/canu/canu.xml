@@ -6,7 +6,7 @@
     <macros>
         <token name="@TOOL_VERSION@">2.1.1</token>
         <token name="@VERSION_SUFFIX@">0</token>
-        <token name="@GA_VERSION_SUFFIX@">0</token>
+        <token name="@GA_VERSION_SUFFIX@">1</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">canu</requirement>
@@ -78,7 +78,7 @@
         cnsMemory=\${GALAXY_MEMORY_MB:-4096}M
         oeaMemory=\${GALAXY_MEMORY_MB:-4096}M
         oeaThreads=\${GALAXY_SLOTS:-4}
-        useGrid=true
+        useGrid=false
 
         #for $haplotype in $haplotypes:
             -haplotype${haplotype.haplotype_name} '${haplotype.haplotype_input}'
