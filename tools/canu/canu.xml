@@ -6,7 +6,7 @@
     <macros>
         <token name="@TOOL_VERSION@">2.1.1</token>
         <token name="@VERSION_SUFFIX@">0</token>
-        <token name="@GA_VERSION_SUFFIX@">1</token>
+        <token name="@GA_VERSION_SUFFIX@">2</token>
     </macros>
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">canu</requirement>
@@ -23,9 +23,7 @@
     #end for
 
     if [[ \$GALAXY_SLOTS = 126 ]]; then
-        GALAXY_MEMORY_MB=4017152;
-    elif [[ \$GALAXY_SLOTS = 64 ]] || [[ \$GALAXY_SLOTS = 32 ]]; then
-        GALAXY_MEMORY_MB=1004288;
+        GALAXY_MEMORY_MB=3937280;
     fi && echo "GALAXY_MEMORY_MB set to \$GALAXY_MEMORY_MB" &&
 
     canu
