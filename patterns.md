@@ -7,12 +7,17 @@ We need a place to store tricky situations alongside the patterns which solve th
 
 This file is intended to be the reference which stores tool xml patterns and workarounds for tricky situations.
 
+<br>
 
 ## contents
-* [variables](#variables)
+* [Variables](#variables)
+* [Filetypes](#filetypes)
 
+<br>
 
-## variables
+## Variables
+
+### Setting and accessing variables
 
 **cheetah and environment variables**
 
@@ -46,6 +51,27 @@ environment
 ```
 export DATE=`date +"%Y-%m-%d"`
 echo \$DATE
+```
+
+<br>
+
+## Filetypes
+
+### Getting filetype from object
+
+Simplest approach:
+```
+$input.is_of_type('fastq')
+```
+
+example: sorting list of history inputs by file type
+```
+#def sort_fastq_fasta(files):
+    #set fastqs = [f for f in $files if f.is_of_type('fastq')]
+    #set fastas = [f for f in $files if f.is_of_type('fasta')]
+    #set out = $fastqs + $fastas
+    #return $out
+#end def
 ```
 
 
