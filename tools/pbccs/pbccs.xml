@@ -118,6 +118,10 @@
     </outputs>
     <tests>
         <test><!-- test with default settings -->
+                 <param name="input_file" ftype="bam" value="test.subreads.bam"/>
+                 <output name="bam_output" ftype="bam" file="test.ccs.bam" />
+                 <output name="log_output" ftype="txt" file="log.txt" />
+                 <output name="report_output" ftype="txt" file="report.txt" />
         </test>
     </tests>
     <help><![CDATA[
