@@ -80,7 +80,7 @@
        </section>
 	<section name="processing_options" title="Processing Options" expanded="False">
 	    <param argument="--byStrand" type="boolean" truevalue="--byStrand" falsevalue="" checked="false" label="Generate a consensus for each strand." />
-	    <param argument="--noPolish" type="boolean" truevalue="--no{olish" falsevalue="" checked="false" label="Only output the initial template derived from the POA (faster, less accurate)." />
+	    <param argument="--noPolish" type="boolean" truevalue="--noPolish" falsevalue="" checked="false" label="Only output the initial template derived from the POA (faster, less accurate)." />
 	    <param argument="--richQVs" type="boolean" truevalue="--richQVs" falsevalue="" checked="false" label="Emit dq, iq, and sq rich quality tracks." />
         </section>
 	<section name="output_filter_options" title="Output FIlter Options" expanded="False">
