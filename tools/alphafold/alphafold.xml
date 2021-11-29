@@ -1,0 +1,159 @@
+<tool id="alphafold" name="alphafold" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
+    <description></description>
+    <macros>
+        <token name="@TOOL_VERSION@">2.0.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    
+    <edam_topics>
+        <edam_topic>topic_0082</edam_topic>
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_0474</edam_operation>
+    </edam_operations>
+
+    <requirements>
+        <container type="docker">clairemcwhite/alphafold@sha256:a0369d8d81c21879d2ad6e3f49885df35fd98200214f2f741e14ff4de981b4b1</container>   
+    </requirements>
+    
+    <command detect_errors="exit_code"><![CDATA[
+       
+        ## fasta setup ----------------------------
+        #if $fasta_or_text.input_mode == 'history':
+            cat $fasta_or_text.fasta_file > input.fasta &&
+            #set format = 'file'
+
+        #elif $fasta_or_text.input_mode == 'textbox':
+            echo '$fasta_or_text.fasta_text' > input.fasta &&
+            #set format = 'text'
+        #end if
+        
+        python3 $__tool_directory__/validate_fasta.py input.fasta $format &&
+
+        ## env vars -------------------------------
+        export TF_FORCE_UNIFIED_MEMORY=1 &&
+        export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
+        export DATE=`date +"%Y-%m-%d"` &&
+
+        ## run alphafold  -------------------------
+        ln -s /app/alphafold/alphafold alphafold &&
+	    python /app/alphafold/run_alphafold.py 
+         
+	    --fasta_paths alphafold.fasta  
+        --output_dir output            
+ 
+        --data_dir /data                        ## location of the alphafold databases on pulsar node
+        --uniref90_database_path /data/uniref90/uniref90.fasta 
+        --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa 
+        --pdb70_database_path /data/pdb70/pdb70 
+        --template_mmcif_dir /data/pdb_mmcif/mmcif_files 
+        --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat 
+        --max_template_date=\$DATE
+        --model_names model_1,model_2,model_3,model_4,model_5 
+        --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08 
+        &&       
+        
+        ## generate extra outputs -----------------
+        python3 $__tool_directory__/gen_extra_outputs.py plddts &&
+        mkdir -p '${ html.files_path }' &&
+        wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${ html.files_path }/index.html &&
+        cp '${html.files_path}'/index.html output.html 
+
+    ]]></command>
+    <inputs>
+        <conditional name="fasta_or_text">
+            <param name="input_mode" type="select" label="Use fasta from history or paste sequence?" help="Input protein sequence to fold. Format can be fasta file from history, or text. Provide a single protein sequence per job. ">
+                <option value="history">Use fasta from history</option>
+                <option value="textbox">Paste sequence into textbox</option>
+            </param>      
+            <when value="history">
+                <param name="fasta_file" type="data" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
+            </when>
+            <when value="textbox">
+                <param name="fasta_text" type="text" area="true" value="" label="Fasta sequence" help="Paste single protein sequence in the textbox above. DO NOT include a fasta header line (starting with '>'). If you wish to fold multiple proteins, submit an individual job for each protein.">
+                    <sanitizer invalid_char="">
+                        <!-- TODO make this more flexible?  -->
+                        <valid initial="string.letters,string.digits">
+                            <add value="_" />
+                            <add value=">" />
+                            <add value="-" />
+                            <add value="=" />
+                            <add value="/" />
+                            <add value="\" />
+                            <add value="\n" />
+                            <add value="|" />
+                            <add value=" " />
+                        </valid>
+                    </sanitizer>
+                </param>
+            </when>
+        </conditional>
+        <param name="output_plddts" type="boolean" checked="true" label="Output per-residue confidence scores" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
+        
+    </inputs>
+    <outputs>
+
+        <collection name="models" type="list" label="${tool.name} on ${on_string}: Models">
+		    <discover_datasets pattern="(?P&lt;designation&gt;ranked_\d)\.pdb" ext="pdb" directory="output/alphafold"/>
+        </collection>
+        <data name="confidence_scores" format="tsv" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
+        <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
+            <filter>(output_plddts)</filter>
+        </data>
+        <data name="html" format="html" from_work_dir="output.html" label="${tool.name} on ${on_string}: Webpage" />
+        
+    </outputs>
+    <tests>
+
+        <!-- this is a TODO! -->
+        <!-- the following is a rough template to fine tune after an initial run has been completed. -->
+        <test expect_num_outputs="4">
+            <conditional name="fasta_or_text">
+                <param name="input_mode" value="history"/>
+                <param name="fasta_file" value="test1.fasta"/>
+            </conditional>
+            <param name="output_plddts" value="true"/>
+            <!-- 'models' output test can be improved once 'test1.fasta' is actually run -->
+            <output_collection name="models" type="list">
+                <element name="model_1.pdb" file="test1_model_1.pdb" compare="sim_size" delta="50" />
+            </output_collection>
+            <output name="confidence_scores">
+                <assert_contents>
+                    <has_n_columns n="2"/>
+                    <has_n_lines n="6"/>
+                    <has_size value="158" delta="10"/>
+                </assert_contents>
+            </output>
+            <output name="plddts">
+                <assert_contents>
+                    <has_n_columns n="2"/>
+                    <has_n_lines n="6"/>
+                    <has_size value="3100" delta="200"/>
+                </assert_contents>
+            </output>
+            <output name="html" file="index.html" compare="diff" delta="0" />
+        </test>
+        
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+If you want, you can preview your help section using this online editor: http://rst.ninjs.org/
+
+Usage
+.....
+
+**Input**
+
+**Output**
+
+
+    ]]></help>
+    <citations>
+        <citation type="doi">https://doi.org/10.1038/s41586-021-03819-2</citation>
+    </citations>
+</tool>
