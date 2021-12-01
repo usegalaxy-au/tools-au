@@ -53,7 +53,7 @@
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08 
         &&       
 
-        ## ## for fake run testing
+        ## ## for dry run testing
         ## cp -r $__tool_directory__/output . &&
         
         ## generate extra outputs -----------------

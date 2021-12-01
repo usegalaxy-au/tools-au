@@ -1,44 +1,48 @@
-"""Generate additional outputs from AlphaFold run."""
+
 
 import json
 import pickle
 import sys
+import numpy as np
 
 
 class FileLoader:
-    """Load and parse AlphaFold output files."""
-
-    WORKDIR = 'output/alphafold'
-
     def __init__(self):
+        self.workdir = 'output/alphafold'
         self.model_mapping = {}
         self.model_scores = {}
         self.model_plddts = {}
 
+
     def load_conf_scores(self):
-        filepath = f'{self.WORKDIR}/ranking_debug.json'
+        filepath = f'{self.workdir}/ranking_debug.json'
         with open(filepath, 'r') as fp:
             data = json.load(fp)
+
         self.set_model_mapping(data)
         self.set_model_scores(data)
         print()
+
 
     def set_model_mapping(self, data):
         for rank, model_name in enumerate(data['order']):
             self.model_mapping[model_name] = f'ranked_{rank}'
 
+
     def set_model_scores(self, data):
         for model_name, conf_score in data['plddts'].items():
             self.model_scores[model_name] = conf_score
 
+
     def load_model_plddts(self):
         data = {}
         for i in range(5):
-            filepath = f'{self.WORKDIR}/result_model_{i+1}.pkl'
+            filepath = f'{self.workdir}/result_model_{i+1}.pkl'
             with open(filepath, 'rb') as fp:
                 data[f'model_{i+1}'] = pickle.load(fp)
-
+        
         self.set_model_plddts(data)
+
 
     def set_model_plddts(self, data):
         for model_name, info in data.items():
@@ -47,11 +51,11 @@ class FileLoader:
             self.model_plddts[model_name] = ','.join(plddt_scores)
 
 
-class FileWriter:
-    """Write new files from default output."""
 
+class FileWriter:
     def __init__(self):
         self.outdir = 'output/alphafold'
+
 
     def write_conf_scores(self, model_mapping, model_scores):
         out_lines = []
@@ -68,17 +72,17 @@ class FileWriter:
         header = 'model\tconfidence score'
         filepath = f'{self.outdir}/model_confidence_scores.tsv'
         self.write_tsv(header, out_lines, filepath)
+       
 
     def write_tsv(self, header, tsv_data, filepath):
-        """Write data to TSV file.
-
-        tsv_data is expected in the form of a list of tuples where each tuple
-        has form [model_name, data]
+        """
+        tsv_data is expected in the form of a list of tuples where each tuple has form [model_name, data]
         """
         with open(filepath, 'w') as fp:
             fp.write(header + '\n')
             for line in tsv_data:
                 fp.write(f'{line}\n')
+        
 
     def write_model_plddts(self, model_mapping, model_plddts):
         out_lines = []
@@ -88,7 +92,7 @@ class FileWriter:
         for model_name, plddt_string in model_plddts.items():
             ranked_name = model_mapping[model_name]
             ranked_plddts.append([ranked_name, plddt_string])
-
+        
         ranked_plddts.sort(key=lambda x: int(x[0][-1]))
 
         out_lines = [f'{m}\t{p}' for m, p in ranked_plddts]
@@ -97,13 +101,14 @@ class FileWriter:
         header = 'model\tper-residue confidence score (pLDDT)'
         filepath = f'{self.outdir}/plddts.tsv'
         self.write_tsv(header, out_lines, filepath)
+    
 
 
 def main(argv):
     extra_outputs = argv[0].split(',')  # 'plddts,msas'
     fl = FileLoader()
     fw = FileWriter()
-
+    
     # model confidence scores
     fl.load_conf_scores()
     fw.write_conf_scores(fl.model_mapping, fl.model_scores)
@@ -113,6 +118,10 @@ def main(argv):
         fl.load_model_plddts()
         fw.write_model_plddts(fl.model_mapping, fl.model_plddts)
 
-
+    
+    
 if __name__ == '__main__':
     main(sys.argv[1:])
+
+
+
