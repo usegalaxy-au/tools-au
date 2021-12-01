@@ -52,12 +52,19 @@
         --model_names model_1,model_2,model_3,model_4,model_5 
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08 
         &&       
+
+        ## ## for fake run testing
+        ## cp -r $__tool_directory__/output . &&
         
         ## generate extra outputs -----------------
+        ## plddts
         python3 $__tool_directory__/gen_extra_outputs.py plddts &&
+        
+        ## html
         mkdir -p '${ html.files_path }' &&
-        wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${ html.files_path }/index.html &&
-        cp '${html.files_path}'/index.html output.html 
+        wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html.files_path} &&
+        cp output/alphafold/ranked_*.pdb '${html.files_path}'
+
 
     ]]></command>
     <inputs>
@@ -100,7 +107,7 @@
         <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
             <filter>(output_plddts)</filter>
         </data>
-        <data name="html" format="html" from_work_dir="output.html" label="${tool.name} on ${on_string}: Webpage" />
+        <data name="html" format="html" label="${tool.name} on ${on_string}: Webpage" />
         
     </outputs>
     <tests>
