@@ -4,7 +4,7 @@
         <token name="@TOOL_VERSION@">2.0.0</token>
         <token name="@VERSION_SUFFIX@">0</token>
     </macros>
-    
+
     <edam_topics>
         <edam_topic>topic_0082</edam_topic>
     </edam_topics>
@@ -13,11 +13,11 @@
     </edam_operations>
 
     <requirements>
-        <container type="docker">clairemcwhite/alphafold@sha256:a0369d8d81c21879d2ad6e3f49885df35fd98200214f2f741e14ff4de981b4b1</container>   
+        <container type="docker">clairemcwhite/alphafold@sha256:a0369d8d81c21879d2ad6e3f49885df35fd98200214f2f741e14ff4de981b4b1</container>
     </requirements>
-    
+
     <command detect_errors="exit_code"><![CDATA[
-       
+
         ## fasta setup ----------------------------
         #if $fasta_or_text.input_mode == 'history':
             cat $fasta_or_text.fasta_file > input.fasta &&
@@ -27,7 +27,7 @@
             echo '$fasta_or_text.fasta_text' > input.fasta &&
             #set format = 'text'
         #end if
-        
+
         python3 $__tool_directory__/validate_fasta.py input.fasta $format &&
 
         ## env vars -------------------------------
@@ -37,17 +37,17 @@
 
         ## run alphafold  -------------------------
         ln -s /app/alphafold/alphafold alphafold &&
-	    python /app/alphafold/run_alphafold.py 
-         
-	    --fasta_paths alphafold.fasta  
-        --output_dir output            
- 
+  	    python /app/alphafold/run_alphafold.py
+
+  	    --fasta_paths alphafold.fasta
+        --output_dir output
+
         --data_dir /data                        ## location of the alphafold databases on pulsar node
-        --uniref90_database_path /data/uniref90/uniref90.fasta 
-        --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa 
-        --pdb70_database_path /data/pdb70/pdb70 
-        --template_mmcif_dir /data/pdb_mmcif/mmcif_files 
-        --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat 
+        --uniref90_database_path /data/uniref90/uniref90.fasta
+        --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa
+        --pdb70_database_path /data/pdb70/pdb70
+        --template_mmcif_dir /data/pdb_mmcif/mmcif_files
+        --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
         --model_names model_1,model_2,model_3,model_4,model_5 
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08 
@@ -72,7 +72,7 @@
             <param name="input_mode" type="select" label="Use fasta from history or paste sequence?" help="Input protein sequence to fold. Format can be fasta file from history, or text. Provide a single protein sequence per job. ">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
-            </param>      
+            </param>
             <when value="history">
                 <param name="fasta_file" type="data" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
             </when>
@@ -96,7 +96,7 @@
             </when>
         </conditional>
         <param name="output_plddts" type="boolean" checked="true" label="Output per-residue confidence scores" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
-        
+
     </inputs>
     <outputs>
 
@@ -140,7 +140,7 @@
             </output>
             <output name="html" file="index.html" compare="diff" delta="0" />
         </test>
-        
+
     </tests>
     <help><![CDATA[
 
