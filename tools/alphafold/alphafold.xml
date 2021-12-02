@@ -52,7 +52,9 @@
         ## &&
 
         ## for dry run testing
-        cp -r $__tool_directory__/output . &&
+        mkdir output &&
+        mkdir output/alphafold
+        cp $__tool_directory__/* output/alphafold/ &&
 
         ## generate extra outputs -----------------
         ## plddts
