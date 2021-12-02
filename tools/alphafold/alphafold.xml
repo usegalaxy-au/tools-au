@@ -36,25 +36,25 @@
         export DATE=`date +"%Y-%m-%d"` &&
 
         ## run alphafold  -------------------------
-        ln -s /app/alphafold/alphafold alphafold &&
-  	    python /app/alphafold/run_alphafold.py
+        ## ln -s /app/alphafold/alphafold alphafold &&
+  	    ## python /app/alphafold/run_alphafold.py
 
-  	    --fasta_paths alphafold.fasta
-        --output_dir output
+  	    ## --fasta_paths alphafold.fasta
+        ## --output_dir output
 
-        --data_dir /data                        ## location of the alphafold databases on pulsar node
-        --uniref90_database_path /data/uniref90/uniref90.fasta
-        --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa
-        --pdb70_database_path /data/pdb70/pdb70
-        --template_mmcif_dir /data/pdb_mmcif/mmcif_files
-        --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
-        --max_template_date=\$DATE
-        --model_names model_1,model_2,model_3,model_4,model_5
-        --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
-        &&
+        ## --data_dir /data                        ## location of the alphafold databases on pulsar node
+        ## --uniref90_database_path /data/uniref90/uniref90.fasta
+        ## --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa
+        ## --pdb70_database_path /data/pdb70/pdb70
+        ## --template_mmcif_dir /data/pdb_mmcif/mmcif_files
+        ## --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
+        ## --max_template_date=\$DATE
+        ## --model_names model_1,model_2,model_3,model_4,model_5
+        ## --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+        ## &&
 
         ## for dry run testing
-        ## cp -r $__tool_directory__/output . &&
+        cp -r $__tool_directory__/test-data/output . &&
 
         ## generate extra outputs -----------------
         ## plddts
