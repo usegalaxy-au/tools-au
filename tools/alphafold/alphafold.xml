@@ -61,9 +61,10 @@
 
         ## html
         wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html} &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}'
-
-
+        cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+        ls -lrth working &&
+        cp -r working/* . &&
+        ls -lrth 
 
     ]]></command>
     <inputs>
@@ -100,7 +101,7 @@
     <outputs>
 
         <collection name="models" type="list" label="${tool.name} on ${on_string}: Models">
-		    <discover_datasets pattern="(?P&lt;designation&gt;ranked_\d)\.pdb" ext="pdb" directory="output/alphafold"/>
+		    <discover_datasets pattern="(?P&lt;designation&gt;ranked_\d)\.pdb" ext="pdb" directory="output/alphafold/"/>
         </collection>
         <data name="confidence_scores" format="tsv" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
         <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
