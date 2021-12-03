@@ -63,7 +63,7 @@
         wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html} &&
         cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         ls -lrth working &&
-        cp -r working/* . &&
+        cp -r * working/ &&
         ls -lrth 
 
     ]]></command>
