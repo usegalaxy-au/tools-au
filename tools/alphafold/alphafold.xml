@@ -52,18 +52,17 @@
         ## &&
 
         ## for dry run testing
-        mkdir output &&
-        mkdir output/alphafold
-        cp $__tool_directory__/* output/alphafold/ &&
+        cp -r $__tool_directory__/output . &&
 
         ## generate extra outputs -----------------
         ## plddts
         python3 $__tool_directory__/gen_extra_outputs.py plddts &&
+        mkdir -p '${ html.files_path }' &&
 
         ## html
-        mkdir -p '${html.files_path}' &&
-        wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > '${html.files_path}/index.html' &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}/'
+        wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html.files_path} &&
+        cp output/alphafold/ranked_*.pdb '${html.files_path}'
+
 
 
     ]]></command>

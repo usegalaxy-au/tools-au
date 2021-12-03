@@ -1,0 +1,9 @@
+
+
+to test:
+    
+    code works on grace-dev
+    code works on planemo serve?
+    cp pdb file from $__tool_directory__ into tool working dir & confirm
+
+
