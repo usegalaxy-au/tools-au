@@ -56,7 +56,7 @@
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 $__tool_directory__/gen_extra_outputs.py plddts &&
+        python3 $__tool_directory__/gen_extra_outputs.py output/alphafold plddts &&
         
         ## html
         mkdir -p '${ html.files_path }' &&
