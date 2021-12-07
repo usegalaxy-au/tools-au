@@ -56,9 +56,9 @@
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 $__tool_directory__/gen_extra_outputs.py plddts &&
-
-        echo 'pwd here' &&
+        python3 $__tool_directory__/gen_extra_outputs.py output/alphafold plddts &&
+        
+        echo 'pwd command' &&
         pwd &&
         
         ## html
