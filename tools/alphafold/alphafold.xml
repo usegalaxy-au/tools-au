@@ -47,7 +47,7 @@
         --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
         --model_names model_1,model_2,model_3,model_4,model_5
-        --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt 
+        --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
         --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
         &&
 
@@ -57,15 +57,15 @@
         ## generate extra outputs -----------------
         ## plddts
         python3 $__tool_directory__/gen_extra_outputs.py output/alphafold plddts &&
-        
+
         echo 'pwd command' &&
         pwd &&
-        
+
         ## html
         mkdir -p '${ html.files_path }' &&
         wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html} &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}' && 
-        mv working/* . 
+        cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+        mv working/* .
 
 
     ]]></command>
@@ -114,7 +114,7 @@
         <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
             <filter>(output_plddts)</filter>
         </data>
-        <data name="html" format="html" label="${tool.name} on ${on_string}: Webpage" />
+        <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
 
     </outputs>
     <tests>
