@@ -57,11 +57,16 @@
         ## generate extra outputs -----------------
         ## plddts
         python3 $__tool_directory__/gen_extra_outputs.py plddts &&
+
+        echo 'pwd here' &&
+        pwd &&
         
         ## html
         mkdir -p '${ html.files_path }' &&
         wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html} &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}' 
+        cp output/alphafold/ranked_*.pdb '${html.files_path}' && 
+        mv working/* . 
+
 
     ]]></command>
     <inputs>
