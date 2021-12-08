@@ -20,7 +20,7 @@
 
         ## fasta setup ----------------------------
         #if $fasta_or_text.input_mode == 'history':
-            cat $fasta_or_text.fasta_file > input.fasta &&
+            cp '$fasta_or_text.fasta_file' > input.fasta &&
             #set format = 'file'
 
         #elif $fasta_or_text.input_mode == 'textbox':
@@ -28,7 +28,7 @@
             #set format = 'text'
         #end if
 
-        python3 $__tool_directory__/validate_fasta.py input.fasta $format &&
+        python3 '$__tool_directory__/validate_fasta.py' input.fasta $format &&
 
         ## env vars -------------------------------
         export TF_FORCE_UNIFIED_MEMORY=1 &&
@@ -37,10 +37,10 @@
 
         ## run alphafold  -------------------------
         ln -s /app/alphafold/alphafold alphafold &&
-  	    python /app/alphafold/run_alphafold.py
-  	    --fasta_paths alphafold.fasta
+  	python /app/alphafold/run_alphafold.py
+  	--fasta_paths alphafold.fasta
         --output_dir output
-        --data_dir /data                        ## location of the alphafold databases on pulsar node
+        --data_dir /data                   ## location of the alphafold databases on pulsar node --> could this maybe a env var? $ALPHAFOLD_DB --> \${ALPHAFOLD_DB:-/data}
         --uniref90_database_path /data/uniref90/uniref90.fasta
         --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa
         --pdb70_database_path /data/pdb70/pdb70
@@ -56,10 +56,11 @@
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 $__tool_directory__/gen_extra_outputs.py plddts &&
+        python3 '$__tool_directory__/gen_extra_outputs.py' plddts &&
         mkdir -p '${ html.files_path }' &&
 
         ## html
+	## that should probably be shipped with the tool
         wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html} &&
         cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
@@ -76,7 +77,7 @@
                 <param name="fasta_file" type="data" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
             </when>
             <when value="textbox">
-                <param name="fasta_text" type="text" area="true" value="" label="Fasta sequence" help="Paste single protein sequence in the textbox above. DO NOT include a fasta header line (starting with '>'). If you wish to fold multiple proteins, submit an individual job for each protein.">
+                <param name="fasta_text" type="text" area="true" value="" label="Sequence" help="Paste single protein sequence into the textbox. DO NOT include a fasta header line (starting with '>'). If you wish to fold multiple proteins, submit an individual job for each protein.">
                     <sanitizer invalid_char="">
                         <!-- TODO make this more flexible?  -->
                         <valid initial="string.letters,string.digits">
@@ -100,7 +101,7 @@
     <outputs>
 
         <collection name="models" type="list" label="${tool.name} on ${on_string}: Models">
-		    <discover_datasets pattern="(?P&lt;designation&gt;ranked_\d)\.pdb" ext="pdb" directory="output/alphafold"/>
+            <discover_datasets pattern="(?P&lt;designation&gt;ranked_\d)\.pdb" ext="pdb" directory="output/alphafold"/>
         </collection>
         <data name="confidence_scores" format="tsv" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
         <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
