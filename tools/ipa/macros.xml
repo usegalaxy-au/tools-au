@@ -1,0 +1,69 @@
+<macros>
+    <xml name="requirements">
+	   <requirements>
+        	<requirement type="package" version="1.5.0">pbipa</requirement>
+           </requirements>
+   </xml>
+   <xml name="stdio">
+     <stdio>
+        <exit_code range=":-1"  level="fatal" description="Error: Cannot open file" />
+        <exit_code range="1:"  level="fatal" description="Error" />
+     </stdio>
+   </xml>
+   <token name="@CONDA_IPA_PATH@">if [ -z "\$IPA_PATH" ]; then export IPA_PATH=\$(dirname \$(dirname \$(readlink -e \$(which ipa)))); fi</token>
+   <xml name="version_command">
+      <version_command><![CDATA[
+       if [ -z "$IPA_PATH" ]; then export IPA_PATH=$(dirname $(dirname $(readlink -e $(which ipa)))); fi &&
+	      "$IPA_PATH/bin/ipa" --version 2>&1 | head -1       
+      ]]></version_command>
+  </xml>
+  <xml name="macro_input">
+       <param name="input_file" type="data" format="fasta,fastq,fasta.gz,fastq.gz,bam,xml" label="Sequence file"/>
+  </xml>
+  <token name="@PREPARE_INPUT_FILE@">
+     <![CDATA[
+     #set $pacbio_input_file = 'input.fastq'
+     #if $input_file.is_of_type('fastq')
+         cp '$input_file' $pacbio_input_file
+     #elif $input_file.is_of_type('fasta')
+         #set $pacbio_input_file = 'input.fasta'
+	 cp '$input_file' $pacbio_input_file
+     #elif $input_file.is_of_type('bam')		  
+         #set $pacbio_input_file = 'input.bam'		  
+         cp '$input_file' $pacbio_input_file 
+     #end if
+     ]]>
+  </token>
+  <token name="@INPUT_FILE@">
+        $pacbio_input_file
+  </token>   
+  <xml name="macro_inputs">
+      <param name="input_files" type="data" format="fasta,fastq,fasta.gz,fastq.gz,bam,xml" label="Sequence file datasets" multiple="True" />
+  </xml>
+  <token name="@PREPARE_INPUT_FILES@">
+     <![CDATA[
+      #set $pacbio_input_files = []
+      #set $pacbio_list_file = 'pacbio_list'
+      #for (i, input_file) in enumerate($input_files):
+  	#set $pacbio_input_file = 'input' + str($i) + '.fastq'
+  	#if $pacbio_input_file.is_of_type('fastq')
+    	    cp '$input_file' $pacbio_input_file
+        #elif $input_file.is_of_type('fasta')
+	    #set $pacbio_input_file = 'input' + str($i) + 'fasta'
+            cp '$input_file' $pacbio_input_file
+  	#elif $input_file.is_of_type('bam')
+	    #set $pacbio_input_file = 'input' + str($i) + 'bam'
+            cp '$input_file' $pacbio_input_file
+  	#end if
+  	echo '$pacbio_input_file' >> $pacbio_list_file &&
+  	$pacbio_input_files.append($pacbio_input_file)
+      #end for
+     ]]>
+  </token>
+    <token name="@INPUT_FILES@">
+	#echo ' '.join($pacbio_input_files)#
+  </token>
+  <token name="@INPUT_LIST_FILE@">
+	$pacbio_list_file
+  </token>
+</macros>

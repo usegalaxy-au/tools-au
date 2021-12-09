@@ -1,0 +1,221 @@
+<tool id="ipa" name="Improved Phased Assembler" version="0.1.0" python_template_version="3.5">
+    <description>IPA HiFi Genome Assembler</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    @CONDA_IPA_PATH@ &&
+	    @PREPARE_INPUT_FILE@ &&
+
+	    ipa local
+            #if $ipa_params.no_polish:
+               --no-polish
+            #end if
+            #if $ipa_params.no_phase:
+               --no-phase
+            #end if
+            #if $ipa_params.no_purge_dups:
+               --no-purge-dups
+            #end if
+            #if $ipa_params.genome_size:
+               --genome-size '$ipa_params.genome_size'
+            #end if
+            #if $ipa_params.coverage:
+               --coverage '$ipa_params.coverage'
+            #end if
+	    --nthreads \${GALAXY_SLOTS:-2}  --njobs \${GALAXY_SLOTS:-4} -i $pacbio_input_file --only-print &&
+            
+	    sed -i '/^reads_fn:.*$/d' 'RUN/config.yaml' &&
+
+	    #if $ipa_advance_params.advance_options.adv_opt == 'True':
+	        sed -i '/^advanced_options:.*$/d' 'RUN/config.yaml' &&
+	        cat $add_advance_options >> 'RUN/config.yaml' &&
+            #end if
+	    cat 'RUN/ipa.log' > '$log' &&
+	    cat 'RUN/input.fofn' > '$fofn' &&
+	    cat 'RUN/config.yaml' > '$config' && 
+	    cat $fofn  | awk '{print "\nreads_fn: " $1}' >> '$config' &&
+	    python3 -m snakemake -j \${GALAXY_SLOTS:-6} -p -s "\$IPA_PATH/etc/ipa.snakefile" --configfile '$config' --reason
+	    ]]></command>
+    	    <configfiles>
+		    <configfile name="add_advance_options"><![CDATA[
+#if str($ipa_advance_params.advance_options.adv_opt) == 'True':
+advanced_options: 'config_auto_comp_max_cov=$ipa_advance_params.advance_options.auto_comp_max_cov;
+	           config_block_size=$ipa_advance_params.advance_options.block_size;
+		   config_ovl_filter_opt=$ipa_advance_params.advance_options.ovl_filter_opt;
+		   config_ovl_min_idt=$ipa_advance_params.advance_options.ovl_min_idt;
+	           config_ovl_min_len=$ipa_advance_params.advance_options.ovl_min_len;
+		   config_ovl_opt=$ipa_advance_params.advance_options.ovl_opt;
+		   config_phasing_opt=$ipa_advance_params.advance_options.phasing_opt;
+		   config_phasing_split_opt=$ipa_advance_params.advance_options.phasing_split_opt;
+		   config_seeddb_opt=$ipa_advance_params.advance_options.seeddb_opt;
+		   config_seqdb_opt=$ipa_advance_params.advance_options.seqdb_opt;
+		   config_use_hpc=$ipa_advance_params.advance_options.use_hpc;
+		   config_use_seq_ids=$ipa_advance_params.advance_options.use_seq_ids;'
+#end if]]></configfile>
+	        </configfiles>
+    <inputs>
+	    <expand macro="macro_input" />
+	    <section name="ipa_params" title="common parameter" expanded="false">
+                    <param name="no_polish" argument="--no-polish" type="boolean" truevalue="--no-polish" falsevalue="" checked="False" label="Skip polishing. (default: False)"/>
+                    <param name="no_phase" argument="--no-phase" type="boolean" truevalue="--no-phase" falsevalue="" checked="False" label="Skip phasing. (default: False)"/>
+                    <param name="no_purge_dups" argument="--no-purge-dups" type="boolean" truevalue="--no-purge-dups" falsevalue="" checked="False" label="Skip purge_dups. (default: False)"/>
+                    <param name="genome_size" argument="--genome-size" type="integer" value="0" label="Genome Size, required only for downsampling. (default: 0)"/>
+                    <param name="coverage" argument="--coverage" type="integer" value="0" label="Downsmapled coverage, only if genome_size * coverage > 0. (default: 0)"/>
+	    </section>
+	    <section name="ipa_advance_params" title="advance parameter" expanded="false">
+		    <conditional name="advance_options">
+			    <param name="adv_opt" type="select" label="Specify advance options">
+				  <option value="True">Enabled</option>
+				  <option value="False" selected="True">Disabled</option>
+			    </param>
+			    <when value="True">
+				  <param name="auto_comp_max_cov" type="integer" value="1" help="These options are used to determine potential repoeats and filter out those reads before the string graph is constructed. 0 disables this feature; 1 enables it."/>
+				  <param name="block_size" type="integer" value="4096" help="The overlapping process is performed on pairs of blocks of input sequences, where each block contains the number of sequences which crop up to this size (in Mbp)"/>
+<param name="ovl_filter_opt" type="text" value="--max-diff 80 --max-cov 100 --min-cov 2 --bestn 10 --min-len 4000 --gapFilt --minDepth 4 --idt-stage2 98" help="see options"/>
+<param name="ovl_min_idt" type="integer" value="98" help="The final overlap identity threshold. Applied during the final filtering stage, right before the overlaps are passed to the layout stage."/>
+<param name="ovl_min_len" type="integer" value="1000" help="The minimum length of either A-read or a B-read to keep the overlap. Applied during the final filtering stage, right before the overlaps are passed to the layout stage."/>
+<param name="ovl_opt" type="text" value="--one-hit-per-target --min-idt 96" help="The defaults used here are: --one-hit-per-target which keeps only the best hit in case there are multiple possible overlaps between a pair of reads (tandem repeats); and --min-idt 96 which will filter out any overlap with identity lower than 96%"/>
+<param name="phasing_opt" type="text" value="" help="Options for the phasing tool nighthawk. The options set by this parameter are passed directly to nighthawk. For details on nighthawk options"/>
+<param name="phasing_split_opt" type="text" value="--split-type noverlaps --limit 3000000" help="Options that control the chunking of the phasing jobs, and through that regulate the time and memory consumption of each individual chunk. The defaults are: --split-type noverlaps which splits the chunks by the number of overlaps; and --limit 3000000 which allow at most approximately 3 million overlaps per chunk."/>
+<param name="seeddb_opt" type="text" value="-k 30 -w 80 --space 1" help="Options to control the seed computation.These options are passed directly to the pancake seeddb command. Defaults: -k 30 is the k-mer size of 30bp; -w 80 is the minimizer window size of 80bp; and --space 1 specifies the spacing for spaced seed construction, with 1 gap in between every two bases of the seed."/>
+<param name="seqdb_opt" type="text" value="--compression 1" help="Options to control the construction of the sequence database. These options are passed directly to the pancake seqdb command.Current default is --compression 1 which turns on the 2-bit encoding compression of the sequences."/>
+<param name="use_hpc" type="integer" value="0" help="This parameter enables (1) or disables (0) an experimental Homopolymer Compression feature."/>
+<param name="use_seq_ids" type="integer" value="1" help="This feature is mostly useful for debugging purposes. If 0 is specified, then the overlaps contain original sequence names instead of their numerical IDs."/>
+			    </when>
+			    <when value="False">
+			    </when>
+		   </conditional>
+	    </section>
+    </inputs>
+    <outputs>
+          <data name="log" format="txt"  label="${tool.name} on ${on_string}: log" />
+          <data name="fofn" format="txt"  label="${tool.name} on ${on_string}: fofn" />
+          <data name="config" format="txt" label="${tool.name} on ${on_string}: config" />
+          
+	  
+          <data format="fasta" name="purged_primary" label="final_purged_primary.fasta" from_work_dir="18-purge_dups/final_purged_primary.fasta" />
+          <data format="fasta" name="purged_haplotig" label="final_purged_haplotigs.fasta" from_work_dir="18-purge_dups/final_purged_haplotigs.fasta" />
+          <data format="fasta" name="primary_contig" label="primary_final.p_ctg.fasta" from_work_dir="19-final/final.p_ctg.fasta" />
+          <data format="fasta" name="alternative_contig" label="alternative_final.a_ctg.fasta" from_work_dir="19-final/final.a_ctg.fasta" />
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test with common parameters -->
+	   <param name="input_file" value="test.bam"/>
+	   <section name="ipa_params">
+		  <param name="no_polish" argument="--no-polish" type="boolean" truevalue="--no-polish" falsevalue="" checked="True"/>
+                  <param name="no_phase" argument="--no-phase" type="boolean" truevalue="--no-phase" falsevalue="" checked="True"/>
+		  <param name="no_purge_dups" argument="--no-purge-dups" type="boolean" truevalue="--no-purge-dups" falsevalue="" checked="True"/>
+                  <param name="genome_size" argument="--genome-size" type="integer" value="0"/>
+                  <param name="coverage" argument="--coverage" type="integer" value="0"/>
+	   </section>
+	   <output name="log" value="log.txt" format="txt"/>
+		   <!--<output name="config" value="config.txt" format="txt"/>-->
+		   <!--<output name="fofn" value="fofn.txt" format="txt"/>-->
+           <output name="purged_primary" value="final_purged_primary.fasta" format="fasta"/>
+	   <output name="purged_haplotig" value="final_purged_haplotigs.fasta" format="fasta"/>
+	   <output name="primary_contig" value="primary_ctg.fasta" format="fasta"/>
+	   <output name="alternative_contig" value="alternative_ctg.fasta" format="fasta"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+.. class:: infomark
+
+**What it does**
+	    
+*Improved Phased Assembly (IPA)* is a HIFI Genome Assembler
+	    
+**Input**
+	    
+- input file - FASTA, FASTQ and BAM. Also, gipped versions of FASTA and FASTQ. 
+
+
+**Output**
+	    
+*Assembly*
+	    
+- primary_final : file containing assembled primary purged duplicated contigs (FASTA format)
+- alternative_final : file containing assembled alternative purged duplicated contigs (FASTA format)
+- final_purged_primary : file containing assembled primary contigs (FASTA format)
+- final_purged_haplotigs : file containing assembled haplotigs (FASTA format)
+
+*Config file*
+
+The description of the config file.
+
+*Common Parameter*
+
+- reads_fn: Can be a FOFN, FASTA, FASTQ, BAM or XML. Also, gzipped versions of FASTA and FASTQ are available. This IPA wrapper has excluded the FOFN and XML from the input option.
+- genome_size: Used for downsampling in combination with coverage. If genome_size * coverage <=0 downsampling is turned off.
+- coverage: Used for downsampling in combination with genome_size. If genome_size * coverage <=0 downsampling is turned off.
+- advanced_options: A single line listing advanced options in the form of key = value pairs, separated with ;.
+- polish_run: Polishing will be applied if the value of this parameter is equal to 1.
+- phase_run: Phasing will be applied if the value of this parameter is equal to 1.
+- nproc: Number of threads to use on each compute node.
+- max_nchunks: Parallel tasks will be groupped into at most this many chunks. If there is more than one task per chunk, they are executed linearly. Each chunk is executed in parallel. Useful for throttling job submissions.
+- tmp_dir: Temporary directory which will be used for some disk-based operations, like sorting.
+
+*Advance Parameter*
+
+- config_autocomp_max_cov=1 : If enabled, the maximum allowed overlap coverage at either the 5’ or the 3’ end of every read is automatically determined based on the statistics computed from the overlap piles. s. This value is appended to the config_ovl_filter_opt value internally, and supersedes the manually specified --max-cov and --max-diff values of that parameter. These options are used to determine potential repeats and filter out those reads before the string graph is constructed. 0 disables this feature; 1 enables it.
+- config_block_size=4096 : The overlapping process is performed on pairs of blocks of input sequences, where each block contains the number of sequences which crop up to this size (in Mbp). Note: The number of pairwise comparisons grows quadratically with the number of blocks (meaning more cluster jobs), but also the larger the block size the more resources are required to execute each pairwise comparison.
+- config_coverage=0 : The input Data Set can be downsampled to a desired coverage, provided that both the Downsampled coverage and Genome Length parameters are specified and above 0. Downsampling applies to the entire assembly process, including polishing. This feature selects reads randomly, using a fixed random seed for reproducibility.
+- config_existing_db_prefix= : Allows injection of an existing SeqDB, so that one doesn’t have to be built from scratch. The provided existing DB is symbolically linked and used for assembly. (This option is intended for debugging purposes.)
+- config_genome_size=0 : The approximate number of base pairs expected in the genome, used to determine the coverage cutoff. This is only used for downsampling; 0 turns downsampling off. Note: It is better to slightly overestimate rather than underestimate the genome length to ensure good coverage across the genome.  
+- config_ovl_filter_opt=--max-diff 80 --max-cov 100 --min-cov 2 --bestn 10 --min-len 4000 --gapFilt --minDepth 4 --idt-stage2 98
+    - max-diff  : Maximum allowed difference between the coverages at the 5' and 3' ends of any particular read. If the coverage is above this value, the read is blacklisted and all of the overlaps it is incident with are ignored. If the autocompute_max_cov option is used, then the same computed value is supplied to this parameter as well.
+    - max-cov   : Maximum allowed coverage at either the 5' or the 3' end of a read. If the coverage is above this value, the read is blacklisted and all of the overlaps it is incident with are ignored. This helps remove repetitive reads which can make tangles in the string graph. Note that this value is a heuristic which works well for ~30x seed length cutoff. If the cutoff is set higher, we advise that this value be also increased. Alternatively, using the autocompute_max_cov option can automatically estimate the value of this parameter, which can improve contiguity (for example, in cases when the input genome size or the seed coverage were overestimated).
+    - min-cov   : Minimum allowed coverage at either the 5' or the 3' end of a read. If the coverage is below this value, the read is blacklisted and all of the overlaps it is incident with are ignored. This helps remove potentially chimeric reads.
+    - bestn     : Keep at most this many overlaps on the 5' and the 3' side of any particular read
+    - min-len   : Filter overlaps where either A-read or the B-read are shorter than this value.
+    - gapFilt   : Enables the chimera filter, which analyzes each pread's overlap pile, and determines whether a pread is chimeric based on the local coverage across the pread.
+    - minDepth  : Option for the chimera filter. The chimera filter is ignored when a local region of a read has coverage lower than this value.
+    - idt-stage2 : Filter overlaps with identity below 98%
+- config_ovl_min_idt=98 : The final overlap identity threshold. Applied during the final filtering stage, right before the overlaps are passed to the layout stage.
+- config_ovl_min_len=1000 : The minimum length of either A-read or a B-read to keep the overlap. Applied during the final filtering stage, right before the overlaps are passed to the layout stage.
+- config_ovl_opt=--one-hit-per-target --min-idt 96
+    - one-hit-per-target : keeps only the best hit in case there are multiple possible overlaps between a pair of reads (tandem repeats);
+    - min-idt : will filter out any overlap with identity lower than 96%. repeats);
+- config_phase_run=1 : Enables or disables the phasing stage of the workflow. Phasing can be disabled to assemble haploid genomes, or to perform fast draft assemblies. 0 disables this feature; 1 enables it.
+- config_phasing_opt= : Options for the phasing tool nighthawk. The options set by this parameter are passed directly to nighthawk. For details on nighthawk options, use nighthawk -h.
+- config_phasing_split_opt=--split-type noverlaps --limit 3000000 
+    - split-type : splits the chunks by the number of overlaps
+    - limit : allow at most approximately 3 million overlaps per chunk.
+- config_polish_run=1 : Enables or disables the polishing stage of the workflow. Polishing can be disabled to perform fast draft assemblies. 0 disables this feature; 1 enables it.
+- config_seeddb_opt=-k 30 -w 80 --space 1
+    - k :  is the k-mer size of 30bp
+    - w :  is the minimizer window size of 80bp;
+    - space : specifies the spacing for spaced seed construction, with 1 gap in between every two bases of the seed. 
+- config_seqdb_opt=--compression 1 : Options to control the construction of the sequence database. These options are passed directly to the pancake seqdb command. Current default is --compression 1 which turns on the 2-bit encoding compression of the sequences.
+- config_use_hpc=0 : This parameter enables (1) or disables (0) an experimental Homopolymer Compression feature.If this feature is enabled, the overlaps are computed from homopolymer-compressed sequences. The layout stage is somewhat slower because the sequences have to be aligned to determine the correct homopolymer-expanded coordinates.
+- config_use_seq_ids=1 : This feature is mostly useful for debugging purposes. If 0 is specified, then the overlaps contain original sequence names instead of their numerical IDs. The default of 1 uses the numerical IDs to represent reads, which uses memory much more efficiently.
+	    
+*Others*
+	    
+- Log: This is a basic IPA log file with the information that shows up on your terminal.
+- Extended log: An elaborate log file.
+- Config file : file containing the IPA configuration in json format
+	    
+.. class:: infomark
+	    
+**References**
+More information are available on `GitHub <https://github.com/PacificBiosciences/pbipa/>`_.
+    ]]></help>
+         <citations>
+        <citation type="bibtex">@ARTICLE{Kim07aninterior-point,
+        author = {Ivan Sovic, Zev Kronenberg, Christopher Dunn, Derek Barnett, Sarah Kingan, James Drake},
+        title = {Improved Phased Assembler},
+        abstract = {Improved Phased Assembler (IPA) is the official PacBio software for HiFi genome assembly. IPA was designed to utilize the accuracy of PacBio HiFi reads to produce high-quality phased genome assemblies. IPA is an end-to-end solution, starting with input reads and resulting in a polished assembly. IPA is fast, providing an easy to use local run mode or a distributed pipeline for a cluster},
+        }</citation>
+        <citation type="bibtex">
+           @misc{IPA_github,
+           title={IPA Github page},
+           url = {https://github.com/PacificBiosciences/pbipa},}
+        </citation>
+    </citations>
+</tool>
