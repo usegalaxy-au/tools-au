@@ -77,17 +77,33 @@
             <when value="textbox">
                 <param name="fasta_text" type="text" area="true" value="" label="Sequence" help="Paste single protein sequence into the textbox. DO NOT include a fasta header line (starting with '>'). If you wish to fold multiple proteins, submit an individual job for each protein.">
                     <sanitizer invalid_char="">
-                        <!-- TODO make this more flexible?  -->
-                        <valid initial="string.letters,string.digits">
-                            <add value="_" />
-                            <add value=">" />
+                        <valid initial="">
+                            <add value="A" />
+                            <add value="B" />
+                            <add value="C" />
+                            <add value="D" />
+                            <add value="E" />
+                            <add value="F" />
+                            <add value="G" />
+                            <add value="H" />
+                            <add value="I" />
+                            <add value="K" />
+                            <add value="L" />
+                            <add value="M" />
+                            <add value="N" />
+                            <add value="P" />
+                            <add value="Q" />
+                            <add value="R" />
+                            <add value="S" />
+                            <add value="T" />
+                            <add value="U" />
+                            <add value="V" />
+                            <add value="W" />
+                            <add value="Y" />
+                            <add value="Z" />
+                            <add value="X" />
+                            <add value="*" />
                             <add value="-" />
-                            <add value="=" />
-                            <add value="/" />
-                            <add value="\" />
-                            <add value="\n" />
-                            <add value="|" />
-                            <add value=" " />
                         </valid>
                     </sanitizer>
                 </param>
