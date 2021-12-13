@@ -7,8 +7,8 @@ import numpy as np
 
 
 class FileLoader:
-    def __init__(self):
-        self.workdir = 'output/alphafold'
+    def __init__(self, workdir):
+        self.workdir = workdir.rstrip('/')
         self.model_mapping = {}
         self.model_scores = {}
         self.model_plddts = {}
@@ -26,7 +26,7 @@ class FileLoader:
 
     def set_model_mapping(self, data):
         for rank, model_name in enumerate(data['order']):
-            self.model_mapping[model_name] = f'ranked_{rank}'
+            self.model_mapping[model_name] = rank + 1
 
 
     def set_model_scores(self, data):
@@ -53,8 +53,8 @@ class FileLoader:
 
 
 class FileWriter:
-    def __init__(self):
-        self.outdir = 'output/alphafold'
+    def __init__(self, workdir):
+        self.outdir = workdir.rstrip('/')
 
 
     def write_conf_scores(self, model_mapping, model_scores):
@@ -65,7 +65,7 @@ class FileWriter:
         models_ranked.sort(key=lambda x: x[1], reverse=True)
 
         for model_name, score in models_ranked:
-            ranked_name = model_mapping[model_name]
+            ranked_name = f'model_{model_mapping[model_name]}'
             out_lines.append(f'{ranked_name}\t{score}')
 
         # write
@@ -90,7 +90,7 @@ class FileWriter:
         # for each model, translate its name, then format a line to write
         ranked_plddts = []
         for model_name, plddt_string in model_plddts.items():
-            ranked_name = model_mapping[model_name]
+            ranked_name = f'model_{model_mapping[model_name]}'
             ranked_plddts.append([ranked_name, plddt_string])
         
         ranked_plddts.sort(key=lambda x: int(x[0][-1]))
@@ -105,9 +105,10 @@ class FileWriter:
 
 
 def main(argv):
-    extra_outputs = argv[0].split(',')  # 'plddts,msas'
-    fl = FileLoader()
-    fw = FileWriter()
+    alphafold_files_dir = argv[0]
+    extra_outputs = argv[1].split(',')  # 'plddts,msas'
+    fl = FileLoader(alphafold_files_dir)
+    fw = FileWriter(alphafold_files_dir)
     
     # model confidence scores
     fl.load_conf_scores()
