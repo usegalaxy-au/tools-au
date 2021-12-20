@@ -59,14 +59,14 @@ advanced_options: 'config_auto_comp_max_cov=$ipa_advance_params.advance_options.
 	        </configfiles>
     <inputs>
 	    <expand macro="macro_input" />
-	    <section name="ipa_params" title="common parameter" expanded="false">
-                    <param name="no_polish" argument="--no-polish" type="boolean" truevalue="--no-polish" falsevalue="" checked="False" label="Skip polishing. (default: False)"/>
-                    <param name="no_phase" argument="--no-phase" type="boolean" truevalue="--no-phase" falsevalue="" checked="False" label="Skip phasing. (default: False)"/>
-                    <param name="no_purge_dups" argument="--no-purge-dups" type="boolean" truevalue="--no-purge-dups" falsevalue="" checked="False" label="Skip purge_dups. (default: False)"/>
+	    <section name="ipa_params" title="common parameters" expanded="false">
+                    <param name="no_polish" argument="polish" type="boolean" truevalue="--no-polish" falsevalue="" checked="False" label="Skip polishing. (default: no)" help="Polishing will be applied if the setting of this parameter is disable. (polish)" />
+                    <param name="no_phase" argument="phase" type="boolean" truevalue="--no-phase" falsevalue="" checked="False" label="Skip phasing. (default: no)" help="Phasing will be applied if the setting of this parameter is disable. (phase)" />
+                    <param name="no_purge_dups" argument="purge-dups" type="boolean" truevalue="--no-purge-dups" falsevalue="" checked="False" label="Skip purge_dups. (default: no)" help="Purge duplicates will be applied if the setting of this parameter is disable. (purge-dups)" />
                     <param name="genome_size" argument="--genome-size" type="integer" value="0" label="Genome Size, required only for downsampling. (default: 0)"/>
                     <param name="coverage" argument="--coverage" type="integer" value="0" label="Downsmapled coverage, only if genome_size * coverage > 0. (default: 0)"/>
 	    </section>
-	    <section name="ipa_advance_params" title="advance parameter" expanded="false">
+	    <section name="ipa_advance_params" title="advance parameters" expanded="false">
 		    <conditional name="advance_options">
 			    <param name="adv_opt" type="select" label="Specify advance options">
 				  <option value="True">Enabled</option>
