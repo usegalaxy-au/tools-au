@@ -17,11 +17,11 @@ Requires the fasta library
 Example usage:
 -------------
 
-# Lots of contigs with smallish gaps
+# Lots of small contigs with little gaps
 ./obliterate.py --n50 5000 --min-gap 200 --max-gap 3000 genome.fasta
 
-# Fewer contigs but with larger gaps
-./obliterate.py --n50 20000 --min-gap 2000 --max-gap 15000 genome.fasta
+# Longer contigs with some gaps
+./obliterate.py --n50 200000 --min-gap 1000 --max-gap 15000 genome.fasta
 
 """
 
@@ -35,6 +35,7 @@ except ModuleNotFoundError:
 
 import argparse
 import random
+import statistics
 
 # Defaults
 MIN_GAP = 500
@@ -44,21 +45,43 @@ N50 = 50000
 
 def obliterate(args):
     """Break up the sequence(s)."""
+    gaps = []
     obliterated = {}
-    n50_stdev = args.n50 / 5
 
     fas = fasta.read(args.filename)
     for name, seq in fas.items():
-        obliterated[name] = ''
-        ngaps = round(len(seq) / args.n50)
-        stop = 0
-        for i in range(ngaps):
-            start = stop + random.randint(args.min_gap, args.max_gap)
-            stop = start + int(
-                random.normalvariate(args.n50, n50_stdev))
-            obliterated[f"{name}_frag_{i}"] = seq[start:stop]
+        i = 0
+        slen = len(seq)
+        if slen < args.n50:
+            print(f"Sequence {name} smaller than N50 ({args.n50})")
+            trunc_limit = slen / 4
+            start = random.randint(0, trunc_limit)
+            stop = slen - random.randint(1, trunc_limit)
+            frag = seq[start:stop]
+            if len(frag) > args.n50 / 10:
+                obliterated[f"{name}_frag_{i}"] = frag
+        else:
+            stop = 0
+            n50_stdev = args.n50 / 5
+            while True:
+                gap = random.randint(args.min_gap, args.max_gap)
+                gaps.append(gap)
+                start = stop + gap
+                stop = min(
+                    start + int(random.normalvariate(args.n50, n50_stdev)),
+                    slen)
+                if start > slen:
+                    break
+                frag = seq[start:stop]
+                if len(frag) > args.n50 / 10:
+                    obliterated[f"{name}_frag_{i}"] = seq[start:stop]
+                    i += 1
+                else:
+                    print(
+                        "Skipping fragment smaller than N50/10",
+                        f" ({args.n50/10})")
 
-    return obliterated
+    return obliterated, gaps
 
 
 def get_args():
@@ -98,10 +121,18 @@ def main():
     args = get_args()
     print(f"Obliterating {args.filename}...")
 
-    fas = obliterate(args)
+    fas, gaps = obliterate(args)
     outfile = f"{args.filename.rsplit('.', 1)[0]}.frags.fasta"
     fasta.write(fas, outfile)
+    fas_lengths = [len(x) for x in fas.values()]
+    mean_bp = round(statistics.mean(fas_lengths))
+    mean_gap = round(statistics.mean(gaps))
     print(f"Obliteration complete - saved to {outfile}")
+    print(f"  - contigs:     {len(fas)}")
+    print(f"  - min length:  {min(fas_lengths)} bp")
+    print(f"  - max length:  {max(fas_lengths)} bp")
+    print(f"  - mean length: {mean_bp} bp")
+    print(f"  - mean gap:    {mean_gap} bp")
 
 
 if __name__ == '__main__':
