@@ -9,3 +9,4 @@ These are `alphafold` git repos copied from:
 - These issues have since been resolved in the upstream
 - Can probably copy the new repo into the image in a new Dockerfile `FROM clairemcwhite/alphafold`
 - And hope that alphafold on pulsar can work with the new container!
+  (There were lots of dependency issues...)
