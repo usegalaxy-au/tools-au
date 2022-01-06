@@ -13,7 +13,7 @@
     </edam_operations>
 
     <requirements>
-        <container type="docker">clairemcwhite/alphafold@sha256:a0369d8d81c21879d2ad6e3f49885df35fd98200214f2f741e14ff4de981b4b1</container>
+        <container type="docker">neoformit/alphafold-galaxy@sha256:6adf7f07062b307d08c11130c39a28abc7c290b23f6c347b09c2c649c054c338</container>
     </requirements>
 
     <command detect_errors="exit_code"><![CDATA[
@@ -46,7 +46,7 @@
         --template_mmcif_dir /data/pdb_mmcif/mmcif_files
         --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
-        --model_names model_1,model_2,model_3,model_4,model_5
+##        --model_names model_1,model_2,model_3,model_4,model_5  ## Deprecated - already set in alphafold/model/config.py
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
         --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
         &&
