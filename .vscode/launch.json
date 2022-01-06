@@ -11,7 +11,68 @@
             "program": "tools/alphafold/gen_extra_outputs.py",
             "console": "integratedTerminal",
             "args": [
-                "tools/alphafold/output/alphafold", "plddts"
+                "tools/alphafold/output/alphafold", 
+                "--plddts"
+            ]
+        },
+        {
+            "name": "validate_fasta1",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/alphafold/validate_fasta.py",
+            "console": "integratedTerminal",
+            "args": [
+                "tools/alphafold/test-data/test1.fasta", 
+            ]
+        },
+        {
+            "name": "validate_fasta2",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/alphafold/validate_fasta.py",
+            "console": "integratedTerminal",
+            "args": [
+                "tools/alphafold/test-data/test2.fasta", 
+            ]
+        },
+        {
+            "name": "validate_fasta3",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/alphafold/validate_fasta.py",
+            "console": "integratedTerminal",
+            "args": [
+                "tools/alphafold/test-data/test3.fasta", 
+            ]
+        },
+        {
+            "name": "validate_fasta4",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/alphafold/validate_fasta.py",
+            "console": "integratedTerminal",
+            "args": [
+                "tools/alphafold/test-data/test4.fasta", 
+            ]
+        }
+        {
+            "name": "validate_fasta5",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/alphafold/validate_fasta.py",
+            "console": "integratedTerminal",
+            "args": [
+                "tools/alphafold/test-data/test5.fasta", 
+            ]
+        },
+        {
+            "name": "validate_fasta6",
+            "type": "python",
+            "request": "launch",
+            "program": "tools/alphafold/validate_fasta.py",
+            "console": "integratedTerminal",
+            "args": [
+                "tools/alphafold/test-data/test6.fasta", 
             ]
         }
     ]

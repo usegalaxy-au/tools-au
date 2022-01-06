@@ -2,127 +2,144 @@
 
 import json
 import pickle
-import sys
-import numpy as np
+import argparse
+from typing import Any, Dict, List
+
+
+class Settings:
+    """parses then keeps track of program settings"""
+    def __init__(self):
+        self.workdir = None
+        self.output_confidence_scores = True
+        self.output_residue_scores = False
+
+    def parse_settings(self) -> None:
+        parser = argparse.ArgumentParser()
+        parser.add_argument(
+            "workdir", 
+            help="alphafold output directory", 
+            type=str
+        )   
+        parser.add_argument(
+            "-p",
+            "--plddts",
+            help="output per-residue confidence scores (pLDDTs)", 
+            action="store_true"
+        )
+        args = parser.parse_args()
+        self.workdir = args.workdir.rstrip('/')
+        self.output_residue_scores = args.plddts
+
+
+class ExecutionContext:
+    """uses program settings to get paths to files etc"""
+    def __init__(self, settings: Settings):
+        self.settings = settings
+
+    def ranking_debug(self):
+        return f'{self.settings.workdir}/ranking_debug.json'
+
+    def model_pkl(self, model_num: int):
+        return f'{self.settings.workdir}/result_model_{model_num}.pkl'
+
+    def model_conf_score_output(self):
+        return f'{self.settings.workdir}/model_confidence_scores.tsv'
+
+    def plddt_output(self):
+        return f'{self.settings.workdir}/plddts.tsv'
 
 
 class FileLoader:
-    def __init__(self, workdir):
-        self.workdir = workdir.rstrip('/')
-        self.model_mapping = {}
-        self.model_scores = {}
-        self.model_plddts = {}
+    """loads file data for use by other classes"""
+    def __init__(self, context: ExecutionContext):
+        self.context = context
+
+    def get_model_mapping(self) -> Dict[str, int]:
+        data = self.load_ranking_debug()
+        return {name: int(rank) + 1 for (rank, name) in enumerate(data['order'])}
+
+    def get_conf_scores(self) -> Dict[str, float]:
+        data = self.load_ranking_debug()
+        return {name: float(f'{score:.2f}') for name, score in data['plddts'].items()}
+
+    def load_ranking_debug(self) -> Dict[str, Any]:
+        with open(self.context.ranking_debug(), 'r') as fp:
+            return json.load(fp)
+
+    def get_model_plddts(self) -> Dict[str, List[float]]:
+        plddts: Dict[str, List[float]] = {}
+        for i in range(1, 6):
+            pklfile = self.context.model_pkl(i)
+            with open(pklfile, 'rb') as fp:
+                data = pickle.load(fp)
+                plddts[f'model_{i}'] = [float(f'{x:.2f}') for x in data['plddt']]
+        return plddts
 
 
-    def load_conf_scores(self):
-        filepath = f'{self.workdir}/ranking_debug.json'
-        with open(filepath, 'r') as fp:
-            data = json.load(fp)
+class OutputGenerator:
+    """generates the output data we are interested in creating"""
+    def __init__(self, loader: FileLoader):
+        self.loader = loader
 
-        self.set_model_mapping(data)
-        self.set_model_scores(data)
-        print()
+    def gen_conf_scores(self):
+        mapping = self.loader.get_model_mapping()
+        scores = self.loader.get_conf_scores()
+        ranked = list(scores.items())
+        ranked.sort(key=lambda x: x[1], reverse=True)
+        return {f'model_{mapping[name]}': score for name, score in ranked}
 
-
-    def set_model_mapping(self, data):
-        for rank, model_name in enumerate(data['order']):
-            self.model_mapping[model_name] = rank + 1
-
-
-    def set_model_scores(self, data):
-        for model_name, conf_score in data['plddts'].items():
-            self.model_scores[model_name] = conf_score
+    def gen_residue_scores(self) -> Dict[str, List[float]]:
+        mapping = self.loader.get_model_mapping()
+        model_plddts = self.loader.get_model_plddts()
+        return {f'model_{mapping[name]}': plddts for name, plddts in model_plddts.items()}
 
 
-    def load_model_plddts(self):
-        data = {}
-        for i in range(5):
-            filepath = f'{self.workdir}/result_model_{i+1}.pkl'
-            with open(filepath, 'rb') as fp:
-                data[f'model_{i+1}'] = pickle.load(fp)
-        
-        self.set_model_plddts(data)
+class OutputWriter:
+    """writes generated data to files"""
+    def __init__(self, context: ExecutionContext):
+        self.context = context
 
-
-    def set_model_plddts(self, data):
-        for model_name, info in data.items():
-            plddt_scores = info['plddt']
-            plddt_scores = [f'{x:.2f}' for x in plddt_scores]
-            self.model_plddts[model_name] = ','.join(plddt_scores)
-
-
-
-class FileWriter:
-    def __init__(self, workdir):
-        self.outdir = workdir.rstrip('/')
-
-
-    def write_conf_scores(self, model_mapping, model_scores):
-        out_lines = []
-
-        # for each model, translate its name, then format a line to write
-        models_ranked = list(model_scores.items())
-        models_ranked.sort(key=lambda x: x[1], reverse=True)
-
-        for model_name, score in models_ranked:
-            ranked_name = f'model_{model_mapping[model_name]}'
-            out_lines.append(f'{ranked_name}\t{score}')
-
-        # write
-        header = 'model\tconfidence score'
-        filepath = f'{self.outdir}/model_confidence_scores.tsv'
-        self.write_tsv(header, out_lines, filepath)
-       
-
-    def write_tsv(self, header, tsv_data, filepath):
-        """
-        tsv_data is expected in the form of a list of tuples where each tuple has form [model_name, data]
-        """
-        with open(filepath, 'w') as fp:
-            fp.write(header + '\n')
-            for line in tsv_data:
-                fp.write(f'{line}\n')
-        
-
-    def write_model_plddts(self, model_mapping, model_plddts):
-        out_lines = []
-
-        # for each model, translate its name, then format a line to write
-        ranked_plddts = []
-        for model_name, plddt_string in model_plddts.items():
-            ranked_name = f'model_{model_mapping[model_name]}'
-            ranked_plddts.append([ranked_name, plddt_string])
-        
-        ranked_plddts.sort(key=lambda x: int(x[0][-1]))
-
-        out_lines = [f'{m}\t{p}' for m, p in ranked_plddts]
-
-        # write
-        header = 'model\tper-residue confidence score (pLDDT)'
-        filepath = f'{self.outdir}/plddts.tsv'
-        self.write_tsv(header, out_lines, filepath)
+    def write_conf_scores(self, data: Dict[str, float]) -> None:
+        outfile = self.context.model_conf_score_output()
+        with open(outfile, 'w') as fp:
+            for model, score in data.items():
+                fp.write(f'{model}\t{score}\n')
     
+    def write_residue_scores(self, data: Dict[str, List[float]]) -> None:
+        outfile = self.context.plddt_output()
+        model_plddts = list(data.items())
+        model_plddts.sort()
+
+        with open(outfile, 'w') as fp:
+            for model, plddts in model_plddts:
+                plddt_str_list = [str(x) for x in plddts]
+                plddt_str = ','.join(plddt_str_list)
+                fp.write(f'{model}\t{plddt_str}\n')
 
 
-def main(argv):
-    alphafold_files_dir = argv[0]
-    extra_outputs = argv[1].split(',')  # 'plddts,msas'
-    fl = FileLoader(alphafold_files_dir)
-    fw = FileWriter(alphafold_files_dir)
+def main():
+    # setup
+    settings = Settings()
+    settings.parse_settings()
+    context = ExecutionContext(settings)
+    loader = FileLoader(context)
     
-    # model confidence scores
-    fl.load_conf_scores()
-    fw.write_conf_scores(fl.model_mapping, fl.model_scores)
-
-    # per-residue confidence scores
-    if 'plddts' in extra_outputs:
-        fl.load_model_plddts()
-        fw.write_model_plddts(fl.model_mapping, fl.model_plddts)
-
+    # generate & write outputs
+    generator = OutputGenerator(loader)
+    writer = OutputWriter(context)
     
+    # confidence scores
+    conf_scores = generator.gen_conf_scores()
+    writer.write_conf_scores(conf_scores)
+    
+    # per-residue plddts
+    if settings.output_residue_scores:
+        residue_scores = generator.gen_residue_scores()
+        writer.write_residue_scores(residue_scores)
+
     
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    main()
 
 
 

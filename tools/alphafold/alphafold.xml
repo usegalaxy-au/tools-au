@@ -20,14 +20,12 @@
         ## fasta setup ----------------------------
         #if $fasta_or_text.input_mode == 'history':
             cp '$fasta_or_text.fasta_file' > input.fasta &&
-            #set format = 'file'
 
         #elif $fasta_or_text.input_mode == 'textbox':
             echo '$fasta_or_text.fasta_text' > input.fasta &&
-            #set format = 'text'
         #end if
 
-        python3 '$__tool_directory__/validate_fasta.py' input.fasta $format &&
+        python3 '$__tool_directory__/validate_fasta.py' input.fasta &&
 
         ## env vars -------------------------------
         export TF_FORCE_UNIFIED_MEMORY=1 &&
