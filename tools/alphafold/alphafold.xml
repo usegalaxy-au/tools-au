@@ -67,7 +67,7 @@
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
-            <param name="input_mode" type="select" label="Use fasta from history or paste sequence?" help="Input protein sequence to fold. Format can be fasta file from history, or text. Provide a single protein sequence per job. ">
+            <param name="input_mode" type="select" label="Fasta Input" help="Single protein sequence to fold. Input can be fasta file from history, or text. Provide only 1 sequence per job.">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
@@ -75,41 +75,10 @@
                 <param name="fasta_file" type="data" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
             </when>
             <when value="textbox">
-                <param name="fasta_text" type="text" area="true" value="" label="Sequence" help="Paste single protein sequence into the textbox. DO NOT include a fasta header line (starting with '>'). If you wish to fold multiple proteins, submit an individual job for each protein.">
-                    <sanitizer invalid_char="">
-                        <valid initial="">
-                            <add value="A" />
-                            <add value="B" />
-                            <add value="C" />
-                            <add value="D" />
-                            <add value="E" />
-                            <add value="F" />
-                            <add value="G" />
-                            <add value="H" />
-                            <add value="I" />
-                            <add value="K" />
-                            <add value="L" />
-                            <add value="M" />
-                            <add value="N" />
-                            <add value="P" />
-                            <add value="Q" />
-                            <add value="R" />
-                            <add value="S" />
-                            <add value="T" />
-                            <add value="U" />
-                            <add value="V" />
-                            <add value="W" />
-                            <add value="Y" />
-                            <add value="Z" />
-                            <add value="X" />
-                            <add value="*" />
-                            <add value="-" />
-                        </valid>
-                    </sanitizer>
-                </param>
+                <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
             </when>
         </conditional>
-        <param name="output_plddts" type="boolean" checked="true" label="Output per-residue confidence scores" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
+        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
 
     </inputs>
     <outputs>
@@ -166,15 +135,31 @@
 
 **What it does**
 
-Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
-If you want, you can preview your help section using this online editor: http://rst.ninjs.org/
-
-Usage
-.....
+- what does it do
+- alphafold in analysis pipelines
+   - 3D viewers (pymol, chimera, ngl, blender)
+   - molecular docking
+   - mutation analysis 
+   - activate site stuff
+   - regulation
+- differentiation from other software (why its good)
+- Future directions
 
 **Input**
 
+- only 1 sequence
+- fasta vs pasted text
+
 **Output**
+
+- default outputs
+- optional outputs
+- galaxy visualisation
+    - include screenshots
+
+**links**
+
+- github page: https://github.com/deepmind/alphafold
 
 
     ]]></help>
