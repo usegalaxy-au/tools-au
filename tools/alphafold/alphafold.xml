@@ -44,7 +44,8 @@
         --template_mmcif_dir /data/pdb_mmcif/mmcif_files
         --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
-##        --model_names model_1,model_2,model_3,model_4,model_5  ## Deprecated - already set in alphafold/model/config.py
+        ## Deprecated - now set in alphafold/model/config.py
+        ## --model_names model_1,model_2,model_3,model_4,model_5
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
         --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
         &&
@@ -129,36 +130,67 @@
     </tests>
     <help><![CDATA[
 
+Alphafold: AI-guided 3D structure prediction of proteins
+========================================================
+
 .. class:: infomark
 
 **What it does**
 
-- what does it do
-- alphafold in analysis pipelines
-   - 3D viewers (pymol, chimera, ngl, blender)
+- What does it do
+- Expected run times!
+- 3D viewers (pymol, chimera, ngl, blender)
+- Alphafold in analysis pipelines
    - molecular docking
-   - mutation analysis 
+   - mutation analysis
    - activate site stuff
    - regulation
-- differentiation from other software (why its good)
+- Differentiation from other software (why its good)
 - Future directions
 
-**Input**
+Input
+-----
 
-- only 1 sequence
-- fasta vs pasted text
+- Alphafold takes a single amino acid sequence in FASTA format. You can choose
+  to input either a file from your Galaxy history or paste a sequence into a
+  text box.
+- Please paste only a single sequence - we can only process a single sequence
+  per job. Multiple sequences will return an error.
 
-**Output**
+Outputs
+------
 
-- default outputs
-- optional outputs
-- galaxy visualisation
-    - include screenshots
+**Visualization**
 
-**links**
+An interactive 3D graphic of the best predicted molecular structures. This
+output can be opened in Galaxy to give a visual impression of the results, with
+different structural representations to choose from. Open the Visualization
+output in your history and click the "eye" icon to view.
 
-- github page: https://github.com/deepmind/alphafold
+< screenshot >
 
+**PDB files**
+
+Five PDB (Protein Data Bank) files will be created for the best ranking models
+predicted by Alphafold. These files describe the molecular structures and can be
+used for downstream analysis. e.g. *in silico* molecular docking.
+
+**Model confidence scores** (optional)
+
+ This optional output produces a file which describes the confidence scores for
+each model (based on pLDDTs) which may be useful for downstream analysis. Model
+confidence scores are also included as a column in the default PDB output. You
+can learn about the pLDDT metric in this article:
+https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/
+
+
+**Links**
+
+We recommend checking out the Alphafold Protein Scructure Database, which
+contains predicted sequences for thousands of Human proteins:
+https://alphafold.ebi.ac.uk/
+
+- Alphafold on GitHub: https://github.com/deepmind/alphafold
 
     ]]></help>
     <citations>
