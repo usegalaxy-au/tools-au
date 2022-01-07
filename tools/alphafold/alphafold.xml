@@ -130,68 +130,102 @@
     </tests>
     <help><![CDATA[
 
-Alphafold: AI-guided 3D structure prediction of proteins
-========================================================
+    
+    
+    .. class:: infomark
+    
+    **What it does**
+    
+    | Alphafold v2.0: AI-guided 3D structure prediction of proteins
+    | 
+    
+    *What is alphafold?*
+    
+    | Alphafold is a program which uses neural networks to predict the tertiary (3D) structue of proteins. Alphafold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model. 
+    | NOTE: Alphafold has a number of versions - this tool uses Alphafold v2.0. 
+    |
 
-.. class:: infomark
+    *Differentiation from other software*
+ 
+    | The ability to use computers to predict 3D structures with high accuracy is desirable because it removes the time-consuming and costly process of determining structures experimentally. 
+    | In-silico protein folding has therefore been an active field of research for decades. 
+    | Alphafold represents a leap forward by regularly predicting structures to atomic-level accuracy, even when no similar structures are known.
+    |
 
-**What it does**
+    *Downstream analysis*
 
-- What does it do
-- Expected run times!
-- 3D viewers (pymol, chimera, ngl, blender)
-- Alphafold in analysis pipelines
-   - molecular docking
-   - mutation analysis
-   - activate site stuff
-   - regulation
-- Differentiation from other software (why its good)
-- Future directions
+    | Obtaining a protein fold is the first step in many analyses. 
+    | The 3D models created by alphafold can be used in downstream analysis, including the following:  
+    | 
 
-Input
------
+    - Inspecting protein features
+        3D viewers (pymol, chimera, ngl, blender) can be used to inspect active sites, regulatory domains, binding sites.
+    - Molecular docking
+        3D structures can be used to predict the binding affinity of different compounds.
+        This is especially useful in structure-based drug design. 
+    - Protein-protein interactions
+        Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
+        To predict these interactions, other programs ingest 3D models (such as those produced by alphafold) exist (PROVIDE TOOL NAME).
+    - Mutation analysis
+        todo
 
-- Alphafold takes a single amino acid sequence in FASTA format. You can choose
-  to input either a file from your Galaxy history or paste a sequence into a
-  text box.
-- Please paste only a single sequence - we can only process a single sequence
-  per job. Multiple sequences will return an error.
+    *Expected run times*
 
-Outputs
-------
+    .. image:: $PATH_TO_IMAGES/alphafold_runtime_graph.png
+        :width: 800
+        :height: 520
+    
+    | 
+    | In general, we observe a quadratic relationship between sequence length and time to fold. 
+    | Once your job begings, a sequence of 50aa will take approx 1hr to complete, while a sequence of 2000aa will take about 18hrs.
+    | 
+        
+    **Input**
+    
+    *Amino acid sequence* 
 
-**Visualization**
+    | Alphafold accepts a **single amino acid sequence** in FASTA format. 
+    | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
+    | Please paste only a single sequence - we can only process a single sequence per job. 
+    | Multiple sequences will return an error.
+    | 
+    
+    **Outputs**
+   
+    *Visualization*
+    
+    | An interactive 3D graphic of the best predicted molecular structures. 
+    | This output can be opened in Galaxy to give a visual impression of the results, with different structural representations to choose from. 
+    | Open the "Visualization" history output by clicking on the "view data" icon:
+    | 
 
-An interactive 3D graphic of the best predicted molecular structures. This
-output can be opened in Galaxy to give a visual impression of the results, with
-different structural representations to choose from. Open the "Visualization"
-history output by clicking on the "view data" icon:
+    .. image:: $PATH_TO_IMAGES/alphafold-visualization.png
+        :width: 800
+        :height: 520
+    
+    | 
 
-.. image:: $PATH_TO_IMAGES/alphafold-visualization.png
-   :width: 800
-   :height: 520
-
-**PDB files**
-
-Five PDB (Protein Data Bank) files will be created for the best ranking models
-predicted by Alphafold. These files describe the molecular structures and can be
-used for downstream analysis. e.g. *in silico* molecular docking.
-
-**Model confidence scores** (optional)
-
- This optional output produces a file which describes the confidence scores for
-each model (based on pLDDTs) which may be useful for downstream analysis. Model
-confidence scores are also included as a column in the default PDB output.
-`Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_.
-
-**Links**
-
-We recommend checking out the
-`Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
-which contains predicted sequences for thousands of Human proteins:
-
-- `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
-- `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
+    *PDB files*
+    
+    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by Alphafold. 
+    | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
+    | 
+    
+    *Model confidence scores (optional)*
+    
+    | This optional output produces a file which describes the confidence scores for each model (based on pLDDTs) which may be useful for downstream analysis. 
+    | Model confidence scores are also included as a column in the default PDB output.
+    | `Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>.`
+    | 
+    
+    **External Resources**
+    
+    We recommend checking out the
+    `Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
+    which contains predicted sequences for thousands of Human proteins:
+    
+    - `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
+    - `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`
 
     ]]></help>
     <citations>
