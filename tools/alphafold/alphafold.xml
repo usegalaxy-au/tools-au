@@ -166,8 +166,6 @@
     - Protein-protein interactions
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
         To predict these interactions, other programs ingest 3D models (such as those produced by alphafold) exist (PROVIDE TOOL NAME).
-    - Mutation analysis
-        todo
 
     *Expected run times*
 
