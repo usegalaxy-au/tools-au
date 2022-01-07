@@ -164,10 +164,12 @@ Outputs
 
 An interactive 3D graphic of the best predicted molecular structures. This
 output can be opened in Galaxy to give a visual impression of the results, with
-different structural representations to choose from. Open the Visualization
-output in your history and click the "eye" icon to view.
+different structural representations to choose from. Open the "Visualization"
+history output by clicking on the "view data" icon:
 
-< screenshot >
+.. image:: $PATH_TO_IMAGES/alphafold-visualization.png
+   :width: 800
+   :height: 520
 
 **PDB files**
 
@@ -179,18 +181,17 @@ used for downstream analysis. e.g. *in silico* molecular docking.
 
  This optional output produces a file which describes the confidence scores for
 each model (based on pLDDTs) which may be useful for downstream analysis. Model
-confidence scores are also included as a column in the default PDB output. You
-can learn about the pLDDT metric in this article:
-https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/
-
+confidence scores are also included as a column in the default PDB output.
+`Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_.
 
 **Links**
 
-We recommend checking out the Alphafold Protein Scructure Database, which
-contains predicted sequences for thousands of Human proteins:
-https://alphafold.ebi.ac.uk/
+We recommend checking out the
+`Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
+which contains predicted sequences for thousands of Human proteins:
 
-- Alphafold on GitHub: https://github.com/deepmind/alphafold
+- `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
+- `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
 
     ]]></help>
     <citations>
