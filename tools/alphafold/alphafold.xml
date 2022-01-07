@@ -166,8 +166,6 @@
     - Protein-protein interactions
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
         To predict these interactions, other programs ingest 3D models (such as those produced by alphafold) exist (PROVIDE TOOL NAME).
-    - Mutation analysis
-        todo
 
     *Expected run times*
 
@@ -215,7 +213,7 @@
     
     | This optional output produces a file which describes the confidence scores for each model (based on pLDDTs) which may be useful for downstream analysis. 
     | Model confidence scores are also included as a column in the default PDB output.
-    | `Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>.`
+    | `Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_
     | 
     
     **External Resources**
@@ -225,7 +223,7 @@
     which contains predicted sequences for thousands of Human proteins:
     
     - `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
-    - `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`
+    - `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
 
     ]]></help>
     <citations>
