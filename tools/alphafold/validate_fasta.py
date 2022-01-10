@@ -76,7 +76,9 @@ class FastaValidator:
         self.validate_num_seqs()
         self.validate_length()
         self.validate_alphabet()
-        #self.validate_x() # NOT DOING THIS 
+        # not checking for 'X' nucleotides at the moment. 
+        # alphafold can throw an error if it doesn't like it. 
+        #self.validate_x() 
 
     def validate_num_seqs(self) -> None:
         if len(self.fasta_list) > 1:
