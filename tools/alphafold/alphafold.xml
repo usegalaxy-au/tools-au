@@ -19,7 +19,7 @@
     <command detect_errors="exit_code"><![CDATA[
         ## fasta setup ----------------------------
         #if $fasta_or_text.input_mode == 'history':
-            cp '$fasta_or_text.fasta_file' > input.fasta &&
+            cp '$fasta_or_text.fasta_file' input.fasta &&
 
         #elif $fasta_or_text.input_mode == 'textbox':
             echo '$fasta_or_text.fasta_text' > input.fasta &&
