@@ -44,8 +44,6 @@
         --template_mmcif_dir /data/pdb_mmcif/mmcif_files
         --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
-        ## Deprecated - now set in alphafold/model/config.py
-        ## --model_names model_1,model_2,model_3,model_4,model_5
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
         --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
         &&
@@ -55,7 +53,7 @@
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 $__tool_directory__/gen_extra_outputs.py output/alphafold plddts &&
+        python3 $__tool_directory__/gen_extra_outputs.py output/alphafold $output_plddts &&
 
         ## html
         mkdir -p '${ html.files_path }' &&
@@ -77,7 +75,7 @@
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
             </when>
         </conditional>
-        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
+        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
 
     </inputs>
     <outputs>
