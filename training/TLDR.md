@@ -29,21 +29,28 @@ Tool Wrapping is the process of making a tool runnable on galaxy. This includes 
 
 ## Setup Your Development Environment
 
-To develop tool wrappers, you need a good IDE to write xml and search, and a system to test the wrappers you have built. <br>
+To develop tool wrappers, you need a good IDE to write XML and search, and a system to test the wrappers you have built. <br>
 ***Visual studio code*** is recommended for wrapper development, and ***planemo*** is recommended to test your work. 
 
 ### IDE
 
-VSC is highly recommended
+
+
+Visual Studio Code (VSC) is highly recommended
 - Has a Galaxy extension (ext name: 'Galaxy Tools')
     - Provides code snippets (to make boilerplate tool, write gx-tool and select)
     - Tag and attribute auto-completion 
     - Documentation on hover
-- Allows searching for use-cases or examples in tool xml:
+
+GIF HERE PLS 
+
+- Allows searching for use-cases or examples in tool XML:
     - Clone the [tools-iuc github](https://github.com/galaxyproject/tools-iuc)
-    - Open the cloned repo with vsc
+    - Open the cloned repo with VSC
     - Use the search tool (left side nav button) for something you want to see an example of
-    - Example: searching 'type="data_collection"' will show you examples of data_collections in use in tools-iuc
+    - Example: searching 'type="data_collection"' will show you examples of data_collections in use in tools-iuc.
+
+GIF HERE PLS 
 
 <br>
 
@@ -73,9 +80,9 @@ DO NOT INSTALL PLANEMO USING CONDA IT DOESN'T WORK. ONLY PIP.
 
 https://planemo.readthedocs.io/en/latest/commands/serve.html?highlight=serve
 
-The first command to use is 'serve'. This command runs a containerised galaxy instance and serves it on localhost:9090. planemo serve is useful because it loads tool xml files and presents them as on a real server, so we can look at the wrapper UI we are currently working on. 
+The first command to use is 'serve'. This command runs a containerised galaxy instance and serves it on localhost:9090. planemo serve is useful because it loads tool XML files and presents them as on a real server, so we can look at the wrapper UI we are currently working on. 
 
-To use, navigate to a folder containing a tool xml file.
+To use, navigate to a folder containing a tool XML file.
 Execute the following:
 
 ```
@@ -84,44 +91,44 @@ planemo serve
 
 It will take some time, but eventually will build galaxy and serve on localhost:9090. Look in the galaxy tools panel on the left side of your screen - you should see the tool you are working on. 
 
-If the tool UI doesn't look right, make your change in the tool xml file, then refresh localhost:9090. The change should have been reflected in the running galaxy instance.  
+If the tool UI doesn't look right, make your change in the tool XML file, then refresh localhost:9090. The change should have been reflected in the running galaxy instance.  
 
 **planemo lint**
 
 https://planemo.readthedocs.io/en/latest/commands/lint.html?highlight=lint
 
-The 'lint' command tests whether the tool xml violates any rules.
-For example, each tool xml needs tests. If no tests are found in the xml, planemo will report it and fail the linting process.
+The 'lint' command tests whether the tool XML violates any rules.
+For example, each tool XML needs tests. If no tests are found in the XML, planemo will report it and fail the linting process.
 
-To test, navigate to a folder containing a tool xml file.
+To test, navigate to a folder containing a tool XML file.
 Execute the following:  
 
 ```
-planemo lint [tool_xml_file]
+planemo lint [tool_XML_file]
 ```
 
-This will report any errors with the xml. These errors need to be addressed before submission. 
+This will report any errors with the XML. These errors need to be addressed before submission. 
 
 **planemo test**
 
 https://planemo.readthedocs.io/en/latest/commands/test.html?highlight=test
 
-Planemo test allows you to run tool xml tests and verify they pass. 
+Planemo test allows you to run tool XML tests and verify they pass. 
 This is probably the most important command. 
 
-To run tool tests, navigate to a folder containing a tool xml file.
+To run tool tests, navigate to a folder containing a tool XML file.
 Execute the following:  
 
 ```
-planemo test [tool_xml_file]
+planemo test [tool_XML_file]
 ```
 
-This will read, then execute the tests you have specified within the `<tests>` tag in `tool_xml_file`. 
+This will read, then execute the tests you have specified within the `<tests>` tag in `tool_XML_file`. 
 
 Note: 
 
 Tool requirements need to already be installed when running planemo test. <br>
-For example if you are wrapping the 'quast' tool, create and activate a conda environment for your development, and install 'quast' into that env. Then when you run `planemo test quast.xml`, the quast software will be available. This is actually similar to what happens when a job is run on galaxy. 
+For example if you are wrapping the 'quast' tool, create and activate a conda environment for your development, and install 'quast' into that env. Then when you run `planemo test quast.XML`, the quast software will be available. This is actually similar to what happens when a job is run on galaxy. 
 
 If you are using a container for tool execution, supply the `--mulled-containers` option when running `planemo test`.
 
@@ -168,7 +175,7 @@ There is nothing to write in terms of the wrapper, and it doesn't affect the dev
 
 **Containers**
 
-By default, Galaxy uses conda to resolve dependencies. If the tool you are wrapping is quast, you need to specify quast as a requirement in the xml. At runtime, Galaxy will then use conda to get the quast conda package you specified and install it, then it will execute the code in the xml `<command>` section.
+By default, Galaxy uses conda to resolve dependencies. If the tool you are wrapping is quast, you need to specify quast as a requirement in the XML. At runtime, Galaxy will then use conda to get the quast conda package you specified and install it, then it will execute the code in the XML `<command>` section.
 
 For containers this is not the case. To actually use a container as a dependency (ie you're running the tool using an image), a job destination has to be set up to use containers. Again, this is the realm of Galaxy Admins, but it applies when developing the wrapper. For example, to run planemo test to check your wrapper, it wont pull the container you specified unless you provide the `--mulled_containers` option to `planemo test`. 
 
@@ -188,21 +195,22 @@ It is very useful to check this folder when things aren't working. In this secti
 
 This is the folder that ***Galaxy*** sees when it is running a job. It is the base folder and contains everything needed to run that job. This acts as a parent folder since it holds all the files and folders needed. The tool itself doesn't actually need to see most of these, so tool execution actually occurs in the `working/` folder. 
 
-**Workdir**
+**Tool Workdir**
 
 ![workdir](images/workdir.png)
+TODO CHANGE TO HITMAP SCREENCAP
 
-The `working/` folder is where the tool actually runs. Anything in the `<command>` section of the tool xml is templated into a string, then that string is run using the `working/` folder as the home directory. 
+The `working/` folder is where the tool actually runs. Anything in the `<command>` section of the tool XML is templated into a string, then that string is run using the `working/` folder as the home directory. 
 
-If you write `echo "hi" > hello.txt` in the `<command>` section of the tool xml, a file called `hello.txt` will appear in the `working/` directory. This is where the commands are run. 
+If you write `echo "hi" > hello.txt` in the `<command>` section of the tool XML, a file called `hello.txt` will appear in the `working/` directory. This is where the commands are run. 
 
 From the above (first command), we see that the tool which was run produces a single folder called `expdata/` when running. Inside `expdata/` (second command) we have some outputs like a fasta database and some mass spec data.
 
-**Scripts**
+**Tool Script**
 
 ![tool_script](images/tool_script.png)
 
-`tool_script.sh` contains the command line string you specified in the `<command>` section of the tool xml. It has now been templated by cheetah, and so has be condensed down to what will actually be run by the OS. Something to note here is that there are a lot of `.dat` files -> this relates to how Galaxy stores datasets. More on this below.   
+`tool_script.sh` contains the command line string you specified in the `<command>` section of the tool XML. It has now been templated by cheetah, and so has be condensed down to what will actually be run by the OS. Something to note here is that there are a lot of `.dat` files -> this relates to how Galaxy stores datasets. More on this below.   
 
 ![init script](images/command.png)
 
@@ -218,7 +226,7 @@ The `inputs/` folder contains the input files which are needed for the job. This
 
 ![outputs](images/outputs.png)
 
-The `outputs/` folder contains the output files which have been collected. These are specified in the tool xml in the `<outputs>` section. Imagine that Galaxy finds these files and stages them in the `outputs/` folder before moving them to the user history.  
+The `outputs/` folder contains the output files which have been collected. These are specified in the tool XML in the `<outputs>` section. Imagine that Galaxy finds these files and stages them in the `outputs/` folder before moving them to the user history.  
 
 Depending on Galaxy setup, `outputs/` may also contains the tool `stderr` and `stdout`. These are captured when the tool is running, and will be the same as you would see on your console if running the tool locally. If not, `stderr` and `stdout` will be in the Job home directory. 
 
@@ -227,13 +235,13 @@ Depending on Galaxy setup, `outputs/` may also contains the tool `stderr` and `s
 ![configs](images/configs.png)
 ![configfile](images/demo_configfile.png)
 
-The `config/` folder contains each `<configfile>` in the `<configfiles>` section of the tool xml. Configfiles are also templated by cheetah in the same manner as the `<command>` section, so when they appear in the `config/` folder, they are the plain text file which will can actually be run or used by the tool. 
+The `config/` folder contains each `<configfile>` in the `<configfiles>` section of the tool XML. Configfiles are also templated by cheetah in the same manner as the `<command>` section, so when they appear in the `config/` folder, they are the plain text file which will can actually be run or used by the tool. 
 
 Similar to checking `tool_script.sh` to find how the tool is executed on the command line, checking the files in `config/` shows you how your configfiles actually ended up after all the variables and logic was assessed. 
 
-**environment variables**
+**Environment Variables & Job Setup**
 
-Aside from files and folders, environment variables are set in the job sandbox. Many link to reserved variables which can be written in the tool xml, like `$__tool_directory__` which allows you to access files in the tool wrapper directory. An example of its use is placing small python programs which transform the tool output, or validate files into the tool wrapper directory, next to the tool xml. These programs would then be accessible at `$__tool_directory__/your_python_file.py` 
+Aside from files and folders, environment variables are set in the job sandbox. Many link to reserved variables which can be written in the tool XML, like `$__tool_directory__` which allows you to access files in the tool wrapper directory. An example of its use is placing small python programs which transform the tool output, or validate files into the tool wrapper directory, next to the tool XML. These programs would then be accessible at `$__tool_directory__/your_python_file.py` 
 
 See https://docs.galaxyproject.org/en/latest/dev/schema.html#reserved-variables for the full list of reserved variables. 
 
@@ -252,36 +260,100 @@ When you upload a file to your history called `myfasta.fasta`, the file is store
 
 This structure means that when you run a tool on `myfasta.fasta` from your history, Galaxy decodes where that actual file is, and ships it to the `inputs/` folder of the Job sandbox. 
 
-For this reason, you are not meant to interact with the data directory at all. When running a job, all relevant files have already been stage in the job `inputs/` folder ready for use. The names of these files don't even matter, as they are mapped to `$variable_name` you specified for that input in the tool xml. 
+For this reason, you are not meant to interact with the data directory at all. When running a job, all relevant files have already been stage in the job `inputs/` folder ready for use. The names of these files don't even matter, as they are mapped to `$variable_name` you specified for that input in the tool XML. 
 
 This does have an implication for file types. Many bioinformatics tools will try to check file types at runtime using the file's extension. As the extension of the underlying file is always `.dat`, this often results in a failed job. 
 
 To skirt this, just symlink the input file to a more appropriate name. 
-Executing `ln -s $input_reads input.fastq` at the start of the `<command>` section of the tool xml, then running the tool on `input.fastq` will present the file as `input.fastq`, not the random `dataset_11146.dat` filename which Galaxy provided. 
+Executing `ln -s $input_reads input.fastq` at the start of the `<command>` section of the tool XML, then running the tool on `input.fastq` will present the file as `input.fastq`, not the random `dataset_11146.dat` filename which Galaxy provided. 
 
 <br><br>
 
 ## Galaxy Tool UI
 
-[Tool XML documentation](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#1)
-<br>[Tool dev training material](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#1)
+On the topic of Tool UI, a famous wrapper dev said the following.
+
+*“Give people flexibility, while guiding them away from stupid mistakes”*
+
+Aside from being a great line, this expresses one of the core tenets of Galaxy - accessability. We want Galaxy to be as straightforward to use as possible, and a big responsibility rests on the wrappers we develop. We aim to encapsulate the tool options in an intuitive way, so that it feels effortless to set up a job and run the tool on Galaxy. 
+
+There are three main pieces of reference material we will refer to in this section. They are the:
+- [Tool dev training slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#1)<br>
+- [Galaxy Tool XML documentation](https://docs.galaxyproject.org/en/latest/dev/schema.html)<br>
+- [Planemo Documentation](https://planemo.readthedocs.io/en/latest/writing.html)
 
 
-### Params and Outputs
-- Params are what the user sees in the UI
+### Params 
+
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#14)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-param)<br>
+[planemo docs](https://planemo.readthedocs.io/en/latest/writing_standalone.html#simple-parameters)
+
+Params are what the user sees in the galaxy tool UI. We want this to be clear and have a useful structure.
+
+### Outputs
+
+https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#24<br>
+https://planemo.readthedocs.io/en/latest/writing_advanced.html#multiple-output-files<br>
+https://planemo.readthedocs.io/en/latest/writing_advanced.html#id2
+
 - Outputs are the files we collect and send to the user history
-- Use the links above to find out their use. 
-- Output collection can be tricky - [provides links]
+- Output reference paths can be tricky - [provides links and examples]
+- Output Collections
+
+### Structure Elements
+
+slides: [conditionals, ](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#22)
+[sections, ](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#34)
+[repeat](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#23)<br>
+Galaxy docs: [conditionals, ](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-conditional)
+[sections, ](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-section)
+[repeat](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-repeat)<br>
+Planemo: [conditionals](https://planemo.readthedocs.io/en/latest/writing_standalone.html#conditional-parameters)<br>
+
+- section<br>
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#34), galaxy docs, planemo
+- repeat 
+- conditional
+
+**conditional tag**
+
+https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#22<br>
+https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-conditional<br>
+https://planemo.readthedocs.io/en/latest/writing_standalone.html#conditional-parameters
 
 ### Tokens
-- tokens are just variables used within the xml. 
-- They are used so we don't have to repeat stuff like the 'tool name' or 'tool version' in multiple locations. As an example, setting `@TOOL_NAME@` to 'quast' and `@TOOL_VERSION@` to 5.2.1 using tokens means we can use these tokens in other xml tags. 
 
+https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#61<br>
+https://planemo.readthedocs.io/en/latest/writing_advanced.html#parameterizing-xml-macros-with-tokens
+
+Tokens are variables which can be reused within XML tags themselves. They are handy to avoid repetition. This has two benefits: it ensures the variable value is constant across the whole document, and allows the variable to be reassigned by only modifying the token, rather than all the place the token is used. 
+
+As an example, in abricate.xml, `@VERSION@` is set to 1.0.1. This token is then used in 2 places
+```
+macros.xml: line 13
+<token name="@VERSION@">1.0.1</token>
+
+abricate.xml: line 1
+<tool id="abricate" name="ABRicate" version="@VERSION@" profile="@PROFILE@">
+
+macros.xml: line 4
+<requirement type="package" version="@VERSION@">
+```
+ 
 ### Macros
-- Macros are snippets of xml.
+
+https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#59
+https://planemo.readthedocs.io/en/latest/writing_advanced.html#macros-reusable-elements
+
+- Macros are snippets of XML.
 - Are used for a number of reasons
-- One reason is just for readability. Big sections of XML can be moved to a Macro in the macros.xml file so they don't have to appear in the main XML document. Instead, the macro is injected.
-- Another reason is where the same section of xml is used in multiple locations. This is the same motivation as programming - duplication is bad and annoying. Just declare the xml section once as a macro, then inject the macro where it is needed. 
+- One reason is just for readability. Big sections of XML can be moved to a Macro in the macros.XML file so they don't have to appear in the main XML document. Instead, the macro is injected.
+- Another reason is where the same section of XML is used in multiple locations. This is the same motivation as programming - duplication is bad and annoying. Just declare the XML section once as a macro, then inject the macro where it is needed. 
+
+### Dependencies
+
+https://training.galaxyproject.org/training-material/topics/dev/tutorials/conda/slides.html#11
 
 ### Command section
 
@@ -307,7 +379,7 @@ end if
 
 This will see if the `$should_produce_summary` param was `true`. This will most likely be a `type="boolean"` param, which presents itself as a on/off check button in the tool form UI.  If the user has this checked, it will execute the code on the line below to produce a summary file. The `&&` is just so that we can execute another statement after this, which is often necessary as most tool wrappers execute multiple statments. 
 
-The best way to learn cheetah and its use in tool xml is to search tools-iuc. Example: if you want to see how a cheetah function is declared, seach '#def ' in the tools-iuc repo. Any tool declaring a cheetah function will appear, giving you a bunch of use-cases to learn from. 
+The best way to learn cheetah and its use in tool XML is to search tools-iuc. Example: if you want to see how a cheetah function is declared, seach '#def ' in the tools-iuc repo. Any tool declaring a cheetah function will appear, giving you a bunch of use-cases to learn from. 
 
 **Preprocessing**
 
@@ -337,6 +409,9 @@ The above was taken from the `kraken` tool. We set an environment variable, then
 
 **Best-practises**
 
+https://planemo.readthedocs.io/en/latest/writing_advanced.html#test-driven-development
+
+
 ### Configfiles
 
 ### Metadata
@@ -350,6 +425,9 @@ The above was taken from the `kraken` tool. We set an environment variable, then
 <br><br>
 
 ## Tool Wrapping Process
+
+https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#
+
 ### Before You Wrap
 **Searching for Wrappers**
 **Identifying time-consuming tools**
