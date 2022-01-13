@@ -42,15 +42,17 @@ Visual Studio Code (VSC) is highly recommended
     - Tag and attribute auto-completion 
     - Documentation on hover
 
-GIF HERE PLS 
+    <br>
+    <img src="gifs/galaxy_ext.gif" width="700">
 
 - Allows searching for use-cases or examples in tool XML:
     - Clone the [tools-iuc github](https://github.com/galaxyproject/tools-iuc)
     - Open the cloned repo with VSC
     - Use the search tool (left side nav button) for something you want to see an example of
     - Example: searching 'type="data_collection"' will show you examples of data_collections in use in tools-iuc.
-
-GIF HERE PLS 
+    
+    <br>
+    <img src="gifs/tools_iuc_search.gif" width="700">
 
 <br>
 
@@ -282,6 +284,7 @@ There are three main pieces of reference material we will refer to in this secti
 - [Galaxy Tool XML documentation](https://docs.galaxyproject.org/en/latest/dev/schema.html)<br>
 - [Planemo Documentation](https://planemo.readthedocs.io/en/latest/writing.html)
 
+<br>
 
 ### Params 
 
@@ -289,43 +292,100 @@ There are three main pieces of reference material we will refer to in this secti
 [galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-param)<br>
 [planemo docs](https://planemo.readthedocs.io/en/latest/writing_standalone.html#simple-parameters)
 
-Params are what the user sees in the galaxy tool UI. We want this to be clear and have a useful structure.
+Params appear in the Galaxy Tool UI Form (the Tool Form). They provide widgets so the user can provide input to customise tool settings and supply data from their history. Params also link this user input to the `tool.xml` `<command>` section, so that the tool script can be customised for that job. 
 
-### Outputs
+We want the parameters to be clear and simple. This sometimes means that the underlying software tool's options are represented differently in the Tool Form. 
 
-https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#24<br>
-https://planemo.readthedocs.io/en/latest/writing_advanced.html#multiple-output-files<br>
-https://planemo.readthedocs.io/en/latest/writing_advanced.html#id2
+An example - the tool being wrapped has 3 run modes: `--relaxed`, `--moderate`, `--strict` .
+Rather than providing 3 `type="boolean"` params to switch these on or off individually, we might create a single `type="select"` param with `name="run mode"`. This offers a simple dropdown containing the three 'run mode' options, as only 1 can be selected at a time. If multiple are selectable, you could supply the `multiple="true"` attribute in the xml tag.
 
-- Outputs are the files we collect and send to the user history
-- Output reference paths can be tricky - [provides links and examples]
-- Output Collections
+<br>
 
 ### Structure Elements
 
-slides: [conditionals, ](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#22)
-[sections, ](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#34)
-[repeat](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#23)<br>
-Galaxy docs: [conditionals, ](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-conditional)
-[sections, ](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-section)
-[repeat](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-repeat)<br>
-Planemo: [conditionals](https://planemo.readthedocs.io/en/latest/writing_standalone.html#conditional-parameters)<br>
+Tool XML Structure elements greatly enhance wrapper usability. They group params into logical sections, and hide / reveal settings depending on what the user has selected. 
 
-- section<br>
-[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#34), galaxy docs, planemo
-- repeat 
-- conditional
+Here we will discuss the `<section>`, `<conditional>` and `<repeat>` tags.
 
-**conditional tag**
+**Section**
 
-https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#22<br>
-https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-conditional<br>
-https://planemo.readthedocs.io/en/latest/writing_standalone.html#conditional-parameters
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#34)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-section)
+
+Sections group params together. The grouping is reflected in the Tool Form, with each section getting a heading. Each section can be collapsed or revealed.  A common pattern is to split the Tool Form into base settings, and an 'Advanced' `<section>` of settings. 
+
+```
+<section name="advanced" title="Advanced" expanded="false">
+```
+
+If 90% of the time users don't interact with the settings in the 'Advanced', the Tool Form UI is much cleaner and easy to use this way. Due to `expanded="false"` the section is collapsed when the page loads, and internals are hidden. 
+
+**Conditional**
+
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#22)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-conditional)<br>
+[planemo docs](https://planemo.readthedocs.io/en/latest/writing_standalone.html#conditional-parameters)
+
+Conditional params dynamically change the look of the Tool Form based on user input. They are used to guide users to make fewer mistakes, and also provide a more clean UI. 
+
+Conditional params are especially useful where a group of tool settings only becomes relevant when another setting takes a specific value. An example is a tool which has 'genome', 'transcriptome', and 'metagenome' options. When running the tool in 'transcriptome' mode, the 'genome' and 'metagenome' become irrelevant. We could make these groups of settings appear and disappear doing the following:
+
+```
+<conditional name="runmode">
+    <param name="mode" type="select" label="Run Mode" help="Which run mode is being used?">
+        <option value="genome">Genome</option>
+        <option value="transcriptome">Transcriptome</option>
+        <option value="metagenome">Metagenome</option>
+    </param>
+    <when value="genome">
+        <param name="genome_param_1" type="integer" value="10" label="Genome Param 1" />
+        <param name="genome_param_2" type="text" value="10" label="Genome Param 2" />
+    </when>
+    <when value="transcriptome">
+        <param name="transcriptome_param_1" type="integer" value="100" label="Transcriptome Param 1" />
+    </when>
+    <when value="metagenome">
+        <param name="metagenome_param_1" type="data" format="fasta" label="Metagenome Param 1" />
+        <param name="metagenome_param_2" type="float" value="32.6" label="Metagenome Param 2" />
+    </when>
+</conditional>
+```
+<img src="gifs/conditionals.gif" width="1000">
+
+<br>
+
+**Repeat**
+
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#23)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-inputs-repeat)<br>
+
+The `<repeat>` tag is useful when settings are supplied in lists/arrays.  An example is the `circos` tool. Circos allows you to add as many data inputs as you like, and customise the settings and plot appearence for each data input. You can infinitely add more data inputs as the relevant settings are wrapped in a `<repeat>` tag. For example, to add another Link Data Track, just click the `+ Insert Link Data` button in the Tool Form. 
+
+<br>
+
+### Outputs
+
+The files which should appear in the user history after the job is complete are declared in the `<outputs>` tag of the Tool XML. Outputs can be individual files, or a collection. Declaring outputs is relatively straightforward, except for some edge cases which we will discuss here. 
+
+**data**
+
+[slides]()<br>
+[galaxy docs]()<br>
+[planemo docs]()
+
+**data_collection**
+
+[slides]()<br>
+[galaxy docs]()<br>
+[planemo docs: advanced outputs](https://planemo.readthedocs.io/en/latest/writing_advanced.html#multiple-output-files)<br>
+[planemo docs: collections](https://planemo.readthedocs.io/en/latest/writing_advanced.html#id2)
+
+<br>
 
 ### Tokens
 
-https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#61<br>
-https://planemo.readthedocs.io/en/latest/writing_advanced.html#parameterizing-xml-macros-with-tokens
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#61)<br>
+[planemo docs](https://planemo.readthedocs.io/en/latest/writing_advanced.html#parameterizing-xml-macros-with-tokens)
 
 Tokens are variables which can be reused within XML tags themselves. They are handy to avoid repetition. This has two benefits: it ensures the variable value is constant across the whole document, and allows the variable to be reassigned by only modifying the token, rather than all the place the token is used. 
 
@@ -340,20 +400,31 @@ abricate.xml: line 1
 macros.xml: line 4
 <requirement type="package" version="@VERSION@">
 ```
- 
+
+<br>
+
 ### Macros
 
-https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#59
-https://planemo.readthedocs.io/en/latest/writing_advanced.html#macros-reusable-elements
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#59)<br>
+[planemo docs](https://planemo.readthedocs.io/en/latest/writing_advanced.html#macros-reusable-elements)
 
-- Macros are snippets of XML.
-- Are used for a number of reasons
-- One reason is just for readability. Big sections of XML can be moved to a Macro in the macros.XML file so they don't have to appear in the main XML document. Instead, the macro is injected.
-- Another reason is where the same section of XML is used in multiple locations. This is the same motivation as programming - duplication is bad and annoying. Just declare the XML section once as a macro, then inject the macro where it is needed. 
+Macros are snippets of XML. They are used for two main reasons: readability, and reuse of XML code. 
+
+To improve readability, big sections of XML can be moved to the wrapper's `macros.xml` file. Here they are declared as a `<macro>`. This moves the section out of the main XML document, and allows it to be injected where it is needed. This can make the main XML doc much more clear and concise. 
+
+Another reason is reuse of XML code. This is the same motivation as seen in all programming - duplication is bad and annoying. Just declare the XML section once as a macro, then inject the macro in the multiple locations it is needed in the main XML document. 
+
+<br>
 
 ### Dependencies
 
+[slides]()<br>
+[galaxy docs]()<br>
+[planemo docs]()
+
 https://training.galaxyproject.org/training-material/topics/dev/tutorials/conda/slides.html#11
+
+<br>
 
 ### Command section
 
@@ -411,8 +482,10 @@ The above was taken from the `kraken` tool. We set an environment variable, then
 
 https://planemo.readthedocs.io/en/latest/writing_advanced.html#test-driven-development
 
+<br>
 
 ### Configfiles
+<br>
 
 ### Metadata
 

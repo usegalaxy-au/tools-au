@@ -1,0 +1,63 @@
+<tool id="test" name="test tool" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01" license="MIT">
+    <description>This is just a test tool! </description>
+    <macros>
+        <token name="@TOOL_VERSION@">0.1.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <!-- <requirements>
+        <requirement type="package" version="@TOOL_VERSION@"></requirement>
+    </requirements> -->
+    <command detect_errors="exit_code"><![CDATA[
+        echo "hello!"
+    ]]></command>
+    <inputs>
+
+        <conditional name="runmode">
+            <param name="mode" type="select" label="Run Mode" help="Which run mode is being used?">
+                <option value="genome">Genome</option>
+                <option value="transcriptome">Transcriptome</option>
+                <option value="metagenome">Metagenome</option>
+            </param>
+            <when value="genome">
+                <param name="genome_param_1" type="integer" value="10" label="Genome Param 1" />
+                <param name="genome_param_2" type="text" value="10" label="Genome Param 2" />
+            </when>
+            <when value="transcriptome">
+                <param name="transcriptome_param_1" type="integer" value="100" label="Transcriptome Param 1" />
+            </when>
+            <when value="metagenome">
+                <param name="metagenome_param_1" type="data" format="fasta" label="Metagenome Param 1" />
+                <param name="metagenome_param_2" type="float" value="32.6" label="Metagenome Param 2" />
+            </when>
+        </conditional>
+
+    </inputs>
+    <outputs>
+    </outputs>
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+TODO: Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+Hint: If you want, you can preview your help section using this online editor: http://rst.ninjs.org/
+
+Usage
+.....
+
+
+**Input**
+
+
+**Output**
+
+
+    ]]></help>
+    <citations>
+        <citation type="doi"> </citation>
+    </citations>
+</tool>
