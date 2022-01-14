@@ -365,20 +365,105 @@ The `<repeat>` tag is useful when settings are supplied in lists/arrays.  An exa
 
 ### Outputs
 
-The files which should appear in the user history after the job is complete are declared in the `<outputs>` tag of the Tool XML. Outputs can be individual files, or a collection. Declaring outputs is relatively straightforward, except for some edge cases which we will discuss here. 
+Outputs appear in the user history. They are defined in the `<outputs>` tag of the Tool XML. They can be single files specified as `<data>` elements, or `<collection>` of files.  
 
-**data**
+Specifying the outputs for a tool is relatively straightforward, but ensuring Galaxy collects and organises the right files from the job working directory for each output can be challenging. 
 
-[slides]()<br>
-[galaxy docs]()<br>
-[planemo docs]()
+In this section, some links are provided to learn the basics, then some more challenging cases are discussed. 
 
-**data_collection**
+**data vs collection**
 
-[slides]()<br>
-[galaxy docs]()<br>
-[planemo docs: advanced outputs](https://planemo.readthedocs.io/en/latest/writing_advanced.html#multiple-output-files)<br>
-[planemo docs: collections](https://planemo.readthedocs.io/en/latest/writing_advanced.html#id2)
+slides: [data,](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#24) [collection](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#70)<br>
+galaxy docs: [data,](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-outputs-data) [collection](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-outputs-collection)<br>
+planemo docs: [collection](https://planemo.readthedocs.io/en/latest/writing_advanced.html#creating-collections)<br>
+
+`<data>` outputs are single files. Each `<data>` output will appear seperately in the user history. 
+
+Imagine your tool produces a fastq file and a html report as output. In this situation, you would declare both these files as individual `<data>` outputs. This is the most straightforward approach to outputs, and should be considered first when writing your wrapper. 
+
+On the other hand, a `<collection>` is an array of files. We can choose if they're an array of paired files (eg forward and reverse read mate pairs), or just a flat list. 
+
+Collections are good in a number of situations.  If the tool accepts an input array of files (a collection) as a batch, it may also produce an array (collection) of outputs, where each output has a corresponding input. 
+
+Collections also make sense for certain tool outputs. Alphafold produces five folded models per input protein - as these are all the same file type, it is nice to contain them in a 'models' `<collection>` so the user history isn't spammed with 5 outputs. 
+
+Note:
+
+`<collection>` outputs often do not work when the job destination is a [pulsar](TODO link) node. 
+
+**file gathering**
+
+When an output is declared, we need to tell Galaxy how to actually find that file in the working directory. We can do this in three different ways: variable references, paths, and patterns.
+
+*variable references*
+
+One of the most simple methods is just using a variable reference. This is kinda magic because you don't need to specify a file path - just the name of the output variable in the <command> section. See below. 
+
+```
+<command>
+    python my_program.py > $out_file
+</command>
+
+...
+
+<outputs>
+    <data name="out_file" format="fasta" />
+</outputs>
+```
+
+In this example, `my_program.py` is a python program which prints to `stdout`. In the `<command>` section, we see this is being redirected into `$out_file`.
+
+In the `<outputs>`  section we have declared a `<data>` output with the name 'out_file'. This output would therefore be accessible in the `<command>` section using its variable form: `$out_file`. 
+
+Piecing the above together, Galaxy actually has everything it needs to properly gather the required file and put it into the user history. It may seem like magic, but Galaxy is smart enough to know that `$out_file` is the `name="out_file"` output declared in `<outputs>`, so just links the two.
+
+Under the hood, I believe this occurs by creating and linking temp files, but am not 100% sure. 
+
+*paths*
+
+Another way to specify the file location for an output is via a local path. 
+If your tool produces a file called `report.html` in the working directory, we can specify to collect that file using `from_work_dir=""`. See below:
+
+```
+<data name="html_out" from_work_dir="report.html" format="html" label="html report" />
+```
+
+This specifies that `./report.html` is the file to be gathered for the output. 
+
+*patterns*
+
+Sometimes file paths are not fixed, or more than one file should be collected. In these situations we need to use a pattern to find files. The `<discover_datasets>` tag is used to discover these files, by providing `pattern="your_pattern_here"`. `<discover_datasets>` can be used to create multiple outputs at runtime based on how many files are discovered, or can be used to populate a `<collection>` output with the files for that collection. 
+
+We will talk about this more below when referring to **dynamic outputs**.
+
+**static vs dynamic outputs**
+
+planemo docs: [static](https://planemo.readthedocs.io/en/latest/writing_advanced.html#static-multiple-outputs), [dynamic](https://planemo.readthedocs.io/en/latest/writing_advanced.html#dynamic-numbers-of-outputs)
+
+In the above sections we have just focused on static outputs. This is where we expect 1 user history output per 1 `<data>` or `<collection>`. Sometimes this isn't flexible enough, and we want to create a dynamic number of user history items, or dynamically gather files into a collection. To accomplish this, the `<discover_datasets>` tag can be nested inside an output tag.
+
+`<discover_datasets>` can be used with both `<data>` or `<collection>` outputs, but they do different things. When using with a `<data>` output, multiple user history items are created: one per discovered file. When using with a `<collection>` output, the pattern gathers all the files which will be placed into the collection. 
+
+The `pattern=""` attribute of a `<disover_datasets>` tag serves two purposes: to locate files for collection in the working directory, and to dynamically assign a name for each collected file. To accomplish this, Galaxy has its own flavour of regex patterns. [See here](https://planemo.readthedocs.io/en/latest/writing_advanced.html#examples). 
+
+The tools-iuc wrapper for samtools_stats shows examples for both `<data>` and `<collection>` outputs using `<discover_datasets>`.
+
+
+**extra features**
+
+*turning outputs on/off*
+
+Sometimes we have optional outputs we only want to display in certain situations. To accomplish this, we can write simple python logic to tell Galaxy when an output should be ignored. See the `<filter>` [slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#26) and [galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-outputs-data-filter).
+
+*outputs with unknown data format*
+
+From planemo docs:
+
+"If the output format of a tool’s output cannot be known ahead of time, Galaxy can be instructed to “sniff” the output and determine the data type using the same method used for uploads. Adding the auto_format="true" attribute to a tool’s output enables this."
+
+```
+<output name="out1" auto_format="true" label="Auto Output" />
+```
 
 <br>
 
@@ -454,9 +539,9 @@ The best way to learn cheetah and its use in tool XML is to search tools-iuc. Ex
 
 **Preprocessing**
 
-- Before the actual tool is run, preprocessing is often needed
-- This may be to symlink files, to echo text, or to format a user input. 
-- It is common to see something like the following:
+Before the actual tool is run, preprocessing is often needed. 
+This may be to symlink files, to echo text, or to format a user input. 
+It is common to see something like the following:
 
 ```
 # preprocessing
