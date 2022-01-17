@@ -51,16 +51,18 @@
         &&
 
         ## for dry run testing
-        ## cp -r $__tool_directory__/output . &&
+        ## cp -r '$__tool_directory__/output' . &&
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 $__tool_directory__/gen_extra_outputs.py output/alphafold plddts &&
+        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold plddts &&
 
         ## html
         mkdir -p '${ html.files_path }' &&
-        wget -q -O - https://raw.githubusercontent.com/neoformit/alphafold-galaxy/embedded/index.html > ${html} &&
+        mv '$__tool_directory__/alphafold.html' > ${html} &&
         cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+
+        ## For some reason the working directory ends up being one level too deep!
         mv working/* .
 
     ]]></command>
