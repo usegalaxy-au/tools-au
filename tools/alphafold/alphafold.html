@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title> Alphafold structure prediction </title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chroma-js/2.1.0/chroma.min.js" integrity="sha512-yocoLferfPbcwpCMr8v/B0AB4SWpJlouBwgE0D3ZHaiP1nuu5djZclFEIj9znuqghaZ3tdCMRrreLoM8km+jIQ==" crossorigin="anonymous"></script>
+
+    <style type="text/css">
+      * {
+        margin: 0;
+        padding: 0;
+      }
+      html, body {
+        width: 100%;
+        font-size: 1rem;
+      }
+      body {
+        font-family: 'Ubuntu', sans-serif;
+      }
+      canvas {
+        background-color: white;
+      }
+      h1, h2, h3, h4, h5, h6 {
+        color: dodgerblue;
+        text-align: center;
+        font-weight: lighter;
+      }
+      h1 {
+        margin: 2rem;
+        font-size: 3rem;
+      }
+      h2 {
+        font-size: 2rem;
+        margin-top: 1rem;
+        margin-bottom: .5rem;
+      }
+      button.btn {
+        color: #ccc;
+        margin: 1rem;
+        padding: .5rem;
+        font-size: 1rem;
+        min-width: 4rem;
+        border: none;
+        border-radius: .5rem;
+        background-color: grey;
+        transition-duration: 0.25s;
+        cursor: pointer;
+      }
+      button.btn.selected {
+        color: #eee;
+        background-color: dodgerblue;
+      }
+      button.btn.green {
+        color: #eee;
+        background-color: #10941f;
+      }
+      button.btn:focus {
+        outline: none;
+        color: inherit;
+      }
+      button.btn:hover {
+        color: white;
+        box-shadow: 0 0 10px dodgerblue;
+      }
+      button.btn.green:hover {
+        color: white;
+        box-shadow: 0 0 10px limegreen;
+      }
+      .main {
+        min-height: 90vh;
+        position: relative;
+      }
+      .flex {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 1rem;
+      }
+      .col {
+        flex-direction: column;
+        flex-grow: 0;
+      }
+      .controls {
+        padding-bottom: 10vh;
+      }
+      .box {
+        padding: .5rem 1rem;
+        margin: .5rem auto;
+        width: fit-content;
+        border-radius: 1rem;
+      }
+      .mono {
+        font-family: monospace;
+        color: #555;
+        background-color: #ddd;
+        padding: .25rem;
+        border-radius: .25rem;
+      }
+      .space-1 {
+        line-height: 1.2;
+      }
+      .space-2 {
+        line-height: 1.5;
+      }
+      .relative {
+        position: relative;
+      }
+      .legend {
+        max-width: 350px;
+      }
+      .legend .scale {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      .legend .color {
+        width: 150px;
+        height: 30px;
+        justify-content: space-between;
+        background: linear-gradient(
+          90deg,
+          rgba(255,55,0,1)   0%,
+          rgba(216,224,6,1)  33%,
+          rgba(34,213,238,1) 66%,
+          rgba(3,30,148,1)   100%
+          );
+      }
+      .legend .ticks {
+        margin-top: -1rem;
+        width: 180px;
+        justify-content: space-between;
+      }
+      #ngl-root-parent {
+        width: 40vw;
+        height: 30vw;
+        margin: auto;
+        position: relative;
+      }
+      #ngl-root {
+        width: 40vw;
+        height: 30vw;
+        border-radius: 15px;
+        border: 1px solid grey;
+      }
+      #ngl-nothing {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: none;
+        text-align: center;
+        width: 40vw;
+        height: 30vw;
+        padding-top: 12vw;
+      }
+      #ngl-loading {
+        position: absolute;
+        top: 0;
+        left: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 800px;
+        height: 600px;
+        width: 40vw;
+        height: 30vw;
+      }
+      #ngl-loading svg {
+        width: 30%;
+        height: 30%;
+        width: 10vw;
+        height: 10vw;
+      }
+
+      /* Responsive */
+      @media (max-width: 1400px) {
+        :root {
+          font-size: 10pt;
+        }
+        button.btn {
+          margin: .5rem;
+          padding: .25rem;
+        }
+        .box {
+          padding: .5rem;
+          margin: .5rem auto;
+        }
+        .legend {
+          max-width: 200px;
+        }
+        .help-text {
+          font-size: 0.8rem;
+        }
+        .mono {
+          padding: .25rem .5rem;
+        }
+      }
+      @media (max-width: 1000px) {
+        :root {
+          font-size: 8pt;
+        }
+      }
+      @media (max-width: 800px) {
+        :root {
+          font-size: 6pt;
+        }
+      }
+    </style>
+
+    <script src="https://cdn.rawgit.com/arose/ngl/v2.0.0-dev.37/dist/ngl.js"></script>
+  </head>
+
+
+  <body>
+    <h1> Alphafold structure prediction </h1>
+
+    <div class="main flex">
+      <div class="col relative">
+        <div id="ngl-root-parent">
+
+          <div id="ngl-root"></div>
+
+          <div id="ngl-nothing">
+            Select a representation to display
+          </div>
+
+          <div id="ngl-loading">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" style="margin: auto; background: none; display: block; shape-rendering: auto;" width="200px" height="200px" viewBox="0 0 100 100" preserveAspectRatio="xMidYMid">
+              <g transform="rotate(0 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.9166666666666666s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(30 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.8333333333333334s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(60 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.75s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(90 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.6666666666666666s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(120 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5833333333333334s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(150 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.5s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(180 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.4166666666666667s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(210 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.3333333333333333s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(240 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.25s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(270 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.16666666666666666s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(300 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="-0.08333333333333333s" repeatCount="indefinite"></animate>
+                </rect>
+              </g><g transform="rotate(330 50 50)">
+                <rect x="47" y="24" rx="3" ry="6" width="6" height="12" fill="#88879e">
+                  <animate attributeName="opacity" values="1;0" keyTimes="0;1" dur="1s" begin="0s" repeatCount="indefinite"></animate>
+                </rect>
+              </g>
+            </svg>
+          </div>
+        </div>
+
+        <div class="flex">
+          <div class="box space-1">
+            <p>
+              <span class="mono">Scroll up/down</span>
+              to zoom in and out
+            </p>
+            <p>
+              <span class="mono">Click + drag</span>
+              to rotate the structure
+            </p>
+            <p>
+              <span class="mono">CTRL + click + drag</span>
+              to move the structure
+            </p>
+            <p>
+              <span class="mono">Click</span>
+              an atom to bring it into focus
+            </p>
+          </div>
+
+          <div class="box legend">
+            <div class="scale">
+              <div class="color"></div>
+              <div class="flex ticks">
+                <div>&lt;50</div>
+                <div>70</div>
+                <div>90+</div>
+              </div>
+            </div>
+
+            <div>
+              <p class="text-center">
+                <small>
+                Alphafold produces a
+                <a href="https://alphafold.ebi.ac.uk/faq#faq-5" target="_blank">
+                  per-residue confidence score (pLDDT)
+                </a>
+                between 0 and 100. Some regions below 50 pLDDT may be
+                unstructured in isolation.
+              </small>
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex col controls">
+        <div class="box text-center">
+          <h3> Select model </h3>
+          <p>The top five structures predicted by Alphafold</p>
+          <div>
+            <button class="btn selected" id="btn-ranked_0" onclick="setModel(0);">
+              Model 1
+            </button>
+
+            <button class="btn" id="btn-ranked_1" onclick="setModel(1);">
+              Model 2
+            </button>
+
+            <button class="btn" id="btn-ranked_2" onclick="setModel(2);">
+              Model 3
+            </button>
+
+            <button class="btn" id="btn-ranked_3" onclick="setModel(3);">
+              Model 4
+            </button>
+
+            <button class="btn" id="btn-ranked_4" onclick="setModel(4);">
+              Model 5
+            </button>
+          </div>
+        </div>
+
+        <div class="box text-center">
+          <h3> Toggle representations </h3>
+          <div>
+            <button class="btn selected" id="btn-cartoon" onclick="toggleModelRepresentation('cartoon');">
+              Cartoon
+            </button>
+
+            <button class="btn" id="btn-ball-stick" onclick="toggleModelRepresentation('ball+stick');">
+              Ball + stick
+            </button>
+
+            <button class="btn" id="btn-surface" onclick="toggleModelRepresentation('surface');">
+              Surface
+            </button>
+
+            <button class="btn" id="btn-backbone" onclick="toggleModelRepresentation('backbone');">
+              Backbone
+            </button>
+          </div>
+        </div>
+
+        <div class="box text-center">
+          <h3> Actions </h3>
+          <div>
+            <button class="btn selected" id="btn-toggle-spin" onclick="toggleSpin();">
+              Toggle spin
+            </button>
+
+            <button class="btn" id="btn-toggle-dark" onclick="toggleDark();">
+              Dark mode
+            </button>
+          </div>
+        </div>
+
+        <div class="box text-center">
+          <h3> Download </h3>
+          <div>
+            <button class="btn green" onclick="downloadPng();">
+              Snapshot
+            </button>
+
+            <button class="btn green" onclick="downloadPdb();">
+              PDB
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+
+
+  <script type="text/javascript">
+
+    // Render NGLviewer for PDB files
+
+    // State management has been implemented with vanilla Js but could have used
+    // Vue - it's a fairly simple use case so a global 'state' object works fine
+    // without complicating things too much.
+
+
+    // Define a custom color scheme to represent model confidence consistently
+    // across different representations
+    // ------------------------------------------------------------------------
+    const colorScale = chroma.scale([
+      'red', 'yellow', 'green', 'cyan', 'blue'
+    ]).mode('lab').domain([0, 0.9]);
+
+    const confidenceScheme = NGL.ColormakerRegistry.addScheme(function (params) {
+      this.atomColor = function (atom) {
+        // Actually model confidence (pLDDT)
+        const c = atom.bfactor;
+        const BREAK_RED = 40;   // Below this is just plain red
+        let range, r, g, b;
+
+        if (c < BREAK_RED) {
+          return 0xFF0000;
+        }
+        const p = (c - BREAK_RED) / (100 - BREAK_RED)
+        return eval(colorScale(p).hex().replace('#', '0x'));
+      };
+    });
+
+    // NGL color schemes https://nglviewer.org/ngl/api/manual/usage/coloring.html
+    const COLORSCHEME = confidenceScheme;  //'bfactor'
+
+    const MODELS = [
+      'ranked_0.pdb',
+      'ranked_1.pdb',
+      'ranked_2.pdb',
+      'ranked_3.pdb',
+      'ranked_4.pdb',
+    ]
+
+    const REPRESENTATIONS = [
+      'cartoon',
+      'ball+stick',
+      'surface',
+      'backbone',
+    ]
+
+    const DEFAULT_REPRESENTATION = REPRESENTATIONS[0];
+    const MAX_CLICK_INTERVAL_MS = 500;  // For debouncing model clicks
+
+    let stage;
+    let nonceSetModel;
+
+    let state = {
+      model: 0,
+      modelObject: null,
+      representations: {},
+      colorScheme: 'bfactor',
+      darkMode: false,
+      loading: 1,
+      spin: true,
+    }
+
+    const uri = (i) => MODELS[i];
+    // Switch to this function to return sample model URI (local dev)
+    // const uri = (i) => `https://raw.githubusercontent.com/neoformit/alphafold-galaxy/main/data/${MODELS[i]}`;
+
+    document.addEventListener("DOMContentLoaded", async function () {
+      // Can set debug for development if NGL is being... funny
+      // NGL.setDebug(true)
+
+      // Create NGL Stage object
+      stage = new NGL.Stage("ngl-root", { backgroundColor: 'white' });
+
+      // Handle window resizing
+      window.addEventListener("resize",  () => stage.handleResize());
+
+      loadModel();
+      while (true) {
+        if (!state.loading) {
+          // Reload page if NGL failed to display. Weird occassional bug.
+          const canvas = document.querySelector('#ngl-root canvas');
+          canvas.height < 50 && window.reload();
+          break
+        }
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
+    });
+
+    // Models ------------------------------------------------------------------
+
+    const setModel = (ix) => {
+      state.model = ix;
+      stage.removeComponent(state.modelObject);
+      setLoading(1);
+
+      // Debounce rapid model clicking with a nonce
+      nonceSetModel = new Object();
+      const localNonce = nonceSetModel;
+      setTimeout( () => {
+        if (localNonce === nonceSetModel) {
+          // The user has stopped clicking, hurray...
+          loadModel().then(updateButtons);
+        }
+      }, MAX_CLICK_INTERVAL_MS);
+    }
+
+    const loadModel = () => {
+      reps = Object.keys(state.representations);
+      if (reps.length) {
+        state.representations = {};
+      } else {
+        reps = [DEFAULT_REPRESENTATION];
+      }
+
+      // Load PDB entry
+      return stage.loadFile(uri(state.model)).then( (o) => {
+        state.modelObject = o;
+        reps.forEach( (r) => addModelRepresentation(r) );
+        stage.setSpin(state.spin);
+        o.autoView();
+        setLoading(0);
+      })
+    }
+
+    // Representations ---------------------------------------------------------
+
+    const toggleModelRepresentation = (rep) => {
+      rep in state.representations ?
+        removeModelRepresentation(rep)
+        : addModelRepresentation(rep)
+    }
+
+    const addModelRepresentation = (rep) => {
+      state.representations[rep] =
+        state.modelObject.addRepresentation(rep, {colorScheme: COLORSCHEME});
+      updateButtons();
+    }
+
+    const removeModelRepresentation = (rep) => {
+      o = state.representations[rep];
+      state.modelObject.removeRepresentation(o);
+      delete state.representations[rep];
+      updateButtons();
+    }
+
+    const clearModelRepresentations = () => {
+      state.modelObject && state.modelObject.removeAllRepresentations();
+      state.representations = {};
+    }
+
+    // Actions -----------------------------------------------------------------
+
+    const toggleDark = () => {
+      state.darkMode = !state.darkMode;
+      stage.setParameters({
+        backgroundColor: state.darkMode ? 'black' : 'white',
+      });
+      const btn = document.querySelector('#btn-toggle-dark');
+      btn && btn.classList.toggle('selected');
+    }
+
+    const setLoading = (state) => {
+      document.getElementById('ngl-loading')
+        .style.display = state ? 'flex' : 'none';
+      state.loading = state;
+    }
+
+    const toggleSpin = () => {
+      stage.toggleSpin();
+      const btn = document.querySelector('#btn-toggle-spin');
+      btn && btn.classList.toggle('selected');
+      state.spin = !state.spin;
+    }
+
+    const downloadPng = () => {
+      const params = {
+        factor: 3,
+        antialias: true,
+      }
+      stage.makeImage(params).then( (blob) => {
+        const name = MODELS[state.model].replace('.pdb', '.png');
+        const url = URL.createObjectURL(blob);
+        makeDownload(url, name);
+      })
+    }
+
+    const downloadPdb = () => {
+      const url = uri(state.model);
+      const name = `alphafold_${MODELS[state.model]}`;
+      makeDownload(url, name);
+    }
+
+    const makeDownload = (url, name) => {
+      // Will not work with cross-origin urls (i.e. during development)
+      console.log(`Creating file download for ${name}, href ${url}`);
+      const saveLink = document.createElement('a');
+      saveLink.href = url;
+      saveLink.download = name;
+      document.body.appendChild(saveLink);
+      saveLink.dispatchEvent(
+        new MouseEvent('click', {
+          bubbles: true,
+          cancelable: true,
+          view: window
+        })
+      );
+      document.body.removeChild(saveLink);
+    }
+
+    const updateButtons = () => {
+      MODELS.forEach( (name, i) => {
+        const id = `#btn-${name.replace('.pdb', '')}`;
+        const btn = document.querySelector(id);
+        if (!btn) return
+        i == state.model ?
+          btn.classList.add('selected')
+          : btn.classList.remove('selected');
+      })
+
+      REPRESENTATIONS.forEach( (name) => {
+        const id = `#btn-${name}`.replace('+', '-');
+        const btn = document.querySelector(id);
+        if (!btn) return
+        if (name in state.representations) {
+          btn.classList.add('selected')
+        } else {
+          btn.classList.remove('selected');
+        }
+      });
+
+      // Show "Nothing to display" if no representations are selected
+      document.querySelector('#ngl-nothing').style.display =
+        Object.keys(state.representations).length ?
+        'none'
+        : 'block';
+    }
+
+  </script>
+
+</html>
