@@ -503,11 +503,47 @@ Another reason is reuse of XML code. This is the same motivation as seen in all 
 
 ### Dependencies
 
-[slides]()<br>
-[galaxy docs]()<br>
-[planemo docs]()
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/conda/slides.html#6)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-requirements)<br>
+planemo docs: [conda](https://planemo.readthedocs.io/en/latest/writing_advanced.html#dependencies-and-conda), [containers](https://planemo.readthedocs.io/en/latest/writing_advanced.html#dependencies-and-containers)
 
-https://training.galaxyproject.org/training-material/topics/dev/tutorials/conda/slides.html#11
+Dependencies are all the pieces of software needed to run a tool. When wrapping a tool for Galaxy, there is almost always at least one dependency: the tool itself. Keep in mind that when running a job, a blank-slate sandbox is created. Galaxy then installs any software required into that environment so the tool can be executed. 
+
+The `<requirement>` tag is used to specify dependencies. Galaxy allows two different approaches for handling dependencies: through **conda**, or **containers**. 
+
+*anaconda*
+
+As of Jan 2022, the preferred way to handle dependencies is through conda. Imagine that when your job will run, a conda environment is created and activated, then any package listed as a `<requirement>` in the Tool XML is installed into the environment. This allows multiple dependencies, and ensures that when the tool is actually executed, all software has been installed. 
+
+*creating conda recipes*
+
+If a tool is high priority but does not yet have a conda package, you can create one using a recipe. For tutorials, see the [planemo documentation](https://planemo.readthedocs.io/en/latest/writing_advanced.html#building-new-conda-packages), and the [GTN youtube video](https://www.youtube.com/watch?v=UtNErGKw8SI) on this topic.   
+
+*containers*
+
+Sometimes containers are preferred over conda. Software conflicts may arise between individual `<requirements>` needed by the Galaxy wrapper, or a conda package may not exist and be hard to create. In these cases, containers are used if available. 
+
+The easiest approach is using a single container dependency. If the software developers responsible for the tool being wrapped have created a publically available container, they have usually included everything needed for tool execution. Its rare that a container needs modification for the Galaxy wrapper.  
+
+When the Job is executed, Galaxy will pull and run the required container. From the perspective of what to write in the Tool XML `<command>` section, imagine that you have shelled into the container. Access the software tool as if you have it installed as a package - for example if you are using a `quast` image as a container requirement, writing `quast input.fastq ...` will just work. Writing something like `singularity run ...` inside the `<command>` section is like trying to execute a container ***inside*** of the container which has already been loaded when the job is created! 
+
+Always specify the container image to a specific commit, eg `your_tool:SHA@od81knd1od` rather than a tag like `your_tool:latest`. This ensures the same container will be executed every single time, rather than a new version. 
+
+Write the wrapper as if all docker / singularity container options are correctly set up. Galaxy automatically does things like binds the job `working/` dir to the container `~/` dir - for most tools, these options should be enough to get the tool running. Adding extra docker / singularity options is possible, but gives Galaxy admins more work as a custom job destination has to be set up on the Galaxy Server running the tool.  
+
+If you need to set up specific singularity / docker options (eg specific bind paths above the defaults), these are specified in the JOB DESTINATION where the tool will run on the Galaxy server, not the Galaxy wrapper itself. In `code_snippets/job_conf.yml.j2` we see the following `pulsar-eu-gpu-alpha` job destination for `alphafold`:
+
+```
+execution:
+  environments:
+      pulsar-eu-gpu-alpha:
+        singularity_run_extra_arguments: --nv
+        singularity_volumes: "$job_directory:ro,$tool_directory:ro,$job_directory/outputs:rw,$working_directory:rw,/data/alphafold_databases:/data:ro"
+```
+
+We have set `--nv` which sets up the container to use CUDA libraries with a NVIDIA GPU. We also added some extra volumes to bind, on top of the defaults. 
+This is sometimes unavoidable, but would require a Galaxy admin to configure this destination on their server to run `alphafold`
+
 
 <br>
 
@@ -563,6 +599,9 @@ The above was taken from the `kraken` tool. We set an environment variable, then
 
 **Tricky Cases**
 
+https://github.com/usegalaxy-au/galaxy-local-tools/<br>
+https://github.com/usegalaxy-au/galaxy-local-tools/blob/master/patterns.md
+
 **Best-practises**
 
 https://planemo.readthedocs.io/en/latest/writing_advanced.html#test-driven-development
@@ -570,15 +609,24 @@ https://planemo.readthedocs.io/en/latest/writing_advanced.html#test-driven-devel
 <br>
 
 ### Configfiles
+
+TODO
+
 <br>
 
 ### Metadata
 
 **Tool Name and Version**
 
+TODO
+
 **Citations**
 
+TODO
+
 **Help**
+
+Making sure new wrappers are high quality and well documented serves makes them easier to use and understand. This serves a core tenet of Galaxy - accessibility - as tool wrappers are supposed to make bioinformatics easy. A wrapper which has poor documentation and bad UI doesn't do a good job of making the tool accessible, and may be less usable than the command line in some extreme cases! 
 
 <br><br>
 
