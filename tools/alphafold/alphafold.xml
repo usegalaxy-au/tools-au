@@ -19,7 +19,7 @@
     <command detect_errors="exit_code"><![CDATA[
         ## fasta setup ----------------------------
         #if $fasta_or_text.input_mode == 'history':
-            cp '$fasta_or_text.fasta_file' > input.fasta &&
+            cp '$fasta_or_text.fasta_file' input.fasta &&
 
         #elif $fasta_or_text.input_mode == 'textbox':
             echo '$fasta_or_text.fasta_text' > input.fasta &&
@@ -44,8 +44,6 @@
         --template_mmcif_dir /data/pdb_mmcif/mmcif_files
         --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
-        ## Deprecated - now set in alphafold/model/config.py
-        ## --model_names model_1,model_2,model_3,model_4,model_5
         --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
         --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
         &&
@@ -55,7 +53,7 @@
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold plddts &&
+        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
 
         ## html
         mkdir -p '${ html.files_path }' &&
@@ -79,7 +77,7 @@
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
             </when>
         </conditional>
-        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
+        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
 
     </inputs>
     <outputs>
@@ -132,68 +130,100 @@
     </tests>
     <help><![CDATA[
 
-Alphafold: AI-guided 3D structure prediction of proteins
-========================================================
 
-.. class:: infomark
 
-**What it does**
+    .. class:: infomark
 
-- What does it do
-- Expected run times!
-- 3D viewers (pymol, chimera, ngl, blender)
-- Alphafold in analysis pipelines
-   - molecular docking
-   - mutation analysis
-   - activate site stuff
-   - regulation
-- Differentiation from other software (why its good)
-- Future directions
+    **What it does**
 
-Input
------
+    | Alphafold v2.0: AI-guided 3D structure prediction of proteins
+    |
 
-- Alphafold takes a single amino acid sequence in FASTA format. You can choose
-  to input either a file from your Galaxy history or paste a sequence into a
-  text box.
-- Please paste only a single sequence - we can only process a single sequence
-  per job. Multiple sequences will return an error.
+    *What is alphafold?*
 
-Outputs
-------
+    | Alphafold is a program which uses neural networks to predict the tertiary (3D) structue of proteins. Alphafold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
+    | NOTE: Alphafold has a number of versions - this tool uses Alphafold v2.0.
+    |
 
-**Visualization**
+    *Differentiation from other software*
 
-An interactive 3D graphic of the best predicted molecular structures. This
-output can be opened in Galaxy to give a visual impression of the results, with
-different structural representations to choose from. Open the "Visualization"
-history output by clicking on the "view data" icon:
+    | The ability to use computers to predict 3D structures with high accuracy is desirable because it removes the time-consuming and costly process of determining structures experimentally.
+    | In-silico protein folding has therefore been an active field of research for decades.
+    | Alphafold represents a leap forward by regularly predicting structures to atomic-level accuracy, even when no similar structures are known.
+    |
 
-.. image:: $PATH_TO_IMAGES/alphafold-visualization.png
-   :width: 800
-   :height: 520
+    *Downstream analysis*
 
-**PDB files**
+    | Obtaining a protein fold is the first step in many analyses.
+    | The 3D models created by alphafold can be used in downstream analysis, including the following:
+    |
 
-Five PDB (Protein Data Bank) files will be created for the best ranking models
-predicted by Alphafold. These files describe the molecular structures and can be
-used for downstream analysis. e.g. *in silico* molecular docking.
+    - Inspecting protein features
+        3D viewers (pymol, chimera, ngl, blender) can be used to inspect active sites, regulatory domains, binding sites.
+    - Molecular docking
+        3D structures can be used to predict the binding affinity of different compounds.
+        This is especially useful in structure-based drug design.
+    - Protein-protein interactions
+        Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
+        To predict these interactions, other programs ingest 3D models (such as those produced by alphafold) exist (PROVIDE TOOL NAME).
 
-**Model confidence scores** (optional)
+    *Expected run times*
 
- This optional output produces a file which describes the confidence scores for
-each model (based on pLDDTs) which may be useful for downstream analysis. Model
-confidence scores are also included as a column in the default PDB output.
-`Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_.
+    .. image:: $PATH_TO_IMAGES/alphafold_runtime_graph.png
+        :width: 800
+        :height: 520
 
-**Links**
+    |
+    | In general, we observe a quadratic relationship between sequence length and time to fold.
+    | Once your job begings, a sequence of 50aa will take approx 1hr to complete, while a sequence of 2000aa will take about 18hrs.
+    |
 
-We recommend checking out the
-`Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
-which contains predicted sequences for thousands of Human proteins:
+    **Input**
 
-- `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
-- `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
+    *Amino acid sequence*
+
+    | Alphafold accepts a **single amino acid sequence** in FASTA format.
+    | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
+    | Please paste only a single sequence - we can only process a single sequence per job.
+    | Multiple sequences will return an error.
+    |
+
+    **Outputs**
+
+    *Visualization*
+
+    | An interactive 3D graphic of the best predicted molecular structures.
+    | This output can be opened in Galaxy to give a visual impression of the results, with different structural representations to choose from.
+    | Open the "Visualization" history output by clicking on the "view data" icon:
+    |
+
+    .. image:: $PATH_TO_IMAGES/alphafold-visualization.png
+        :width: 800
+        :height: 520
+
+    |
+
+    *PDB files*
+
+    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by Alphafold.
+    | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
+    |
+
+    *Model confidence scores (optional)*
+
+    | This optional output produces a file which describes the confidence scores for each model (based on pLDDTs) which may be useful for downstream analysis.
+    | Model confidence scores are also included as a column in the default PDB output.
+    | `Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_
+    |
+
+    **External Resources**
+
+    We recommend checking out the
+    `Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
+    which contains predicted sequences for thousands of Human proteins:
+
+    - `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
+    - `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
 
     ]]></help>
     <citations>
