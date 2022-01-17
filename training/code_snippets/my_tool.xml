@@ -11,6 +11,9 @@
         echo "hello!"
     ]]></command>
     <inputs>
+        <section name="advanced" title="Advanced Settings" expanded="false">
+            <param name="min_read_length" type="integer" value="10" label="minimum read length" />
+        </section>
 
         <conditional name="runmode">
             <param name="mode" type="select" label="Run Mode" help="Which run mode is being used?">

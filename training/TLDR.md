@@ -4,8 +4,10 @@
 
 ## Preface
 
-This file is a stripped back, minimal version of the full training material. 
-It provides the essentials needed to get started with tool wrapping. 
+Wrapping bioinformatics programs for the Galaxy platform is challenging. 
+It requires good linux skills, and deep understanding of how Galaxy executes jobs. 
+
+This document is designed to provide a structure for learning tool wrapping. Much about this topic has already been written, so this document contains many links to relevant material. It also serves as an index for you to get help when stuck with a problem. 
 
 <br><br>
 
@@ -19,7 +21,61 @@ It provides the essentials needed to get started with tool wrapping.
 
 <br><br>
 
-## Introduction
+
+## Long Introduction
+
+### Galaxy
+
+**History of command-lines and user interfaces**
+
+Think back to the first business computers. At this time, humans interacted with computers using a command-line interface (CLI) running on a terminal. There was no graphical-user-interface, or 'GUI' which allowed anyone to walk up and use the system. Simply using a computer required formal training and expertise. 
+
+Graphical user interfaces (GUIs) really changed the game as they allowed more people to jump in. People could use the system and have a go, without first getting bogged down in learning how to use the operating system or program from the command line. Sure, people still needed to learn how to use programs (eg word processing) by clicking around, but this proved much more accessible than the command line. 
+
+Fast-forward to today, and everything is a GUI. Very few people who use computers actually ever touch the command line anymore. Could you imagine facebook being only accessible from the command line (this is possible btw)? No one would use it. Its just not accessible enough for the average person to use. 
+
+**CLI and Bioinformatics**
+
+One field where the CLI still dominates is bioinformatics. While there are some web-servers like BLAST which make life easier, the majority of bioinformatics is still performed on the command-line. Some software tools even require knowledge of a specific programming language (usually R) in order to run them. 
+
+The are many reasons why bioinformatics tools mainly exist on the command line. 
+Firstly, they usually only do 1 thing. No point in creating a GUI if all the program does is press a big 'run' button after providing some settings. Secondly, the code is often written by PhD candidates and research groups researching a specific area of biology. Not many people in these situations are industry-grade software engineers with a computer science background. Thirdly, GUIs are expensive and funding could pose an issue. 
+
+This situation is somewhat unfortunate. As computational analysis is now present in most published research projects, the above presents a large barrier. Without an embedded bioinformatician, wet-lab scientists wishing to analyse their data would first need to spend months learning programming and linux skills in order to execute the tools require for their analysis. 
+
+**Galaxy: bringing bioinformatics into the GUI era**
+
+Cue Galaxy. Galaxy's mandate is to bring bioinformatics into the GUI era. Galaxy has become a major platform where people can do bioinformatics (even complex analysis pipelines and workflows) without using the command line or writing scripts. By providing a GUI, galaxy will open the door for countless researchers and hopefully the general public to get involved with bioinformatics and to run their analysis. 
+
+<br>
+
+### Tool Wrapping
+
+**What is tool wrapping?**
+
+At its core, Galaxy allows users to run (theoretically) any bioinformatics analysis on the web using a GUI. It has many great features like creating workflows and providing a data sharing platform, but the core functionality is to run programs without the command line. 
+
+Tool wrapping is the process of writing a definition for a program (currently using XML) which allows the software to be run via GUI on galaxy. This incorporates how the galaxy UI will look when users go to run the tool (customising the tool form), and some CLI related code & logic which allows the tool to actually be run under the hood.
+
+**Why wrap tools?**
+
+Wrapping a tool for the galaxy platform is like unlocking a new character in a video game. It enriches the ecosystem, and provides users with new abilities. To reiterate the previous sections, the aim of The Galaxy Project is to provide a GUI. If a galaxy user needs to run a certain bioinformatics tool in their analysis but its not available on galaxy, it needs to be wrapped! This is a continual process as new, or more powerful tools are regularly created within the field. 
+
+Currently, the pace of new tool development outmatches the rate they can be wrapped for the Galaxy system. This means we must prioritise tools which are likely to have high impact. More on this later in the __TOOLS__ section.
+
+**How do users benefit from new tool wrappers?**
+
+Galaxy has 3 main types of users: Large research initiatives, research groups, and students. 
+
+The first group is multi-researcher projects. These large projects / initiatives will sometimes partner with a galaxy server to process many samples in a pipeline. In these cases, all tools in the pipeline need to be available on that server. Often most of the tools will be available, but a few may need to be wrapped. These tools become high-priority in terms of wrapping as they enable an entire pipeline, and because the project is held up until they are available.
+
+The second group is individual researchers or research groups. This group often wants to run a few relatively straightforward analyses on data they have generated in the lab. While the analysis might be seen as routine, there are few situations where a single cover-all 'best practise' workflow is available. Analysis pipelines are often tailored per analysis, and as such the group will often wish to include a number of shiny new tools from their field which are not yet available on Galaxy. This is a similar situation to the above, where wrapping these tools enables an analysis pipeline, and brings greater functionality to Galaxy in that field. 
+
+The final group is students / learners. Teaching students about Galaxy brings a huge number of new people to the table, and is incredibly important for its continual growth. Students usually learn routine workflows where all tools are available, but wrapping is still implicated for this group! Making sure new wrappers are high quality and well documented serves makes them easier to use and understand. This serves a core tenet of Galaxy - accessibility - as tool wrappers are supposed to make bioinformatics easy. A wrapper which has poor documentation and bad UI doesn't do a good job of making the tool accessible, and may be less usable than the command line in some extreme cases! 
+
+<br><br>
+
+## Short Introduction
 
 Galaxy's mandate is to bring bioinformatics into the GUI era. Galaxy has become a major platform where people can do bioinformatics (even complex analysis pipelines and workflows) without using the command line or writing scripts. By providing a GUI, galaxy will open the door for countless researchers and hopefully the general public to get involved with bioinformatics and to run their analysis. 
 
@@ -286,6 +342,39 @@ There are three main pieces of reference material we will refer to in this secti
 
 <br>
 
+
+### Metadata
+
+**Tool ID, Name and Version**
+
+The first line of tool XML is a `<tool>` tag. Here we state the id, name and version. 
+Tool ids need to be unique, so search [the toolshed](https://toolshed.g2.bx.psu.edu/) to ensure this is the case. The tool version (usually set with `@TOOL_VERSION@` token) should correspond to the version of the software tool being wrapped (the main dependency). The version suffix (usually set with the `@VERSION_SUFFIX@` token) corresponds to the version of ***the wrapper itself***. The first wrapper will have `@VERSION_SUFFIX@ = 0`.
+
+Here is an example from the quast tool:
+
+```<tool id="quast" name="Quast" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">```
+
+
+<br>
+
+**EDAM topics / bio.tools**
+
+TODO
+
+<br>
+
+**Citations**
+
+TODO
+
+<br>
+
+**Help**
+
+Making sure new wrappers are high quality and well documented serves makes them easier to use and understand. This serves a core tenet of Galaxy - accessibility - as tool wrappers are supposed to make bioinformatics easy. A wrapper which has poor documentation and bad UI doesn't do a good job of making the tool accessible, and may be less usable than the command line in some extreme cases! 
+
+<br>
+
 ### Params 
 
 [slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#14)<br>
@@ -525,11 +614,11 @@ Sometimes containers are preferred over conda. Software conflicts may arise betw
 
 The easiest approach is using a single container dependency. If the software developers responsible for the tool being wrapped have created a publically available container, they have usually included everything needed for tool execution. Its rare that a container needs modification for the Galaxy wrapper.  
 
-When the Job is executed, Galaxy will pull and run the required container. From the perspective of what to write in the Tool XML `<command>` section, imagine that you have shelled into the container. Access the software tool as if you have it installed as a package - for example if you are using a `quast` image as a container requirement, writing `quast input.fastq ...` will just work. Writing something like `singularity run ...` inside the `<command>` section is like trying to execute a container ***inside*** of the container which has already been loaded when the job is created! 
-
 Always specify the container image to a specific commit, eg `your_tool:SHA@od81knd1od` rather than a tag like `your_tool:latest`. This ensures the same container will be executed every single time, rather than a new version. 
 
-Write the wrapper as if all docker / singularity container options are correctly set up. Galaxy automatically does things like binds the job `working/` dir to the container `~/` dir - for most tools, these options should be enough to get the tool running. Adding extra docker / singularity options is possible, but gives Galaxy admins more work as a custom job destination has to be set up on the Galaxy Server running the tool.  
+When the Job is executed, Galaxy will pull and run the required container. From the perspective of what to write in the Tool XML `<command>` section, imagine that you have shelled into the container. Access the software tool as if you have it installed as a package - for example if you are using a `quast` image as a container requirement, writing `quast input.fastq ...` will just work. Writing something like `singularity run ...` inside the `<command>` section is like trying to execute a container ***inside*** of the container which has already been loaded when the job is created! 
+
+Write the wrapper as if all docker / singularity container setup options are correct. Galaxy automatically does things like binds the job `working/` dir to the container `~/` dir.  For most tools, these options should be enough to get the tool running. Adding extra docker / singularity options is possible, but gives Galaxy admins more work as a custom job destination has to be set up on the Galaxy Server running the tool.  
 
 If you need to set up specific singularity / docker options (eg specific bind paths above the defaults), these are specified in the JOB DESTINATION where the tool will run on the Galaxy server, not the Galaxy wrapper itself. In `code_snippets/job_conf.yml.j2` we see the following `pulsar-eu-gpu-alpha` job destination for `alphafold`:
 
@@ -549,11 +638,27 @@ This is sometimes unavoidable, but would require a Galaxy admin to configure thi
 
 ### Command section
 
-**Overview**
+The tool XML `<command>` section is essentially a bash script with extra functionality. Most importantly, it contains the command-line statements needed to execute the software tool being wrapped. The `<command>` section should be written in a manner that allows it to dynamically respond to whatever parameters the user sets in the tool UI form. 
 
-- The command section brings everything together and provides the script which will be run to execute the tool. 
-- It will refer to each `<param>` and `<output>` you have specified in the XML.
-- the command section can be seen as a bash script, with additional features due to the cheetah templating language. 
+This is possible because each `<param>` and everything in the `<outputs>` section is available as a variable in the `<command>` section. See the following example:
+
+```
+<param name="input_fastq" type="data" format="fastq" label="Input reads" />
+
+<section name="advanced" title="Advanced Settings" expanded="false">
+    <param name="min_read_length" type="integer" value="80" label="minimum read length" />
+</section>
+```
+
+We have 2 params: `input_fastq` and `min_read_length`. 
+
+`input_fastq` is a fastq which the tool will act on. It's final value (the fastq dataset the user supplies) will be available in the command section as `$input_fastq`
+
+`min_read_length` is an integer param which sets min read length. It's final value set by the user (or defaulting to '80') would be available in the command section as `advanced.min_read_length`. Note here that it is nested inside a `<section>` tag, so it's variable name reflects this heirarchy. The same is true for `<conditional>` and `<repeat>` tags. 
+
+
+
+<br>
 
 **Cheetah basics**
 
@@ -561,7 +666,9 @@ https://cheetahtemplate.org/users_guide/intro.html<br>
 https://pythonhosted.org/Cheetah/<br>
 https://docs.galaxyproject.org/en/latest/dev/schema.html
 
-The `<command>` section allows cheetah expressions. Cheetah is a templating language which permits useful features like conditional logic and variable injection. If we sometimes want to produce an extra history output when the tool is run, we might see something like the following: 
+As the `<command>` section needs to be very dynamic, the ***cheetah*** templating language is used. This  permits useful features like conditional logic and the variable injection we saw above. 
+
+As an example - if we sometimes want to produce an extra history output when the tool is run based on user input, we might see something like the following: 
 
 ```
 #if $should_produce_summary:
@@ -572,6 +679,8 @@ end if
 This will see if the `$should_produce_summary` param was `true`. This will most likely be a `type="boolean"` param, which presents itself as a on/off check button in the tool form UI.  If the user has this checked, it will execute the code on the line below to produce a summary file. The `&&` is just so that we can execute another statement after this, which is often necessary as most tool wrappers execute multiple statments. 
 
 The best way to learn cheetah and its use in tool XML is to search tools-iuc. Example: if you want to see how a cheetah function is declared, seach '#def ' in the tools-iuc repo. Any tool declaring a cheetah function will appear, giving you a bunch of use-cases to learn from. 
+
+<br>
 
 **Preprocessing**
 
@@ -593,40 +702,46 @@ python kraken_taxonomy_report.py ...
 
 The above was taken from the `kraken` tool. We set an environment variable, then created the kraken_database path using some bash conditional logic. 
 
+<br>
+
 **Tool execution**
+
+Writing the statements which execute the tool itself within the `<command>` section is one of the more straightword aspects. If you understand how the tool works and its options, writing the logic should be possible. 
+
+Try to ensure that your code can't break the syntax of the tool - eg depending on user input, your wrapper `<command>` section can create an invalid command-line string (due to including options that cannot appear together etc).  The best way to ensure this is to look carefully at the default `value` of each param, whether they are `optional`, and through writing good `<tests>` for your wrapper during development.
+
+<br>
 
 **Postprocessing**
 
+After the main tool has run, sometimes we wish to add a postprocessing step. This may be calling another piece of software to create an output report, to translate a file into another format, or simply to move files around the folder structure. 
+
+<br>
+
 **Tricky Cases**
 
-https://github.com/usegalaxy-au/galaxy-local-tools/<br>
-https://github.com/usegalaxy-au/galaxy-local-tools/blob/master/patterns.md
+There are many challenging scenarios that appear. The best way to find workarounds is by searching within `tools-iuc` to see whether someone has already solved your problem. If not, you may need to come up with your own clever workaround for the issue. We often find that ***symlinks*** are highly useful in skirting tough scenarios. 
+
+Have a look through the usegalaxy-au/galaxy-local-tools documentation on [tricky cases and workaround patterns.](https://github.com/usegalaxy-au/galaxy-local-tools/blob/master/patterns.md)
+
+<br>
 
 **Best-practises**
 
-https://planemo.readthedocs.io/en/latest/writing_advanced.html#test-driven-development
+Once you have started tool wrapping, you will quickly realise there are good / bad strategies for doing things. See the links below to learn the current top standard for Galaxy tool wrappers.
+
+[tools-iuc best practices](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/tool_xml.html)<br>
+[tool wrapper test-driven-development](https://planemo.readthedocs.io/en/latest/writing_advanced.html#test-driven-development)
 
 <br>
 
 ### Configfiles
 
-TODO
+The `<command>` section is how we traditionally link user input to a command-line string in order to run a tool. But what if those user settings correspond to something like an R or python script? If the R / python file itself needs to be dynamically templated, we use a `<configfile>` rather than the `<command>` section to do this. 
 
-<br>
+Configfiles operate in exactly the same way as the `<command>` section, except it is a file you are templating. If you then wish to 'run' that file, you simply refer to it in the `<command>` section. For example (from the volcanoplot tool), if we have a `<configfile>` called `volcanoplot_script` containing some R code, we can simply write `Rscript $volcanoplot_script` in the `<command>` section and the code will execute. 
 
-### Metadata
-
-**Tool Name and Version**
-
-TODO
-
-**Citations**
-
-TODO
-
-**Help**
-
-Making sure new wrappers are high quality and well documented serves makes them easier to use and understand. This serves a core tenet of Galaxy - accessibility - as tool wrappers are supposed to make bioinformatics easy. A wrapper which has poor documentation and bad UI doesn't do a good job of making the tool accessible, and may be less usable than the command line in some extreme cases! 
+Inside the `<configfile name="volcanoplot_script" />` configfile, we would have the basic logic set out, and all the galaxy UI user params would be present in their `$variable` form to grab their values. 
 
 <br><br>
 
@@ -635,15 +750,26 @@ Making sure new wrappers are high quality and well documented serves makes them 
 https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#
 
 ### Before You Wrap
+
 **Searching for Wrappers**
+
 **Identifying time-consuming tools**
+
+<br>
+ 
 ### Process
+
+<br>
+ 
 ### Submission
 **toolshed**
 **tools-iuc**
+
+<br>
+ 
 ### Post-wrapping tasks
 
-<br><br>
-
-## Getting Help
+<br>
+ 
+### Getting Help
 
