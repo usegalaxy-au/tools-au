@@ -342,7 +342,6 @@ There are three main pieces of reference material we will refer to in this secti
 
 <br>
 
-
 ### Metadata
 
 **Tool ID, Name and Version**
@@ -357,19 +356,46 @@ Here is an example from the quast tool:
 
 <br>
 
-**EDAM topics / bio.tools**
+**EDAM topics & operations / biotools**
 
-TODO
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-edam-topics)
+
+To properly define a tool and what it does, we use the EDAM ontology. This provides a single point-of-truth system to desbribe tools using a defined set of terms.  
+
+An EDAM topic denotes something like a field of interest or an area of study. 
+for example, the circos tool wrapper lists: 
+- topic_0797: comparative genomics
+- topic_0092: data visualisation
+
+An EDAM operation is a transformative process, usually processing of data. The circos wrapper lists:
+- operation_0337: visualisation
+
+These are specified using the `<edam_topic>` and `<edam_operation>` tags. 
+If a bio.tools listing for the tool exists, we can just point to that listing and the EDAM information will be transferred to our tool. In this case we use a `<xref>` tag. 
+
+Together, these provide useful metadata about the tool, but also have a practical purpose. The tool panel of Galaxy servers can be structured according to the EDAM ontology, so that tools are automatically grouped in a logical way for users. 
+
+Relevant links:<br>
+Searching for relevant EDAM topics & operations - https://www.ebi.ac.uk/ols/ontologies/edam<br>
+Quast bio.tools listing - https://bio.tools/t?page=1&q=quast&sort=score
 
 <br>
 
 **Citations**
 
-TODO
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-citations)
+
+Each tool needs at least 1 `<citation>`. At the least, a doi which points to the original paper describing the tool. Both `type="bibtex"` and `type="doi"` citations are possible. A github link is also useful if available, but this is placed in the `<help>` section. 
+
+See bwa-mem.xml for an example on ***bibtex*** citations.
 
 <br>
 
 **Help**
+
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#29)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/schema.html#tool-help)<br>
+[planemo docs](https://planemo.readthedocs.io/en/latest/standards/docs/best_practices/tool_xml.html?highlight=help#help-tag)
 
 Making sure new wrappers are high quality and well documented serves makes them easier to use and understand. This serves a core tenet of Galaxy - accessibility - as tool wrappers are supposed to make bioinformatics easy. A wrapper which has poor documentation and bad UI doesn't do a good job of making the tool accessible, and may be less usable than the command line in some extreme cases! 
 
@@ -752,6 +778,10 @@ https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/
 ### Before You Wrap
 
 **Searching for Wrappers**
+- toolshed
+- toolshed similar names
+- google the tool + galaxy 
+- tools-iuc issues
 
 **Identifying time-consuming tools**
 
