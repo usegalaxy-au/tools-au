@@ -769,37 +769,124 @@ Configfiles operate in exactly the same way as the `<command>` section, except i
 
 Inside the `<configfile name="volcanoplot_script" />` configfile, we would have the basic logic set out, and all the galaxy UI user params would be present in their `$variable` form to grab their values. 
 
+<br>
+
+### Tests
+
+[slides](https://training.galaxyproject.org/training-material/topics/dev/tutorials/tool-integration/slides.html#41)<br>
+[galaxy docs](https://docs.galaxyproject.org/en/latest/dev/writing_tests.html)<br>
+[planemo docs](https://planemo.readthedocs.io/en/latest/test_format.html)<br>
+[planemo test-driven-development](https://planemo.readthedocs.io/en/latest/writing_advanced.html)
+
+TODO
+
 <br><br>
 
 ## Tool Wrapping Process
 
-https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#
+NOTE: See the galaxy-local-tools [tool wrapping checklist](https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#) for a step by step guide. 
 
 ### Before You Wrap
 
+Before wrapping the tool, a few checks need to be made. Primarily, we want to see if a wrapper is already available, and if not, whether someone else is already developing one. Additionally, sometimes tool wrapping isn't possible due to technical or time reasons. 
+
 **Searching for Wrappers**
-- toolshed
-- toolshed similar names
-- google the tool + galaxy 
-- tools-iuc issues
+
+The first thing to do is search for an existing wrapper. Do these 4 quick searches to make sure it isn't already available:
+
+- Search the [toolshed](https://toolshed.g2.bx.psu.edu/)
+- Search the toolshed for a similar name (eg wtdbg vs wtdbg2 situation)
+- Google the tool name + galaxy
+- Search the [tools-iuc issues page](https://github.com/galaxyproject/tools-iuc/issues) to see if someone is actively wrapping the tool. 
+
+If you didn't find anything, raise an issue in the [tools-iuc issues page](https://github.com/galaxyproject/tools-iuc/issues) to declare you are now working on wrapping this tool. 
 
 **Identifying time-consuming tools**
 
-<br>
- 
-### Process
+Some tools are extremely challenging to get running on Galaxy. This isn't necessarily obvious when starting the tool wrapping process, but there are a couple red flags to keep in mind. The tool wrapping process can be cancelled or put on hold at any stage, but it is better to identify these situations early. 
+
+The examples below are to get a feel for whether the tool will be easy / hard. Having one of these is no issue, but when multiple are present it suggests the tool may be challenging to install / run on Galaxy.
+
+Red flags:
+- Dependencies
+    - Many dependencies (>5), including R libraries etc <br>
+    - GCC or other compilers 
+    - Perl scripts
+    - Autoconf / automake
+    - [Long installation scripts](https://github.com/MASHUOA/HiTMaP#codes-for-linux-os-building-enviornment) in general 
+- Code body
+    - 'Hello world' example code doesn't run
+    - Errors experienced when running basic inputs
+    - Uninformative error messages / crashes with no error report
+
+Due to the growing trend of containerisation, some of the hard-to-install tools due to dependencies / environment setup are now able to run. A container may have been recently created for a legacy tool, or a new tool with challenging requirements may have a container available on release. Consider using a container for challenging tools before putting them on hold.
+
+Containers mainly solve issues related to dependencies - if the underlying code body itself is buggy and prone to failure, containers do not solve anything. In these situations, reach out to the developers by raising an issue in the tool github, but don't fix or improve their code via pull requests. Our responsibility is wrapping the tool they provide for Galaxy, not fix their own software issues!
 
 <br>
- 
+
+### Process
+[Galaxy-aus tool wrapping checklist](https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#)<br>
+[planemo test-driven-development](https://planemo.readthedocs.io/en/latest/writing_advanced.html)<br>
+[Planemo best practices]()<br>
+[tools-iuc best practices]()
+
+<br>
+
 ### Submission
+
+There are two main ways to submit your wrapper to the toolshed. Via [tools-iuc](https://github.com/galaxyproject/tools-iuc) (recommended), or directly to the [toolshed](https://toolshed.g2.bx.psu.edu/) from [galaxy-local-tools](https://github.com/usegalaxy-au/galaxy-local-tools). 
+
 **toolshed**
+
+TODO
+
+[.shed.yml](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/shed_yml.html)
+
 **tools-iuc**
 
+[toolshed readiness checklist](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/integration_checklist.html)<br>
+[tools-iuc submission guide](https://github.com/galaxyproject/tools-iuc/blob/master/docs/guide_for_reviewers.md)
+
+Creating a pull request in tools-iuc is the preferred way to submit your wrapper. Submitting to tools-iuc ensures a high level of quality, and gives the experts a chance to make comments about your wrapper so it can be improved. If the PR is accepted, the tool will automatically be deployed to the toolshed. 
+
+When you create a pull request, Galaxy CI tasks will automatically be run. The first steps are linting and style checking, followed by running the tool XML tests, and a final manual review by an admin of tools-iuc if all other checks pass.  
+
+**galaxy-local-tools**
+
+While submission to tools-iuc is recommended, sometimes this is not possible. When your wrapper does not pass the tools-iuc CI tasks, and no workaround is possible, use [galaxy-local-tools](https://github.com/usegalaxy-au/galaxy-local-tools) instead. Create a request for your working branch to be merged with master, and have another tool-team member to review and accept the request. If you use galaxy-local-tools rather than tools-iuc, ensure that your tests pass in your development environment, then add the tool to https://dev.usegalaxy.org.au/. Test the tool using a real dataset on the dev server and ensure everything is successful. ***Wrapper changes*** are time-consuming and difficult once the tool is on the toolshed, so ***should be avoided at all costs***
+
+Here are some common reasons why a wrapper may not pass the tools-iuc CI tasks.
+
+*Resources*<br>
+Some tools require large computational resources to run. The tools-iuc CI test node is relatively humble - with only a few cores and a few Gb RAM. Some tools will require more RAM than is available, even when running a small test dataset. 
+
+*Compute environment*<br>
+If the tool requires a custom job destination, like the case for Alphafold, it will never pass the tools-iuc tests. The tools-iuc CI process involving creating a containerised vanilla Galaxy instance, then testing your tool wrapper on that instance. Any custom Galaxy setup will therefore cause the tests to fail. 
+
+*Dataset too large*<br>
+tools-iuc imposes a 500kb file size limit for test data. 
+
 <br>
- 
+
 ### Post-wrapping tasks
+
+
 
 <br>
  
 ### Getting Help
+
+**tools-iuc** 
+
+One of the best options is to find examples in real wrappers. Searching the [tools-iuc github](https://github.com/galaxyproject/tools-iuc) using an IDE is a fast and flexible way to find examples in the wild. 
+
+Once your wrapper is a working prototype, create a pull request in tools-iuc. Even if you think it's not 100% perfect, the community will provide some comments and help you take the final steps. 
+
+**Gitter channels**
+
+If you have an issue, you can ask the community in the galaxy gitter channels. The community is super helpfull and welcoming to new people enthusiastic about Galaxy! 
+
+Training and basic tool wrapping: https://gitter.im/Galaxy-Training-Network/Lobby<br>
+Best practices & tricky situations: https://gitter.im/galaxy-iuc/iuc
 
