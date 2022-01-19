@@ -12,12 +12,35 @@ This document is designed to provide a structure for learning tool wrapping. Muc
 <br><br>
 
 ## Contents
-* [Introduction](#introduction)
+* [Long Introduction](#long-introduction)
+    * [Galaxy](#galaxy)
+    * [Tool Wrapping](#tool-wrapping)
+* [Short Introduction](#short-introduction)
 * [Setup Your Development Environment](#setup-your-development-environment)
+    * [IDE](#ide)
+    * [Planemo](#planemo)
 * [The Galaxy System](#the-galaxy-system)
-* [Galaxy Tool UI]()
-* [Tool Wrapping Process]()
-* [Getting Help]()
+    * [Overview](#overview)
+    * [Job Destinations](#job-destinations)
+    * [Job Execution](#job-execution)
+    * [Datasets](#datasets)
+* [Galaxy Tool UI](#galaxy-tool-ui)
+    * [Metadata](#metadata)
+    * [Params](#params)
+    * [Structure Elements](#structure-elements)
+    * [Outputs](#outputs)
+    * [Tokens](#tokens)
+    * [Macros](#macros)
+    * [Dependencies](#dependencies)
+    * [Command section](#command-section)
+    * [Configfiles](#configfiles)
+    * [Tests](#tests)
+* [Tool Wrapping Process](#tool-wrapping-process)
+    * [Before You Wrap](#before-you-wrap)
+    * [Process](#process)
+    * [Submission](#submission)
+    * [Post-wrapping tasks](#post-wrapping-tasks)
+    * [Getting Help](#getting-help)
 
 <br><br>
 
@@ -255,8 +278,7 @@ This is the folder that ***Galaxy*** sees when it is running a job. It is the ba
 
 **Tool Workdir**
 
-![workdir](images/workdir.png)
-TODO CHANGE TO HITMAP SCREENCAP
+![workdir](images/working.png)
 
 The `working/` folder is where the tool actually runs. Anything in the `<command>` section of the tool XML is templated into a string, then that string is run using the `working/` folder as the home directory. 
 
@@ -504,7 +526,7 @@ Collections also make sense for certain tool outputs. Alphafold produces five fo
 
 Note:
 
-`<collection>` outputs often do not work when the job destination is a [pulsar](TODO link) node. 
+`<collection>` outputs often do not work when the job destination is a [pulsar](https://training.galaxyproject.org/training-material/topics/admin/tutorials/pulsar/tutorial.html) node. 
 
 **file gathering**
 
@@ -778,7 +800,13 @@ Inside the `<configfile name="volcanoplot_script" />` configfile, we would have 
 [planemo docs](https://planemo.readthedocs.io/en/latest/test_format.html)<br>
 [planemo test-driven-development](https://planemo.readthedocs.io/en/latest/writing_advanced.html)
 
-TODO
+Tests are important. They ensure the tool can be successfully installed on a Galaxy server, and also confirm that the wrapper is working correctly!
+
+Each tool must have at least 1 test. 2+ tests are recommended - one basic test, and at least one other which includes some tool options. Having more tests is generally better, at around max of 7 for complex tools. 
+
+tools-iuc impose a 500kb file size for test-data - dont exceed this if possible!<br>
+Generic test datasets (<500kb) can be found in [galaxy-local-tools test-data](https://github.com/usegalaxy-au/galaxy-local-tools/tree/master/test-data. )
+<br>This folder also includes some information about software tools which allow you to subset data - eg samtools view to create BAM/SAM slices. 
 
 <br><br>
 
@@ -826,33 +854,88 @@ Containers mainly solve issues related to dependencies - if the underlying code 
 <br>
 
 ### Process
-[Galaxy-aus tool wrapping checklist](https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#)<br>
+
+[galaxy-aus tool wrapping checklist](https://docs.google.com/document/d/1Sf2zl7wBqb0RsVhQNVfrrKFQERVO3PEn7_-ALSARj2I/edit#)<br>
 [planemo test-driven-development](https://planemo.readthedocs.io/en/latest/writing_advanced.html)<br>
-[Planemo best practices]()<br>
-[tools-iuc best practices]()
+[Planemo best practices](https://planemo.readthedocs.io/en/latest/standards/docs/best_practices/tool_xml.html)<br>
+
+**Setup**
+
+To begin, please create a new branch in [galaxy-local-tools](https://github.com/usegalaxy-au/galaxy-local-tools) and add a folder for your tool in the `tools/` directory. This github repo acts as our central version of truth, and we have found this process avoids many issues. Versioning also allows us to unwind changes that cause errors when developing the wrapper.  
+
+**Development**
+
+Tool wrapping is an iterative process. A wrapper starts in the most minimal form possible, then grows from that point. It is best to get the tool working for a basic/common use case, then progressively add new options and features.  Sometimes a tool can work in some capacity on galaxy but not others, and some functionality is better than none! 
+
+Write a test for each new development you make. Write the test ***before*** the associated XML code, then ensure it passes! This allows you to make meaningful developments, and guarantees the wrapper delivers the ***functionality*** you desire. Progressively writing then passing tests also ensures nothing breaks in the process!
+
+For more details on tool wrapping, read the planemo and tools-iuc best practices guides above. Follow along with the galaxy-aus tool wrapping checklist while you are working to provide a framework and structure. 
+
+**Testing on the dev server**
+
+It is recommended to test the tool with a real dataset on the dev server before submitting to the toolshed or tools-iuc. This is done through the galaxy-local-tools github. 
+
+<img src="images/dev_local_tools.png" width="700">
+
+In the image above, we have navigated to the local_tools directory on the dev server. This is a folder which allows local tools to appear in the Galaxy dev server, rather than everything else which is pulled from the toolshed.  
+
+Navigate to the `galaxy-local-tools` directory, checkout to your development branch, then `git pull` to sync with the repo.  The only other thing to do is add a symlink like the one you see for alphafold so that Galaxy can access your tool. 
+
+```
+sudo ln -s galaxy-local-tools/tools/[your_tool_folder] [your_tool_name]
+```
+
+After the tool is added to the dev server local_tools directory as a simlink, it will appear on the dev server after we have listed it in the [dev server local_tool_conf](https://github.com/usegalaxy-au/infrastructure/blob/master/files/galaxy/config/local_tool_conf_dev.xml) (see below)
+
+<img src="images/dev_local_tools_conf.png" width="500">
+
+<br>
+
+Simply add another line to include your tool, then create a pull request. One of the Admin team will approve it relatively quickly, then it will be available on the dev server. It is a good idea to do this early in the wrapping process.
+
+This process is still being properly fleshed-out. There is at least 1 issue with this approach, being that it needs constant switching between branches if more than 1 tool is being tested on the dev server at a time. 
 
 <br>
 
 ### Submission
 
+**The Toolshed**
+
+The toolshed is the central location for galaxy tools. Once a tool has been made available on the toolshed, it can be installed onto any Galaxy server worldwide. 
+Your tool therefore needs to be submitted to the toolshed to be available to Galaxy australia and the broader community. 
+
 There are two main ways to submit your wrapper to the toolshed. Via [tools-iuc](https://github.com/galaxyproject/tools-iuc) (recommended), or directly to the [toolshed](https://toolshed.g2.bx.psu.edu/) from [galaxy-local-tools](https://github.com/usegalaxy-au/galaxy-local-tools). 
 
-**toolshed**
+**.shed.yml**
 
-TODO
+[tools-iuc docs](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/shed_yml.html)
 
-[.shed.yml](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/shed_yml.html)
+Whether submitting manually from galaxy-local-tools, or from tools-iuc, each tool wrapper needs a .shed.yml file. This file defines who created the wrapper, the tool being wrapped, its category, and a bunch of other necessary metadata.  The toolshed reads this file upon submission so it knows how to render your wrapper, and so that all the important information is present.  
 
-**tools-iuc**
+**submission via tools-iuc**
 
-[toolshed readiness checklist](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/integration_checklist.html)<br>
+[tools-iuc readiness checklist](https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/integration_checklist.html)<br>
 [tools-iuc submission guide](https://github.com/galaxyproject/tools-iuc/blob/master/docs/guide_for_reviewers.md)
 
 Creating a pull request in tools-iuc is the preferred way to submit your wrapper. Submitting to tools-iuc ensures a high level of quality, and gives the experts a chance to make comments about your wrapper so it can be improved. If the PR is accepted, the tool will automatically be deployed to the toolshed. 
 
 When you create a pull request, Galaxy CI tasks will automatically be run. The first steps are linting and style checking, followed by running the tool XML tests, and a final manual review by an admin of tools-iuc if all other checks pass.  
 
-**galaxy-local-tools**
+**submission via galaxy-local-tools**
+
+[planemo guide for manual shed submission](https://planemo.readthedocs.io/en/latest/publishing.html)
+
+When not using tools-iuc, the toolshed submission process is 'manual'. We use planemo to submit wrappers using the galaxyaus user profile. 
+
+The galaxyaus/galaxy-local-tools account details for the toolshed are as follows:
+
+```
+email:    help@genome.edu.au
+username: galaxy-australia
+password: L0013553
+```
+
+The exact commands for planemo toolshed submission are are in the link above.
 
 While submission to tools-iuc is recommended, sometimes this is not possible. When your wrapper does not pass the tools-iuc CI tasks, and no workaround is possible, use [galaxy-local-tools](https://github.com/usegalaxy-au/galaxy-local-tools) instead. Create a request for your working branch to be merged with master, and have another tool-team member to review and accept the request. If you use galaxy-local-tools rather than tools-iuc, ensure that your tests pass in your development environment, then add the tool to https://dev.usegalaxy.org.au/. Test the tool using a real dataset on the dev server and ensure everything is successful. ***Wrapper changes*** are time-consuming and difficult once the tool is on the toolshed, so ***should be avoided at all costs***
 
@@ -871,7 +954,10 @@ tools-iuc imposes a 500kb file size limit for test data.
 
 ### Post-wrapping tasks
 
-
+After your tool wrapper has been submitted, finish up by doing the following:
+- Mark your tools-iuc issue as solved and provide comment (was tools-iuc PR successful, or was it submitted through galaxy-local-tools etc)
+- Inform the galaxy-australia infrastructure team (Catherine / Simon) so they can install the tool
+- Update trello by putting the card in the done pile! 
 
 <br>
  
