@@ -36,16 +36,21 @@ class ExecutionContext:
     def __init__(self, settings: Settings):
         self.settings = settings
 
-    def ranking_debug(self):
+    @property
+    def ranking_debug(self) -> str:
         return f'{self.settings.workdir}/ranking_debug.json'
 
-    def model_pkl(self, model_num: int):
-        return f'{self.settings.workdir}/result_model_{model_num}.pkl'
+    @property
+    def model_pkls(self) -> List[str]:
+        return [f'{self.settings.workdir}/result_model_{i}.pkl'
+                for i in range(1, 6)]
 
-    def model_conf_score_output(self):
+    @property
+    def model_conf_score_output(self) -> str:
         return f'{self.settings.workdir}/model_confidence_scores.tsv'
 
-    def plddt_output(self):
+    @property
+    def plddt_output(self) -> str:
         return f'{self.settings.workdir}/plddts.tsv'
 
 
@@ -56,23 +61,26 @@ class FileLoader:
 
     def get_model_mapping(self) -> Dict[str, int]:
         data = self.load_ranking_debug()
-        return {name: int(rank) + 1 for (rank, name) in enumerate(data['order'])}
+        return {name: int(rank) + 1 
+                for (rank, name) in enumerate(data['order'])}
 
     def get_conf_scores(self) -> Dict[str, float]:
         data = self.load_ranking_debug()
-        return {name: float(f'{score:.2f}') for name, score in data['plddts'].items()}
+        return {name: float(f'{score:.2f}') 
+                for name, score in data['plddts'].items()}
 
     def load_ranking_debug(self) -> Dict[str, Any]:
-        with open(self.context.ranking_debug(), 'r') as fp:
+        with open(self.context.ranking_debug, 'r') as fp:
             return json.load(fp)
 
     def get_model_plddts(self) -> Dict[str, List[float]]:
         plddts: Dict[str, List[float]] = {}
-        for i in range(1, 6):
-            pklfile = self.context.model_pkl(i)
+        model_pkls = self.context.model_pkls
+        for i in range(5):
+            pklfile = model_pkls[i]
             with open(pklfile, 'rb') as fp:
                 data = pickle.load(fp)
-                plddts[f'model_{i}'] = [float(f'{x:.2f}') for x in data['plddt']]
+                plddts[f'model_{i+1}'] = [float(f'{x:.2f}') for x in data['plddt']]
         return plddts
 
 
@@ -86,12 +94,14 @@ class OutputGenerator:
         scores = self.loader.get_conf_scores()
         ranked = list(scores.items())
         ranked.sort(key=lambda x: x[1], reverse=True)
-        return {f'model_{mapping[name]}': score for name, score in ranked}
+        return {f'model_{mapping[name]}': score 
+                for name, score in ranked}
 
     def gen_residue_scores(self) -> Dict[str, List[float]]:
         mapping = self.loader.get_model_mapping()
         model_plddts = self.loader.get_model_plddts()
-        return {f'model_{mapping[name]}': plddts for name, plddts in model_plddts.items()}
+        return {f'model_{mapping[name]}': plddts 
+                for name, plddts in model_plddts.items()}
 
 
 class OutputWriter:
@@ -100,13 +110,13 @@ class OutputWriter:
         self.context = context
 
     def write_conf_scores(self, data: Dict[str, float]) -> None:
-        outfile = self.context.model_conf_score_output()
+        outfile = self.context.model_conf_score_output
         with open(outfile, 'w') as fp:
             for model, score in data.items():
                 fp.write(f'{model}\t{score}\n')
     
     def write_residue_scores(self, data: Dict[str, List[float]]) -> None:
-        outfile = self.context.plddt_output()
+        outfile = self.context.plddt_output
         model_plddts = list(data.items())
         model_plddts.sort()
 
