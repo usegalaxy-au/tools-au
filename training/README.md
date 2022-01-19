@@ -1,6 +1,6 @@
 
 
-# Tool wrapping: barebones documentation
+# Tool wrapping docs
 
 ## Preface
 
