@@ -18,12 +18,12 @@ Example usage:
 -------------
 
 # Lots of small contigs with little gaps
-./obliterate.py --n50 2000 --min-gap 100 --max-gap 500 genome.fasta
-> myfakeassembly1.fasta
+./obliterate.py --n50 2000 --min-gap 100 --max-gap 500 genome.fasta \
+    > myfakeassembly1.fasta
 
 # Longer contigs with some gaps
-./obliterate.py --n50 200000 --min-gap 500 --max-gap 5000 genome.fasta
-> myfakeassembly2.fasta
+./obliterate.py --n50 200000 --min-gap 500 --max-gap 5000 genome.fasta \
+    > myfakeassembly2.fasta
 
 """
 
