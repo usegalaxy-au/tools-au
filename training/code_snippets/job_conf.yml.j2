@@ -1,0 +1,95 @@
+##################################  NOTE  ######################################
+# this is a demo file which shows how job destinations can be configured in    #
+# galaxy                                                                       #
+# code is adapted from the dev.usegalaxy.edu.au server (dev_job_conf.yml.j2)   #
+################################################################################
+
+# destinations ----
+# a destination specifies a job runner and some details so the runner can run jobs.
+# nothing is stated about the specific settings an actual job should use. see 'execution'
+runners:
+    # a default destination
+    local:
+        load: galaxy.jobs.runners.local:LocalJobRunner
+        workers: 4
+    
+    # using a slurm batch system (allows better scheduling?)
+    slurm:
+        load: galaxy.jobs.runners.slurm:SlurmJobRunner
+    
+    # a pulsar destination
+    pulsar_au_01:
+        load: galaxy.jobs.runners.pulsar:PulsarMQJobRunner
+        amqp_url: "pyamqp://galaxy_au:{{ vault_rabbitmq_password_galaxy_au_dev }}@dev-queue.usegalaxy.org.au:5671//pulsar/galaxy_au?ssl=1"
+        galaxy_url: https://dev.usegalaxy.org.au
+        manager: _default_
+        amqp_acknowledge: true
+        amqp_ack_republish_time: 300
+        amqp_consumer_timeout: 2.0
+        amqp_publish_retry: true
+        amqp_publish_retry_max_retries: 60
+
+    # a destination for alphafold jobs
+    pulsar_eu_gpu:
+        load: galaxy.jobs.runners.pulsar:PulsarMQJobRunner
+        amqp_url: "pyamqp://galaxy_eu_gpu:{{ vault_rabbitmq_password_galaxy_eu_gpu }}@dev-queue.usegalaxy.org.au:5671//pulsar/galaxy_eu_gpu?ssl=1"
+        galaxy_url: "https://dev.usegalaxy.org.au"
+        manager: _default_
+        amqp_acknowledge: True
+        amqp_ack_republish_time: 1200
+        amqp_consumer_timeout: 2.0
+        amqp_publish_retry: True
+        amqp_publish_retry_max_retries: 60
+
+# config/settings for the above destinations ----
+# this is the real magic. 
+# example: a slurm job usually needs some config about how many nodes and 
+# memory to allocate to a job ie --nodes=1 --mem=7760.
+# anything about how to actually transfer files and the job running environment 
+# is specified here. 
+
+execution:
+  default: local
+  environments:
+        local:
+            runner: local
+        slurm:
+            runner: slurm
+            nativeSpecification: "--nodes=1 --ntasks=2 --ntasks-per-node=2 --mem=7760"
+        pulsar_destination:
+            runner: pulsar_au_01
+            jobs_directory: /mnt/pulsar/files/staging
+            transport: curl
+            remote_metadata: 'false'
+            default_file_action: remote_transfer
+            dependency_resolution: remote
+            rewrite_parameters: 'true'
+            persistence_directory: /mnt/pulsar/files/persisted_data
+            submit_native_specification: "--nodes=1 --ntasks=2 --ntasks-per-node=2 --mem=7495"
+        pulsar-eu-gpu-alpha:
+            runner: pulsar_eu_gpu
+            jobs_directory: /mnt/share/staging
+            transport: curl
+            remote_metadata: "false"
+            default_file_action: remote_transfer
+            dependency_resolution: 'none'
+            rewrite_parameters: "true"
+            persistence_directory: /mnt/share/persisted_data
+            submit_native_specification: "--nodes=1 --ntasks=16 --ntasks-per-node=16 --mem=49350"
+            singularity_enabled: true
+            singularity_run_extra_arguments: --nv
+            singularity_volumes: "$job_directory:ro,$tool_directory:ro,$job_directory/outputs:rw,$working_directory:rw,/data/alphafold_databases:/data:ro"
+
+
+# this specifies which tools run where
+# for example, any job from the 'alphafold' tool will be sent to the 
+# pulsar-eu-gpu-alpha destination
+tools:
+- id: quast
+  environment: local
+- id: minimap2
+  environment: slurm
+- id: busco
+  environment: pulsar_au_01
+- id: alphafold
+  environment: pulsar-eu-gpu-alpha
