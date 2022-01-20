@@ -17,7 +17,7 @@ Example usage:
 -------------
 
 # Mutate a set of fasta sequences to acheive 99% identity
-./mutate.py -i 0.99 sequences.fasta
+./mutate.py -i 0.99 sequences.fasta > mutant.fasta
 
 """
 
