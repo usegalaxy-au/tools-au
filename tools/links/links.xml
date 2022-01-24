@@ -1,25 +1,22 @@
 <tool id="links" name="Long Interval Nucleotide K-mer Scaffolder" version="0.1.0" python_template_version="3.5">
     <requirements>
     </requirements>
-    <!-- $input.is_of_type('fastq') -->
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
-        #set sequences_fn = 'sequences.' + $sequences.ext
-        #set reads_fn = 'reads.' + $reads.ext
-        ln -s '${sequences}' '${sequences_fn}' &&
-        ln -s '${reads}' '${reads_fn}' &&
+        #set sequences_fn = 'sequences.' + '$sequences.ext'
+        #set reads_fn = 'reads.' + '$reads.ext'
+        ln -s '$sequences' '$sequences_fn' &&
+        ln -s '$reads' '$reads_fn' &&
 
         ## RUN LINKS
         LINKS
-        -f '${sequences_fn}'
+        -f '$sequences_fn'
         -s <( echo '$reads_fn' )
         -b links_output
     ]]></command>
-        <!-- -s '$fof' -->
     <inputs>
         <param type="data" name="sequences" format="fasta,fasta.gz" />
         <param type="data" name="reads" format="fasta,fasta.gz,fastq,fastq.gz" />
-        <!-- <param type="data" name="fof" format="fof" /> -->
     </inputs>
     <outputs>
         <data name="scaffolds" format="fasta" from_work_dir="links_output.scaffolds.fa" />
@@ -28,7 +25,6 @@
     <test>
         <param name="sequences" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
-        <!-- <param name="fof" value="reads.fof"/> -->
         <output name="scaffolds" ftype="fasta" file="links_output.scaffolds.fa"/>
     </test>
     </tests>
