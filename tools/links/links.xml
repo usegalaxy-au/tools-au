@@ -3,7 +3,7 @@
         <xref type="bio.tools">links</xref>
     </xrefs>
     <requirements>
-          <container type="singularity">docker://quay.io/biocontainers/links:2.0.1--h7d875b9_0</container>
+          <container type="singularity">https://github.com/TomHarrop/container-links/releases/download/v2.0.0/container-links.v2.0.0.sif</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
