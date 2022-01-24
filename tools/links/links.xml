@@ -1,12 +1,18 @@
-<tool id="links" name="Long Interval Nucleotide K-mer Scaffolder" version="0.1.0" python_template_version="3.5">
+<tool id="links" name="Long Interval Nucleotide K-mer Scaffolder" version="0.1.0" python_template_version="3.5" profile="20.09">
+    <xrefs>
+        <xref type="bio.tools">links</xref>
+    </xrefs>
     <requirements>
+          <container type="singularity">docker://quay.io/biocontainers/links:2.0.1--h7d875b9_0</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
         #set sequences_fn = 'sequences.' + '$sequences.ext'
         #set reads_fn = 'reads.' + '$reads.ext'
-        ln -s '$sequences' '$sequences_fn' &&
-        ln -s '$reads' '$reads_fn' &&
+        ln -s '$sequences' '$sequences_fn'
+        &&
+        ln -s '$reads' '$reads_fn'
+        &&
 
         ## RUN LINKS
         LINKS
