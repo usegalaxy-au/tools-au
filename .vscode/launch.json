@@ -91,6 +91,31 @@
                 "--strategy", "firstword",
                 "--outfile", "test-data/fasta/bacteria1_LR_assembly_slice.fasta"
             ]
+        },
+        {
+            "name": "programs: pull_reads_by_id (SR)",
+            "type": "python",
+            "request": "launch",
+            "program": "test-data/programs/pull_reads_by_id.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--forward", "~/reads/bacteria1_SR_1.fastq",
+                "--reverse", "~/reads/bacteria1_SR_2.fastq",
+                "--ids", "test-data/fastq/bacteria1_SR_read_ids.fastq",
+                "--out", "test-data/fastq/bacteria1_SR_reads_slice.fastq",
+            ]
+        },
+        {
+            "name": "programs: pull_reads_by_id (LR)",
+            "type": "python",
+            "request": "launch",
+            "program": "test-data/programs/pull_reads_by_id.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--reads", "~/reads/bacteria1_LR.fastq",
+                "--ids", "test-data/fastq/bacteria1_LR_read_ids.fastq",
+                "--out", "test-data/fastq/bacteria1_LR_reads_slice.fastq",
+            ]
         }
     ]
 }
