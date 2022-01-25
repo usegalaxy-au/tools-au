@@ -1,5 +1,5 @@
 <tool id="alphafold" name="alphafold" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
-    <description></description>
+    <description>Alphafold v2.0: AI-guided 3D structure prediction of proteins</description>
     <macros>
         <token name="@TOOL_VERSION@">2.0.0</token>
         <token name="@VERSION_SUFFIX@">0</token>

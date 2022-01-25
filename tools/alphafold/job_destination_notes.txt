@@ -1,0 +1,18 @@
+
+
+# Alphafold needs a custom singularity job destination to run. 
+# The destination needs to be configured for singularity, and some
+# extra singularity params need to be set as seen below.
+
+# specify job runner
+# for example, a local runner
+<plugin id="alphafold_runner" type="runner" load="galaxy.jobs.runners.local:LocalJobRunner"/>
+
+# customise job destination with singularity settings. 
+# add your own params depending on runner setup! 
+<destination id="alphafold" runner="alphafold_runner">
+    <param id="dependency_resolution">'none'</param>
+    <param id="singularity_enabled">true</param>
+    <param id="singularity_run_extra_arguments">--nv</param>
+    <param id="singularity_volumes">"$job_directory:ro,$tool_directory:ro,$job_directory/outputs:rw,$working_directory:rw,/data/alphafold_databases:/data:ro"</param>
+</destination>
