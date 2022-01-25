@@ -3,7 +3,7 @@
         <xref type="bio.tools">links</xref>
     </xrefs>
     <requirements>
-          <container type="singularity">https://github.com/TomHarrop/container-links/releases/download/v2.0.0/container-links.v2.0.0.sif</container>
+        <container type="package" version="2.0.1">links</container> 
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
