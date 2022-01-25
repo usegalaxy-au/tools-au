@@ -4,18 +4,15 @@
         <token name="@TOOL_VERSION@">2.0.0</token>
         <token name="@VERSION_SUFFIX@">0</token>
     </macros>
-
     <edam_topics>
         <edam_topic>topic_0082</edam_topic>
     </edam_topics>
     <edam_operations>
         <edam_operation>operation_0474</edam_operation>
     </edam_operations>
-
     <requirements>
         <container type="docker">neoformit/alphafold-galaxy@sha256:6adf7f07062b307d08c11130c39a28abc7c290b23f6c347b09c2c649c054c338</container>
     </requirements>
-
     <command detect_errors="exit_code"><![CDATA[
         ## fasta setup ----------------------------
         #if $fasta_or_text.input_mode == 'history':
@@ -62,7 +59,6 @@
 
         ## For some reason the working directory ends up being one level too deep!
         mv working/* .
-
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
@@ -78,12 +74,8 @@
             </when>
         </conditional>
         <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
-
     </inputs>
     <outputs>
-        <!-- <collection name="models" type="list" label="${tool.name} on ${on_string}: Models">
-		    <discover_datasets pattern="(?P&lt;designation&gt;ranked_\d)\.pdb" ext="pdb" directory="output/alphafold/"/>
-        </collection> -->
         <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: Model 5"/>
         <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: Model 4"/>
         <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: Model 3"/>
@@ -94,43 +86,66 @@
             <filter>(output_plddts)</filter>
         </data>
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
-
     </outputs>
     <tests>
-
-        <!-- this is a TODO! -->
-        <!-- the following is a rough template to fine tune after an initial run has been completed. -->
-        <test expect_num_outputs="4">
+        <test expect_num_outputs="8">
             <conditional name="fasta_or_text">
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
             <param name="output_plddts" value="true"/>
-            <!-- 'models' output test can be improved once 'test1.fasta' is actually run -->
-            <!-- <output_collection name="models" type="list">
-                <element name="model_1.pdb" file="test1_model_1.pdb" compare="sim_size" delta="50" />
-            </output_collection> -->
-            <output name="confidence_scores">
-                <assert_contents>
-                    <has_n_columns n="2"/>
-                    <has_n_lines n="6"/>
-                    <has_size value="158" delta="10"/>
-                </assert_contents>
-            </output>
             <output name="plddts">
                 <assert_contents>
                     <has_n_columns n="2"/>
                     <has_n_lines n="6"/>
-                    <has_size value="3100" delta="200"/>
+                    <has_size value="2900" delta="300"/>
                 </assert_contents>
             </output>
-            <output name="html" file="index.html" compare="diff" delta="0" />
+            <output name="confidence_scores">
+                <assert_contents>
+                    <has_n_columns n="2"/>
+                    <has_n_lines n="6"/>
+                    <has_size value="70" delta="50"/>
+                </assert_contents>
+            </output>
+            <output name="model1">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model2">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model3">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model4">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model5">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
         </test>
-
     </tests>
     <help><![CDATA[
-
-
 
     .. class:: infomark
 
