@@ -57,7 +57,7 @@
 
         ## html
         mkdir -p '${ html.files_path }' &&
-        mv '$__tool_directory__/alphafold.html' ${html} &&
+        cp '$__tool_directory__/alphafold.html' ${html} &&
         cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
         ## For some reason the working directory ends up being one level too deep!
