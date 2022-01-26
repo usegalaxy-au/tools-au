@@ -1,0 +1,247 @@
+<tool id="alphafold" name="alphafold" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
+    <description>Alphafold v2.0: AI-guided 3D structure prediction of proteins</description>
+    <macros>
+        <token name="@TOOL_VERSION@">2.0.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <edam_topics>
+        <edam_topic>topic_0082</edam_topic>
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_0474</edam_operation>
+    </edam_operations>
+    <requirements>
+        <container type="docker">neoformit/alphafold-galaxy@sha256:6adf7f07062b307d08c11130c39a28abc7c290b23f6c347b09c2c649c054c338</container>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        ## fasta setup ----------------------------
+        #if $fasta_or_text.input_mode == 'history':
+            cp '$fasta_or_text.fasta_file' input.fasta &&
+
+        #elif $fasta_or_text.input_mode == 'textbox':
+            echo '$fasta_or_text.fasta_text' > input.fasta &&
+        #end if
+
+        python3 '$__tool_directory__/validate_fasta.py' input.fasta &&
+
+        ## env vars -------------------------------
+        export TF_FORCE_UNIFIED_MEMORY=1 &&
+        export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
+        export DATE=`date +"%Y-%m-%d"` &&
+
+        ## run alphafold  -------------------------
+        ln -s /app/alphafold/alphafold alphafold &&
+  	    python /app/alphafold/run_alphafold.py
+  	    --fasta_paths alphafold.fasta
+        --output_dir output
+        --data_dir /data                   ## location of the alphafold databases on pulsar node --> could this maybe a env var? $ALPHAFOLD_DB --> \${ALPHAFOLD_DB:-/data}
+        --uniref90_database_path /data/uniref90/uniref90.fasta
+        --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa
+        --pdb70_database_path /data/pdb70/pdb70
+        --template_mmcif_dir /data/pdb_mmcif/mmcif_files
+        --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
+        --max_template_date=\$DATE
+        --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+        --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+        &&
+
+        ## for dry run testing
+        ## cp -r '$__tool_directory__/output' . &&
+
+        ## generate extra outputs -----------------
+        ## plddts
+        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
+
+        ## html
+        mkdir -p '${ html.files_path }' &&
+        cp '$__tool_directory__/alphafold.html' ${html} &&
+        cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+
+        ## For some reason the working directory ends up being one level too deep!
+        mv working/* .
+    ]]></command>
+    <inputs>
+        <conditional name="fasta_or_text">
+            <param name="input_mode" type="select" label="Fasta Input" help="Single protein sequence to fold. Input can be fasta file from history, or text. Provide only 1 sequence per job.">
+                <option value="history">Use fasta from history</option>
+                <option value="textbox">Paste sequence into textbox</option>
+            </param>
+            <when value="history">
+                <param name="fasta_file" type="data" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
+            </when>
+            <when value="textbox">
+                <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
+            </when>
+        </conditional>
+        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
+    </inputs>
+    <outputs>
+        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: Model 5"/>
+        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: Model 4"/>
+        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: Model 3"/>
+        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: Model 2"/>
+        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: Model 1"/>
+        <data name="confidence_scores" format="tsv" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
+        <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
+            <filter>(output_plddts)</filter>
+        </data>
+        <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
+    </outputs>
+    <tests>
+        <test expect_num_outputs="8">
+            <conditional name="fasta_or_text">
+                <param name="input_mode" value="history"/>
+                <param name="fasta_file" value="test1.fasta"/>
+            </conditional>
+            <param name="output_plddts" value="true"/>
+            <output name="plddts">
+                <assert_contents>
+                    <has_n_columns n="2"/>
+                    <has_n_lines n="6"/>
+                    <has_size value="2900" delta="300"/>
+                </assert_contents>
+            </output>
+            <output name="confidence_scores">
+                <assert_contents>
+                    <has_n_columns n="2"/>
+                    <has_n_lines n="6"/>
+                    <has_size value="70" delta="50"/>
+                </assert_contents>
+            </output>
+            <output name="model1">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model2">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model3">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model4">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+            <output name="model5">
+                <assert_contents>
+                    <has_n_columns n="12"/>
+                    <has_n_lines n="1517"/>
+                    <has_size value="123000" delta="10000"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+    .. class:: infomark
+
+    **What it does**
+
+    | Alphafold v2.0: AI-guided 3D structure prediction of proteins
+    |
+
+    *What is alphafold?*
+
+    | Alphafold is a program which uses neural networks to predict the tertiary (3D) structue of proteins. Alphafold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
+    | NOTE: Alphafold has a number of versions - this tool uses Alphafold v2.0.
+    |
+
+    *Differentiation from other software*
+
+    | The ability to use computers to predict 3D structures with high accuracy is desirable because it removes the time-consuming and costly process of determining structures experimentally.
+    | In-silico protein folding has therefore been an active field of research for decades.
+    | Alphafold represents a leap forward by regularly predicting structures to atomic-level accuracy, even when no similar structures are known.
+    |
+
+    *Downstream analysis*
+
+    | Obtaining a protein fold is the first step in many analyses.
+    | The 3D models created by alphafold can be used in downstream analysis, including the following:
+    |
+
+    - Inspecting protein features
+        3D viewers (pymol, chimera, ngl, blender) can be used to inspect active sites, regulatory domains, binding sites.
+    - Molecular docking
+        3D structures can be used to predict the binding affinity of different compounds.
+        This is especially useful in structure-based drug design.
+    - Protein-protein interactions
+        Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
+        To predict these interactions, other programs ingest 3D models (such as those produced by alphafold) exist (PROVIDE TOOL NAME).
+
+    *Expected run times*
+
+    .. image:: $PATH_TO_IMAGES/alphafold_runtime_graph.png
+        :width: 800
+        :height: 520
+
+    |
+    | In general, we observe a quadratic relationship between sequence length and time to fold.
+    | Once your job begings, a sequence of 50aa will take approx 1hr to complete, while a sequence of 2000aa will take about 18hrs.
+    |
+
+    **Input**
+
+    *Amino acid sequence*
+
+    | Alphafold accepts a **single amino acid sequence** in FASTA format.
+    | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
+    | Please paste only a single sequence - we can only process a single sequence per job.
+    | Multiple sequences will return an error.
+    |
+
+    **Outputs**
+
+    *Visualization*
+
+    | An interactive 3D graphic of the best predicted molecular structures.
+    | This output can be opened in Galaxy to give a visual impression of the results, with different structural representations to choose from.
+    | Open the "Visualization" history output by clicking on the "view data" icon:
+    |
+
+    .. image:: $PATH_TO_IMAGES/alphafold-visualization.png
+        :width: 800
+        :height: 520
+
+    |
+
+    *PDB files*
+
+    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by Alphafold.
+    | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
+    |
+
+    *Model confidence scores (optional)*
+
+    | This optional output produces a file which describes the confidence scores for each model (based on pLDDTs) which may be useful for downstream analysis.
+    | Model confidence scores are also included as a column in the default PDB output.
+    | `Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_
+    |
+
+    **External Resources**
+
+    We recommend checking out the
+    `Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
+    which contains predicted sequences for thousands of Human proteins:
+
+    - `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
+    - `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
+
+    ]]></help>
+    <citations>
+        <citation type="doi">https://doi.org/10.1038/s41586-021-03819-2</citation>
+    </citations>
+</tool>
