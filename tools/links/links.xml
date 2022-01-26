@@ -3,12 +3,12 @@
         <xref type="bio.tools">links</xref>
     </xrefs>
     <requirements>
-        <container type="package" version="2.0.1">links</container> 
+        <requirement type="package" version="2.0.1-0">links</requirement> 
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
-        #set sequences_fn = 'sequences.' + '$sequences.ext'
-        #set reads_fn = 'reads.' + '$reads.ext'
+        #set sequences_fn = 'sequences.' + $sequences.ext
+        #set reads_fn = 'reads.' + $reads.ext
         ln -s '$sequences' '$sequences_fn'
         &&
         ln -s '$reads' '$reads_fn'
