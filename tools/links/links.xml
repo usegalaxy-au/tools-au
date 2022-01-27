@@ -18,7 +18,7 @@
         #set sequences_fn = 'sequences.' + $f.ext
         ln -s '$f' '$sequences_fn'
         &&
-        #set n = 14
+        #set n = 1
         #for $read in $reads
             #set read_fn = 'reads' + str($n) + '.' + $read.ext
             #set n += 1
@@ -27,7 +27,6 @@
             printf '%s\n' '$read_fn' >> reads.fof
             &&
         #end for
-        cat reads.fof &&
 
         ## RUN LINKS
         LINKS
@@ -52,14 +51,14 @@
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
-        <output name="scaffolds" ftype="fasta" file="links_output.scaffolds.fa"/>
-        <output name="correspondence" ftype="tsv" file="links_output.assembly_correspondence.tsv"/>
+        <output name="scaffolds" ftype="fasta" file="single_readfile.scaffolds.fa"/>
+        <output name="correspondence" ftype="tsv" file="single_readfile.assembly_correspondence.tsv"/>
     </test>
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads1.fasta.gz,reads2.fasta.gz"/>
-        <output name="scaffolds" ftype="fasta" file="links_output.scaffolds.fa"/>
-        <output name="correspondence" ftype="tsv" file="links_output.assembly_correspondence.tsv"/>
+        <output name="scaffolds" ftype="fasta" file="multi_readfile.scaffolds.fa"/>
+        <output name="correspondence" ftype="tsv" file="multi_readfile.assembly_correspondence.tsv"/>
     </test>
     </tests>
     <help><![CDATA[
