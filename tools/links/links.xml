@@ -18,15 +18,16 @@
         #set sequences_fn = 'sequences.' + $f.ext
         ln -s '$f' '$sequences_fn'
         &&
-        #set n = 1
+        #set n = 14
         #for $read in $reads
             #set read_fn = 'reads' + str($n) + '.' + $read.ext
             #set n += 1
             ln -s '$read' '$read_fn'
             &&
-            echo '$read_fn' >> reads.fof
+            printf '%s\n' '$read_fn' >> reads.fof
             &&
         #end for
+        cat reads.fof &&
 
         ## RUN LINKS
         LINKS
