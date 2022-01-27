@@ -185,7 +185,7 @@
     *Expected run times*
 
     .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold_runtime_graph.png?raw=true
-        :width: 800
+        :width: auto
         :height: 520
         :alt: Run time graph
 
@@ -214,7 +214,7 @@
     |
 
     .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold-visualization.png?raw=true
-        :width: 800
+        :width: auto
         :height: 520
         :alt: Result visualization
 
