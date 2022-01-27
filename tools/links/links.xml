@@ -33,6 +33,8 @@
         -f '$sequences_fn'
         -s reads.fof
         -k '$k'
+        -d '$d'
+        -t '$t'
         -b links_output
         &&
 
@@ -44,6 +46,8 @@
         <param argument="-f" type="data" format="fasta,fasta.gz" help="Sequences to scaffold" label="Contigs" />
         <param type="data" name="reads" multiple="true" format="fasta,fasta.gz,fastq,fastq.gz" label="Reads" help="Long sequence reads for scaffolding" />
         <param argument="-k" type="integer" min="11" max="21" value="15" label="k-mer length" />
+        <param argument="-d" type="text" value="4000" label="distance" help="Distance between k-mer pairs. Multiple distances are separated by comma, e.g. 500,1000,2000,3000"/>
+        <param argument="-t" type="text" value="2" label="step" help="step of sliding window when extracting k-mer pairs from long reads. Multiple steps are separated by comma, e.g. 10,5" />
     </inputs>
     <outputs>
         <data name="scaffolds" format="fasta" from_work_dir="links_output.scaffolds.fa" />
@@ -75,15 +79,22 @@
         <output name="scaffolds" ftype="fasta" file="k19.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="k19.assembly_correspondence.tsv"/>
     </test>
+    <test>
+        <param name="f" value="used_contigs.fasta.gz"/>
+        <param name="reads" value="reads.fasta.gz"/>
+        <param name="k" value="19" />
+        <param name="d" value="500,1000,2000,3000" />
+        <param name="t" value="10,5" />
+        <output name="scaffolds" ftype="fasta" file="moreparams.scaffolds.fa"/>
+        <output name="correspondence" ftype="tsv" file="moreparams.assembly_correspondence.tsv"/>
+    </test>
     </tests>
     <help><![CDATA[
         m  MPET reads (default -m 1 = yes, default = no, optional)
         DO NOT SET IF NOT USING MPET. WHEN SET, LINKS WILL EXPECT A SPECIAL FORMAT UNDER -s
         Paired MPET reads in their original outward orientation <- -> must be separated by :
         >template_name    ACGACACTATGCATAAGCAGACGAGCAGCGACGCAGCACG:ATATATAGCGCACGACGCAGCACAGCAGCAGACGAC
-        d  distance between k-mer pairs (ie. target distances to re-scaffold on. default -d 4000, optional)
-        Multiple distances are separated by comma. eg. -d 500,1000,2000,3000
-        k  k-mer value (default -k 15, optional)
+
         t  step of sliding window when extracting k-mer pairs from long reads (default -t 2, optional)
         Multiple steps are separated by comma. eg. -t 10,5
         j  threads  (default -j 3, optional) 
