@@ -130,8 +130,6 @@
     </tests>
     <help><![CDATA[
 
-
-
     .. class:: infomark
 
     **What it does**
@@ -169,7 +167,7 @@
 
     *Expected run times*
 
-    .. image:: $PATH_TO_IMAGES/alphafold_runtime_graph.png
+    .. image:: ./static/img/alphafold_runtime_graph.png
         :width: 800
         :height: 520
 
@@ -197,7 +195,7 @@
     | Open the "Visualization" history output by clicking on the "view data" icon:
     |
 
-    .. image:: $PATH_TO_IMAGES/alphafold-visualization.png
+    .. image:: ./static/img/alphafold-visualization.png
         :width: 800
         :height: 520
 
