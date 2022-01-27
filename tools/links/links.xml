@@ -7,7 +7,6 @@
         <requirement type="package" version="2.0.1">links</requirement> 
         <!-- My container-->
         <!-- <container type="docker">ghcr.io/tomharrop/container-links:v2.0.1</container> -->
-    </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
         #set sequences_fn = 'sequences.' + $sequences.ext
