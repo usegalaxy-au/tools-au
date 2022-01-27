@@ -184,7 +184,7 @@
 
     *Expected run times*
 
-    .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold_runtime_graph.png
+    .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold_runtime_graph.png?raw=true
         :width: 800
         :height: 520
         :alt: Run time graph
@@ -213,7 +213,7 @@
     | Open the "Visualization" history output by clicking on the "view data" icon:
     |
 
-    .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold-visualization.png
+    .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold-visualization.png?raw=true
         :width: 800
         :height: 520
         :alt: Result visualization
