@@ -151,36 +151,36 @@
 
     **What it does**
 
-    | Alphafold v2.0: AI-guided 3D structure prediction of proteins
+    | AlphaFold v2.0: AI-guided 3D structure prediction of proteins
     |
 
-    *What is alphafold?*
+    *What is AlphaFold?*
 
-    | Alphafold is a program which uses neural networks to predict the tertiary (3D) structue of proteins. Alphafold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
-    | NOTE: Alphafold has a number of versions - this tool uses Alphafold v2.0.
+    | AlphaFold is a program which uses neural networks to predict the tertiary (3D) structure of proteins. AlphaFold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
+    | NOTE: AlphaFold has a number of versions - this tool uses AlphaFold v2.0.
     |
 
-    *Differentiation from other software*
+    *What makes AlphaFold different?*
 
-    | The ability to use computers to predict 3D structures with high accuracy is desirable because it removes the time-consuming and costly process of determining structures experimentally.
-    | In-silico protein folding has therefore been an active field of research for decades.
-    | Alphafold represents a leap forward by regularly predicting structures to atomic-level accuracy, even when no similar structures are known.
+    | The ability to use computers to predict 3D protein structures with high accuracy is desirable because it removes the time-consuming and costly process of determining structures experimentally.
+    | In-silico protein folding has been an active field of research for decades, but existing tools ran more slowly and with less reliability than AlphaFold.
+    | AlphaFold represents a leap forward by regularly predicting structures to atomic-level accuracy, even when no similar structures are known.
     |
 
     *Downstream analysis*
 
     | Obtaining a protein fold is the first step in many analyses.
-    | The 3D models created by alphafold can be used in downstream analysis, including the following:
+    | The 3D models created by AlphaFold can be used in downstream analysis, including the following:
     |
 
     - Inspecting protein features
         3D viewers (pymol, chimera, ngl, blender) can be used to inspect active sites, regulatory domains, binding sites.
     - Molecular docking
         3D structures can be used to predict the binding affinity of different compounds.
-        This is especially useful in structure-based drug design.
+        This is especially useful in screening drug candidates.
     - Protein-protein interactions
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
-        To predict these interactions, other programs ingest 3D models (such as those produced by alphafold) exist (PROVIDE TOOL NAME).
+        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include [GOLD](https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/) and [SeeSAR](https://www.biosolveit.de/SeeSAR), but many [free and open-source options](https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software) are available such as [AutoDock](https://autodock.scripps.edu/) and [SwissDock](http://www.swissdock.ch/).
 
     *Expected run times*
 
@@ -190,14 +190,14 @@
 
     |
     | In general, we observe a quadratic relationship between sequence length and time to fold.
-    | Once your job begings, a sequence of 50aa will take approx 1hr to complete, while a sequence of 2000aa will take about 18hrs.
+    | Once your job begins, a sequence of 50aa will take approximately 1hr to complete, while a sequence of 2000aa will take about 18hrs.
     |
 
     **Input**
 
     *Amino acid sequence*
 
-    | Alphafold accepts a **single amino acid sequence** in FASTA format.
+    | AlphaFold accepts a **single amino acid sequence** in FASTA format.
     | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
     | Please paste only a single sequence - we can only process a single sequence per job.
     | Multiple sequences will return an error.
@@ -220,25 +220,24 @@
 
     *PDB files*
 
-    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by Alphafold.
+    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by AlphaFold.
     | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
     |
 
     *Model confidence scores (optional)*
 
-    | This optional output produces a file which describes the confidence scores for each model (based on pLDDTs) which may be useful for downstream analysis.
+    | This optional output produces a file which describes the confidence scores for each model (based on `pLDDTs <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_) which may be useful for downstream analysis.
     | Model confidence scores are also included as a column in the default PDB output.
-    | `Learn more about the pLDDT metric <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_
     |
 
     **External Resources**
 
     We recommend checking out the
-    `Alphafold Protein Scructure Database <https://alphafold.ebi.ac.uk/>`_,
-    which contains predicted sequences for thousands of Human proteins:
+    `Alphafold Protein Structure Database <https://alphafold.ebi.ac.uk/>`_,
+    which contains predicted sequences for thousands of Human proteins. See also:
 
-    - `Google Deepmind's article on Alphafold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
-    - `Alphafold source code on GitHub <https://github.com/deepmind/alphafold>`_
+    - `Google Deepmind's article on AlphaFold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
+    - `AlphaFold source code on GitHub <https://github.com/deepmind/alphafold>`_
 
     ]]></help>
     <citations>
