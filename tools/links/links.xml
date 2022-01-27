@@ -3,7 +3,10 @@
         <xref type="bio.tools">links</xref>
     </xrefs>
     <requirements>
-        <requirement type="package" version="2.0.1-0">links</requirement> 
+        <!-- Bioconda container (job runner needs to be set to singularity) -->
+        <requirement type="package" version="2.0.1">links</requirement> 
+        <!-- My container-->
+        <!-- <container type="docker">ghcr.io/tomharrop/container-links:v2.0.1</container> -->
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## SET UP FILE PATHS
@@ -13,13 +16,19 @@
         &&
         ln -s '$reads' '$reads_fn'
         &&
+        echo '$reads_fn' > reads.fof
 
         ## RUN LINKS
         LINKS
         -f '$sequences_fn'
-        -s <( echo '$reads_fn' )
+        -s reads.fof
         -b links_output
-    ]]></command>
+        &&
+
+        ## TIDY UP
+        rm reads.fof '$sequences_fn' '$reads_fn'
+
+    ]]></command>        
     <inputs>
         <param type="data" name="sequences" format="fasta,fasta.gz" />
         <param type="data" name="reads" format="fasta,fasta.gz,fastq,fastq.gz" />
