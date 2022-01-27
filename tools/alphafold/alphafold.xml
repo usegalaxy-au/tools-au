@@ -180,7 +180,7 @@
         This is especially useful in screening drug candidates.
     - Protein-protein interactions
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
-        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include [GOLD](https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/) and [SeeSAR](https://www.biosolveit.de/SeeSAR), but many [free and open-source options](https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software) are available such as [AutoDock](https://autodock.scripps.edu/) and [SwissDock](http://www.swissdock.ch/).
+        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
 
     *Expected run times*
 
