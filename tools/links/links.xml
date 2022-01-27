@@ -18,8 +18,10 @@
         #set sequences_fn = 'sequences.' + $f.ext
         ln -s '$f' '$sequences_fn'
         &&
+        #set n = 1
         #for $read in $reads
-            #set read_fn = 'reads.' + $read.ext
+            #set read_fn = 'reads' + str($n) + '.' + $read.ext
+            #set n += 1
             ln -s '$read' '$read_fn'
             &&
             echo '$read_fn' >> reads.fof
@@ -49,6 +51,12 @@
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
+        <output name="scaffolds" ftype="fasta" file="links_output.scaffolds.fa"/>
+        <output name="correspondence" ftype="tsv" file="links_output.assembly_correspondence.tsv"/>
+    </test>
+    <test>
+        <param name="f" value="used_contigs.fasta.gz"/>
+        <param name="reads" value="reads1.fasta.gz,reads2.fasta.gz"/>
         <output name="scaffolds" ftype="fasta" file="links_output.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="links_output.assembly_correspondence.tsv"/>
     </test>
