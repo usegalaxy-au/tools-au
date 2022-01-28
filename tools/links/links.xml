@@ -42,6 +42,24 @@
         #if $scaffolding.t:
             -t '$scaffolding.t'
         #end if
+        #if $advanced.a:
+            -a '$advanced.a'
+        #end if
+        #if $advanced.e:
+            -e '$advanced.e'
+        #end if
+        #if $advanced.o:
+            -o '$advanced.o'
+        #end if
+        #if $advanced.l:
+            -l '$advanced.l'
+        #end if
+        #if $advanced.z:
+            -z '$advanced.z'
+        #end if
+        #if $advanced.p:
+            -p '$advanced.p'
+        #end if
         &&
 
         ## TIDY UP
@@ -56,6 +74,15 @@
             <param argument="-d" type="text" optional="true" value="4000" label="Distance" help="Distance between k-mer pairs. Multiple distances are separated by comma, e.g. 500,1000,2000,3000"/>
             <param argument="-t" type="text" optional="true" value="2" label="Step" help="Step of sliding window when extracting k-mer pairs from long reads. Multiple steps are separated by comma, e.g. 10,5" />
         </section>
+        <section name="advanced" title="Advanced options" expanded="False">
+            <param argument="-a" type="float" optional="true" value="0.3" label="Maximum link ratio" help="Maximum link ratio between two best contig pairs. Higher values lead to least accurate scaffolding" />
+            <param argument="-e" type="float" optional="true" value="0.1" label="Error" help="Error (%) allowed on -d distance"/>
+            <param argument="-l" type="integer" optional="true" value="5" label="Number of links" help="Minimum number of links (k-mer pairs) to compute 
+            scaffold"/>
+            <param argument="-o" type="integer" optional="true" value="0" label="Offset" help="Offset position for extracting k-mer pairs"/>
+            <param argument="-p" type="float" optional="true" value="0.001" label="Bloom filter false positive rate" help="Increase to prevent memory allocation errors"/>
+            <param argument="-z" type="integer" optional="true" value="500" label="Minimum contig length" help="Minimum contig length to consider for scaffolding"/>
+        </section>
     </inputs>
     <outputs>
         <data name="scaffolds" format="fasta" from_work_dir="links_output.scaffolds.fa" />
@@ -63,6 +90,7 @@
         <data name="gv" format="graph_dot" from_work_dir="links_output.gv" />
     </outputs>
     <tests>
+    <!-- Basic test -->
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
@@ -74,19 +102,14 @@
             </assert_contents>
         </output>
     </test>
+    <!-- Test multiple readfile input -->
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads1.fasta.gz,reads2.fasta.gz"/>
         <output name="scaffolds" ftype="fasta" file="multi_readfile.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="multi_readfile.assembly_correspondence.tsv"/>
     </test>
-    <test>
-        <param name="f" value="used_contigs.fasta.gz"/>
-        <param name="reads" value="reads.fasta.gz"/>
-        <param name="k" value="19" />
-        <output name="scaffolds" ftype="fasta" file="k19.scaffolds.fa"/>
-        <output name="correspondence" ftype="tsv" file="k19.assembly_correspondence.tsv"/>
-    </test>
+    <!-- Test scaffolding paramaters -->
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
@@ -95,6 +118,19 @@
         <param name="t" value="10,5" />
         <output name="scaffolds" ftype="fasta" file="scaffolding.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="scaffolding.assembly_correspondence.tsv"/>
+    </test>
+    <!-- Test advanced parameters -->
+    <test>
+        <param name="f" value="used_contigs.fasta.gz"/>
+        <param name="reads" value="reads.fasta.gz"/>
+        <output name="scaffolds" ftype="fasta" file="advanced.scaffolds.fa"/>
+        <param name="a" value="0.2" />
+        <param name="e" value="0.05" />
+        <param name="l" value="10" />
+        <param name="o" value="1" />
+        <param name="z" value="600" />
+        <output name="scaffolds" ftype="fasta" file="advanced.scaffolds.fa"/>
+        <output name="correspondence" ftype="tsv" file="advanced.assembly_correspondence.tsv"/>
     </test>
     </tests>
     <help><![CDATA[
