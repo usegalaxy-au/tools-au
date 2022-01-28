@@ -154,4 +154,4 @@ The settings below are mandatory, but you may include other settings as needed.
 
 ### Closing
 
-If you are experiencing technical issues, feel free to write to _____. We may be able to provide comment on setting up Alphafold on your compute environment.
+If you are experiencing technical issues, feel free to write to help@genome.edu.au. We may be able to provide comment on setting up Alphafold on your compute environment.
