@@ -83,16 +83,16 @@
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
-        <param name="scaffolding.k" value="19" />
+        <param name="k" value="19" />
         <output name="scaffolds" ftype="fasta" file="k19.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="k19.assembly_correspondence.tsv"/>
     </test>
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
-        <param name="scaffolding.k" value="19" />
-        <param name="scaffolding.d" value="500,1000,2000,3000" />
-        <param name="scaffolding.t" value="10,5" />
+        <param name="k" value="19" />
+        <param name="d" value="500,1000,2000,3000" />
+        <param name="t" value="10,5" />
         <output name="scaffolds" ftype="fasta" file="scaffolding.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="scaffolding.assembly_correspondence.tsv"/>
     </test>
