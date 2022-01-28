@@ -46,8 +46,8 @@
         <param argument="-f" type="data" format="fasta,fasta.gz" help="Sequences to scaffold" label="Contigs" />
         <param type="data" name="reads" multiple="true" format="fasta,fasta.gz,fastq,fastq.gz" label="Reads" help="Long sequence reads for scaffolding" />
         <param argument="-k" type="integer" min="11" max="21" value="15" label="k-mer length" />
-        <param argument="-d" type="text" value="4000" label="distance" help="Distance between k-mer pairs. Multiple distances are separated by comma, e.g. 500,1000,2000,3000"/>
-        <param argument="-t" type="text" value="2" label="step" help="step of sliding window when extracting k-mer pairs from long reads. Multiple steps are separated by comma, e.g. 10,5" />
+        <param argument="-d" type="text" value="4000" label="Distance" help="Distance between k-mer pairs. Multiple distances are separated by comma, e.g. 500,1000,2000,3000"/>
+        <param argument="-t" type="text" value="2" label="Step" help="Step of sliding window when extracting k-mer pairs from long reads. Multiple steps are separated by comma, e.g. 10,5" />
     </inputs>
     <outputs>
         <data name="scaffolds" format="fasta" from_work_dir="links_output.scaffolds.fa" />
@@ -90,27 +90,19 @@
     </test>
     </tests>
     <help><![CDATA[
-        m  MPET reads (default -m 1 = yes, default = no, optional)
-        DO NOT SET IF NOT USING MPET. WHEN SET, LINKS WILL EXPECT A SPECIAL FORMAT UNDER -s
-        Paired MPET reads in their original outward orientation <- -> must be separated by :
-        >template_name    ACGACACTATGCATAAGCAGACGAGCAGCGACGCAGCACG:ATATATAGCGCACGACGCAGCACAGCAGCAGACGAC
 
-        t  step of sliding window when extracting k-mer pairs from long reads (default -t 2, optional)
-        Multiple steps are separated by comma. eg. -t 10,5
-        j  threads  (default -j 3, optional) 
-        o  offset position for extracting k-mer pairs (default -o 0, optional)
-        e  error (%) allowed on -d distance   e.g. -e 0.1  == distance +/- 10% (default -e 0.1, optional)
-        l  minimum number of links (k-mer pairs) to compute scaffold (default -l 5, optional)
-        a  maximum link ratio between two best contig pairs (default -a 0.3, optional)
-        *higher values lead to least accurate scaffolding*
-        z  minimum contig length to consider for scaffolding (default -z 500, optional)
-        b  base name for your output files (optional)
-        r  Bloom filter input file for sequences supplied in -s (optional, if none provided will output to .bloom)
-        NOTE: BLOOM FILTER MUST BE DERIVED FROM THE SAME FILE SUPPLIED IN -f WITH SAME -k VALUE
-        IF YOU DO NOT SUPPLY A BLOOM FILTER, ONE WILL BE CREATED (.bloom)
-        p  Bloom filter false positive rate (default -p 0.001, optional; increase to prevent memory allocation errors)
-        x  Turn off Bloom filter functionality (-x 1 = yes, default = no, optional)
-        v  Runs in verbose mode (-v 1 = yes, default = no, optional)
+Long Interval Nucleotide *k*-mer Scaffolder (LINKS)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. figure:: https://github.com/warrenlr/links/raw/master/links-logo.png
+   :alt: links-logo
+   :width: 200px
+
+`LINKS <https://github.com/bcgsc/LINKS>`__ is a genomics application for
+scaffolding genome assemblies with long reads, such as those produced by
+Oxford Nanopore Technologies Ltd. It can be used to scaffold
+high-quality draft genome assemblies with any long sequences (eg. ONT
+reads, PacBio reads, other draft genomes, etc).
 
     ]]></help>
     <citations>
