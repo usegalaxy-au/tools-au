@@ -1,4 +1,4 @@
-<tool id="links" name="Long Interval Nucleotide K-mer Scaffolder" version="@TOOL_VERSION@+galaxy" python_template_version="3.5" profile="20.09">
+<tool id="links" name="LINKS: Long Interval Nucleotide K-mer Scaffolder" version="@TOOL_VERSION@+galaxy" python_template_version="3.5" profile="20.09">
     <macros>
         <token name="@TOOL_VERSION@">2.0.0</token>
     </macros>
@@ -6,15 +6,19 @@
         <xref type="bio.tools">links</xref>
     </xrefs>
     <requirements>
-        <!-- Bioconda container (job runner needs to be set to singularity) -->
-        <!-- 2.0.1 is missing LINKS_CPP -->
-        <!-- 2.0.0 is missing perl -->
+        <!-- Bioconda containers
+        (Set job runner to singularity to use biocontainers)
+        2.0.1 is missing LINKS_CPP
+        2.0.0 is missing perl -->
         <!-- <requirement type="package" version="@TOOL_VERSION@">links</requirement>  -->
-        <!-- My container-->
+        <!-- Working container -->
         <container type="docker">ghcr.io/tomharrop/container-links:v@TOOL_VERSION@</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        ## SET UP FILE PATHS
+        #######################
+        ## SET UP FILE PATHS ##
+        #######################
+
         #set sequences_fn = 'sequences.' + $f.ext
         ln -s '$f' '$sequences_fn'
         &&
@@ -28,41 +32,57 @@
             &&
         #end for
 
-        ## RUN LINKS
+        ###############
+        ## RUN LINKS ##
+        ###############
+
         LINKS
         -f '$sequences_fn'
         -s reads.fof
         -b links_output
+
         #if $scaffolding.k:
             -k '$scaffolding.k'
         #end if
+
         #if $scaffolding.d:
             -d '$scaffolding.d'
         #end if
+
         #if $scaffolding.t:
             -t '$scaffolding.t'
         #end if
+
         #if $advanced.a:
             -a '$advanced.a'
         #end if
+
         #if $advanced.e:
             -e '$advanced.e'
         #end if
+
         #if $advanced.o:
             -o '$advanced.o'
         #end if
+
         #if $advanced.l:
             -l '$advanced.l'
         #end if
+
         #if $advanced.z:
             -z '$advanced.z'
         #end if
+
         #if $advanced.p:
             -p '$advanced.p'
         #end if
+
         &&
 
-        ## TIDY UP
+        #############
+        ## TIDY UP ##
+        #############
+
         rm reads.fof '$sequences_fn'
 
     ]]></command>        
@@ -70,7 +90,7 @@
         <param argument="-f" type="data" format="fasta,fasta.gz" help="Sequences to scaffold" label="Contigs" />
         <param type="data" name="reads" multiple="true" format="fasta,fasta.gz,fastq,fastq.gz" label="Reads" help="Long sequence reads for scaffolding" />
         <section name="scaffolding" title="Scaffolding options" expanded="False">
-            <param argument="-k" type="integer" optional="true" min="11" max="21" value="15" label="k-mer length" />
+            <param argument="-k" type="integer" optional="true" value="15" label="k-mer length" />
             <param argument="-d" type="text" optional="true" value="4000" label="Distance" help="Distance between k-mer pairs. Multiple distances are separated by comma, e.g. 500,1000,2000,3000"/>
             <param argument="-t" type="text" optional="true" value="2" label="Step" help="Step of sliding window when extracting k-mer pairs from long reads. Multiple steps are separated by comma, e.g. 10,5" />
         </section>
