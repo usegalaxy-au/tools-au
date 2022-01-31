@@ -1,7 +1,8 @@
-<tool id="links" name="LINKS" version="@TOOL_VERSION@+galaxy" python_template_version="3.5" profile="20.09">
+<tool id="links" name="LINKS" version="@TOOL_VERSION@+galaxy+@VERSION_SUFFIX@" python_template_version="3.5" profile="20.09">
     <description> - scaffold genome assemblies with long reads</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.0.1-1</token>
+        <token name="@TOOL_VERSION@">2.0.1</token>
+        <token name="@VERSION_SUFFIX@">1</token>
     </macros>
     <xrefs>
         <xref type="bio.tools">links</xref>
@@ -13,7 +14,7 @@
         2.0.0 is missing perl -->
         <!-- <requirement type="package" version="@TOOL_VERSION@">links</requirement>  -->
         <!-- Working container -->
-        <container type="docker">ghcr.io/tomharrop/container-links:v@TOOL_VERSION@</container>
+        <container type="docker">ghcr.io/tomharrop/container-links:v@TOOL_VERSION@-@VERSION_SUFFIX@</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         #######################
