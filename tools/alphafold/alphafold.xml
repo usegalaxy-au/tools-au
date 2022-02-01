@@ -55,7 +55,7 @@
         ## html
         mkdir -p '${ html.files_path }' &&
         cp '$__tool_directory__/alphafold.html' ${html} &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+        cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
     ]]></command>
     <inputs>
