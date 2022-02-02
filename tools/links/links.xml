@@ -79,14 +79,6 @@
             -p '$advanced.p'
         #end if
 
-        &&
-
-        #############
-        ## TIDY UP ##
-        #############
-
-        rm reads.fof '$sequences_fn'
-
     ]]></command>
 
     <inputs>
@@ -134,7 +126,7 @@
         <output name="scaffolds" ftype="fasta" file="multi_readfile.scaffolds.fa"/>
         <output name="correspondence" ftype="tsv" file="multi_readfile.assembly_correspondence.tsv"/>
     </test>
-    <!-- Test scaffolding paramaters -->
+    <!-- Test scaffolding parameters -->
     <test>
         <param name="f" value="used_contigs.fasta.gz"/>
         <param name="reads" value="reads.fasta.gz"/>
@@ -160,9 +152,6 @@
     </tests>
     <help><![CDATA[
 
-Long Interval Nucleotide *k*-mer Scaffolder (LINKS)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
 .. figure:: https://github.com/warrenlr/links/raw/master/links-logo.png
    :alt: links-logo
    :width: 200px
@@ -172,6 +161,39 @@ scaffolding genome assemblies with long reads, such as those produced by
 Oxford Nanopore Technologies Ltd. It can be used to scaffold
 high-quality draft genome assemblies with any long sequences (eg. ONT
 reads, PacBio reads, other draft genomes, etc).
+
+**Input**:
+
+**LINKS does not use quality information in the Reads, so it is
+recommended to filter the long reads first**.
+
+Provide a ``fasta`` or ``fasta.gz`` dataset containing the Contigs, and
+a ``fastq``, ``fastq.gz``, ``fasta`` or ``fasta.gz`` dataset of Reads to
+be used for scaffolding.
+
+**Use cases**:
+
+-  *Use long reads to scaffold a draft assembly* by providing the draft
+   assembly to the Contigs parameter and the long reads to the Reads
+   parameter.
+-  *Use a reference assembly to scaffold a draft assembly* by providing
+   the reference assembly to the Reads parameter. For example, you could
+   use a species’s reference genome to scaffold a genome that was
+   assembled for another individual.
+
+**How it works**:
+
+LINKS uses *k*-mer pairs from the Reads to identify candidate pairs of
+Contigs, then uses the number of spanning *k*-mer pairs and the mean
+distance between them to build scaffolds.
+
+You can control the distance between *k*-mer pairs, the length of the
+*k*-mers and the minimum number of *k*-mer pairs between contigs. See
+the `LINKS readme on
+GitHub <https://github.com/bcgsc/LINKS#how-it-works>`__ for information
+on setting advanced parameters.
+
+
 
     ]]></help>
     <citations>
