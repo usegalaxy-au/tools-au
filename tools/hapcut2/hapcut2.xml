@@ -1,0 +1,89 @@
+<tool id="hapcut2" name="Hapcut2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@+ga@GA_VERSION_SUFFIX@">
+    <macros>
+        <token name="@TOOL_VERSION@">1.3.3</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@GA_VERSION_SUFFIX@">1</token>
+    </macros>
+    <requirements>
+      <requirement type="package" version="1.3.3"> hapcut2 </requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+        ## Prep inputs
+        ## =====================================================================
+        ln -s '$input_bam' input.bam &&
+        ln -s '$input_vcf' input.vcf &&
+
+
+        ## Run program
+        ## =====================================================================
+        ## Extract variant fragments from alignment
+        extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat &&
+
+        ## Create haplotype.out and haplotype.out.phased.VCF
+        HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out &&
+
+
+        ## Collect outputs
+        ## =====================================================================
+        #if $output_fragments:
+            cp frags.dat '$frags' &&
+        #end if
+
+        #if $output_phased:
+            cp haplotype.out.phased.VCF '$haplotype_phased' &&
+        #end if
+
+        cp haplotype.out '$haplotype'
+
+    ]]></command>
+
+    <inputs>
+      <param name="input_bam" type="data" format="bam" label="Input BAM file"/>
+      <param name="input_vcf" type="data" format="vcf" label="Input VCF file"/>
+      <param name="output_fragments" type="boolean" label="Output phased VCF file?" help="Output variant calls on the haplotype assembly"/>
+      <param name="output_phased" type="boolean" label="Output fragments file?" help="Output fragments collected by extractHAIRS"/>
+    </inputs>
+
+    <outputs>
+      <data name="frags" format="txt" label="${tool.name} on ${on_string}: Fragments">
+        <filter>output_fragments</filter>
+      </data>
+      <!-- Require datatype haplotype block? -->
+      <data name="haplotype" format="txt" label="${tool.name} on ${on_string}: Haplotype block"/>
+      <data name="haplotype_phased" format="vcf" label="${tool.name} on ${on_string}: Phased haplotype block">
+        <filter>output_phased</filter>
+      </data>
+    </outputs>
+
+    <tests>
+      <test expect_num_outputs="3">
+        <param name="input_bam" ftype="bam" value="input.bam"/>
+        <param name="input_vcf" ftype="vcf" value="input.vcf"/>
+        <param name="output_fragments" value="1"/>
+        <param name="output_phased" value="1"/>
+        <output name="frags" ftype="txt" file="output_frag.dat"/>
+        <output name="haplotype" ftype="txt" file="output_haplotype.out"/>
+        <output name="haplotype_phased" ftype="vcf" file="output_haplotype.out.phased.vcf"/>
+      </test>
+    </tests>
+
+    <help><![CDATA[
+.. class:: infomark
+
+**What it does**
+HapCUT2 is a maximum-likelihood-based tool for assembling haplotypes from DNA sequence reads, designed to "just work" with excellent speed and accuracy. Previously described haplotype assembly methods are specialized for specific read technologies or protocols, with slow or inaccurate performance on others. With this in mind, HapCUT2 is designed for speed and accuracy across diverse sequencing technologies, including but not limited to:
+
+- NGS short reads (Illumina HiSeq)
+- single-molecule long reads (PacBio and Oxford Nanopore)
+- Linked-Reads (e.g. 10X Genomics, stLFR or TELL-seq)
+- proximity-ligation (Hi-C) reads
+- high-coverage sequencing (>40x coverage-per-SNP) using above technologies
+- combinations of the above technologies (e.g. scaffold long reads with Hi-C reads)
+
+*NOTE: At this time HapCUT2 is for diploid organisms only and can assemble haplotypes for one individual at a time. VCF input should contain variants and genotypes for a single diploid individual.*
+
+
+    ]]></help>
+</tool>
