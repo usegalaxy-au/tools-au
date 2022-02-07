@@ -34,15 +34,15 @@
   	    python /app/alphafold/run_alphafold.py
   	    --fasta_paths alphafold.fasta
         --output_dir output
-        --data_dir /data                   ## location of the alphafold databases on pulsar node --> could this maybe a env var? $ALPHAFOLD_DB --> \${ALPHAFOLD_DB:-/data}
-        --uniref90_database_path /data/uniref90/uniref90.fasta
-        --mgnify_database_path /data/mgnify/mgy_clusters_2018_12.fa
-        --pdb70_database_path /data/pdb70/pdb70
-        --template_mmcif_dir /data/pdb_mmcif/mmcif_files
-        --obsolete_pdbs_path /data/pdb_mmcif/obsolete.dat
+        --data_dir \${ALPHAFOLD_DB:-/data}        ## location of the alphafold databases on pulsar node --> could this maybe a env var? $ALPHAFOLD_DB --> \${ALPHAFOLD_DB:-/data}
+        --uniref90_database_path \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
+        --mgnify_database_path \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
+        --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
+        --template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
+        --obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
         --max_template_date=\$DATE
-        --bfd_database_path /data/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
-        --uniclust30_database_path /data/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+        --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+        --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
         &&
 
         ## for dry run testing
