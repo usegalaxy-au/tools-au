@@ -19,10 +19,22 @@
         ## Run program
         ## =====================================================================
         ## Extract variant fragments from alignment
-        extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat &&
+        extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
+        #if $optimization == 'pacbio':
+          --pacbio 1
+        #elif $optimization == 'ont':
+          --ont 1
+        #elif $optimization == 'hic':
+          --HiC 1
+        #end if
+        &&
 
         ## Create haplotype.out and haplotype.out.phased.VCF
-        HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out &&
+        HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
+        #if $optimization == 'hic':
+          --HiC 1
+        #end if
+        &&
 
 
         ## Collect outputs
@@ -44,6 +56,18 @@
       <param name="input_vcf" type="data" format="vcf" label="Input VCF file"/>
       <param name="output_fragments" type="boolean" label="Output phased VCF file?" help="Output variant calls on the haplotype assembly"/>
       <param name="output_phased" type="boolean" label="Output fragments file?" help="Output fragments collected by extractHAIRS"/>
+
+      <!-- Optimizations: pacbio, ont, Hi-C  -->
+      <param name="optimization" type="select" display="radio" label="Optimization">
+        <options>
+          <option value=""> None </option>
+          <option value="pacbio"> Pacbio </option>
+          <option value="ont"> Oxford Nanopore </option>
+          <option value="hic"> Hi-C </option>
+        </options>
+      </param>
+
+      <!-- indels method for realignment -->
     </inputs>
 
     <outputs>
@@ -72,6 +96,9 @@
     <help><![CDATA[
 .. class:: infomark
 
+*NOTE: At this time HapCUT2 is for diploid organisms only and can assemble haplotypes for one individual at a time. VCF input should contain variants and genotypes for a single diploid individual.*
+
+
 **What it does**
 HapCUT2 is a maximum-likelihood-based tool for assembling haplotypes from DNA sequence reads, designed to "just work" with excellent speed and accuracy. Previously described haplotype assembly methods are specialized for specific read technologies or protocols, with slow or inaccurate performance on others. With this in mind, HapCUT2 is designed for speed and accuracy across diverse sequencing technologies, including but not limited to:
 
@@ -82,8 +109,23 @@ HapCUT2 is a maximum-likelihood-based tool for assembling haplotypes from DNA se
 - high-coverage sequencing (>40x coverage-per-SNP) using above technologies
 - combinations of the above technologies (e.g. scaffold long reads with Hi-C reads)
 
-*NOTE: At this time HapCUT2 is for diploid organisms only and can assemble haplotypes for one individual at a time. VCF input should contain variants and genotypes for a single diploid individual.*
 
+**Inputs**
+
+Input data should reference a single diploid individual mapped to a reference genome.
+
+1. BAM file with reads mapped to reference genome
+1. VCF file with variant calls against reference genome
+
+*Using linked reads (10X Genomics, stLFR etc)?* Additional preparation is required: `see here<https://github.com/vibansal/HapCUT2/blob/master/linkedreads.md>`_
+
+
+**Outputs**
+- ``haplotype.out``: `phased block file <https://github.com/vibansal/HapCUT2/blob/master/outputformat.md>`_
+- ``haplotype.out.phased.vcf``: (optional) phased VCF file
+- ``Fragments``: (optional) An intermediate file containing alignment fragments with haplotype information
+
+See `HapCUT2 on GitHib <https://github.com/vibansal/HapCUT2>`_ for more detailed information.
 
     ]]></help>
 </tool>
