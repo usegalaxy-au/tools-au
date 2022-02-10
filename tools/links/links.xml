@@ -3,9 +3,6 @@
     <macros>
         <token name="@TOOL_VERSION@">2.0.1</token>
         <token name="@VERSION_SUFFIX@">1</token>
-        <token name="@DIGEST@">
-sha256:5f22be0d47df2ada61056fc4cbad1cf17fe03748d3a55201eb72dba5a6eb35e2
-</token>
     </macros>
     <xrefs>
         <xref type="bio.tools">links</xref>
@@ -17,7 +14,7 @@ sha256:5f22be0d47df2ada61056fc4cbad1cf17fe03748d3a55201eb72dba5a6eb35e2
         2.0.0 is missing perl -->
         <!-- <requirement type="package" version="@TOOL_VERSION@">links</requirement>  -->
         <!-- Working container -->
-        <container type="docker">ghcr.io/tomharrop/container-links@@DIGEST@</container>
+        <container type="docker">ghcr.io/tomharrop/container-links:v@TOOL_VERSION@-@VERSION_SUFFIX@</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         #######################
