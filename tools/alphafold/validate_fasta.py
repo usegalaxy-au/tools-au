@@ -22,7 +22,7 @@ class FastaLoader:
         """
         with open(fasta_path, 'r') as fp:
             header, sequence = self.interpret_first_line(fp)
-            line = fp.readline().rstrip('\n')
+            line = self.getline(fp)
         
             while line:
                 if line.startswith('>'):
@@ -31,16 +31,19 @@ class FastaLoader:
                     sequence = ''
                 else:
                     sequence += line
-                line = fp.readline().rstrip('\n')
+                line = self.getline(fp)
 
         # after reading whole file, header & sequence buffers might be full
         self.update_fastas(header, sequence)
         return self.fastas
 
+    def getline(self, fp: TextIO) -> str:
+        return fp.readline().rstrip('\n').replace('__cn__', '')
+
     def interpret_first_line(self, fp: TextIO):
         header = ''
         sequence = ''
-        line = fp.readline().rstrip('\n')
+        line = self.getline(fp)
         if line.startswith('>'):
             header = line
         else:
