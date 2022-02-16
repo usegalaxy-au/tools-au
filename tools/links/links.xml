@@ -8,13 +8,7 @@
         <xref type="bio.tools">links</xref>
     </xrefs>
     <requirements>
-        <!-- Bioconda containers
-        (Set job runner to singularity to use biocontainers)
-        2.0.1 is missing LINKS_CPP
-        2.0.0 is missing perl -->
-        <!-- <requirement type="package" version="@TOOL_VERSION@">links</requirement>  -->
-        <!-- Working container -->
-        <container type="docker">ghcr.io/tomharrop/container-links:v@TOOL_VERSION@-@VERSION_SUFFIX@</container>
+        <requirement type="package" version="@TOOL_VERSION@">links</requirement> 
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         #######################
