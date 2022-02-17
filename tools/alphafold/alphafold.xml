@@ -11,7 +11,7 @@
         <edam_operation>operation_0474</edam_operation>
     </edam_operations>
     <requirements>
-        <container type="docker">neoformit/alphafold-galaxy@sha256:6adf7f07062b307d08c11130c39a28abc7c290b23f6c347b09c2c649c054c338</container>
+        <container type="docker">neoformit/alphafold:latest</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
         ## fasta setup ----------------------------
