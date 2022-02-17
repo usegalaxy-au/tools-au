@@ -30,7 +30,7 @@
         export DATE=`date +"%Y-%m-%d"` &&
 
         ## run alphafold  -------------------------
-        ln -s /app/alphafold/alphafold alphafold &&
+        ## ln -s /app/alphafold/alphafold alphafold &&
   	    python /app/alphafold/run_alphafold.py
   	    --fasta_paths alphafold.fasta
         --output_dir output
@@ -51,11 +51,11 @@
 
         ## generate extra outputs -----------------
         ## plddts
-        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
+        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold '$output_plddts' &&
 
         ## html
         mkdir -p '${ html.files_path }' &&
-        cp '$__tool_directory__/alphafold.html' ${html} &&
+        cp '$__tool_directory__/alphafold.html' '${html}' &&
         cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
     ]]></command>
