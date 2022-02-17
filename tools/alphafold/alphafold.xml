@@ -43,6 +43,7 @@
         --max_template_date=\$DATE
         --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
         --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+        --use_gpu_relax=True
         &&
 
         ## for dry run testing
