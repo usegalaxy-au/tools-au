@@ -1,0 +1,56 @@
+<tool id="smudgeplot" name="Smudgeplot" version="@TOOL_VERSION@+galaxy+@VERSION_SUFFIX@">
+    <description> - scaffold genome assemblies with long reads</description>
+
+    <macros>
+        <token name="@TOOL_VERSION@">0.2.3</token>
+        <token name="@VERSION_SUFFIX@">1</token>
+    </macros>
+
+    <xrefs>
+        <xref type="bio.tools">smudgeplots</xref>
+    </xrefs>
+
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">smudgeplot</requirement>
+        <requirement type="package" version="2.2.10">jellyfish</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+        jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C '$reads'
+        && jellyfish histo 1_counts.jf > 1_kmer_k21.hist
+
+        ## Calculate lower and upper kmer count cutoffs
+        ## && L=$(smudgeplot.py cutoff 1_kmer_k21.hist L)
+        ## && U=$(smudgeplot.py cutoff 1_kmer_k21.hist U)
+        ## HACK
+        && L=2 && U=150
+
+        ## Jellyfish dump
+        && jellyfish dump -c -L $L -U $U 1_counts.jf > 2_dump.jf
+
+        && smudgeplot.py hetkmers -o 2_kmer_pairs 2_dump.jf
+        && smudgeplot.py plot 2_kmer_pairs_coverages.tsv -o my_genome
+
+    ]]></command>
+
+    <inputs>
+        <param name="reads" type="data" format="fastq,fastq.gz" label="Sequencing reads"
+            help="Sequencing reads corresponding to your genome"/>
+    </inputs>
+
+    <outputs>
+        <data name="smudgeplot" format="png" from_work_dir="my_genome_smudgeplot.png" label="${tool.name} on ${on_string}: Smudgeplot" />
+        <data name="smudgeplot_log" format="png" from_work_dir="my_genome_smudgeplot_log10.png" label="${tool.name} on ${on_string}: Smudgeplot (log10)" />
+        <data name="genome_summary" format="tabular" from_work_dir="my_genome_summary.tsv" label="${tool.name} on ${on_string}: Genome summary table" />
+    </outputs>
+
+    <tests>
+        <param name="reads" ftype="fastq" file="reads.fq"/>
+        <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png"/>
+    </tests>
+
+    <help><![CDATA[
+        TODO: Fill in help.
+    ]]></help>
+</tool>
