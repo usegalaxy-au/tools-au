@@ -1,5 +1,5 @@
 <tool id="smudgeplot" name="Smudgeplot" version="@TOOL_VERSION@+galaxy+@VERSION_SUFFIX@">
-    <description> - scaffold genome assemblies with long reads</description>
+    <description> - inference of ploidy and heterozygosity structure using whole genome sequencing</description>
 
     <macros>
         <token name="@TOOL_VERSION@">0.2.3</token>
@@ -27,7 +27,7 @@
         && L=2 && U=150
 
         ## Jellyfish dump
-        && jellyfish dump -c -L $L -U $U 1_counts.jf > 2_dump.jf
+        && jellyfish dump -c -L \$L -U \$U 1_counts.jf > 2_dump.jf
 
         && smudgeplot.py hetkmers -o 2_kmer_pairs 2_dump.jf
         && smudgeplot.py plot 2_kmer_pairs_coverages.tsv -o my_genome
@@ -46,8 +46,10 @@
     </outputs>
 
     <tests>
-        <param name="reads" ftype="fastq" file="reads.fq"/>
-        <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png"/>
+        <test>
+            <param name="reads" value="reads.fq" ftype="fastq"/>
+            <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png"/>
+        </test>
     </tests>
 
     <help><![CDATA[
