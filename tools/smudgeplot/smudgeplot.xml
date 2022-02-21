@@ -12,7 +12,7 @@
 
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">smudgeplot</requirement>
-        <requirement type="package" version="2.2.10">jellyfish</requirement>
+        <requirement type="package" version="2.3.0">kmer-jellyfish</requirement>
     </requirements>
 
     <command detect_errors="exit_code"><![CDATA[
