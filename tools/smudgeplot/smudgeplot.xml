@@ -35,7 +35,7 @@
     ]]></command>
 
     <inputs>
-        <param name="reads" type="data" format="fastq,fastq.gz" label="Sequencing reads"
+        <param name="reads" type="data" format="fastq,fastq.gz,fasta,fasta.gz" label="Sequencing reads"
             help="Sequencing reads corresponding to your genome"/>
     </inputs>
 
