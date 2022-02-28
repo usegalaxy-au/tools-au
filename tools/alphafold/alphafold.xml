@@ -46,14 +46,13 @@
         --use_gpu_relax=True
         &&
 
-        ## for dry run testing
+        ## Uncomment for "dummy run" - skip alphafold run and read test-data output
         ## cp -r '$__tool_directory__/output' . &&
 
-        ## generate extra outputs -----------------
-        ## plddts
+        ## Generate additional outputs ------------
         python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
 
-        ## html
+        ## HTML output
         mkdir -p '${ html.files_path }' &&
         cp '$__tool_directory__/alphafold.html' '${html}' &&
         cp output/alphafold/ranked_*.pdb '${html.files_path}'
