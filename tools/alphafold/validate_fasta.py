@@ -1,5 +1,6 @@
+"""Validate input FASTA sequence."""
 
-
+import re
 import argparse
 from typing import List, TextIO
 
@@ -17,13 +18,13 @@ class FastaLoader:
 
     def load(self, fasta_path: str):
         """
-        load function has to be very flexible. 
-        file may be normal fasta format (header, seq) or can just be a bare sequence. 
+        load function has to be very flexible.
+        file may be normal fasta format (header, seq) or can just be a bare sequence.
         """
         with open(fasta_path, 'r') as fp:
             header, sequence = self.interpret_first_line(fp)
             line = self.getline(fp)
-        
+
             while line:
                 if line.startswith('>'):
                     self.update_fastas(header, sequence)
@@ -44,12 +45,12 @@ class FastaLoader:
         header = ''
         sequence = ''
         line = self.getline(fp)
-        if line.startswith('>'):
-            header = line
+        if line.startswith('__gt__'):
+            header = re.sub(r'\_\_.{2}\_\_', '', line)
         else:
             sequence += line
         return header, sequence
-                
+
     def update_fastas(self, header: str, sequence: str):
         # if we have a sequence
         if not sequence == '':
@@ -58,7 +59,7 @@ class FastaLoader:
                 fasta_count = len(self.fastas)
                 header = f'>sequence_{fasta_count}'
 
-            # create new Fasta    
+            # create new Fasta
             self.fastas.append(Fasta(header, sequence))
 
 
@@ -68,9 +69,9 @@ class FastaValidator:
         self.min_length = 30
         self.max_length = 2000
         self.iupac_characters = {
-            'A', 'B', 'C', 'D', 'E', 'F', 'G', 
-            'H', 'I', 'K', 'L', 'M', 'N', 'P', 
-            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 
+            'A', 'B', 'C', 'D', 'E', 'F', 'G',
+            'H', 'I', 'K', 'L', 'M', 'N', 'P',
+            'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
             'Y', 'Z', '-'
         }
 
@@ -79,9 +80,9 @@ class FastaValidator:
         self.validate_num_seqs()
         self.validate_length()
         self.validate_alphabet()
-        # not checking for 'X' nucleotides at the moment. 
-        # alphafold can throw an error if it doesn't like it. 
-        #self.validate_x() 
+        # not checking for 'X' nucleotides at the moment.
+        # alphafold can throw an error if it doesn't like it.
+        #self.validate_x()
 
     def validate_num_seqs(self) -> None:
         if len(self.fasta_list) > 1:
@@ -96,19 +97,19 @@ class FastaValidator:
             raise Exception(f'Error encountered validating fasta: Sequence too short ({len(fasta.aa_seq)}aa). Must be > 30aa')
         if len(fasta.aa_seq) > self.max_length:
             raise Exception(f'Error encountered validating fasta: Sequence too long ({len(fasta.aa_seq)}aa). Must be < 2000aa')
-    
+
     def validate_alphabet(self):
         """
-        Confirms whether the sequence conforms to IUPAC codes. 
-        If not, reports the offending character and its position. 
-        """ 
+        Confirms whether the sequence conforms to IUPAC codes.
+        If not, reports the offending character and its position.
+        """
         fasta = self.fasta_list[0]
         for i, char in enumerate(fasta.aa_seq.upper()):
             if char not in self.iupac_characters:
                 raise Exception(f'Error encountered validating fasta: Invalid amino acid found at pos {i}: {char}')
 
     def validate_x(self):
-        """checks if any bases are X. TODO check whether alphafold accepts X bases. """ 
+        """checks if any bases are X. TODO check whether alphafold accepts X bases. """
         fasta = self.fasta_list[0]
         for i, char in enumerate(fasta.aa_seq.upper()):
             if char == 'X':
@@ -148,14 +149,14 @@ def main():
     fw = FastaWriter()
     fw.write(fastas[0])
 
-        
+
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "input_fasta", 
-        help="input fasta file", 
+        "input_fasta",
+        help="input fasta file",
         type=str
-    )   
+    )
     return parser.parse_args()
 
 

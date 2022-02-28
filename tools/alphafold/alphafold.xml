@@ -1,18 +1,18 @@
 <tool id="alphafold" name="alphafold" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
     <description>Alphafold v2.0: AI-guided 3D structure prediction of proteins</description>
-    <xrefs>
-      <ref type="bio.tools">alphafold_2.0</ref>
-    </xrefs>
     <macros>
-        <token name="@TOOL_VERSION@">2.0.0</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+      <token name="@TOOL_VERSION@">2.0.0</token>
+      <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
-        <edam_topic>topic_0082</edam_topic>
+      <edam_topic>topic_0082</edam_topic>
     </edam_topics>
     <edam_operations>
-        <edam_operation>operation_0474</edam_operation>
+      <edam_operation>operation_0474</edam_operation>
     </edam_operations>
+    <xrefs>
+      <xref type="bio.tools">alphafold_2.0</xref>
+    </xrefs>
     <requirements>
         <container type="docker">neoformit/alphafold:latest</container>
     </requirements>
