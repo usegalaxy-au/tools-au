@@ -1,5 +1,8 @@
 <tool id="alphafold" name="alphafold" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
     <description>Alphafold v2.0: AI-guided 3D structure prediction of proteins</description>
+    <xrefs>
+      <ref type="bio.tools">alphafold_2.0</ref>
+    </xrefs>
     <macros>
         <token name="@TOOL_VERSION@">2.0.0</token>
         <token name="@VERSION_SUFFIX@">0</token>
@@ -14,48 +17,51 @@
         <container type="docker">neoformit/alphafold:latest</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        ## fasta setup ----------------------------
-        #if $fasta_or_text.input_mode == 'history':
-            cp '$fasta_or_text.fasta_file' input.fasta &&
 
-        #elif $fasta_or_text.input_mode == 'textbox':
-            echo '$fasta_or_text.fasta_text' > input.fasta &&
-        #end if
+## $ALPHAFOLD_DB variable should point to the location of the AlphaFold
+## databases - defaults to /data
 
-        python3 '$__tool_directory__/validate_fasta.py' input.fasta &&
+## fasta setup ----------------------------
+#if $fasta_or_text.input_mode == 'history':
+    cp '$fasta_or_text.fasta_file' input.fasta &&
 
-        ## env vars -------------------------------
-        export TF_FORCE_UNIFIED_MEMORY=1 &&
-        export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
-        export DATE=`date +"%Y-%m-%d"` &&
+#elif $fasta_or_text.input_mode == 'textbox':
+    echo '$fasta_or_text.fasta_text' > input.fasta &&
+#end if
 
-        ## run alphafold  -------------------------
-        ## ln -s /app/alphafold/alphafold alphafold &&
-  	    python /app/alphafold/run_alphafold.py
-  	    --fasta_paths alphafold.fasta
-        --output_dir output
-        --data_dir \${ALPHAFOLD_DB:-/data}        ## location of the alphafold databases on pulsar node --> could this maybe a env var? $ALPHAFOLD_DB --> \${ALPHAFOLD_DB:-/data}
-        --uniref90_database_path \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
-        --mgnify_database_path \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
-        --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
-        --template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
-        --obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
-        --max_template_date=\$DATE
-        --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
-        --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
-        --use_gpu_relax=True
-        &&
+python3 '$__tool_directory__/validate_fasta.py' input.fasta &&
 
-        ## Uncomment for "dummy run" - skip alphafold run and read test-data output
-        ## cp -r '$__tool_directory__/output' . &&
+## env vars -------------------------------
+export TF_FORCE_UNIFIED_MEMORY=1 &&
+export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
+export DATE=`date +"%Y-%m-%d"` &&
 
-        ## Generate additional outputs ------------
-        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
+## run alphafold  -------------------------
+python /app/alphafold/run_alphafold.py
+--fasta_paths alphafold.fasta
+--output_dir output
+--data_dir \${ALPHAFOLD_DB:-/data}
+--uniref90_database_path \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
+--mgnify_database_path \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
+--pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
+--template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
+--obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
+--max_template_date=\$DATE
+--bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+--uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+--use_gpu_relax=True
+&&
 
-        ## HTML output
-        mkdir -p '${ html.files_path }' &&
-        cp '$__tool_directory__/alphafold.html' '${html}' &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}'
+## Uncomment for "dummy run" - skip alphafold run and read output from test-data
+## cp -r '$__tool_directory__/output' . &&
+
+## Generate additional outputs ------------
+python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
+
+## HTML output
+mkdir -p '${ html.files_path }' &&
+cp '$__tool_directory__/alphafold.html' '${html}' &&
+cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
     ]]></command>
     <inputs>
