@@ -12,54 +12,67 @@ class Fasta:
 
 
 class FastaLoader:
-    def __init__(self):
-        """creates a Fasta() from a file"""
-        self.fastas: List[Fasta] = []
+    def __init__(self, fasta_path: str):
+        """Initialize from FASTA file."""
+        self.fastas = []
+        self.load(fasta_path)
+        print("Loaded FASTA sequences:")
+        for f in self.fastas:
+            print(f.header)
+            print(f.aa_seq)
 
     def load(self, fasta_path: str):
-        """
-        load function has to be very flexible.
-        file may be normal fasta format (header, seq) or can just be a bare sequence.
-        """
-        with open(fasta_path, 'r') as fp:
-            header, sequence = self.interpret_first_line(fp)
-            line = self.getline(fp)
+        """Load bare or FASTA formatted sequence."""
+        with open(fasta_path, 'r') as f:
+            self.content = f.read()
 
-            while line:
-                if line.startswith('>'):
-                    self.update_fastas(header, sequence)
-                    header = line
-                    sequence = ''
-                else:
-                    sequence += line
-                line = self.getline(fp)
+        if "__cn__" in self.content:
+            # Pasted content with escaped characters
+            self.newline = '__cn__'
+            self.caret = '__gt__'
+        else:
+            # Uploaded file with normal content
+            self.newline = '\n'
+            self.caret = '>'
+
+        self.lines = self.content.split(self.newline)
+        header, sequence = self.interpret_first_line()
+
+        i = 0
+        while i < len(self.lines):
+            line = self.lines[i]
+            if line.startswith(self.caret):
+                self.update_fastas(header, sequence)
+                header = '>' + self.strip_header(line)
+                sequence = ''
+            else:
+                sequence += line.strip('\n ')
+            i += 1
 
         # after reading whole file, header & sequence buffers might be full
         self.update_fastas(header, sequence)
-        return self.fastas
 
-    def getline(self, fp: TextIO) -> str:
-        return fp.readline().rstrip('\n').replace('__cn__', '')
-
-    def interpret_first_line(self, fp: TextIO):
-        header = ''
-        sequence = ''
-        line = self.getline(fp)
-        if line.startswith('__gt__'):
-            header = re.sub(r'\_\_.{2}\_\_', '', line)
+    def interpret_first_line(self):
+        line = self.lines[0]
+        if line.startswith(self.caret):
+            header = '>' + self.strip_header(line)
+            return header, ''
         else:
-            sequence += line
-        return header, sequence
+            return '', line
+
+    def strip_header(self, line):
+        """Strip characters escaped with underscores from pasted text."""
+        return re.sub(r'\_\_.{2}\_\_', '', line).strip('>')
 
     def update_fastas(self, header: str, sequence: str):
         # if we have a sequence
-        if not sequence == '':
+        if sequence:
             # create generic header if not exists
-            if header == '':
+            if not header:
                 fasta_count = len(self.fastas)
                 header = f'>sequence_{fasta_count}'
 
-            # create new Fasta
+            # Create new Fasta
             self.fastas.append(Fasta(header, sequence))
 
 
@@ -106,7 +119,7 @@ class FastaValidator:
         fasta = self.fasta_list[0]
         for i, char in enumerate(fasta.aa_seq.upper()):
             if char not in self.iupac_characters:
-                raise Exception(f'Error encountered validating fasta: Invalid amino acid found at pos {i}: {char}')
+                raise Exception(f'Error encountered validating fasta: Invalid amino acid found at pos {i}: "{char}"')
 
     def validate_x(self):
         """checks if any bases are X. TODO check whether alphafold accepts X bases. """
@@ -138,16 +151,15 @@ class FastaWriter:
 def main():
     # load fasta file
     args = parse_args()
-    fl = FastaLoader()
-    fastas = fl.load(args.input_fasta)
+    fas = FastaLoader(args.input_fasta)
 
     # validate
-    fv = FastaValidator(fastas)
+    fv = FastaValidator(fas.fastas)
     fv.validate()
 
     # write cleaned version
     fw = FastaWriter()
-    fw.write(fastas[0])
+    fw.write(fas.fastas[0])
 
 
 def parse_args() -> argparse.Namespace:
