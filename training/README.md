@@ -933,7 +933,7 @@ The galaxyaus/galaxy-local-tools account details for the toolshed are as follows
 ```
 email:    help@genome.edu.au
 username: galaxy-australia
-password: L0013553
+password: ***
 ```
 
 The exact commands for planemo toolshed submission are are in the link above.
