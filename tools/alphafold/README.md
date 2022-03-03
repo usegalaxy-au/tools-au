@@ -68,8 +68,10 @@ If you can see something similar to this output (details depend on your GPU), it
 
 ### REFERENCE DATA
 
-Alphafold needs reference data to run. The wrapper expects this data to be present at `/data/alphafold_databases`. <br>
-To download, run the following shell script command in the tool directory.
+Alphafold needs reference data to run. The wrapper expects this data to
+be present at `/data/alphafold_databases`. A custom path will be read from
+the ALPHAFOLD_DB environment variable, if set. To download the AlphaFold,
+reference data, run the following shell script command in the tool directory.
 
 ```
 # make folders if needed

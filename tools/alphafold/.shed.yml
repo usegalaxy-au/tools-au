@@ -9,3 +9,13 @@ name: alphafold2
 owner: galaxy-australia
 remote_repository_url: https://github.com/usegalaxy-au/galaxy-local-tools
 type: unrestricted
+include:
+- strip components: 0
+  source:
+  - test-data/
+  - static/
+  - alphafold.xml
+  - alphafold.html
+  - gen_extra_outputs.py
+  - README.rst
+  - validate_fasta.py
