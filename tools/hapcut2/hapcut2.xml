@@ -61,9 +61,9 @@ cp haplotype.out '$haplotype'
     <param name="output_phased" type="boolean" label="Output fragments file?" help="Output fragments collected by extractHAIRS"/>
 
     <!-- Optimizations: pacbio, ont, Hi-C  -->
-    <param name="optimization" type="select" display="radio" label="Optimization">
+    <param name="optimization" type="select" display="radio" label="Optimization" optional="true">
       <options>
-        <option value=""> None </option>
+        <option value="default" selected="true"> Default </option>
         <option value="pacbio"> Pacbio </option>
         <option value="ont"> Oxford Nanopore </option>
         <option value="hic"> Hi-C </option>
@@ -90,6 +90,7 @@ cp haplotype.out '$haplotype'
       <param name="input_vcf" ftype="vcf" value="input.vcf"/>
       <param name="output_fragments" value="1"/>
       <param name="output_phased" value="1"/>
+      <param name="optimization" value="default"/>
       <output name="frags" ftype="txt" file="output_frag.dat"/>
       <output name="haplotype" ftype="txt" file="output_haplotype.out"/>
       <output name="haplotype_phased" ftype="vcf" file="output_haplotype.out.phased.vcf"/>
