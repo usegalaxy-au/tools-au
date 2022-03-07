@@ -102,6 +102,7 @@ cp haplotype.out '$haplotype'
 
 
 **What it does**
+
 HapCUT2 is a maximum-likelihood-based tool for assembling haplotypes from DNA sequence reads, designed to "just work" with excellent speed and accuracy. Previously described haplotype assembly methods are specialized for specific read technologies or protocols, with slow or inaccurate performance on others. With this in mind, HapCUT2 is designed for speed and accuracy across diverse sequencing technologies, including but not limited to:
 
 - NGS short reads (Illumina HiSeq)
@@ -117,12 +118,14 @@ HapCUT2 is a maximum-likelihood-based tool for assembling haplotypes from DNA se
 Input data should reference a single diploid individual mapped to a reference genome.
 
 1. BAM file with reads mapped to reference genome
-1. VCF file with variant calls against reference genome
 
-*Using linked reads (10X Genomics, stLFR etc)?* Additional preparation is required: `see here<https://github.com/vibansal/HapCUT2/blob/master/linkedreads.md>`_
+2. VCF file with variant calls against reference genome
+
+*Using linked reads (10X Genomics, stLFR etc)?* Additional preparation is required: `see here <https://github.com/vibansal/HapCUT2/blob/master/linkedreads.md>`_
 
 
 **Outputs**
+
 - ``haplotype.out``: `phased block file <https://github.com/vibansal/HapCUT2/blob/master/outputformat.md>`_
 - ``haplotype.out.phased.vcf``: (optional) phased VCF file
 - ``Fragments``: (optional) An intermediate file containing alignment fragments with haplotype information
