@@ -42,13 +42,6 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
 
 ## Collect outputs
 ## =====================================================================
-#if $output_fragments:
-    cp frags.dat '$frags' &&
-#end if
-
-#if $output_phased:
-    cp haplotype.out.phased.VCF '$haplotype_phased' &&
-#end if
 
 cp haplotype.out '$haplotype'
 
@@ -72,13 +65,15 @@ cp haplotype.out '$haplotype'
   </inputs>
 
   <outputs>
-    <data name="frags" format="txt" label="${tool.name} on ${on_string}: Fragments">
-      <filter>output_fragments</filter>
-    </data>
-    <!-- Require datatype haplotype block? -->
-    <data name="haplotype" format="txt" label="${tool.name} on ${on_string}: Haplotype block"/>
-    <data name="haplotype_phased" format="vcf" label="${tool.name} on ${on_string}: Phased haplotype block">
+    <data name="haplotype" format="txt" from_work_dir="haplotype.out"
+        label="${tool.name} on ${on_string}: Haplotype block"/>
+    <data name="haplotype_phased" format="vcf" from_work_dir="haplotype.out.phased.VCF"
+        label="${tool.name} on ${on_string}: Phased haplotype block">
       <filter>output_phased</filter>
+    </data>
+    <data name="frags" format="txt" from_work_dir="frags.dat"
+        label="${tool.name} on ${on_string}: Fragments">
+      <filter>output_fragments</filter>
     </data>
   </outputs>
 
