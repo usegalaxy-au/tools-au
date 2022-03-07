@@ -62,12 +62,10 @@ cp haplotype.out '$haplotype'
 
     <!-- Optimizations: pacbio, ont, Hi-C  -->
     <param name="optimization" type="select" display="radio" label="Optimization" optional="true">
-      <options>
-        <option value="default" selected="true"> Default </option>
-        <option value="pacbio"> Pacbio </option>
-        <option value="ont"> Oxford Nanopore </option>
-        <option value="hic"> Hi-C </option>
-      </options>
+      <option value="default" selected="true"> Default </option>
+      <option value="pacbio"> Pacbio </option>
+      <option value="ont"> Oxford Nanopore </option>
+      <option value="hic"> Hi-C </option>
     </param>
 
     <!-- indels method for realignment -->
