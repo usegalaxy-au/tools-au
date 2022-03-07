@@ -39,12 +39,6 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
 #end if
 &&
 
-
-## Collect outputs
-## =====================================================================
-
-cp haplotype.out '$haplotype'
-
   ]]></command>
 
   <inputs>
