@@ -34,9 +34,6 @@ variantCaller
         <param argument="--referenceFilename" type="data" format="fasta" help="The reference FASTA file" label="Reference genome" />
         <param type="data" name="fa_index" format="fai" label="fai" help="The fasta index file" />
         <param type="data" name="input" format="bam" label="bam" help="The input BAM alignment file" />
-        <!-- <param type="data" name="bam_index" format="bai" label="bai" help="The BAM index file" /> -->
-        <!-- #set bam_index_fn = $input_fn + '.bai' -->
-        <!--   ln -s '$bam_index' '$bam_index_fn' && -->
         <param type="data" name="pbi" format="bai" label="pbi" help="The PacBio index file" />
     </inputs>
     <outputs>
@@ -48,7 +45,6 @@ variantCaller
             <param name="referenceFilename" value="All4mer.V2.01_Insert.fa"/>
             <param name="fa_index" value="All4mer.V2.01_Insert.fa.fai"/>
             <param name="input" value="out.aligned_subreads.bam"/>
-            <!-- <param name="bam_index" value="out.aligned_subreads.bam.bai"/> -->
             <param name="pbi" value="out.aligned_subreads.bam.pbi"/>
             <output name="consensus" ftype="fasta" file="all4merDipl_consensus.fa"/>
         </test>
