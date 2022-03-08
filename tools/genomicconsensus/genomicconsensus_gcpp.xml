@@ -1,5 +1,5 @@
-<tool id="genomicconsensus_arrow" name="GenomicConsensus Arrow" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
-    <description>algorithm to compute genomic consensus and call variants using PacBio reads mapped to a reference.</description>
+<tool id="genomicconsensus_gcpp" name="GenomicConsensus gcpp" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>: Arrow algorithm to compute genomic consensus and call variants using PacBio reads mapped to a reference.</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -9,8 +9,8 @@
 
 ## filenames
 
-#set reference_fn = 'reference.' + $referenceFilename.ext
-ln -s '$referenceFilename' '$reference_fn' &&
+#set reference_fn = 'reference.' + $reference.ext
+ln -s '$reference' '$reference_fn' &&
 
 #set fa_index_fn = $reference_fn + '.fai'
 ln -s '$fa_index' '$fa_index_fn' &&
@@ -23,15 +23,15 @@ ln -s '$pbi' '$pbi_fn' &&
 
 ## variantCaller
 
-variantCaller 
---numWorkers \${GALAXY_SLOTS:-4}
---referenceFilename '$reference_fn'
---outputFilename output.fa
+gcpp 
+--num-threads \${GALAXY_SLOTS:-4}
+--reference '$reference_fn'
+--output output.fa
 '$input_fn'
 
     ]]></command>
     <inputs>
-        <param argument="--referenceFilename" type="data" format="fasta" help="The reference FASTA file" label="Reference genome" />
+        <param argument="--reference" type="data" format="fasta" help="The reference FASTA file" label="Reference genome" />
         <param type="data" name="fa_index" format="fai" label="fai" help="The fasta index file" />
         <param type="data" name="input" format="bam" label="bam" help="The input BAM alignment file" />
         <param type="data" name="pbi" format="bai" label="pbi" help="The PacBio index file" />

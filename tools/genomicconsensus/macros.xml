@@ -1,12 +1,12 @@
 <macros>
-    <token name="@TOOL_VERSION@">2.3.3</token>
+    <token name="@TOOL_VERSION@">2.0.2</token>
     <token name="@VERSION_SUFFIX@">0</token>
-    <token name="@CONDA_SUFFIX@">py_1</token>
     <token name="@PROFILE@">21.09</token>
-    <token name="@DIGEST@">de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab</token>
+    <token name="@DIGEST@"></token>
     <xml name="requirements">
+        <!-- genomicconsensus is deprecated. replaced by pacbio by a tool called pbgcpp -->
         <requirements>
-            <container type="docker">quay.io/biocontainers/genomicconsensus@sha256:@DIGEST@</container>
+            <container type="singularity">https://depot.galaxyproject.org/singularity/pbgcpp:2.0.2--h9ee0642_1</container>
         </requirements>
     </xml>
     <xml name="citations">
