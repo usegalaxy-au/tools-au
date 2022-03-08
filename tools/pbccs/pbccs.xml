@@ -1,0 +1,138 @@
+<tool id="pbccs" name="CCS" version="0.1.0" python_template_version="3.5">
+    <description>Generate circular consensus sequences (ccs) from subreads</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements"/>
+    <expand macro="version_command"/>
+    <command detect_errors="exit_code"> <![CDATA[
+    mkdir -p ./tmp &&
+    cp '$input_file' ./tmp/input.bam &&
+    cd ./tmp/ &&
+    ccs
+    -j 4
+    #if $input_filter_options.minLength:
+        --minLength '$input_filter_options.minLength'
+    #end if
+    #if $input_filter_options.maxLength:
+        --maxLength '$input_filter_options.maxLength'
+    #end if
+    #if $input_filter_options.minPasses:
+        --minPasses '$input_filter_options.minPasses'
+    #end if
+    #if $input_filter_options.minIdentity:
+        --minIdentity '$input_filter_options.minIdentity'
+    #end if
+    #if $input_filter_options.zmws:
+        --zmws '$input_filter_options.zmws'
+    #end if
+    #if $model_override_options.modelPath:
+        --modelPath '$model_override_options.modelPath'
+    #end if
+    #if $model_override_options.modelSpec:
+        --modelSpec '$model_override_options.modelSpec'
+    #end if
+    #if $output_filter_options.minPredictedAccuracy:
+        --minPredictedAccuracy '$output_filter_options.minPredictedAccuracy'
+    #end if
+    #if $output_filter_options.minReadScore:
+        --minReadScore '$output_filter_options.minReadScore'
+    #end if
+    #if $output_filter_options.maxDropFraction:
+        --maxDropFraction  '$output_filter_options.maxDropFraction'
+    #end if
+    #if $processing_options.byStrand:
+        --byStrand '$processing_options.byStrand'
+    #end if
+    #if $processing_options.noPolish:
+	--noPolish '$processing_options.noPolish'
+    #end if
+    #if $processing_options.richQVs:
+        --richQVs '$processing_options.richQVs'
+    #end if 
+    #if $if_log.log_options == "yes":
+        --logFile  '$log_output'
+        --logLevel '$if_log.loglevel'
+    #end if
+    #if $output_options.reportFile:
+        --reportFile ccs_report.txt
+    #end if
+    input.bam
+    output.bam 
+    && mv output.bam '$bam_output'
+    && mv ccs_report.txt '$report_output' 
+    2>&1
+    
+    ]]></command>
+    <inputs>
+	<param name="input_file" type="data" format="bam" label="Input Subreads" help="Subreads (subreads.bam)"/>
+	<section name="input_filter_options" title="Input Filter Options" expanded="False">
+	       <param argument="--minLength" type="integer" value="10" label="Minimum length" help="Minimum draft length before polishing. [10]" />
+	       <param argument="--maxLength" type="integer" value="21000"  label="Maximum length" help="Maximum draft length before polishing. [21000]"/>
+	       <param argument="--minPasses" type="integer" value="3" label="Minimum number of subreads" help="Minimum number of subreads required to generate CCS. [3]" />
+	       <param argument="--minIdentity" type="float" value="0.82" label="top N passes" help="Minimum identity of a subread aligned to the draft consensus to use it for polishing. 0 disables this filter. [0.82]" />
+	       <param argument="--minSnr" type="float" value="2.5" label="Minimum SNR of subreads" help="Minimum SNR of subreads to use for generating CCS [2.5]"/>
+	       <param argument="--zmws" type="text" value="all" label="Generate CCS for the provided comma-separated hole number ranges only." help="Default=all" />
+       </section>
+       <section name="model_override_options" title="Model Override Options" expanded="False">
+	       <param argument="--modelPath" type="data" format="txt" optional="True" label="Model File" help="a model file or directory containing model files." />
+               <param argument="--modelSpec" type="text" value="" optional="True"  label="Chemistry" help="Name of chemistry or model to use, overriding default selection."/>
+       </section>
+	<section name="processing_options" title="Processing Options" expanded="False">
+	    <param argument="--byStrand" type="boolean" truevalue="--byStrand" falsevalue="" checked="false" label="Generate a consensus for each strand." />
+	    <param argument="--noPolish" type="boolean" truevalue="--noPolish" falsevalue="" checked="false" label="Only output the initial template derived from the POA (faster, less accurate)." />
+	    <param argument="--richQVs" type="boolean" truevalue="--richQVs" falsevalue="" checked="false" label="Emit dq, iq, and sq rich quality tracks." />
+        </section>
+	<section name="output_filter_options" title="Output FIlter Options" expanded="False">
+	       <param argument="--minPredictedAccuracy" type="float" value="0.9" label="Mininum predicted accurary" help="i.e 0.9"/>
+               <param argument="--minReadScore" type="float" value="0.75"  label="Minimum read score of input subreads" help="i.e 0.75"/>
+               <param argument="--maxDropFraction" type="float" value="0.34" label="Maximum fraction of subreads dropped by polishing (not input filters) before skipping ZMW." help="i.e 0.34" />
+	</section>
+	<section name="output_options" title="Output Files Options" expanded="False">
+            <param argument="--reportFile" type="boolean" truevalue="True" falsevalue="False" checked="False" label="write the results report."/>
+        </section>
+	<conditional name="if_log">
+		<param type="select" name="log_options" label="show log option">
+		      <option value="yes">Yes</option>
+		      <option value="no" selected="true">No</option> 
+	        </param>
+		<when value="yes">
+                      <param argument="--logLevel" name="loglevel" type="select" label="Log Level">
+                        <option selected="True" value="WARN">WARN</option>
+                        <option value="TRACE">TRACE</option>
+                        <option value="DEBUG">DEBUG</option>
+                        <option value="INFO">INFO</option>
+			<option value="FATAL">FATAL</option>
+		      </param>
+	        </when>
+		<when value="no">
+		</when>
+        </conditional>
+    </inputs>
+    <outputs>
+	    <data format="bam" name="bam_output" label="${tool.name} on ${on_string} (CCS reads in BAM format)"/>
+	    <data format="txt" name="report_output" label="${tool.name} on ${on_string} (CCS reads report)"/>
+	    <data format="txt" name="log_output" label="${tool.name} on ${on_string} ( log file )" >
+		  <filter>if_log['log_options'] == 'yes' </filter>
+	    </data>
+    </outputs>
+    <tests>
+        <test><!-- test with default settings -->
+                 <param name="input_file" ftype="bam" value="test.subreads.bam"/>
+                 <output name="bam_output" ftype="bam" file="test.ccs.bam" />
+                 <output name="log_output" ftype="txt" file="log.txt" />
+                 <output name="report_output" ftype="txt" file="report.txt" />
+        </test>
+    </tests>
+    <help><![CDATA[
+@PBCCS_OVERVIEW@
+
+**Command Documentation**
+
+CCS will generate consensus sequence.
+
+
+    ]]></help>
+    <expand macro="citations"/>
+</tool>
+
