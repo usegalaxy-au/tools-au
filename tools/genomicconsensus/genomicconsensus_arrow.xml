@@ -1,0 +1,64 @@
+<tool id="genomicconsensus_arrow" name="GenomicConsensus Arrow" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>algorithm to compute genomic consensus and call variants using PacBio reads mapped to a reference.</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+
+## filenames
+
+#set reference_fn = 'reference.' + $referenceFilename.ext
+ln -s '$referenceFilename' '$reference_fn' &&
+
+#set fa_index_fn = $reference_fn + '.fai'
+ln -s '$fa_index' '$fa_index_fn' &&
+
+#set input_fn = 'input.' + $input.ext
+ln -s '$input' '$input_fn' &&
+
+#set pbi_fn = $input_fn + '.pbi'
+ln -s '$pbi' '$pbi_fn' &&
+
+## variantCaller
+
+variantCaller 
+--numWorkers \${GALAXY_SLOTS:-4}
+--referenceFilename '$reference_fn'
+--outputFilename output.fa
+'$input_fn'
+
+    ]]></command>
+    <inputs>
+        <param argument="--referenceFilename" type="data" format="fasta" help="The reference FASTA file" label="Reference genome" />
+        <param type="data" name="fa_index" format="fai" label="fai" help="The fasta index file" />
+        <param type="data" name="input" format="bam" label="bam" help="The input BAM alignment file" />
+        <!-- <param type="data" name="bam_index" format="bai" label="bai" help="The BAM index file" /> -->
+        <!-- #set bam_index_fn = $input_fn + '.bai' -->
+        <!--   ln -s '$bam_index' '$bam_index_fn' && -->
+        <param type="data" name="pbi" format="bai" label="pbi" help="The PacBio index file" />
+    </inputs>
+    <outputs>
+        <data name="consensus" format="fasta" from_work_dir="output.fa" label="${tool.name} on ${on_string} (consensus)" />
+    </outputs>
+    <tests>
+        <!-- Basic test -->
+        <test>
+            <param name="referenceFilename" value="All4mer.V2.01_Insert.fa"/>
+            <param name="fa_index" value="All4mer.V2.01_Insert.fa.fai"/>
+            <param name="input" value="out.aligned_subreads.bam"/>
+            <!-- <param name="bam_index" value="out.aligned_subreads.bam.bai"/> -->
+            <param name="pbi" value="out.aligned_subreads.bam.pbi"/>
+            <output name="consensus" ftype="fasta" file="all4merDipl_consensus.fa"/>
+        </test>
+    </tests>
+        <help><![CDATA[
+**What it does**
+
+Compute genomic consensus and call variants relative to the reference.
+
+
+        ]]></help>
+
+</tool>
