@@ -2,7 +2,7 @@
     <description>Alphafold v2.0: AI-guided 3D structure prediction of proteins</description>
     <macros>
       <token name="@TOOL_VERSION@">2.0.0</token>
-      <token name="@VERSION_SUFFIX@">1</token>
+      <token name="@VERSION_SUFFIX@">2</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_0082</edam_topic>
@@ -49,10 +49,11 @@ python /app/alphafold/run_alphafold.py
 --max_template_date=\$DATE
 --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
 --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+## use_gpu_relax introduced in AlphaFold v2.1.2
 --use_gpu_relax=True
 &&
 
-## Uncomment for "dummy run" - skip alphafold run and read output from test-data
+## Uncomment for "dummy" output - read output from test-data
 ## cp -r '$__tool_directory__/output' . &&
 
 ## Generate additional outputs ------------
@@ -61,7 +62,12 @@ python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_pldd
 ## HTML output
 mkdir -p '${ html.files_path }' &&
 cp '$__tool_directory__/alphafold.html' '${html}' &&
-cp output/alphafold/ranked_*.pdb '${html.files_path}'
+cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+
+## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
+## The working directory ends up two levels deep and the visualization html page
+## fails to load the PDB files as static assets.
+[ -d working ] && cp -r working/* .
 
     ]]></command>
     <inputs>

@@ -1,3 +1,6 @@
+# This Dockerfile was adapted for running on Azure CycleCloud by Felipe Ayora
+# (bizdata.co.nz)
+
 # Copyright 2021 DeepMind Technologies Limited
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +15,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-
-# To build:
-#     git clone https://github.com/deepmind/alphafold.git
-#     cp <Dockerfile name> alphafold/docker/<Dockerfile-name>
-#     cd ./alphafold
-#     docker build -t <repo/tag:version> -f docker/<Dockerfile name> .
-
+# Look for latest version that matches NVIDIA drivers on the Azure GPU machines:
+#   https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=cudnn8-runtime-ubuntu18
 
 ARG CUDA=11.4.2
 FROM nvidia/cuda:${CUDA}-cudnn8-runtime-ubuntu18.04
-# FROM directive resets ARGS, so we specify again (the value is retained if
-# previously set).
-ARG CUDA
+
+# FROM directive resets ARGS, so we specify again
 
 # Must match CUDA ARG earlier, with just major.minor values (e.g., "11.4")
 # To find latest version that matches the runtime version:
@@ -74,6 +71,7 @@ RUN conda update -qy conda \
       python=3.7
 
 COPY . /app/alphafold
+
 RUN wget -q -P /app/alphafold/alphafold/common/ \
   https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
 
@@ -100,3 +98,13 @@ RUN echo $'#!/bin/bash\n\
 ldconfig\n\
 python /app/alphafold/run_alphafold.py "$@"' > /app/run_alphafold.sh \
   && chmod +x /app/run_alphafold.sh
+
+# Removed entry point to facilitate running via Galaxy bash scripts
+#ENTRYPOINT ["/app/run_alphafold.sh"]
+
+# To build:
+# 1. Run:
+#       git clone https://github.com/deepmind/alphafold.git
+#       cd ./alphafold
+# 2. Run:
+#       sudo docker build -t <repo/tag:version> -f docker/<Dockerfile name> .
