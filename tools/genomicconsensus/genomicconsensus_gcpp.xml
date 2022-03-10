@@ -69,10 +69,17 @@ gcpp
             <param name="bai" value="pbmm2.bam.bai"/>
             <param name="output_selector" value="fa,gff,vcf"/>
             <output name="fa" ftype="fasta" file="test2_out.fa"/>
-            <output name="gff" ftype="gff" file="test2_out.gff"/>
-            <output name="vcf" ftype="vcf" file="test2_out.vcf"/>
+            <output name="gff" ftype="gff">
+                <assert_contents>
+                    <has_text text="gff-version 3" />
+                </assert_contents>
+            </output>
+            <output name="vcf" ftype="vcf">
+                <assert_contents>
+                    <has_text text="fileformat=VCFv4.2" />
+                </assert_contents>
+            </output>
         </test>
-
     </tests>
         <help><![CDATA[
 **What it does**

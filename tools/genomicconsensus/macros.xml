@@ -4,9 +4,8 @@
     <token name="@PROFILE@">21.09</token>
     <token name="@DIGEST@"></token>
     <xml name="requirements">
-        <!-- genomicconsensus is deprecated. replaced by pacbio by a tool called pbgcpp -->
         <requirements>
-            <container type="singularity">https://depot.galaxyproject.org/singularity/pbgcpp:2.0.2--h9ee0642_1</container>
+            <requirement type="package" version="@TOOL_VERSION@">pbgcpp</requirement>
         </requirements>
     </xml>
     <xml name="citations">
