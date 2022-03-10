@@ -1,4 +1,5 @@
 <tool id="hapcut2" name="Hapcut2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@+ga@GA_VERSION_SUFFIX@">
+  <description> - haplotype assembly for diploid organisms </description>
   <xrefs>
     <xref type="bio.tools">hapcut2</xref>
   </xrefs>
@@ -25,8 +26,10 @@ ln -s '$input_vcf' input.vcf &&
 extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
 #if $optimization == 'pacbio':
   --pacbio 1
+  --ref $reference_fasta
 #elif $optimization == 'ont':
   --ont 1
+  --ref $reference_fasta
 #elif $optimization == 'hic':
   --HiC 1
 #end if
@@ -40,21 +43,41 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
 
   ]]></command>
 
+  <!-- TODO
+  ont and pacbio optimization require reference fasta as input
+  - need to create a conditional
+ -->
+
   <inputs>
     <param name="input_bam" type="data" format="bam" label="Input BAM file"/>
     <param name="input_vcf" type="data" format="vcf" label="Input VCF file"/>
     <param name="output_fragments" type="boolean" label="Output phased VCF file?" help="Output variant calls on the haplotype assembly"/>
     <param name="output_phased" type="boolean" label="Output fragments file?" help="Output fragments collected by extractHAIRS"/>
 
-    <!-- Optimizations: pacbio, ont, Hi-C  -->
-    <param name="optimization" type="select" display="radio" label="Optimization">
-      <option value="default" selected="true"> Default </option>
-      <option value="pacbio"> Pacbio </option>
-      <option value="ont"> Oxford Nanopore </option>
-      <option value="hic"> Hi-C </option>
-    </param>
 
-    <!-- indels method for realignment -->
+    <conditional name="long_reads">
+      <!-- Optimizations: pacbio, ont, Hi-C  -->
+      <param name="optimization" type="select" display="radio" label="Optimization">
+        <option value="default" selected="true"> Default </option>
+        <option value="pacbio"> Pacbio </option>
+        <option value="ont"> Oxford Nanopore </option>
+        <option value="hic"> Hi-C </option>
+      </param>
+
+      <when value="pacbio">
+        <param name="reference_fasta" type="data" format="fasta" label="Reference genome fasta file"
+          help="Pacbio optimization requires the reference assembly that reads were mapped against"
+        />
+      </when>
+
+      <when value="ont">
+        <param name="reference_fasta" type="data" format="fasta" label="Reference genome fasta file"
+          help="Pacbio optimization requires the reference assembly that reads were mapped against"
+        />
+      </when>
+    </conditional>
+
+    <!-- indels method for realignment? -->
   </inputs>
 
   <outputs>
