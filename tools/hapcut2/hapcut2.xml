@@ -37,7 +37,6 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
 #if $optimization == 'hic':
   --HiC 1
 #end if
-&&
 
   ]]></command>
 
