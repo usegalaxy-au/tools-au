@@ -3,13 +3,13 @@ This is working
 ```bash
 
 singularity exec \
-	-B /media,${PWD},${TMPDIR},/tmp --nv -H $(mktemp -d) --pwd ${PWD} --containall --cleanenv --writable-tmpfs \
-		docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
-	variantCaller \
-		--numWorkers 32 \
-		--referenceFilename test-data/All4mer.V2.01_Insert.fa \
-		--outputFilename test-data/output.fa \
-		test-data/out.aligned_subreads.bam
+    -B /media,${PWD},${TMPDIR},/tmp --nv -H $(mktemp -d) --pwd ${PWD} --containall --cleanenv --writable-tmpfs \
+        docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
+    variantCaller \
+        --numWorkers 32 \
+        --referenceFilename test-data/All4mer.V2.01_Insert.fa \
+        --outputFilename test-data/output.fa \
+        test-data/out.aligned_subreads.bam
 ```
 
 But I'm getting a strange error when I run planemo.
@@ -25,25 +25,25 @@ This is how Singularity gets run:
 ```bash
 cd working; \
 SINGULARITYENV_GALAXY_SLOTS=$GALAXY_SLOTS SINGULARITYENV_GALAXY_MEMORY_MB=$GALAXY_MEMORY_MB SINGULARITYENV_GALAXY_MEMORY_MB_PER_SLOT=$GALAXY_MEMORY_MB_PER_SLOT SINGULARITYENV_HOME=$HOME SINGULARITYENV__GALAXY_JOB_HOME_DIR=$_GALAXY_JOB_HOME_DIR SINGULARITYENV__GALAXY_JOB_TMP_DIR=$_GALAXY_JOB_TMP_DIR SINGULARITYENV_TMPDIR=$TMPDIR SINGULARITYENV_TMP=$TMP SINGULARITYENV_TEMP=$TEMP \
-		singularity -s exec \
-			-B /home/tom/.planemo/galaxy:/home/tom/.planemo/galaxy \
-			-B /home/tom/.planemo/planemo_tmp_07y8xlaa:/home/tom/.planemo/planemo_tmp_07y8xlaa \
-			-B /tmp/tmpqd7x7e8m/job_working_directory/000/5:/tmp/tmpqd7x7e8m/job_working_directory/000/5 \
-			-B /tmp/tmpqd7x7e8m/job_working_directory/000/5/outputs:/tmp/tmpqd7x7e8m/job_working_directory/000/5/outputs \
-			-B "$_GALAXY_JOB_TMP_DIR:$_GALAXY_JOB_TMP_DIR" \
-			-B "$_GALAXY_JOB_HOME_DIR:$_GALAXY_JOB_HOME_DIR" \
-			-B /tmp/tmpqd7x7e8m/job_working_directory/000/5/working:/tmp/tmpqd7x7e8m/job_working_directory/000/5/working \
-			-B /tmp/tmpqd7x7e8m/files:/tmp/tmpqd7x7e8m/files \
-			-B /home/tom/.planemo/planemo_tmp_07y8xlaa/test-data:/home/tom/.planemo/planemo_tmp_07y8xlaa/test-data \
-			-B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
-			-B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
-			--home $HOME:$HOME \
-			docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
-			/bin/sh \
-			/tmp/tmpqd7x7e8m/job_working_directory/000/5/tool_script.sh \
-			> ../outputs/tool_stdout \
-			2> ../outputs/tool_stderr; \
-			return_code=$?; 
+        singularity -s exec \
+            -B /home/tom/.planemo/galaxy:/home/tom/.planemo/galaxy \
+            -B /home/tom/.planemo/planemo_tmp_07y8xlaa:/home/tom/.planemo/planemo_tmp_07y8xlaa \
+            -B /tmp/tmpqd7x7e8m/job_working_directory/000/5:/tmp/tmpqd7x7e8m/job_working_directory/000/5 \
+            -B /tmp/tmpqd7x7e8m/job_working_directory/000/5/outputs:/tmp/tmpqd7x7e8m/job_working_directory/000/5/outputs \
+            -B "$_GALAXY_JOB_TMP_DIR:$_GALAXY_JOB_TMP_DIR" \
+            -B "$_GALAXY_JOB_HOME_DIR:$_GALAXY_JOB_HOME_DIR" \
+            -B /tmp/tmpqd7x7e8m/job_working_directory/000/5/working:/tmp/tmpqd7x7e8m/job_working_directory/000/5/working \
+            -B /tmp/tmpqd7x7e8m/files:/tmp/tmpqd7x7e8m/files \
+            -B /home/tom/.planemo/planemo_tmp_07y8xlaa/test-data:/home/tom/.planemo/planemo_tmp_07y8xlaa/test-data \
+            -B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
+            -B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
+            --home $HOME:$HOME \
+            docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
+            /bin/sh \
+            /tmp/tmpqd7x7e8m/job_working_directory/000/5/tool_script.sh \
+            > ../outputs/tool_stdout \
+            2> ../outputs/tool_stderr; \
+            return_code=$?; 
 
 
 ```
@@ -52,20 +52,20 @@ SINGULARITYENV_GALAXY_SLOTS=$GALAXY_SLOTS SINGULARITYENV_GALAXY_MEMORY_MB=$GALAX
 ```bash
 cd working; \
 SINGULARITYENV_GALAXY_SLOTS=$GALAXY_SLOTS SINGULARITYENV_GALAXY_MEMORY_MB=$GALAXY_MEMORY_MB SINGULARITYENV_GALAXY_MEMORY_MB_PER_SLOT=$GALAXY_MEMORY_MB_PER_SLOT SINGULARITYENV_HOME=$HOME SINGULARITYENV__GALAXY_JOB_HOME_DIR=$_GALAXY_JOB_HOME_DIR SINGULARITYENV__GALAXY_JOB_TMP_DIR=$_GALAXY_JOB_TMP_DIR SINGULARITYENV_TMPDIR=$TMPDIR SINGULARITYENV_TMP=$TMP SINGULARITYENV_TEMP=$TEMP \
-		singularity -s exec \
-			-B /home/tom/.planemo/galaxy:/home/tom/.planemo/galaxy \
-			-B /tmp \
-			-B /tmp/tmpqd7x7e8m/job_working_directory/000/5:/tmp/tmpqd7x7e8m/job_working_directory/000/5 \
-			-B /tmp/tmpqd7x7e8m/files:/tmp/tmpqd7x7e8m/files \
-			-B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
-			-B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
-			--home $HOME:$HOME \
-			docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
-			/bin/sh \
-			/tmp/tmpqd7x7e8m/job_working_directory/000/5/tool_script.sh \
-			> ../outputs/tool_stdout \
-			2> ../outputs/tool_stderr; \
-			return_code=$?; 
+        singularity -s exec \
+            -B /home/tom/.planemo/galaxy:/home/tom/.planemo/galaxy \
+            -B /tmp \
+            -B /tmp/tmpqd7x7e8m/job_working_directory/000/5:/tmp/tmpqd7x7e8m/job_working_directory/000/5 \
+            -B /tmp/tmpqd7x7e8m/files:/tmp/tmpqd7x7e8m/files \
+            -B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
+            -B /home/tom/.planemo/galaxy/tool-data:/home/tom/.planemo/galaxy/tool-data \
+            --home $HOME:$HOME \
+            docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
+            /bin/sh \
+            /tmp/tmpqd7x7e8m/job_working_directory/000/5/tool_script.sh \
+            > ../outputs/tool_stdout \
+            2> ../outputs/tool_stderr; \
+            return_code=$?; 
 
 ```
 
@@ -144,8 +144,8 @@ ValueError: A BGZF (e.g. a BAM file) block should start with '\x1f\x8b\x08\x04',
 
 ```bash
 singularity exec    \
-	-B ${PWD},/tmp --nv -H $(mktemp -d) --pwd ${PWD} --containall --cleanenv --writable-tmpfs           \
-	docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
+    -B ${PWD},/tmp --nv -H $(mktemp -d) --pwd ${PWD} --containall --cleanenv --writable-tmpfs           \
+    docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
    variantCaller                \
    --numWorkers 32                 \
    --referenceFilename test-data/All4mer.V2.01_Insert.fa          \
@@ -154,3 +154,30 @@ singularity exec    \
 
 
 ```
+
+## Switch to pbgcpp
+
+```bash
+# align the reads
+singularity exec \
+    docker://quay.io/biocontainers/pbmm2:1.8.0--hdfd78af_0 \
+    pbmm2 align -j 1 \
+    bnd.bam \
+    bnd-ref.fasta \
+    CRAMTMP/pbmm2.bam \
+    --sort -j 1 -J 1 --short-sa-cigar
+
+# try out with pbgcpp
+singularity exec    \
+    -B ${PWD},/tmp --nv -H $(mktemp -d) --pwd ${PWD} --containall --cleanenv --writable-tmpfs           \
+    pbgcpp_2.0.2.sif \
+        gcpp \
+            --num-threads 32 \
+            --reference singularity-test-data/bnd-ref.fasta \
+            --output output.fa \
+            singularity-test-data/pbmm2.bam
+
+
+
+
+
