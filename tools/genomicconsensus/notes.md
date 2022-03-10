@@ -142,3 +142,15 @@ Traceback (most recent call last):
 ValueError: A BGZF (e.g. a BAM file) block should start with '\x1f\x8b\x08\x04', not 'PBI\x01'; handle.tell() now says 4
 ```
 
+```bash
+singularity exec    \
+	-B ${PWD},/tmp --nv -H $(mktemp -d) --pwd ${PWD} --containall --cleanenv --writable-tmpfs           \
+	docker://quay.io/biocontainers/genomicconsensus@sha256:de72299d4fb4f2bd25abdb0309527c0ad5b39e3e6b1216f76456324a642962ab \
+   variantCaller                \
+   --numWorkers 32                 \
+   --referenceFilename test-data/All4mer.V2.01_Insert.fa          \
+   --outputFilename output.fa              \
+   test-data/out.aligned_subreads.bam
+
+
+```

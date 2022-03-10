@@ -42,7 +42,7 @@ gcpp
     <tests>
         <!-- Basic test -->
         <test>
-            <param name="referenceFilename" value="All4mer.V2.01_Insert.fa"/>
+            <param name="reference" value="All4mer.V2.01_Insert.fa"/>
             <param name="fa_index" value="All4mer.V2.01_Insert.fa.fai"/>
             <param name="input" value="out.aligned_subreads.bam"/>
             <param name="pbi" value="out.aligned_subreads.bam.pbi"/>
