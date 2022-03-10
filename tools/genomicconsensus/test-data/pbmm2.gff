@@ -1,0 +1,15 @@
+##gff-version 3
+##pacbio-variant-version 2.1
+##date Thu Mar 10 03:02:01 2022 UTC
+##feature-ontology http://song.cvs.sourceforge.net/*checkout*/song/ontology/sofa.obo?revision=1.12
+##source GCpp 2.0.2
+##source-commandline gcpp --num-threads 32 --reference reference.fasta --output output.fa,output.gff,output.vcf input.bam
+##source-alignment-file /tmp/tmpko7ksc69/files/0/4/f/dataset_04f1bc9b-cc5e-46a0-9f6b-7ac480777ed5.dat
+##source-reference-file /tmp/tmpko7ksc69/files/4/8/4/dataset_484880e0-23bc-4c6b-bfd7-531bfef78b8e.dat
+##sequence-region bnd_ref_U 1 1800
+##sequence-region bnd_ref_V 1 1800
+##sequence-region bnd_ref_W 1 1800
+##sequence-region bnd_ref_X 1 1800
+##sequence-region bnd_ref_Y 1 1800
+##sequence-region bnd_ref_Z 1 1800
+##sequence-region indel_ref 1 1260
