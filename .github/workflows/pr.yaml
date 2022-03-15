@@ -72,30 +72,6 @@ jobs:
       uses: galaxyproject/planemo-ci-action@v1
       id: discover
       with:
-<<<<<<<
-        name: Workflow artifacts
-<<<<<<<
-<<<<<<<
-<<<<<<< HEAD
-        path: |
-          changed_repositories.list
-          changed_tools.list
-=======
-        path: changed_repositories.list
-    - name: Get number of changed tools and compute number of chunks
-=======
-        path: changed_repositories.list
-    - name: Planemo ci_find_tools for the changed repos
-=======
-        path: repository_list.txt
-    - name: Planemo ci_find_tools for the repository list
->>>>>>>
-      run: |
-        touch tool_list.txt
-        if [ -s repository_list.txt ]; then
-            planemo ci_find_tools --output tool_list.txt $(cat repository_list.txt)
-        fi
-=======
         create-cache: ${{ steps.cache-pip.outputs.cache-hit != 'true' || steps.cache-planemo.outputs.cache-hit != 'true' }}
         galaxy-fork: ${{ env.GALAXY_FORK }}
         galaxy-branch: ${{ env.GALAXY_BRANCH }}
@@ -104,42 +80,9 @@ jobs:
     - name: Show commit range
       run: echo '${{ steps.discover.outputs.commit-range }}'
     - name: Show repository list
-<<<<<<<
-<<<<<<<
-      run: echo "${{ steps.discover.outputs.repositories }}"
->>>>>>>
-=======
-      run: echo "${{ steps.discover.outputs.repository-list }}"
->>>>>>>
-=======
       run: echo '${{ steps.discover.outputs.repository-list }}'
->>>>>>>
     - name: Show tool list
-<<<<<<<
-=======
       run: echo '${{ steps.discover.outputs.tool-list }}'
-    - name: Show chunks
-      run: |
-        echo 'Using ${{ steps.discover.outputs.chunk-count }} chunks (${{ steps.discover.outputs.chunk-list }})'
->>>>>>>
-<<<<<<<
-<<<<<<<
-      run: cat tool_list.txt
-    - name: Compute chunks
->>>>>>>
-      id: get-chunks
-      run: |
-<<<<<<<
-=======
-        nchunks=$(wc -l < tool_list.txt)
-        if [ "$nchunks" -gt "$MAX_CHUNKS" ]; then
-            nchunks=$MAX_CHUNKS
-        elif [ "$nchunks" -eq 0 ]; then
-=======
-      run: echo "${{ steps.discover.outputs.tools }}"
-=======
-      run: echo "${{ steps.discover.outputs.tool-list }}"
->>>>>>>
     - name: Show chunks
       run: |
         echo 'Using ${{ steps.discover.outputs.chunk-count }} chunks (${{ steps.discover.outputs.chunk-list }})'
@@ -149,71 +92,6 @@ jobs:
     name: Lint tool-list
     needs: setup
     if: ${{ needs.setup.outputs.repository-list != '' || needs.setup.outputs.tool-list != '' }}
-    runs-on: ubuntu-latest
-    strategy:
-      fail-fast: false
->>>>>>>
->>>>>>>
-        planemo ci_find_tools --output changed_tools.list $(cat changed_repositories.list)
-        ntools=$(wc -l changed_tools.list)
-        log=$(printf "%.0f" $(echo "l($ntools+1)/l(2)" | bc -l))
-        nchunks=$(echo "4 * $log" | bc)
-        if [[ $nchunks -gt 39 ]]; then
-            nchunks="39"
-        fi
-        chunk_list=$(echo "["$(seq -s ", " 0 $nchunks)"]")
-<<<<<<<
-        echo "::set-output name=chunks::$chunk_list"
->>>>>>> make chunks dynamic in PR workflow
-=======
-      with:
-        name: Workflow artifacts
-        path: changed_repositories.list
-    - name: Get number of changed tools and compute number of chunks
-      id: get-chunks
-      run: |
-        planemo ci_find_tools --output changed_tools.list $(cat changed_repositories.list)
-        nchunks=$(wc -l < changed_tools.list)
-        if [ "$nchunks" -gt "$MAX_CHUNKS" ]; then
-            nchunks=$MAX_CHUNKS
-        elif [ "$nchunks" -eq 0 ]; then
-            nchunks=1
-        fi
-<<<<<<<
-<<<<<<<
-        chunk_list='['$(seq -s ", " 0 $(($nchunks - 1)))']'
-        echo "::set-output name=chunks::$chunk_list"
->>>>>>>
-=======
-        echo "::set-output name=nchunks::$nchunks"
-        echo "::set-output name=chunk_list::'['$(seq -s ", " 0 $(($nchunks - 1)))']'"
->>>>>>>
-=======
-        echo "::set-output name=nchunks::$nchunks"
-<<<<<<<
-        echo "::set-output name=chunk_list::'['$(seq -s ", " 0 $(($nchunks - 1)))']'"
->>>>>>>
-=======
-        echo "::set-output name=chunk_list::[$(seq -s ", " 0 $(($nchunks - 1)))]"
-    - name: Show chunks
-      run: |
-        echo 'Using ${{ steps.get-chunks.outputs.nchunks }} chunks (${{ steps.get-chunks.outputs.chunk_list }})'
-<<<<<<<
->>>>>>>
-=======
-            nchunks=$MAX_CHUNKS
-        fi
-        echo "::set-output name=nchunks::$nchunks"
-        echo "::set-output name=chunk_list::[$(seq -s ", " 0 $(($nchunks - 1)))]"
-    - name: Show chunks
-      run: |
-        echo 'Using ${{ steps.get-chunks.outputs.nchunks }} chunks (${{ steps.get-chunks.outputs.chunk_list }})'
->>>>>>>
-
-  # Planemo lint the changed repositories
-  lint:
-    name: Lint tools
-    needs: setup
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -389,8 +267,6 @@ jobs:
     - uses: actions/checkout@v2
       with:
         fetch-depth: 1
-<<<<<<<
-=======
     - uses: actions/setup-python@v1
       with:
         python-version: ${{ matrix.python-version }}
@@ -416,99 +292,6 @@ jobs:
         galaxy-branch: ${{ env.GALAXY_BRANCH }}
         chunk: ${{ matrix.chunk }}
         chunk-count: ${{ needs.setup.outputs.chunk-count }}
-    - uses: actions/upload-artifact@v2
-      with:
-        name: 'Tool test output ${{ matrix.chunk }}'
->>>>>>>
-    - uses: actions/setup-python@v1
-      with:
-        python-version: ${{ matrix.python-version }}
-    - uses: actions/download-artifact@v2
-      with:
-        name: Workflow artifacts
-        path: ../workflow_artifacts/
-    - name: Cache .cache/pip
-      uses: actions/cache@v2
-      id: cache-pip
-      with:
-        path: ~/.cache/pip
-        key: pip_cache_py_${{ matrix.python-version }}_gxy_${{ needs.setup.outputs.galaxy_head_sha }}
-    - name: Cache .planemo
-      uses: actions/cache@v2
-      id: cache-planemo
-      with:
-        path: ~/.planemo
-        key: planemo_cache_py_${{ matrix.python-version }}_gxy_${{ needs.setup.outputs.galaxy_head_sha }}
-    - name: Install Planemo
-      run: pip install planemo
-<<<<<<<
-<<<<<<<
-    - name: Planemo ci_find_tools
-<<<<<<<
-      run: planemo ci_find_tools --chunk_count 4 --chunk ${{ matrix.chunk }} --changed_in_commit_range $COMMIT_RANGE --exclude packages --exclude deprecated --exclude_from .tt_skip --output changed_tools_chunk.list $(cat ../workflow_artifacts/changed_repositories.list)
-<<<<<<<
-    - name: Show tool list
-=======
-=======
-    - name: Planemo ci_find_tools for the change repos, chunked
->>>>>>>
-=======
-    - name: Planemo ci_find_tools for the repository list, chunked
->>>>>>>
-      run: |
-        touch tool_list_chunk.txt
-        if [ -s ../workflow_artifacts/repository_list.txt ]; then
-          planemo ci_find_tools --chunk_count ${{ needs.setup.outputs.nchunks }} --chunk ${{ matrix.chunk }} --group_tools --output tool_list_chunk.txt $(cat ../workflow_artifacts/repository_list.txt)
-        fi
-<<<<<<<
-    - name: Show changed tools chunk list
->>>>>>>
-      run: cat changed_tools_chunk.list
-=======
-    - name: Show tool list chunk
-      run: cat tool_list_chunk.txt
-    - name: Planemo test tools
-      run: |
-        mkdir json_output
->>>>>>>
-=======
-        touch changed_repositories_chunk.list changed_tools_chunk.list
-        if [ -s ../workflow_artifacts/changed_repositories.list ]; then
-            if [ $(wc -l < ../workflow_artifacts/changed_repositories.list) -eq 1 ]; then
-                planemo ci_find_tools --chunk_count ${{ needs.setup.outputs.nchunks }} --chunk ${{ matrix.chunk }} \
-                               --output changed_tools_chunk.list \
-                               $(cat ../workflow_artifacts/changed_repositories.list)
-            else
-                planemo ci_find_repos --chunk_count ${{ needs.setup.outputs.nchunks }} --chunk ${{ matrix.chunk }} \
-                               --output changed_repositories_chunk.list \
-                               $(cat ../workflow_artifacts/changed_repositories.list)
-            fi
->>>>>>>
-    - name: Planemo test tools
-      run: |
-        mkdir json_output
-        while read -r TOOL_GROUP; do
-            # Check if any of the lines in .tt_biocontainer_skip is a substring of $TOOL_GROUP
-            if echo $TOOL_GROUP | grep -qf .tt_biocontainer_skip; then
-                PLANEMO_OPTIONS=""
-            else
-                PLANEMO_OPTIONS="--biocontainers --no_dependency_resolution --no_conda_auto_init"
-            fi
-            json=$(mktemp -u -p json_output --suff .json)
-            PIP_QUIET=1 planemo test --database_connection postgresql://postgres:postgres@localhost:5432/galaxy $PLANEMO_OPTIONS --galaxy_source $GALAXY_REPO --galaxy_branch $GALAXY_RELEASE --galaxy_python_version ${{ matrix.python-version }} --test_output_json "$json" $TOOL_GROUP || true
-            docker system prune --all --force --volumes || true
-        done < tool_list_chunk.txt
-        if [ ! -s tool_list_chunk.txt ]; then
-            echo '{"tests":[]}' > "$(mktemp -u -p json_output --suff .json)"
-        fi
-    - name: Merge tool_test_output.json files
-      run: planemo merge_test_reports json_output/*.json tool_test_output.json
-    - name: Create tool_test_output.html
-      run: planemo test_reports tool_test_output.json --test_output tool_test_output.html
-    - name: Copy artifacts into place
-      run: |
-        mkdir upload
-        mv tool_test_output.json tool_test_output.html upload/
     - uses: actions/upload-artifact@v2
       with:
         name: 'Tool test output ${{ matrix.chunk }}'
