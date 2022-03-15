@@ -1,0 +1,90 @@
+<tool id="pbmm2" name="pbmm2:" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>map PacBio reads to a reference genome.</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+
+## file paths
+
+#set reads_fn = 'reads.' + $reads.ext
+ln -s '$reads' '$reads_fn' &&
+
+#if $reference_source.reference_source_selector == 'history':
+    ln -f -s '$reference_source.ref_file' reference.fa &&
+#else:
+    ln -f -s '$reference_source.ref_file.fields.path' reference.fa &&
+#end if
+
+pbmm2 align 
+-j \${GALAXY_SLOTS:-4}
+'$reads_fn' 
+reference.fa
+out.aligned.bam
+--sort
+    ]]></command>
+    <inputs>
+        <!-- from tools-iuc minimap2 wrapper -->
+        <conditional name="reference_source">
+            <param name="reference_source_selector" type="select" label="Will you select a reference genome from your history or use a built-in index?" help="Built-ins were indexed using default options. See `Indexes` section of help below. If you would like to perform self-mapping select `history` here, then choose your input file as reference.">
+                <option value="cached">Use a built-in genome index</option>
+                <option value="history">Use a genome from history and build index</option>
+            </param>
+            <when value="cached">
+                <param name="ref_file" type="select" label="Using reference genome" help="Select genome from the list">
+                    <options from_data_table="all_fasta">
+                        <filter type="sort_by" column="2" />
+                        <validator type="no_options" message="No reference genomes are available" />
+                    </options>
+                    <validator type="no_options" message="A built-in reference genome is not available for the build associated with the selected input file"/>
+                </param>
+            </when>
+            <when value="history">
+                <param name="ref_file" type="data" format="fasta,fastq" label="Use the following dataset as the reference sequence" help="You can upload a FASTA or FASTQ sequence to the history and use it as reference" />
+            </when>
+        </conditional>
+        <param type="data" name="reads" format="fastq,fastq.gz,fasta,fasta.gz,bam" label="reads" help="PacBio reads in BAM or [gzipped] fasta or fastq format." />
+    </inputs>
+    <outputs>
+        <data name="bam" format="bam" from_work_dir="out.aligned.bam" label="${tool.name} on ${on_string} (BAM file)" />
+    </outputs>
+    <tests>
+        <!-- test1: basic test -->
+        <test expect_num_outputs="1">
+            <param name="reference_source_selector" value="history" />
+            <param name="ref_file" ftype="fasta" value="bnd-ref.fasta"/>
+            <param name="reads" value="bnd.bam"/>
+            <output name="bam" ftype="bam" file="pbmm2_test1_out.bam"/>
+        </test>
+        <!-- test2: can we include the function from GenomicConsensus by mapping the reads with pbgcpp? -->
+        <test expect_num_outputs="1">
+            <param name="reference_source_selector" value="history" />
+            <param name="ref_file" ftype="fasta" value="All4mer.V2.01_Insert.fa"/>
+            <param name="reads" value="out.aligned_subreads.bam"/>
+            <output name="bam" ftype="bam" file="pbmm2_test2_out.bam"/>
+        </test>
+
+    </tests>
+        <help><![CDATA[
+**What it does**
+
+A minimap2 wrapper for PacBio data: native PacBio data in ⇨ native
+PacBio BAM out.
+
+--------------
+
+pbmm2 is Pacific Biosciences’ wrapper for
+`minimap2 <https://github.com/lh3/minimap2>`__\ ’s C API. It supports
+native PacBio input. Output can be used directly for polishing using
+`pbgcpp <root?tool_id=pbgcpp>`__.
+
+**Input**: PacBio reads in bam or [gzipped] fasta or fastq format.
+
+**Output**: A **sorted** PacBio BAM file, suitable for use with
+`pbgcpp <root?tool_id=pbgcpp>`__ (previously known as GenomicConsensus).
+
+        ]]></help>
+
+</tool>
