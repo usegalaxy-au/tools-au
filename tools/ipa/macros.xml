@@ -1,7 +1,7 @@
 <macros>
     <xml name="requirements">
 	   <requirements>
-        	<requirement type="package" version="1.5.0">pbipa</requirement>
+        	<requirement type="package" version="1.8.0">pbipa</requirement>
            </requirements>
    </xml>
    <xml name="stdio">
