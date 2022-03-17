@@ -1,5 +1,5 @@
 <tool id="hapcut2" name="Hapcut2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@+ga@GA_VERSION_SUFFIX@">
-  <description> - haplotype assembly for diploid organisms </description>
+  <description> - haplotype assembly for diploid organisms</description>
   <xrefs>
     <xref type="bio.tools">hapcut2</xref>
   </xrefs>
@@ -9,7 +9,7 @@
     <token name="@GA_VERSION_SUFFIX@">1</token>
   </macros>
   <requirements>
-    <requirement type="package" version="1.3.3"> hapcut2 </requirement>
+    <requirement type="package" version="1.3.3">hapcut2</requirement>
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
@@ -53,10 +53,10 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
     <conditional name="optimization">
       <!-- Optimizations: pacbio, ont, Hi-C  -->
       <param name="choice" type="select" display="radio" label="Optimization">
-        <option value="default" selected="true"> Default </option>
-        <option value="pacbio"> Pacbio </option>
-        <option value="ont"> Oxford Nanopore </option>
-        <option value="hic"> Hi-C </option>
+        <option value="default" selected="true">Default</option>
+        <option value="pacbio">Pacbio</option>
+        <option value="ont">Oxford Nanopore</option>
+        <option value="hic">Hi-C</option>
       </param>
 
       <when value="pacbio">
