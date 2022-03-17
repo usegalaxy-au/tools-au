@@ -1,0 +1,12 @@
+name: "pbccs"
+owner: "galaxy-australia"
+remote_repository_url: "https://github.com/usegalaxy-au/tools-au/tree/master/tools/pbccs"
+categories:
+  - "Genomic Analysis"
+type: unrestricted
+description: "The ccs program takes multiple reads of the same SMRTbell sequence and combines them to produce one high quality consensus sequence."
+include:
+  - pbccs.xml
+  - macros.xml
+  - test-data
+  - README.md
