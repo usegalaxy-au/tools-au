@@ -24,29 +24,24 @@ ln -s '$input_vcf' input.vcf &&
 ## =====================================================================
 ## Extract variant fragments from alignment
 extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
-#if $optimization == 'pacbio':
+#if $optimization.choice == 'pacbio':
   --pacbio 1
   --ref $reference_fasta
-#elif $optimization == 'ont':
+#elif $optimization.choice == 'ont':
   --ont 1
   --ref $reference_fasta
-#elif $optimization == 'hic':
+#elif $optimization.choice == 'hic':
   --HiC 1
 #end if
 &&
 
 ## Create haplotype.out and haplotype.out.phased.VCF
 HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
-#if $optimization == 'hic':
+#if $optimization.choice == 'hic':
   --HiC 1
 #end if
 
   ]]></command>
-
-  <!-- TODO
-  ont and pacbio optimization require reference fasta as input
-  - need to create a conditional
- -->
 
   <inputs>
     <param name="input_bam" type="data" format="bam" label="Input BAM file"/>
@@ -55,9 +50,9 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
     <param name="output_phased" type="boolean" label="Output fragments file?" help="Output fragments collected by extractHAIRS"/>
 
 
-    <conditional name="long_reads">
+    <conditional name="optimization">
       <!-- Optimizations: pacbio, ont, Hi-C  -->
-      <param name="optimization" type="select" display="radio" label="Optimization">
+      <param name="choice" type="select" display="radio" label="Optimization">
         <option value="default" selected="true"> Default </option>
         <option value="pacbio"> Pacbio </option>
         <option value="ont"> Oxford Nanopore </option>
