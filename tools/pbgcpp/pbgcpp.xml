@@ -59,7 +59,7 @@ gcpp
             <!-- Use the format's extension as the value, so we can use it directly in the output_line constructor. -->
             <option value="fa" selected="true">Computed consensus (fasta)</option>
             <option value="vcf">Variants (vcf)</option>
-            <option value="gff">I'm not sure what this is but it's GFF (gff)</option>
+            <option value="gff">Variants (gff)</option>
         </param>
     </inputs>
     <outputs>
@@ -81,14 +81,6 @@ gcpp
             <param name="input" value="pbmm2_test1_out.bam"/>
             <param name="output_selector" value="fa"/>
             <output name="fa" ftype="fasta" file="pbgcpp_test1_out.fa"/>
-        </test>
-        <!-- test2: can we include the function from GenomicConsensus by mapping the reads with pbgcpp? NO, because it's the wrong chemistry -->
-        <test expect_num_outputs="1">
-            <param name="reference_source_selector" value="history" />
-            <param name="ref_file" value="All4mer.V2.01_Insert.fa"/>
-            <param name="input" value="pbmm2_test2_out.bam"/>
-            <param name="output_selector" value="fa"/>
-            <output name="fa" ftype="fasta" file="pbgcpp_test2_out.fa"/>
         </test>
         <!-- test3: output selector -->
         <test  expect_num_outputs="3">
@@ -117,7 +109,10 @@ Compute genomic consensus and call variants relative to the reference.
 This tool requires a PacBio BAM file.
 
 You can create one by mapping PacBio reads to the reference genome with
-the `pbmm2 <root?tool_id=pbmm2>`__ tool.
+the `pbmm2 <root?tool_id=pbmm2>`__ tool. When doing this, you have to
+input CLR reads to pbmm2 in [unaligned] BAM format, not fastq or fasta. This is
+because the pbgcpp algorithm uses additional information stored in the
+unaligned BAM format that PacBio uses.
 
 **NOTE**: The pbgcpp tool used to be called GenomicConsensus.
 
