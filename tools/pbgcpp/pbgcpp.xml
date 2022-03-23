@@ -13,7 +13,7 @@
     #set ref_fn = 'reference.fa'
     ln -f -s '$reference_source.ref_file' '$ref_fn' &&
 #else:
-    #set ref_fn = '$reference_source.ref_file.fields.path'
+    #set ref_fn = $reference_source.ref_file.fields.path
 #end if
 
 #set input_fn = 'input.' + $input.ext
@@ -115,7 +115,7 @@ input CLR reads to pbmm2 in [unaligned] BAM format, not fastq or fasta. This is
 because the pbgcpp algorithm uses additional information stored in the
 unaligned BAM format that PacBio uses.
 
-**NOTE**: The pbgcpp tool used to be called GenomicConsensus.
+**NOTE**: The pbgcpp tool used to be called GenomicConsensus.  It works for PacBio Sequel data and RS data with the P6-C4 chemistry.
 
 --------------
 
@@ -130,7 +130,7 @@ See the `Pacific Biosciences GitHub
 page <https://github.com/PacificBiosciences/pbbioconda>`__ for more
 information.
 
-**Input**: Aligned subreads in PacBio BAM format (.bam).
+**Input**: Aligned subreads in PacBio BAM format (.bam). Compatible with PacBio Sequel data and RS data with the P6-C4 chemistry.
 
 **Output**: Polished contigs in .fasta format.
 
