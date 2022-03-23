@@ -1,4 +1,4 @@
-*A Galaxy Wrapper of IPA HiFI Genome Assembler*
+*A Galaxy Wrapper of IPA HiFi Genome Assembler*
 
 **Description**
 
