@@ -34,9 +34,6 @@ python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-2000}
 > alphafold.fasta &&
 
-cat alphafold.fasta
-exit 0
-
 ## env vars -------------------------------
 export TF_FORCE_UNIFIED_MEMORY=1 &&
 export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
