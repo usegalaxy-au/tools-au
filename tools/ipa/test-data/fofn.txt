@@ -1,0 +1,1 @@
+/home/mthang/galaxy/database/jobs_directory/000/521/working/input.bam

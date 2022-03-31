@@ -1,5 +1,5 @@
 <tool id="pbccs" name="CCS" version="0.1.0" python_template_version="3.5">
-    <description>Generate circular consensus sequences (ccs) from subreads</description>
+    <description>Generate accurate consensus sequences from subreads</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -83,7 +83,7 @@
 	    <param argument="--noPolish" type="boolean" truevalue="--noPolish" falsevalue="" checked="false" label="Only output the initial template derived from the POA (faster, less accurate)." />
 	    <param argument="--richQVs" type="boolean" truevalue="--richQVs" falsevalue="" checked="false" label="Emit dq, iq, and sq rich quality tracks." />
         </section>
-	<section name="output_filter_options" title="Output FIlter Options" expanded="False">
+	<section name="output_filter_options" title="Output Flter Options" expanded="False">
 	       <param argument="--minPredictedAccuracy" type="float" value="0.9" label="Mininum predicted accurary" help="i.e 0.9"/>
                <param argument="--minReadScore" type="float" value="0.75"  label="Minimum read score of input subreads" help="i.e 0.75"/>
                <param argument="--maxDropFraction" type="float" value="0.34" label="Maximum fraction of subreads dropped by polishing (not input filters) before skipping ZMW." help="i.e 0.34" />
@@ -110,22 +110,27 @@
         </conditional>
     </inputs>
     <outputs>
-	    <data format="bam" name="bam_output" label="${tool.name} on ${on_string} (CCS reads in BAM format)"/>
-	    <data format="txt" name="report_output" label="${tool.name} on ${on_string} (CCS reads report)"/>
-	    <data format="txt" name="log_output" label="${tool.name} on ${on_string} ( log file )" >
+	    <data format="bam" name="bam_output" label="${tool.name} on ${on_string}: CCS reads in BAM format"/>
+	    <data format="txt" name="report_output" label="${tool.name} on ${on_string}: CCS reads report"/>
+	    <data format="txt" name="log_output" label="${tool.name} on ${on_string}: log" >
 		  <filter>if_log['log_options'] == 'yes' </filter>
 	    </data>
     </outputs>
     <tests>
         <test><!-- test with default settings -->
-                 <param name="input_file" ftype="bam" value="test.subreads.bam"/>
-                 <output name="bam_output" ftype="bam" file="test.ccs.bam" />
+                 <param name="input_file" ftype="bam" value="input.subreads.bam"/>
+                 <output name="bam_output" ftype="bam" file="output.bam" />
                  <output name="log_output" ftype="txt" file="log.txt" />
                  <output name="report_output" ftype="txt" file="report.txt" />
         </test>
     </tests>
     <help><![CDATA[
 @PBCCS_OVERVIEW@
+
+For detailed information on psp-gen, click here_, or view the license_.
+
+.. _here: https://github.com/nlhepler/pbccs
+.. _license: https://github.com/nlhepler/pbccs/blob/master/LICENSE
 
 **Command Documentation**
 
