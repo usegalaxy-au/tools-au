@@ -157,6 +157,18 @@ needed.
        <param id="singularity_volumes">"$job_directory:ro,$tool_directory:ro,$job_directory/outputs:rw,$working_directory:rw,/data/alphafold_databases:/data:ro"</param>
    </destination>
 
+CUSTOM PARAMETERS
+~~~~~~~~~~~~~~~~~
+
+A few parameters can be customized with the use of environment variables set in the job destination:
+
+- ``ALPHAFOLD_DB``: path to the reference database root (default ``/data``)
+- ``ALPHAFOLD_AA_LENGTH_MIN``: minimum accepted sequence length (default ``30``)
+- ``ALPHAFOLD_AA_LENGTH_MAX``: maximum accepted sequence length (default ``2000``)
+
+For the last two, these could be set to ``0`` and ``50000`` respectively to remove the valiation entirely.
+
+
 Closing
 ~~~~~~~
 
