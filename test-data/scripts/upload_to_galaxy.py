@@ -12,10 +12,10 @@ def main():
     args = get_args()
     if not API_KEY:
         raise ValueError('Environment variable BIOBLEND_API_KEY must be set')
-    gi = galaxy.GalaxyInstance(url=args['url'], key=API_KEY)
-    if args['list_histories']:
+    gi = galaxy.GalaxyInstance(url=args.url, key=API_KEY)
+    if args.list_histories:
         return list_histories(gi)
-    gi.tools.upload_file(args['file'], args['history_id'])
+    gi.tools.upload_file(args.file, args.history_id)
     print('Upload complete')
 
 
@@ -45,8 +45,7 @@ def get_args():
     ))
     p.add_argument(
         '--list_histories',
-        dest='list_histories',
-        type=bool,
+        action='store_true',
         help='List available histories and their IDs',
     )
     p.add_argument(
