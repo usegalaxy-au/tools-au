@@ -17,14 +17,42 @@
 
     <command detect_errors="exit_code"><![CDATA[
 
-        jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C '$reads'
+      #if $input.input_select == 'dump'
+
+        ## ~~~ Run with self-made kmer dump ~~~
+
+        smudgeplot.py hetkmers -o 2_kmer_pairs '$input.dump'
+
+      #else
+
+        ## ~~~ Generate kmer-dump with presets ~~~
+
+        #if $input.reads[0].is_of_type("fastq.gz") or $input.reads[0].is_of_type("fasta.gz")
+          gunzip -c
+          #for $file in $input.reads
+              #if $file
+                  '$file'
+              #end if
+          #end for
+          | jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C /dev/stdin
+
+        #else
+          jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C
+          #for $file in $input.reads
+              #if $file
+                  '$file'
+              #end if
+          #end for
+        #end if
+
         && jellyfish histo 1_counts.jf > 1_kmer_k21.hist
 
         ## Calculate lower and upper kmer count cutoffs
-        ## && L=$(smudgeplot.py cutoff 1_kmer_k21.hist L)
-        ## && U=$(smudgeplot.py cutoff 1_kmer_k21.hist U)
+        && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
+        && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
+
         ## HACK
-        && L=2 && U=150
+        ## && L=2 && U=150
 
         ## Jellyfish dump
         && jellyfish dump -c -L \$L -U \$U 1_counts.jf > 2_dump.jf
@@ -32,14 +60,40 @@
         && smudgeplot.py hetkmers -o 2_kmer_pairs 2_dump.jf
         && smudgeplot.py plot 2_kmer_pairs_coverages.tsv -o my_genome
 
+      #end if
+
     ]]></command>
 
     <inputs>
+      <conditional name="input">
         <param
-          name="reads" type="data" format="fastq,fastq.gz,fasta,fasta.gz"
-          label="Sequencing reads" multiple="true"
-          help="Sequencing reads corresponding to your genome"
-        />
+          name="input_select" type="select" label="Select input type"
+          help="For more control, create your own Kmer dump using Jellyfish.
+            See Smudgeplot on GitHub for more details."
+          >
+          <option value="reads" selected="true"> Sequencing reads </option>
+          <option value="dump"> Kmer dump file </option>
+        </param>
+
+        <when value="reads">
+          <param
+            name="reads" type="data" format="fastq,fasta"
+            label="Sequencing reads" multiple="true"
+            help="Sequencing reads corresponding to your genome.
+              Don't worry about read pairing as it is not used in Kmer-counting.
+              If selecting multiple datasets, please do not mix datatypes!"
+            />
+        </when>
+
+        <when value="dump">
+          <param
+            name="dump" type="data" format="txt"
+            label="Kmer dump"
+            help="Upload your own Kmer dump file created with the Jellyfish or KMC tool.
+              This enables control over kmer-counting parameters."
+            />
+        </when>
+      </conditional>
     </inputs>
 
     <outputs>
