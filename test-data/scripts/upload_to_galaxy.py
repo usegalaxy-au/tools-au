@@ -9,12 +9,26 @@ API_KEY = os.environ.get('BIOBLEND_API_KEY')
 
 def main():
     """Make transaction."""
+    args = get_args()
     if not API_KEY:
         raise ValueError('Environment variable BIOBLEND_API_KEY must be set')
-    args = get_args()
     gi = galaxy.GalaxyInstance(url=args['url'], key=API_KEY)
+    if args['list_histories']:
+        return list_histories(gi)
     gi.tools.upload_file(args['file'], args['history_id'])
     print('Upload complete')
+
+
+def list_histories(gi):
+    """Print a list of available histories."""
+    hs = gi.histories.get_histories
+    if not hs:
+        return print("No histories are available for this Galaxy user.")
+
+    print("Available Galaxy histories:")
+    print("ID".ljust(20) + "Name")
+    for h in hs:
+        print(h['id'].ljust(20) + h['name'])
 
 
 def get_args():
@@ -29,6 +43,12 @@ def get_args():
         'https://bioblend.readthedocs.io/en/latest/api_docs/galaxy/docs.html'
         '#view-histories-and-datasets'
     ))
+    p.add_argument(
+        '--list_histories',
+        dest='list_histories',
+        type=bool,
+        help='List available histories and their IDs',
+    )
     p.add_argument(
         '--history_id',
         dest='history_id',
