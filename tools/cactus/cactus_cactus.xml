@@ -6,6 +6,25 @@
     <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
+        ## Check the FASTA headers
+        ## This is only necessary in pangenome mode
+        #if $aln_mode.aln_mode_select == 'intraspecies':
+            #for $seq in $in_seqs:
+                if
+                #if $seq.fasta.is_of_type('fasta.gz'):
+                    zgrep
+                #else
+                    grep
+                #end if
+                "^>" $seq.fasta | grep -q "[[:space:]]" ; then
+                    echo "Error parsing input FASTA." ;
+                    echo "Pangenome mode fails if there are spaces in the header." ;
+                    echo "Please remove them with the NormalizeFasta tool." ;
+                    exit 1 
+                    ; fi &&
+            #end for
+        #end if
+
         ## Set up seqfile
         
         #if $aln_mode.aln_mode_select == 'interspecies':
@@ -77,7 +96,7 @@
         <repeat name="in_seqs" title="Input genome">
             <param name="label" type="text" value="" label="Genome Label" help="NO SPACES. Must match a label in the guide tree.">
             </param>
-            <param name="fasta" type="data" format="fasta" label="Genome Sequence" help="Input genome"/>
+            <param name="fasta" type="data" format="fasta,fasta.gz" label="Genome Sequence" help="Input genome"/>
         </repeat>
         <!-- add an option for root -->
         <!-- root mr  -->
@@ -149,6 +168,43 @@
                 </assert_contents>
             </output>
         </test>
+        <!-- compressed input -->
+        <test expect_num_outputs="1">
+            <conditional name="aln_mode">
+                <param name="aln_mode_select" value="intraspecies"/>
+            </conditional>
+            <repeat name="in_seqs">
+                <param name="label" value="germ_25"/>
+                <param name="fasta" value="germ_25.fasta.gz"/>
+            </repeat>
+            <repeat name="in_seqs">
+                <param name="label" value="vulg_25"/>
+                <param name="fasta" value="vulg_25.fasta.gz"/>
+            </repeat>
+            <repeat name="in_seqs">
+                <param name="label" value="pens_25"/>
+                <param name="fasta" value="pens_25.fasta.gz"/>
+            </repeat>
+            <output name="out_hal">
+                <assert_contents>
+                    <has_size value="7204260" delta="200000" />
+                </assert_contents>
+            </output>
+        </test>
+        <!-- FASTA header -->
+        <test expect_exit_code="1" expect_failure="true">
+            <conditional name="aln_mode">
+                <param name="aln_mode_select" value="intraspecies"/>
+            </conditional>
+            <repeat name="in_seqs">
+                <param name="label" value="badheader1"/>
+                <param name="fasta" value="bh1.fasta.gz"/>
+            </repeat>
+            <repeat name="in_seqs">
+                <param name="label" value="badheader2"/>
+                <param name="fasta" value="bh2.fasta.gz"/>
+            </repeat>
+        </test>
     </tests>
         <help><![CDATA[
 **What it does**
@@ -180,11 +236,14 @@ The numbers are the branch lengths.
 You can also run Cactus in `pangenome
 mode <https://github.com/ComparativeGenomicsToolkit/cactus/blob/master/doc/pangenome.md>`__
 to align genomes of multiple individuals from the **same species**. In
-this mode you will not be able to provide a guide tree. Cactus will use
+this mode you will not use a guide tree. Cactus will use
 `minigraph <https://github.com/lh3/minigraph>`__ to generate a graph of
 the input genomes and then use the graph to order the alignments. To use
 pangenome mode, select ‘Within-species’ in the ‘Alignment mode’
 dropdown.
+
+⚠️ To use pangenome mode, you will have to remove spaces from the headers in your FASTA file.
+You can do this with the NormalizeFasta tool.
 
 **Input**
 

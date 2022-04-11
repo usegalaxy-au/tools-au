@@ -29,7 +29,10 @@
     echo '$fasta_or_text.fasta_text' > input.fasta &&
 #end if
 
-python3 '$__tool_directory__/validate_fasta.py' input.fasta &&
+python3 '$__tool_directory__/validate_fasta.py' input.fasta
+--min_length \${ALPHAFOLD_AA_LENGTH_MIN:-30}
+--max_length \${ALPHAFOLD_AA_LENGTH_MAX:-2000}
+> alphafold.fasta &&
 
 ## env vars -------------------------------
 export TF_FORCE_UNIFIED_MEMORY=1 &&
@@ -49,7 +52,7 @@ python /app/alphafold/run_alphafold.py
 --max_template_date=\$DATE
 --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
 --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
-## use_gpu_relax introduced in AlphaFold v2.1.2
+## Param introduced in AlphaFold v2.1.2:
 --use_gpu_relax=True
 &&
 

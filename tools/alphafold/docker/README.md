@@ -3,9 +3,10 @@
 Alphafold docker is built from a modified version of the official Dockerfile
 
 - `ENTRYPOINT` removed
+- Cuda & Jax/Jaxlib dependancies updated
 
 
-Run like:
+Build:
 
 ```sh
 cd alphafold
