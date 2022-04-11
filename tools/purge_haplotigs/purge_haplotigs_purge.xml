@@ -131,12 +131,32 @@
 			      <param name="aligned_bam" value="aligned.bam"/>
 		      </conditional>
 	      </conditional>
-	      <output_collection name="output_pngs" type="list">
-		    <element name="000002F" file="dotplots_reassigned_contigs/000002F.png"/>
-		    <element name="000000F_001" file="dotplots_reassigned_contigs/000000F_001.png"/>
-		    <element name="000000F_002" file="dotplots_reassigned_contigs/000000F_002.png"/>
-		    <element name="000000F_003" file="dotplots_reassigned_contigs/000000F_003.png"/>
-		    <element name="000000F_004" file="dotplots_reassigned_contigs/000000F_004.png"/>
+	      <output_collection name="output_pngs" type="list" count="5">
+		    <element name="000002F" file="dotplots_reassigned_contigs/000002F.png" ftype="png">
+			  <assert_content>
+				<has_size value="59559" delta="100"/>
+			  </assert_content>
+	            </element>
+		    <element name="000000F_001" file="dotplots_reassigned_contigs/000000F_001.png" ftype="png">
+			  <assert_contents>
+				<has_size value="31923" delta="100"/>
+			  </assert_contents>
+		    </element>
+		    <element name="000000F_002" file="dotplots_reassigned_contigs/000000F_002.png" ftype="png">
+                           <assert_contents>
+                                 <has_size value="42614" delta="100"/>
+                           </assert_contents>
+		    </element>
+		    <element name="000000F_003" file="dotplots_reassigned_contigs/000000F_003.png" ftype="png">
+                            <assert_contents>
+                                  <has_size value="47498" delta="100"/>
+                            </assert_contents>
+                    </element>
+		    <element name="000000F_004" file="dotplots_reassigned_contigs/000000F_004.png" ftype="png">
+                            <assert_contents>
+                                  <has_size value="32534" delta="100"/>
+                            </assert_contents>
+                    </element>
 	      </output_collection>
         </test>
     </tests>

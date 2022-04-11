@@ -39,7 +39,11 @@
 	      <!-- #1 test with common parameters -->
 	      <param name="input_bam" value="aligned.bam" ftype="bam"/>
 	      <param name="genome" value="contigs.fa" ftype="fasta"/>
-	      <output name="output_histogram" file="aligned.bam.histogram.png" ftype="png"/>
+	      <output name="output_histogram" file="aligned.bam.histogram.png" ftype="png">
+                       <assert_content>
+                           <has_size value="135878" delta="100"/>
+                       </assert_content>
+              </output>
 	      <output name="output_coverage">
 		      <assert_contents>
 			   <has_n_lines n="2613"/>
