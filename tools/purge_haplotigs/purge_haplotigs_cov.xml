@@ -29,7 +29,7 @@
 	    <param name="genomecov" type="data" format="tabular" label="Coverage file" help="Coverage file"/>
 	    <param name="low_cutoff" type="integer" value="10" label="read depth low cutoff" help="obtain from the histogram"/>
 	    <param name="mid_cutoff" type="integer" value="20" label="read depth high cutoff" help="Coverage file"/>
-	    <param name="high_cutoff" type="integer" value="30" label="mid cutoff" help="The low point between the haploid and diploid peaks"/>
+	    <param name="high_cutoff" type="integer" value="30" label="read depth mid cutoff" help="The low point between the haploid and diploid peaks"/>
 	    <section name="options" title="Options" expanded="False">
 		    <param argument="-j" type="integer" value="80" label="Auto-assign contig as j (junk)"/>
 	            <param argument="-s" type="integer" value="80" label="Auto-assign contig as s (suspected haplogit)"/>		    

@@ -4,7 +4,7 @@ remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tool
 categories:
   - Assembly
 type: unrestricted
-description: Pipeline to help with curating heterozygous diploid genome assemblies from third-gen long-read sequencing.
+description: Pipeline to help with curating heterozygous diploid genome assemblies from third-generation sequencing platform.
 include:
   - purge_haplotigs_cov.xml  
   - purge_haplotigs_hist.xml  
