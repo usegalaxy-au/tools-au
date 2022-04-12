@@ -32,6 +32,7 @@
 	        	-repeats '$additional.with_repeat.repeat'
 	    	#end if
 	    #end if
+            -t \${GALAXY_SLOTS:-4}
 	    -g $genome
 	    -c $coverage
 	    2>&1

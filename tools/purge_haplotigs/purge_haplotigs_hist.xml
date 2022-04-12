@@ -12,6 +12,7 @@
     <command><![CDATA[
 	    cp $input_bam input.bam &&
 	    purge_haplotigs hist
+	    -t \${GALAXY_SLOTS:-4}
 	    #if $options.depth
 	        --depth '$options.depth'
 	    #end if
