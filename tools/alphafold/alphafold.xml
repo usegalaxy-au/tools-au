@@ -195,17 +195,6 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
         To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
 
-    *Expected run times*
-
-    .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold_runtime_graph.png?raw=true
-        :height: 520
-        :alt: Run time graph
-
-    |
-    | In general, we observe a quadratic relationship between sequence length and time to fold.
-    | Once your job begins, a sequence of 50aa will take approximately 1hr to complete, while a sequence of 2000aa will take about 18hrs.
-    |
-
     **Input**
 
     *Amino acid sequence*

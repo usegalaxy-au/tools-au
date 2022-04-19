@@ -86,7 +86,7 @@ class FastaValidator:
         }
 
     def validate(self):
-        """performs fasta validation"""
+        """Perform FASTA validation."""
         self.validate_num_seqs()
         self.validate_length()
         self.validate_alphabet()
@@ -98,41 +98,41 @@ class FastaValidator:
     def validate_num_seqs(self) -> None:
         """Assert that only one sequence has been provided."""
         if len(self.fasta_list) > 1:
-            raise Exception(
-                'Error encountered validating fasta:'
+            raise ValueError(
+                'Error encountered validating FASTA:\n'
                 f' More than 1 sequence detected ({len(self.fasta_list)}).'
-                ' Please use single fasta sequence as input.')
+                ' Please use single FASTA sequence as input.')
         elif len(self.fasta_list) == 0:
-            raise Exception(
-                'Error encountered validating fasta:'
-                ' input file has no fasta sequences')
+            raise ValueError(
+                'Error encountered validating FASTA:\n'
+                ' input file has no FASTA sequences')
 
     def validate_length(self):
         """Confirm whether sequence length is valid."""
         fasta = self.fasta_list[0]
         if self.min_length:
             if len(fasta.aa_seq) < self.min_length:
-                raise Exception(
-                    'Error encountered validating fasta: Sequence too short'
+                raise ValueError(
+                    'Error encountered validating FASTA:\n Sequence too short'
                     f' ({len(fasta.aa_seq)}AA).'
                     f' Minimum length is {self.min_length}AA.')
         if self.max_length:
             if len(fasta.aa_seq) > self.max_length:
-                raise Exception(
-                    'Error encountered validating fasta:'
+                raise ValueError(
+                    'Error encountered validating FASTA:\n'
                     f' Sequence too long ({len(fasta.aa_seq)}AA).'
                     f' Maximum length is {self.max_length}AA.')
 
     def validate_alphabet(self):
-        """
-        Confirm whether the sequence conforms to IUPAC codes.
+        """Confirm whether the sequence conforms to IUPAC codes.
+
         If not, report the offending character and its position.
         """
         fasta = self.fasta_list[0]
         for i, char in enumerate(fasta.aa_seq.upper()):
             if char not in self.iupac_characters:
-                raise Exception(
-                    'Error encountered validating fasta: Invalid amino acid'
+                raise ValueError(
+                    'Error encountered validating FASTA:\n Invalid amino acid'
                     f' found at pos {i}: "{char}"')
 
     def validate_x(self):
@@ -140,8 +140,8 @@ class FastaValidator:
         fasta = self.fasta_list[0]
         for i, char in enumerate(fasta.aa_seq.upper()):
             if char == 'X':
-                raise Exception(
-                    'Error encountered validating fasta: Unsupported AA code'
+                raise ValueError(
+                    'Error encountered validating FASTA:\n Unsupported AA code'
                     f' "X" found at pos {i}')
 
 
@@ -164,20 +164,31 @@ class FastaWriter:
 
 def main():
     # load fasta file
-    args = parse_args()
-    fas = FastaLoader(args.input)
+    try:
+        args = parse_args()
+        fas = FastaLoader(args.input)
 
-    # validate
-    fv = FastaValidator(
-        fas.fastas,
-        min_length=args.min_length,
-        max_length=args.max_length,
-    )
-    fv.validate()
+        # validate
+        fv = FastaValidator(
+            fas.fastas,
+            min_length=args.min_length,
+            max_length=args.max_length,
+        )
+        fv.validate()
 
-    # write cleaned version
-    fw = FastaWriter()
-    fw.write(fas.fastas[0])
+        # write cleaned version
+        fw = FastaWriter()
+        fw.write(fas.fastas[0])
+
+    except ValueError as exc:
+        sys.stderr.write(f"{exc}\n\n")
+        raise exc
+
+    except Exception as exc:
+        sys.stderr.write(
+            "Input error: FASTA input is invalid. Please check your input.\n\n"
+        )
+        raise exc
 
 
 def parse_args() -> argparse.Namespace:
