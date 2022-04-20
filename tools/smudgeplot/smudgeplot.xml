@@ -139,7 +139,7 @@ Every haplotype structure has a unique smudge on the graph and the heat of the s
 Please see `Smudgeplot on GitHub <https://github.com/KamilSJaron/smudgeplot>`_
 for further documentation on this tool.
 
-**Input**
+**Inputs**
 
 You have two choices when running Smudgeplot in Galaxy:
 
@@ -152,6 +152,12 @@ The tool accepts compressed (.gz) inputs.
 
 This file would be created by running ``jellyfish count`` and then ``jellyfish dump`` - the process is well described
 `on GitHub <https://github.com/KamilSJaron/smudgeplot>`_.
+
+**Outputs**
+
+- ``smudgeplot.png`` smudgeplot image
+- ``smudgeplot_log10.png`` smudgeplot with log scale
+- ``my_genome_summary.tsv`` summarized genome statistics
 
 **Default operation**
 
