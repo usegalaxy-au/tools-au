@@ -22,4 +22,4 @@ The test data can be downloaded from ([bam](https://downloads.pacbcloud.com/publ
 
 1. download the m64004_210929_143746.bc2046.bam file into test-data folder
 2. create a softlink (test.bam) pointing to m64004_210929_143746.bc2046.bam
-3. run planemoe test (i.e. planemoe test --galaxy_root=/path/to/your/galaxy/folder ipa.xml)
+3. run planemoe test (i.e. planemo test --galaxy_root=/path/to/your/galaxy/folder ipa.xml)
