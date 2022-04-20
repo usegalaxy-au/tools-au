@@ -1,0 +1,29 @@
+
+<macros>
+    <token name="@TOOL_VERSION@">3.4.1</token>
+    <xml name="requirements">
+        <requirements>
+            <requirement type="package" version="@TOOL_VERSION@">pbccs</requirement>
+        </requirements>
+    </xml>
+    <xml name="version_command">
+        <version_command>@HEADLESS@ ccs --version</version_command>
+    </xml>
+    <token name="@HEADLESS@"><![CDATA[export QT_QPA_PLATFORM='offscreen' &&]]></token>
+    <token name="@PBCCS_OVERVIEW@">
+
+**Generate Highly Accurate Single-Molecule Consensus Reads (CCS) Overview**
+
+CCS combines multiple subreads of the same SMRTbell molecule using a statistical model to produce one highly accurate consensus sequence, also called a HiFi read, along with base quality values. This tool powers the Circular Consensus Sequencing workflow in SMRT Link.
+
+
+CCS works with PacBio subreads bam (subreads.bam) files. For more information about this file format, see here_
+
+.. _here: https://ccs.how/how-does-ccs-work.html
+    </token>
+    <xml name="citations">
+        <citations>
+            <citation type="doi">10.1016/j.gpb.2015.08.002</citation>
+        </citations>
+    </xml>
+</macros>

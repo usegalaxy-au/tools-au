@@ -1,62 +1,76 @@
-<tool id="alphafold" name="alphafold" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
-    <description>Alphafold v2.0: AI-guided 3D structure prediction of proteins</description>
+<tool id="alphafold" name="Alphafold 2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
+    <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
-        <token name="@TOOL_VERSION@">2.0.0</token>
-        <token name="@VERSION_SUFFIX@">0</token>
+      <token name="@TOOL_VERSION@">2.1.2</token>
+      <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
-        <edam_topic>topic_0082</edam_topic>
+      <edam_topic>topic_0082</edam_topic>
     </edam_topics>
     <edam_operations>
-        <edam_operation>operation_0474</edam_operation>
+      <edam_operation>operation_0474</edam_operation>
     </edam_operations>
+    <xrefs>
+      <xref type="bio.tools">alphafold_2.0</xref>
+    </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:latest</container>
+        <container type="docker">neoformit/alphafold:v2.1.2_0</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-        ## fasta setup ----------------------------
-        #if $fasta_or_text.input_mode == 'history':
-            cp '$fasta_or_text.fasta_file' input.fasta &&
 
-        #elif $fasta_or_text.input_mode == 'textbox':
-            echo '$fasta_or_text.fasta_text' > input.fasta &&
-        #end if
+## $ALPHAFOLD_DB variable should point to the location of the AlphaFold
+## databases - defaults to /data
 
-        python3 '$__tool_directory__/validate_fasta.py' input.fasta &&
+## fasta setup ----------------------------
+#if $fasta_or_text.input_mode == 'history':
+    cp '$fasta_or_text.fasta_file' input.fasta &&
 
-        ## env vars -------------------------------
-        export TF_FORCE_UNIFIED_MEMORY=1 &&
-        export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
-        export DATE=`date +"%Y-%m-%d"` &&
+#elif $fasta_or_text.input_mode == 'textbox':
+    echo '$fasta_or_text.fasta_text' > input.fasta &&
+#end if
 
-        ## run alphafold  -------------------------
-        ## ln -s /app/alphafold/alphafold alphafold &&
-  	    python /app/alphafold/run_alphafold.py
-  	    --fasta_paths alphafold.fasta
-        --output_dir output
-        --data_dir \${ALPHAFOLD_DB:-/data}        ## location of the alphafold databases on pulsar node --> could this maybe a env var? $ALPHAFOLD_DB --> \${ALPHAFOLD_DB:-/data}
-        --uniref90_database_path \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
-        --mgnify_database_path \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
-        --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
-        --template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
-        --obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
-        --max_template_date=\$DATE
-        --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
-        --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
-        --use_gpu_relax=True
-        &&
+python3 '$__tool_directory__/validate_fasta.py' input.fasta
+--min_length \${ALPHAFOLD_AA_LENGTH_MIN:-30}
+--max_length \${ALPHAFOLD_AA_LENGTH_MAX:-2000}
+> alphafold.fasta &&
 
-        ## for dry run testing
-        ## cp -r '$__tool_directory__/output' . &&
+## env vars -------------------------------
+export TF_FORCE_UNIFIED_MEMORY=1 &&
+export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
+export DATE=`date +"%Y-%m-%d"` &&
 
-        ## generate extra outputs -----------------
-        ## plddts
-        python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold '$output_plddts' &&
+## run alphafold  -------------------------
+python /app/alphafold/run_alphafold.py
+--fasta_paths alphafold.fasta
+--output_dir output
+--data_dir \${ALPHAFOLD_DB:-/data}
+--uniref90_database_path \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
+--mgnify_database_path \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
+--pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
+--template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
+--obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
+--max_template_date=\$DATE
+--bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+--uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
+## Param introduced in AlphaFold v2.1.2:
+--use_gpu_relax=True
+&&
 
-        ## html
-        mkdir -p '${ html.files_path }' &&
-        cp '$__tool_directory__/alphafold.html' '${html}' &&
-        cp output/alphafold/ranked_*.pdb '${html.files_path}'
+## Uncomment for "dummy" output - read output from test-data
+## cp -r '$__tool_directory__/output' . &&
+
+## Generate additional outputs ------------
+python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts &&
+
+## HTML output
+mkdir -p '${ html.files_path }' &&
+cp '$__tool_directory__/alphafold.html' '${html}' &&
+cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+
+## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
+## The working directory ends up two levels deep and the visualization html page
+## fails to load the PDB files as static assets.
+[ -d working ] && cp -r working/* .
 
     ]]></command>
     <inputs>
@@ -180,17 +194,6 @@
     - Protein-protein interactions
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
         To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
-
-    *Expected run times*
-
-    .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold_runtime_graph.png?raw=true
-        :height: 520
-        :alt: Run time graph
-
-    |
-    | In general, we observe a quadratic relationship between sequence length and time to fold.
-    | Once your job begins, a sequence of 50aa will take approximately 1hr to complete, while a sequence of 2000aa will take about 18hrs.
-    |
 
     **Input**
 

@@ -1,0 +1,208 @@
+<tool id="purge_haplotigs_purge" name="Purge Haplotigs Purge" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>Purge contigs</description>
+    <xrefs>
+        <xref type='bio.tools'>purgehaplotigs</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    purge_haplotigs purge
+	    #if $adv_options.align_cov:
+        	-align_cov '$adv_options.align_cov'
+	    #end if
+	    #if $adv_options.max_match:
+	        -max_match '$adv_options.max_match'
+	    #end if
+	    #if $adv_options.wind_min:
+	        -wind_min '$adv_options.wind_min'
+	    #end if
+	    #if $adv_options.wind_nmax:
+	        -wind_nmax '$adv_options.wind_nmax'
+	    #end if
+	    #if $additional.optional_selector == "use_additional_options":
+	    	#if $additional.create_dotplot.include_dotplot =="Yes":
+	        	-dotplots
+	            	-bam '$additional.create_dotplot.aligned_bam'
+	    	#end if
+	    	#if $additional.with_repeat.has_repeat =="Yes":
+	        	-repeats '$additional.with_repeat.repeat'
+	    	#end if
+	    #end if
+            -t \${GALAXY_SLOTS:-4}
+	    -g $genome
+	    -c $coverage
+	    2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="genome" type="data" format="fasta" label="Genome Assembly" help="Fasta file indexed with samtools faidx"/>
+	    <param name="coverage" type="data" format="csv" label="Contig Coverage" help="Contig Coverage file"/>
+	    <section name="adv_options" title="Advance Parameters" expanded="False">
+		    <param argument="-align_cov" type="integer" value="70" label="Cutoff value to identify haplotigs" help="A cutoff value to identify a contig as a haplotigs in percentage: default=70 (-align_cov)"/>
+		    <param argument="-max_match" type="integer" value="250" label="Cutoff value to identify repetitive regions" help="A cutoff value to identify repetitive regions: default=250 (-repeats)"/>
+                    <param argument="-wind_min" type="integer" value="5000" label="Minimum window size" help="Minimum window size for BED coverage (dotplots): default=5000 (-wind_min)"/>
+                    <param argument="-wind_nmax" type="integer" value="200" label="Max windows per contig" help="Max windows per contig for BED coverage plots (dotplots) : default=200 (-wind_nmax)"/>
+	    </section>
+	    <conditional name="additional">
+		  <param name="optional_selector" type="select" label="Additional Parameters">
+			  <option value="no">No</option>
+			  <option value="use_additional_options">Yes</option>
+		  </param>
+		  <when value="no"/>
+		  <when value="use_additional_options">
+		    <conditional name="with_repeat">
+                          <param type="select" name="has_repeat" label="Repetitive region file">
+			        <option value="No">no repetitive region file</option>
+			        <option value="Yes">with repetitive region file</option>
+			  </param>
+			  <when value="No"/>
+			  <when value="Yes">
+			       <param name="repeat" argument="-repeats" type="data" format="bed" label="Repetitive region (BED)" help="repetitive regions in BED file format (-repeats)"/>
+			  </when>
+		    </conditional>
+		    <conditional name="create_dotplot">
+			    <param type="select" name="include_dotplot" label="Generate dotplot" help="repetitive regions in BED file format (-repeats)">
+				  <option value="No">No</option>
+				  <option value="Yes">Yes</option>
+			    </param>
+			    <when value="No"/>
+			    <when value="Yes">
+				<param name="aligned_bam" argument="-bam" type="data" format="bam" label="BAM file" help="Alignment file (BAM) to reference genome, required for generating dotplots (-bam)"/>
+			    </when>
+		    </conditional>
+		 </when>
+	    </conditional>
+    </inputs>
+    <outputs>
+	    <data name="curated_haplotigs" format="fasta" label="${tool.name} on ${on_string}: curated haplotigs" from_work_dir="curated.haplotigs.fasta"/>
+	    <data name="curated_sequences" format="fasta" label="${tool.name} on ${on_string}: curated sequences" from_work_dir="curated.fasta"/>
+	    <data name="curated_artefacts" format="fasta" label="${tool.name} on ${on_string}: curated artefacts" from_work_dir="curated.artefacts.fasta"/>
+	    <data name="curated_reassignment" format="tsv" label="${tool.name} on ${on_string}: curated assignment" from_work_dir="curated.reassignments.tsv"/>
+	    <data name="curated_log" format="txt" label="${tool.name} on ${on_string}: curated log" from_work_dir="curated.contig_associations.log"/>
+	    <collection name="output_pngs" type="list" label="${tool.name} on ${on_string}: dotplot diagram">
+	 	  <filter> additional['optional_selector'] == "use_additional_options" and create_dotplot['include_dotplot'] == "Yes"</filter>
+               <discover_datasets pattern="__name_and_ext__" ext="png" directory="dotplots_reassigned_contigs" visible="false"/>
+           </collection>
+    </outputs>
+
+    <tests>
+	<test>
+              <!-- #1 test with common parameters -->
+              <param name="genome" value="contigs.fa" ftype="fasta"/>
+              <param name="coverage" value="coverage_stats.csv" ftype="csv"/>
+              <param name="align_cov" value="70" />
+	      <param name="max_match" value="250" />
+	      <param name="wind_min" value="5000" />
+	      <param name="wind_nmax" value="200" />
+	      <output name="curated_haplotigs" file="curated.haplotigs.fasta" ftype="fasta"/>
+	      <output name="curated_sequences" file="curated.fasta" ftype="fasta"/>
+              <output name="curated_artefacts" file="curated.artefacts.fasta" ftype="fasta"/>
+	      <output name="curated_reassignment" file="curated.reassignments.tsv" ftype="tsv"/>
+	      <output name="curated_log" file="curated.contig_associations.log" ftype="txt"/>
+	      <conditional name="additional">
+		      <param name="optional_selector" value="no"/>
+	      </conditional>
+        </test>
+	<test>
+              <!-- #2 test with common parameters -->
+              <param name="genome" value="contigs.fa" ftype="fasta"/>
+              <param name="coverage" value="coverage_stats.csv" ftype="csv"/>
+              <param name="align_cov" value="70" />
+              <param name="max_match" value="250" />
+              <param name="wind_min" value="5000" />
+              <param name="wind_nmax" value="200" />
+              <output name="curated_haplotigs" file="curated.haplotigs.fasta" ftype="fasta"/>
+              <output name="curated_sequences" file="curated.fasta" ftype="fasta"/>
+              <output name="curated_artefacts" file="curated.artefacts.fasta" ftype="fasta"/>
+              <output name="curated_reassignment" file="curated.reassignments_w_repeats.tsv" ftype="tsv"/>
+              <output name="curated_log" file="curated.contig_associations.log" ftype="txt"/>
+              <conditional name="additional">
+		      <param name="optional_selector" value="use_additional_options"/>
+		      <conditional name="with_repeat">
+			      <param name="has_repeat" value="Yes"/>
+			      <param name="repeat" value="repeats.bed"/>
+		      </conditional>
+		      <conditional name="create_dotplot">
+			      <param name="include_dotplot" value="Yes"/>
+			      <param name="dotplots" value="-dotplots"/>
+			      <param name="aligned_bam" value="aligned.bam"/>
+		      </conditional>
+	      </conditional>
+	      <output_collection name="output_pngs" type="list" count="5">
+		    <element name="000002F" file="dotplots_reassigned_contigs/000002F.png" ftype="png">
+			  <assert_content>
+				<has_size value="59559" delta="100"/>
+			  </assert_content>
+	            </element>
+		    <element name="000000F_001" file="dotplots_reassigned_contigs/000000F_001.png" ftype="png">
+			  <assert_contents>
+				<has_size value="31923" delta="100"/>
+			  </assert_contents>
+		    </element>
+		    <element name="000000F_002" file="dotplots_reassigned_contigs/000000F_002.png" ftype="png">
+                           <assert_contents>
+                                 <has_size value="42614" delta="100"/>
+                           </assert_contents>
+		    </element>
+		    <element name="000000F_003" file="dotplots_reassigned_contigs/000000F_003.png" ftype="png">
+                            <assert_contents>
+                                  <has_size value="47498" delta="100"/>
+                            </assert_contents>
+                    </element>
+		    <element name="000000F_004" file="dotplots_reassigned_contigs/000000F_004.png" ftype="png">
+                            <assert_contents>
+                                  <has_size value="32534" delta="100"/>
+                            </assert_contents>
+                    </element>
+	      </output_collection>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+Running the purging pipeline from the purge_haplotigs tool.
+	    
+**Input**
+	    
+- input file (g) : Genome assembly in fasta format
+- input file (c) : Contig by contig coverage stats csv file from the previous step.
+
+**Parameters**
+
+*OPTIONAL*
+
+- repeats : BED-format file of repeats to ignore during analysis.
+- dotplots : Generate dotplots for manual inspection.
+- bam : Samtools-indexed bam file of aligned and sorted reads/subreads to the reference, required for generating dotplots.
+
+*ADVANCED*
+
+- align_cov : Percent cutoff for identifying a contig as a haplotig. DEFAULT = 70
+- max_match : Percent cutoff for identifying repetitive contigs. Ignored when using repeat annotations (-repeats). DEFAULT = 250
+- I         : Minimap2 indexing, drop minimisers every N bases, DEFAULT = 4G
+- wind_min  : Min window size for BED coverage plots (for dotplots). DEFAULT = 5000
+- wind_nmax : Max windows per contig for BED coverage plots (for dotplots). DEFAULT = 200
+
+**Output**
+
+- curated.haplotigs.fasta
+- curated.contig_associations.log
+- curated.fasta
+- curated.reassignments.tsv
+- curated.artefacts.fasta
+ 
+.. class:: infomark
+	    
+**References**
+]]></help>
+     <citations>
+	    <citation type="doi">DOI: 10.1186/s12859-018-2485-7</citation>
+     </citations>
+</tool>

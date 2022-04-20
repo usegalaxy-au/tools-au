@@ -1,0 +1,87 @@
+<tool id="purge_haplotigs_cov" name="Purge Haplotigs Cov" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>Generate a coverage statistic</description>
+    <xrefs>
+        <xref type='bio.tools'>purgehaplotigs</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    purge_haplotigs cov
+	    #if $options.j:
+        	-j '$options.j'
+	    #end if
+	    #if $options.s:
+	        -s '$options.s'
+	    #end if
+	    -i $genomecov
+	    -l $low_cutoff
+	    -m $mid_cutoff
+	    -h $high_cutoff
+	    cp coverage_stats.csv '$output_statistic'
+	    2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="genomecov" type="data" format="tabular" label="Coverage file" help="Coverage file"/>
+	    <param name="low_cutoff" type="integer" value="10" label="read depth low cutoff" help="obtain from the histogram"/>
+	    <param name="mid_cutoff" type="integer" value="20" label="read depth high cutoff" help="Coverage file"/>
+	    <param name="high_cutoff" type="integer" value="30" label="read depth mid cutoff" help="The low point between the haploid and diploid peaks"/>
+	    <section name="options" title="Options" expanded="False">
+		    <param argument="-j" type="integer" value="80" label="Auto-assign contig as j (junk)"/>
+	            <param argument="-s" type="integer" value="80" label="Auto-assign contig as s (suspected haplogit)"/>		    
+	    </section>
+    </inputs>
+    <outputs>
+	    <data name="output_statistic" format="csv" label="${tool.name} on ${on_string}: Coverage Statistic" from_work_dir="coverage_stats.csv"/>
+    </outputs>
+
+    <tests>
+	 <test>
+              <!-- #1 test with common parameters -->
+              <param name="genomecov" value="aligned.bam.gencov" ftype="tabular"/>
+	      <param name="low_cutoff" value="10" />
+	      <param name="mid_cutoff" value="20" />
+	      <param name="high_cutoff" value="30" />
+              <output name="output_statistic" file="coverage_stats.csv" ftype="csv"/>
+        </test> 
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+Analyze the coverage on a contig by contig basis.
+
+**Input**
+	    
+- input file: a genemecov output file (tabular format) that was produced from purge_haplotigs hist. 
+
+**Parameters**
+
+- l : The read depth low cutoff (use the histogram to eyeball these cutoffs)
+
+- m : The low point between the haploid and diploid peaks
+
+- h : The read depth high cutoff
+
+- junk : Auto-assign contig as "j" (junk) if this percentage or greater of the contig is low/high coverage (DEFAULT = 80, > 100 = don't junk anything)
+
+- suspect : Auto-assign contig as "s" (suspected haplotig) if this percentage or less of the contig is diploid level of coverage (DEFAULT = 80)
+
+**Output**
+
+- coverage_stats.csv
+
+.. class:: infomark
+	    
+**References**
+]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1186/s12859-018-2485-7</citation>
+    </citations>
+</tool>

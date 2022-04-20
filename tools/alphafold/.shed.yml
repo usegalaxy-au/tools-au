@@ -1,13 +1,21 @@
-categories: 
+categories:
 - Proteomics
-- Structural Materials Analysis
-- Molecular Dynamics
 - Graphics
-description: Alphafold v2.0: AI-guided 3D structure prediction of proteins
+description: "Alphafold v2.0: AI-guided 3D structure prediction of proteins"
 homepage_url: https://github.com/deepmind/alphafold
 long_description: |
-    Alphafold is a program which uses neural networks to predict the tertiary (3D) structue of proteins. Alphafold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
+    Alphafold is a program which uses neural networks to predict the tertiary (3D) structue of proteins. Alphafold accepts an amino acid sequence in Fasta format, which will then be 'folded' into a predicted 3D model.
 name: alphafold2
 owner: galaxy-australia
-remote_repository_url: https://github.com/usegalaxy-au/galaxy-local-tools
+remote_repository_url: https://github.com/usegalaxy-au/tools-au
 type: unrestricted
+include:
+- strip components: 0
+  source:
+  - test-data/
+  - static/
+  - alphafold.xml
+  - alphafold.html
+  - gen_extra_outputs.py
+  - README.rst
+  - validate_fasta.py
