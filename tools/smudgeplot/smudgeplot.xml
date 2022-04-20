@@ -130,7 +130,7 @@ This tool extracts heterozygous kmer pairs from kmer count databases and perform
 
 Smudgeplots are computed from raw or even better from trimmed reads and show the haplotype structure using heterozygous kmer pairs. For example:
 
-.. image:: https://github.com/usegalaxy-au/tools-au/blob/master/tools/smudgeplot/static/img/smudge.png
+.. image:: https://raw.githubusercontent.com/usegalaxy-au/tools-au/master/tools/smudgeplot/static/img/smudge.png
     :height: 520
     :alt: Smudge plot image
 
