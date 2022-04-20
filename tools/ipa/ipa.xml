@@ -1,4 +1,4 @@
-<tool id="ipa" name="Improved Phased Assembler" version="0.1.0" python_template_version="3.5">
+<tool id="ipa" name="Improved Phased Assembler" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@">
     <description>IPA HiFi Genome Assembler</description>
     <macros>
 	  <import>macros.xml</import>
