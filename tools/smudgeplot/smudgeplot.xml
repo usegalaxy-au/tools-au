@@ -51,9 +51,6 @@
         && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
         && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
 
-        ## HACK
-        ## && L=2 && U=150
-
         ## Jellyfish dump
         && jellyfish dump -c -L \$L -U \$U 1_counts.jf > 2_dump.jf
 
@@ -69,7 +66,7 @@
         <param
           name="input_select" type="select" label="Select input type"
           help="For more control, create your own Kmer dump using Jellyfish.
-            See Smudgeplot on GitHub for more details."
+            See Smudgeplot on GitHub for more details: https://github.com/KamilSJaron/smudgeplot"
           >
           <option value="reads" selected="true"> Sequencing reads </option>
           <option value="dump"> Kmer dump file </option>
@@ -122,6 +119,53 @@
     </tests>
 
     <help><![CDATA[
-        TODO: Fill in help.
+
+TODO: Fill in help.
+
+.. class:: infomark
+
+**What it does**
+
+This tool extracts heterozygous kmer pairs from kmer count databases and performs gymnastics with them. We are able to disentangle genome structure by comparing the sum of kmer pair coverages (CovA + CovB) to their relative coverage (CovB / (CovA + CovB)). Such an approach also allows us to analyze obscure genomes with duplications, various ploidy levels, etc.
+
+Smudgeplots are computed from raw or even better from trimmed reads and show the haplotype structure using heterozygous kmer pairs. For example:
+
+.. image:: /static/img/smudge.png
+    :height: 520
+    :alt: Run time graph
+
+Every haplotype structure has a unique smudge on the graph and the heat of the smudge indicates how frequently the haplotype structure is represented in the genome compared to the other structures. The image above is an ideal case, where the sequencing coverage is sufficient to beautifully separate all the smudges, providing very strong and clear evidence of triploidy.
+
+Please see `Smudgeplot on GitHub <https://github.com/KamilSJaron/smudgeplot>`_
+for further documentation on this tool.
+
+**Input**
+
+You have two choices when running Smudgeplot in Galaxy:
+
+1. Input reads file(s) for default kmer-counting with Jellyfish
+
+This should be at least one file which providing coverage of your genome of interest.
+The tool accepts compressed (.gz) inputs.
+
+2. Input your own kmer dump file for more control of kmer counting parameters
+
+This file would be created by running ``jellyfish count`` and then ``jellyfish dump`` - the process is well described
+`on GitHub <https://github.com/KamilSJaron/smudgeplot>`_.
+
+**Default operation**
+
+If choosing reads as the input, you will be using the default kmer counter. The process is summarized as follows:
+
+- ``jellyfish count -m 21 > counts.jf``
+- ``jellyfish histo counts.jf > counts.hist``
+- ``smudgeplot.py cutoff 1_kmer_k21.hist`` to get kmer cutoff values (U & L)
+- ``jellyfish dump -c -L <L> -U <U> counts.jf > dump.jf``
+
+This kmer dump file is then be used to create the smudgeplot:
+
+- ``smudgeplot.py hetkmers -o kmer_pairs dump.jf``
+- ``smudgeplot.py plot kmer_pairs_coverages.tsv -o my_genome``
+
     ]]></help>
 </tool>
