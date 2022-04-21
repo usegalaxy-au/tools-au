@@ -47,14 +47,14 @@
         ## Calculate lower and upper kmer count cutoffs
         ## ---------------------------------------------------------------------
 
-        #if $lower_cutoff:
-          && L=$lower_cutoff
+        #if $input.lower_cutoff:
+          && L=$input.lower_cutoff
         #else
           && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
         #end if
 
-        #if $upper_cutoff:
-          && U=$upper_cutoff
+        #if $input.upper_cutoff:
+          && U=$input.upper_cutoff
         #else
           && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
         #end if
