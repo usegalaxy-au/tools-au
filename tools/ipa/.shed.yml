@@ -1,4 +1,4 @@
-name: ipa
+name: ipa_hifi
 owner: galaxy-australia
 remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/ipa
 categories:

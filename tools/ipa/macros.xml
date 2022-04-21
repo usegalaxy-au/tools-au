@@ -1,7 +1,14 @@
 <macros>
+    <token name="@TOOL_VERSION@">1.8.0</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <xml name="biotools">
+        <xrefs>
+            <xref type="bio.tools">ipa_hifi</xref>
+        </xrefs>
+    </xml>
     <xml name="requirements">
 	   <requirements>
-        	<requirement type="package" version="1.8.0">pbipa</requirement>
+        	<requirement type="package" version="@TOOL_VERSION@">pbipa</requirement>
            </requirements>
    </xml>
    <xml name="stdio">
