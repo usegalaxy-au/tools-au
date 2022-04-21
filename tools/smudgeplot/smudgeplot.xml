@@ -51,13 +51,13 @@
           && L=$lower_cutoff
         #else
           && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
-        #endif
+        #end if
 
         #if $upper_cutoff:
           && U=$upper_cutoff
         #else
           && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
-        #endif
+        #end if
 
         ## ---------------------------------------------------------------------
         ## Dump and extract coverage
