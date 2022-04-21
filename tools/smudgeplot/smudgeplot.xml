@@ -55,9 +55,10 @@
         && jellyfish dump -c -L \$L -U \$U 1_counts.jf > 2_dump.jf
 
         && smudgeplot.py hetkmers -o 2_kmer_pairs 2_dump.jf
-        && smudgeplot.py plot 2_kmer_pairs_coverages.tsv -o my_genome
 
       #end if
+
+      && smudgeplot.py plot 2_kmer_pairs_coverages.tsv -o my_genome
 
     ]]></command>
 
