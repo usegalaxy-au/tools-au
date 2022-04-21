@@ -17,15 +17,12 @@
 
     <command detect_errors="exit_code"><![CDATA[
 
-      #if $input.input_select == 'dump'
+      #if $input.input_select == 'reads'
 
-        ## ~~~ Run with self-made kmer dump ~~~
+        ## ~~~~~~~~~~~~~~~ Generate kmer-dump with presets ~~~~~~~~~~~~~~~~~~~~~
 
-        smudgeplot.py hetkmers -o 2_kmer_pairs '$input.dump'
-
-      #else
-
-        ## ~~~ Generate kmer-dump with presets ~~~
+        ## Jellyfish kmer count
+        ## ---------------------------------------------------------------------
 
         #if $input.reads[0].is_of_type("fastq.gz") or $input.reads[0].is_of_type("fasta.gz")
           gunzip -c
@@ -48,15 +45,36 @@
         && jellyfish histo 1_counts.jf > 1_kmer_k21.hist
 
         ## Calculate lower and upper kmer count cutoffs
-        && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
-        && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
+        ## ---------------------------------------------------------------------
 
-        ## Jellyfish dump
+        #if $lower_cutoff:
+          && L=$lower_cutoff
+        #else
+          && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
+        #endif
+
+        #if $upper_cutoff:
+          && U=$upper_cutoff
+        #else
+          && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
+        #endif
+
+        ## ---------------------------------------------------------------------
+        ## Dump and extract coverage
+
         && jellyfish dump -c -L \$L -U \$U 1_counts.jf > 2_dump.jf
-
         && smudgeplot.py hetkmers -o 2_kmer_pairs 2_dump.jf
 
+      #else
+
+        ## ~~~~~~~~~~~~~~~~~~~ Use provided kmer dump ~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+        smudgeplot.py hetkmers -o 2_kmer_pairs '$input.dump'
+
       #end if
+
+      ## ---------------------------------------------------------------------
+      ## Plot
 
       && smudgeplot.py plot 2_kmer_pairs_coverages.tsv -o my_genome
 
@@ -80,7 +98,29 @@
             help="Sequencing reads corresponding to your genome.
               Don't worry about read pairing as it is not used in Kmer-counting.
               If selecting multiple datasets, please do not mix datatypes!"
-            />
+          />
+
+          <param
+            name="lower_cutoff"
+            label="Lower kmer cutoff"
+            type="integer"
+            optional="true"
+            help="Optionally set a manual lower limit for filtering kmers with
+              smudgeplot hetkmers. If no value is set, a cutoff will be
+              estimated with smudgeplot cutoff. Use the GenomeScope tool to
+              visualize your kmer histogram when choosing cutoff values."
+          />
+
+          <param
+            name="upper_cutoff"
+            label="Upper kmer cutoff"
+            type="integer"
+            optional="true"
+            help="Optionally set a manual upper limit for filtering kmers with
+              smudgeplot hetkmers. If no value is set, a cutoff will be
+              estimated with smudgeplot cutoff. Use the GenomeScope tool to
+              visualize your kmer histogram when choosing cutoff values."
+          />
         </when>
 
         <when value="dump">
