@@ -55,14 +55,13 @@ ln -s '$input_bam' input.bam
   <inputs>
     <param name="input_bam" type="data" format="bam" label="Input BAM file"/>
     <param name="input_vcf" type="data" format="vcf" label="Input VCF file"/>
-    <param name="output_phased" type="boolean" label="Output fragments file?"
+    <param name="output_phased" type="boolean" label="Output phased VCF file?"
       checked="true"
-      help="Output fragments collected by extractHAIRS"
-    />
-    <param name="output_fragments" type="boolean" label="Output phased VCF file?"
       help="Output variant calls on the haplotype assembly"
     />
-
+    <param name="output_fragments" type="boolean" label="Output fragments file?"
+      help="Output fragments collected by extractHAIRS"
+    />
 
     <conditional name="optimization">
       <!-- TODO: include 10X (requires extra processing step) -->
@@ -90,7 +89,7 @@ ln -s '$input_bam' input.bam
       </when>
     </conditional>
 
-    <section name="advanced" label="Advanced parameters">
+    <section name="advanced" title="Advanced parameters">
       <param name="maxIS" type="integer" label="Maximum insert size"
         optional="true" value="1000"
         help="Maximum insert size for a paired-end read to be considered as a single fragment for phasing."
