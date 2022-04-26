@@ -32,8 +32,10 @@ ln -s '$input_bam' input.bam
   --HiC 1
 #end if
 
-#if $optimization.reference_fasta:
-  --ref '$reference_fasta'
+#if $optimization.choice == 'hic' or $optimization.choice == 'ont'
+  #if $optimization.reference_fasta:
+    --ref '$reference_fasta'
+  #end if
 #end if
 
 #if advanced.minIS
