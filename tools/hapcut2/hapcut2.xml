@@ -16,22 +16,24 @@
 
 ## Prep inputs
 ## =====================================================================
-ln -s '$input_bam' input.bam &&
-ln -s '$input_vcf' input.vcf &&
+ln -s '$input_bam' input.bam
+&& ln -s '$input_vcf' input.vcf
 
 
 ## Run program
 ## =====================================================================
 ## Extract variant fragments from alignment
-extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
+&& extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
 #if $optimization.choice == 'pacbio':
   --pacbio 1
-  --ref $reference_fasta
 #elif $optimization.choice == 'ont':
   --ont 1
-  --ref $reference_fasta
 #elif $optimization.choice == 'hic':
   --HiC 1
+#end if
+
+#if $optimization.reference_fasta:
+  --ref '$reference_fasta'
 #end if
 
 #if advanced.minIS
@@ -42,10 +44,8 @@ extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
   --maxIS $advanced.maxIS
 #end if
 
-&&
-
 ## Create haplotype.out and haplotype.out.phased.VCF
-HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
+&& HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
 #if $optimization.choice == 'hic':
   --HiC 1
 #end if
