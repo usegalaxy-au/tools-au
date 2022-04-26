@@ -28,14 +28,10 @@ ln -s '$input_bam' input.bam
   --pacbio 1
 #elif $optimization.choice == 'ont':
   --ont 1
+  --ref '$optimization.reference_fasta'
 #elif $optimization.choice == 'hic':
   --HiC 1
-#end if
-
-#if $optimization.choice == 'hic' or $optimization.choice == 'ont'
-  #if $optimization.reference_fasta:
-    --ref '$reference_fasta'
-  #end if
+  --ref '$optimization.reference_fasta'
 #end if
 
 #if $advanced.minIS
@@ -76,16 +72,14 @@ ln -s '$input_bam' input.bam
 
       <when value="pacbio">
         <param name="reference_fasta" type="data" format="fasta"
-          label="Reference genome fasta file (optional)"
-          optional="true"
+          label="Reference genome fasta file"
           help="It is highly recommended to include the reference genome for long-read optimization."
         />
       </when>
 
       <when value="ont">
         <param name="reference_fasta" type="data" format="fasta"
-          label="Reference genome fasta file (optional)"
-          optional="true"
+          label="Reference genome fasta file"
           help=" It is highly recommended to include the reference genome for long-read optimization."
         />
       </when>
