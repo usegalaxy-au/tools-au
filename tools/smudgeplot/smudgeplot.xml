@@ -177,7 +177,7 @@
 
     <tests>
         <test>
-            <param name="reads" value="reads.fq" ftype="fastq"/>
+            <param name="reads" value="test_reads.fasta" ftype="fasta"/>
             <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png"/>
         </test>
     </tests>
