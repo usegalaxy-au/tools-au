@@ -33,6 +33,15 @@ extractHAIRS --bam input.bam --VCF input.vcf --out frags.dat
 #elif $optimization.choice == 'hic':
   --HiC 1
 #end if
+
+#if advanced.minIS
+--minIS $advanced.minIS
+#end if
+
+#if advanced.maxIS
+  --maxIS $advanced.maxIS
+#end if
+
 &&
 
 ## Create haplotype.out and haplotype.out.phased.VCF
@@ -46,12 +55,17 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
   <inputs>
     <param name="input_bam" type="data" format="bam" label="Input BAM file"/>
     <param name="input_vcf" type="data" format="vcf" label="Input VCF file"/>
-    <param name="output_fragments" type="boolean" label="Output phased VCF file?" help="Output variant calls on the haplotype assembly"/>
-    <param name="output_phased" type="boolean" label="Output fragments file?" help="Output fragments collected by extractHAIRS"/>
+    <param name="output_phased" type="boolean" label="Output fragments file?"
+      checked="true"
+      help="Output fragments collected by extractHAIRS"
+    />
+    <param name="output_fragments" type="boolean" label="Output phased VCF file?"
+      help="Output variant calls on the haplotype assembly"
+    />
 
 
     <conditional name="optimization">
-      <!-- Optimizations: pacbio, ont, Hi-C  -->
+      <!-- TODO: include 10X (requires extra processing step) -->
       <param name="choice" type="select" display="radio" label="Optimization">
         <option value="default" selected="true">Default</option>
         <option value="pacbio">Pacbio</option>
@@ -60,30 +74,47 @@ HAPCUT2 --fragments frags.dat --VCF input.vcf --output haplotype.out
       </param>
 
       <when value="pacbio">
-        <param name="reference_fasta" type="data" format="fasta" label="Reference genome fasta file"
-          help="Pacbio optimization requires the reference assembly that reads were mapped against"
+        <param name="reference_fasta" type="data" format="fasta"
+          label="Reference genome fasta file (optional)"
+          optional="true"
+          help="It is highly recommended to include the reference genome for long-read optimization."
         />
       </when>
 
       <when value="ont">
-        <param name="reference_fasta" type="data" format="fasta" label="Reference genome fasta file"
-          help="Pacbio optimization requires the reference assembly that reads were mapped against"
+        <param name="reference_fasta" type="data" format="fasta"
+          label="Reference genome fasta file (optional)"
+          optional="true"
+          help=" It is highly recommended to include the reference genome for long-read optimization."
         />
       </when>
     </conditional>
 
-    <!-- indels method for realignment? -->
+    <section name="advanced" label="Advanced parameters">
+      <param name="maxIS" type="integer" label="Maximum insert size"
+        optional="true" value="1000"
+        help="Maximum insert size for a paired-end read to be considered as a single fragment for phasing."
+      />
+
+      <param name="minIS" type="integer" label="Minimum insert size"
+        optional="true" value="0"
+        help="Minimum insert size for a paired-end read to be considered as a single fragment for phasing."
+      />
+    </section>
   </inputs>
 
   <outputs>
     <data name="haplotype" format="txt" from_work_dir="haplotype.out"
-        label="${tool.name} on ${on_string}: Haplotype block"/>
+      label="${tool.name} on ${on_string}: Haplotype block"
+    />
     <data name="haplotype_phased" format="vcf" from_work_dir="haplotype.out.phased.VCF"
-        label="${tool.name} on ${on_string}: Phased haplotype VCF">
+      label="${tool.name} on ${on_string}: Phased haplotype VCF"
+    >
       <filter>output_phased</filter>
     </data>
     <data name="frags" format="txt" from_work_dir="frags.dat"
-        label="${tool.name} on ${on_string}: Fragments">
+      label="${tool.name} on ${on_string}: Fragments"
+    >
       <filter>output_fragments</filter>
     </data>
   </outputs>
