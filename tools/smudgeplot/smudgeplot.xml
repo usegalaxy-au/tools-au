@@ -17,16 +17,16 @@
 
     <command detect_errors="exit_code"><![CDATA[
 
-      #if $input.input_select == 'reads'
+      #if $file.input.input_select == 'reads'
 
         ## ~~~~~~~~~~~~~~~ Generate kmer-dump with presets ~~~~~~~~~~~~~~~~~~~~~
 
         ## Jellyfish kmer count
         ## ---------------------------------------------------------------------
 
-        #if $input.reads[0].is_of_type("fastq.gz") or $input.reads[0].is_of_type("fasta.gz")
+        #if $file.input.reads[0].is_of_type("fastq.gz") or $file.input.reads[0].is_of_type("fasta.gz")
           gunzip -c
-          #for $file in $input.reads
+          #for $file in $file.input.reads
               #if $file
                   '$file'
               #end if
@@ -35,7 +35,7 @@
 
         #else
           jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C
-          #for $file in $input.reads
+          #for $file in $file.input.reads
               #if $file
                   '$file'
               #end if
@@ -47,14 +47,14 @@
         ## Calculate lower and upper kmer count cutoffs
         ## ---------------------------------------------------------------------
 
-        #if $input.lower_cutoff:
-          && L=$input.lower_cutoff
+        #if $file.input.lower_cutoff:
+          && L=$file.input.lower_cutoff
         #else
           && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
         #end if
 
-        #if $input.upper_cutoff:
-          && U=$input.upper_cutoff
+        #if $file.input.upper_cutoff:
+          && U=$file.input.upper_cutoff
         #else
           && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
         #end if
@@ -70,7 +70,7 @@
 
         ## ~~~~~~~~~~~~~~~~~~~ Use provided kmer dump ~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-        smudgeplot.py hetkmers -o 2_kmer_pairs '$input.dump'
+        smudgeplot.py hetkmers -o 2_kmer_pairs '$file.input.dump'
 
       #end if
 
@@ -82,57 +82,59 @@
     ]]></command>
 
     <inputs>
-      <conditional name="input">
-        <param
-          name="input_select" type="select" label="Select input type"
-          help="For more control, create your own Kmer dump using Jellyfish.
+      <section name="file" title="File inputs" expanded="true">
+        <conditional name="input">
+          <param
+            name="input_select" type="select" label="Select input type"
+            help="For more control, create your own Kmer dump using Jellyfish.
             See Smudgeplot on GitHub for more details: https://github.com/KamilSJaron/smudgeplot"
           >
-          <option value="reads" selected="true"> Sequencing reads </option>
-          <option value="dump"> Kmer dump file </option>
-        </param>
+            <option value="reads" selected="true"> Sequencing reads </option>
+            <option value="dump"> Kmer dump file </option>
+          </param>
 
-        <when value="reads">
-          <param
-            name="reads" type="data" format="fastq,fasta"
-            label="Sequencing reads" multiple="true"
-            help="Sequencing reads corresponding to your genome.
+          <when value="reads">
+            <param
+              name="reads" type="data" format="fastq,fasta"
+              label="Sequencing reads" multiple="true"
+              help="Sequencing reads corresponding to your genome.
               Don't worry about read pairing as it is not used in Kmer-counting.
               If selecting multiple datasets, please do not mix datatypes!"
-          />
+            />
 
-          <param
-            name="lower_cutoff"
-            label="Lower kmer cutoff"
-            type="integer"
-            optional="true"
-            help="Optionally set a manual lower limit for filtering kmers with
+            <param
+              name="lower_cutoff"
+              label="Lower kmer cutoff"
+              type="integer"
+              optional="true"
+              help="Optionally set a manual lower limit for filtering kmers with
               smudgeplot hetkmers. If no value is set, a cutoff will be
               estimated with smudgeplot cutoff. Use the GenomeScope tool to
               visualize your kmer histogram when choosing cutoff values."
-          />
+            />
 
-          <param
-            name="upper_cutoff"
-            label="Upper kmer cutoff"
-            type="integer"
-            optional="true"
-            help="Optionally set a manual upper limit for filtering kmers with
+            <param
+              name="upper_cutoff"
+              label="Upper kmer cutoff"
+              type="integer"
+              optional="true"
+              help="Optionally set a manual upper limit for filtering kmers with
               smudgeplot hetkmers. If no value is set, a cutoff will be
               estimated with smudgeplot cutoff. Use the GenomeScope tool to
               visualize your kmer histogram when choosing cutoff values."
-          />
-        </when>
+            />
+          </when>
 
-        <when value="dump">
-          <param
-            name="dump" type="data" format="txt"
-            label="Kmer dump"
-            help="Upload your own Kmer dump file created with the Jellyfish or KMC tool.
+          <when value="dump">
+            <param
+              name="dump" type="data" format="txt"
+              label="Kmer dump"
+              help="Upload your own Kmer dump file created with the Jellyfish or KMC tool.
               This enables control over kmer-counting parameters."
             />
-        </when>
-      </conditional>
+          </when>
+        </conditional>
+      </section>
 
       <param name="table_output" type="boolean" label="Output summary table"></param>
       <param name="verbose_output" type="boolean" label="Output verbose summary"></param>
