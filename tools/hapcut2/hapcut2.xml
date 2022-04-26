@@ -38,11 +38,11 @@ ln -s '$input_bam' input.bam
   #end if
 #end if
 
-#if advanced.minIS
+#if $advanced.minIS
 --minIS $advanced.minIS
 #end if
 
-#if advanced.maxIS
+#if $advanced.maxIS
   --maxIS $advanced.maxIS
 #end if
 
