@@ -2,7 +2,7 @@
     <description> - inference of ploidy and heterozygosity structure using whole genome sequencing</description>
 
     <macros>
-        <token name="@TOOL_VERSION@">0.2.3</token>
+        <token name="@TOOL_VERSION@">0.2.5</token>
         <token name="@VERSION_SUFFIX@">1</token>
     </macros>
 
@@ -26,18 +26,18 @@
 
         #if $file.input.reads[0].is_of_type("fastq.gz") or $file.input.reads[0].is_of_type("fasta.gz")
           gunzip -c
-          #for $file in $file.input.reads
-              #if $file
-                  '$file'
+          #for $f in $file.input.reads
+              #if $f
+                  '$f'
               #end if
+              | jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C /dev/stdin
           #end for
-          | jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C /dev/stdin
 
         #else
           jellyfish count -m 21 -t 4 -s 1M -o 1_counts.jf -C
-          #for $file in $file.input.reads
-              #if $file
-                  '$file'
+          #for $f in $file.input.reads
+              #if $f
+                  '$f'
               #end if
           #end for
         #end if
@@ -47,13 +47,13 @@
         ## Calculate lower and upper kmer count cutoffs
         ## ---------------------------------------------------------------------
 
-        #if $file.input.lower_cutoff:
+        #if $file.input.lower_cutoff is not None:
           && L=$file.input.lower_cutoff
         #else
           && L=\$(smudgeplot.py cutoff 1_kmer_k21.hist L)
         #end if
 
-        #if $file.input.upper_cutoff:
+        #if $file.input.upper_cutoff is not None:
           && U=$file.input.upper_cutoff
         #else
           && U=\$(smudgeplot.py cutoff 1_kmer_k21.hist U)
@@ -177,7 +177,10 @@
 
     <tests>
         <test>
+            <param name="input_select" value="reads"/>
             <param name="reads" value="test_reads.fasta" ftype="fasta"/>
+            <param name="lower_cutoff" value="2"/>
+            <param name="upper_cutoff" value="25"/>
             <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png"/>
         </test>
     </tests>
@@ -199,7 +202,7 @@ Smudgeplots are computed from raw or even better from trimmed reads and show the
 Every haplotype structure has a unique smudge on the graph and the heat of the smudge indicates how frequently the haplotype structure is represented in the genome compared to the other structures. The image above is an ideal case, where the sequencing coverage is sufficient to beautifully separate all the smudges, providing very strong and clear evidence of triploidy.
 
 Please see `Smudgeplot on GitHub <https://github.com/KamilSJaron/smudgeplot>`_
-for further documentation on this tool.
+for further documentation and tutorials.
 
 **Inputs**
 
@@ -208,7 +211,10 @@ You have two choices when running Smudgeplot in Galaxy:
 1. Input reads file(s) for default kmer-counting with Jellyfish
 
 This should be at least one file which providing coverage of your genome of interest.
-The tool accepts compressed (.gz) inputs.
+The tool accepts compressed (.gz) inputs. If choosing this option, you can
+(optionally) specify manual cutoff values for the kmer dump step. The Smudgeplot
+docs suggest that you can use GenomeScope on a kmer histogram in order to choose
+reasonable lower and upper cutoff values.
 
 2. Input your own kmer dump file for more control of kmer counting parameters
 
@@ -220,17 +226,20 @@ This file would be created by running ``jellyfish count`` and then ``jellyfish d
 - ``smudgeplot.png`` smudgeplot image
 - ``smudgeplot_log10.png`` smudgeplot with log scale
 - ``my_genome_summary.tsv`` summarized genome statistics
+- ``my_genome_verbose.txt`` detailed genome statistics
+- ``my_genome_warnings.txt`` warnings emitted from the Smudgeplot tool
 
 **Default operation**
 
-If choosing reads as the input, you will be using the default kmer counter. The process is summarized as follows:
+If choosing reads as the input, a default kmer counting procedure will be used
+to create a kmer dump. This default process is summarized as follows:
 
 - ``jellyfish count -m 21 > counts.jf``
 - ``jellyfish histo counts.jf > counts.hist``
-- ``smudgeplot.py cutoff 1_kmer_k21.hist`` to get kmer cutoff values (U & L)
+- ``smudgeplot.py cutoff counts.hist`` to get kmer cutoff values (U & L)
 - ``jellyfish dump -c -L <L> -U <U> counts.jf > dump.jf``
 
-This kmer dump file is then be used to create the smudgeplot:
+The kmer dump file is then used to create a smudgeplot:
 
 - ``smudgeplot.py hetkmers -o kmer_pairs dump.jf``
 - ``smudgeplot.py plot kmer_pairs_coverages.tsv -o my_genome``
