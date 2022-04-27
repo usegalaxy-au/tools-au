@@ -53,13 +53,6 @@ ln -s '$input_bam' input.bam
   <inputs>
     <param name="input_bam" type="data" format="bam" label="Input BAM file"/>
     <param name="input_vcf" type="data" format="vcf" label="Input VCF file"/>
-    <param name="output_phased" type="boolean" label="Output phased VCF file?"
-      checked="true"
-      help="Output variant calls on the haplotype assembly"
-    />
-    <param name="output_fragments" type="boolean" label="Output fragments file?"
-      help="Output fragments collected by extractHAIRS"
-    />
 
     <conditional name="optimization">
       <!-- TODO: include 10X (requires extra processing step) -->
@@ -84,6 +77,15 @@ ln -s '$input_bam' input.bam
         />
       </when>
     </conditional>
+
+    <param name="output_phased" type="boolean" label="Output phased VCF file?"
+      checked="true"
+      help="Output variant calls on the haplotype assembly"
+    />
+    <param name="output_fragments" type="boolean" label="Output fragments file?"
+      help="Output fragments collected by extractHAIRS"
+    />
+
 
     <section name="advanced" title="Advanced parameters">
       <param name="maxIS" type="integer" label="Maximum insert size"
@@ -131,6 +133,10 @@ ln -s '$input_bam' input.bam
 .. class:: infomark
 
 *NOTE: At this time HapCUT2 is for diploid organisms only and can assemble haplotypes for one individual at a time. VCF input should contain variants and genotypes for a single diploid individual.*
+
+.. class:: infomark
+
+*NOTE: At this time HapCUT2 on Galaxy cannot be used for 10X Genomics sequencing data.*
 
 
 **What it does**
