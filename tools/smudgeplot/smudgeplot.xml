@@ -181,7 +181,7 @@
             <param name="reads" value="test_reads.fasta" ftype="fasta"/>
             <param name="lower_cutoff" value="2"/>
             <param name="upper_cutoff" value="25"/>
-            <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png"/>
+            <output name="smudgeplot" ftype="png" file="my_genome_smudgeplot.png" compare="sim_size"/>
         </test>
     </tests>
 
