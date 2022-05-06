@@ -15,20 +15,21 @@
 
   <command detect_errors="exit_code"><![CDATA[
 
+ln -s '$input_ref' input.ref.fasta
+&& ln -s '$input_query' input.query.fasta
+
 ## Nucmer step
 ## ----------------------------------------------------------------------------
 
-nucmer
-
+&& nucmer
 #if $advanced.selected:
   $advanced.nucmer_match_protocol
   #if $advanced.nucmer_min_len:
   -l $advanced.nucmer_min_len
   #end if
 #end if
-
-'$input_ref'
-'$input_query'
+  input.ref.fasta
+  input.query.fasta
 
 
 ## Delta-filter step
@@ -58,8 +59,8 @@ out.delta > out.rq.delta
 
 && quickmerge
 -d out.rq.delta
--q '$input_query'
--r '$input_ref'
+-q input.query.fasta
+-r input.ref.fasta
 
 #if $advanced.selected:
   #if $advanced.quickmerge_hco:
@@ -146,7 +147,7 @@ out.delta > out.rq.delta
         <param
           name="delta_map_ref"
           type="boolean"
-          value="1"
+          checked="true"
           label="Map reference positions"
           help="Maps each position of each reference to its best hit in the
             query, allowing for query overlaps."
@@ -155,7 +156,7 @@ out.delta > out.rq.delta
         <param
           name="delta_map_query"
           type="boolean"
-          value="1"
+          checked="true"
           label="Map query positions"
           help="Maps each position of each query to its best hit in the
             reference, allowing for reference overlaps."
