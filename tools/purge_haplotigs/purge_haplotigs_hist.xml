@@ -1,0 +1,85 @@
+<tool id="purge_haplotigs_hist" name="Purge Haplotigs Hist" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>Generate a coverage histogram</description>
+    <xrefs>
+        <xref type='bio.tools'>purgehaplotigs</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    cp $input_bam input.bam &&
+	    purge_haplotigs hist
+	    -t \${GALAXY_SLOTS:-4}
+	    #if $options.depth
+	        --depth '$options.depth'
+	    #end if
+	    -b input.bam
+	    -g $genome &&
+	    cp input.bam.histogram.png '$output_histogram' &&
+	    cp input.bam.gencov '$output_coverage' 
+	    2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_bam" type="data" format="bam" label="BAM file" help="Input BAM file"/>
+	    <param name="genome" type="data" format="fasta" label="FASTA file" help="Input Genome File"/>
+	    <section name="options" title="Options" expanded="False">
+		    <param name="depth" argument="--depth" type="integer" value="200" label="Maximum cutoff for depth" help="default=200, increase if needed."/>
+	    </section>
+    </inputs>
+    <outputs>
+	    <data name="output_histogram" format="png" label="${tool.name} on ${on_string}: histogram"/>
+	    <data name="output_coverage" format="tabular" label="${tool.name} on ${on_string}: Coverage"/>
+    </outputs>
+
+    <tests>
+	 <test>
+	      <!-- #1 test with common parameters -->
+	      <param name="input_bam" value="aligned.bam" ftype="bam"/>
+	      <param name="genome" value="contigs.fa" ftype="fasta"/>
+	      <output name="output_histogram" file="aligned.bam.histogram.png" ftype="png">
+                       <assert_content>
+                           <has_size value="135878" delta="100"/>
+                       </assert_content>
+              </output>
+	      <output name="output_coverage">
+		      <assert_contents>
+			   <has_n_lines n="2613"/>
+		      </assert_contents>
+	      </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+	    
+Purge Haplotigs Histogram is part of purge_haplotigs for generate a coverage histogram.
+	    
+**Input**
+	    
+- input file 1 - BAM file.
+- input file 2 - FASTA file.    
+
+**Example:**
+
+- purge_haplotigs hist -b input.bam -g genome.fa
+
+**Output**
+
+- input.bam.histogram.png 
+- input.bam.gencov
+
+.. class:: infomark
+
+**References**
+
+]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1186/s12859-018-2485-7</citation>
+    </citations>
+</tool>

@@ -1,0 +1,14 @@
+name: purge_haplotigs
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/purge_haplotigs
+categories:
+  - Assembly
+type: unrestricted
+description: Pipeline to help with curating heterozygous diploid genome assemblies from third-generation sequencing platform.
+include:
+  - purge_haplotigs_cov.xml  
+  - purge_haplotigs_hist.xml  
+  - purge_haplotigs_purge.xml
+  - macros.xml
+  - test-data
+  - README.md

@@ -1,0 +1,25 @@
+<macros>
+    <token name="@TOOL_VERSION@">1.1.2</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <xml name="biotools">
+	<xrefs>
+	    <xref type="bio.tools">purgehaplotigs</xref>
+ 	</xrefs>
+    </xml>
+    <xml name="requirements">
+	    <requirements>
+		   <requirement type="package" version="@TOOL_VERSION@">purge_haplotigs</requirement>
+           </requirements>
+   </xml>
+   <xml name="stdio">
+     <stdio>
+        <exit_code range=":-1"  level="fatal" description="Error: Cannot open file" />
+        <exit_code range="1:"  level="fatal" description="Error" />
+     </stdio>
+   </xml>
+  <xml name="version_command">
+      <version_command><![CDATA[
+	      purge_haplotigs 2>&1 | head -1       
+      ]]></version_command>
+  </xml>
+</macros>

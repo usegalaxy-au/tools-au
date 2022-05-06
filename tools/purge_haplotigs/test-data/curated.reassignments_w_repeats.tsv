@@ -1,0 +1,15 @@
+#reassigned_contig	top_hit_contig	second_hit_contig	best_match_coverage	max_match_coverage	reassignment
+000000F_001	000000F	-	99.95	133.47	HAPLOTIG
+000000F_002	000000F	-	96.56	102.29	HAPLOTIG
+000000F_003	000000F	-	99.98	126.89	HAPLOTIG
+000000F_004	000000F	-	99.97	99.97	HAPLOTIG
+000002F	000001F	-	99.94	110.67	HAPLOTIG
+#contigs_kept
+000000F	-	-	-	-	KEEP
+000001F	-	-	-	-	KEEP
+000004F	-	-	-	-	KEEP
+#junk_contigs
+000003F	-	-	-	-	JUNK
+000002F_001	-	-	-	-	JUNK
+000001F_001	-	-	-	-	JUNK
+000000F_005	-	-	-	-	JUNK

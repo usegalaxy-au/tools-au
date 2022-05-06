@@ -3,9 +3,9 @@
 
 ## Overview
 
-Alphafold requires a customised compute environment to run. The machine needs a GPU, and access to a 2.2 Tb reference data store. 
+Alphafold requires a customised compute environment to run. The machine needs a GPU, and access to a 2.2 Tb reference data store.
 
-This document is designed to provide details on the compute environment required for Alphafold operation, and the Galaxy job destination settings to run the wrapper. 
+This document is designed to provide details on the compute environment required for Alphafold operation, and the Galaxy job destination settings to run the wrapper.
 
 For full details on Alphafold requirements, see https://github.com/deepmind/alphafold.
 
@@ -13,11 +13,11 @@ For full details on Alphafold requirements, see https://github.com/deepmind/alph
 
 ### HARDWARE
 
-The machine is recommended to have the following specs: 
+The machine is recommended to have the following specs:
 - 12 cores
 - 80 Gb RAM
 - 2.5 Tb storage
-- A fast Nvidia GPU. 
+- A fast Nvidia GPU.
 
 As a minimum, the Nvidia GPU must have 8Gb RAM. It also requires ***unified memory*** to be switched on. <br>
 Unified memory is usually enabled by default, but some HPC systems will turn it off so the GPU can be shared between multiple jobs concurrently.
@@ -31,7 +31,7 @@ This wrapper runs Alphafold as a singularity container. The following software a
 - [Singularity](https://sylabs.io/guides/3.0/user-guide/installation.html)
 - [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/install-guide.html)
 
-As Alphafold uses an Nvidia GPU, the NVIDIA Container Toolkit is needed. This makes the GPU available inside the running singularity container. 
+As Alphafold uses an Nvidia GPU, the NVIDIA Container Toolkit is needed. This makes the GPU available inside the running singularity container.
 
 To check that everything has been set up correctly, run the following
 
@@ -68,8 +68,10 @@ If you can see something similar to this output (details depend on your GPU), it
 
 ### REFERENCE DATA
 
-Alphafold needs reference data to run. The wrapper expects this data to be present at `/data/alphafold_databases`. <br>
-To download, run the following shell script command in the tool directory.
+Alphafold needs reference data to run. The wrapper expects this data to
+be present at `/data/alphafold_databases`. A custom path will be read from
+the ALPHAFOLD_DB environment variable, if set. To download the AlphaFold,
+reference data, run the following shell script command in the tool directory.
 
 ```
 # make folders if needed
@@ -79,7 +81,7 @@ mkdir /data /data/alphafold_databases
 bash scripts/download_all_data.sh /data/alphafold_databases
 ```
 
-This will install the reference data to `/data/alphafold_databases`. To check this has worked, ensure the final folder structure is as follows: 
+This will install the reference data to `/data/alphafold_databases`. To check this has worked, ensure the final folder structure is as follows:
 
 ```
 data/alphafold_databases
@@ -128,9 +130,9 @@ data/alphafold_databases
 
 ### JOB DESTINATION
 
-Alphafold needs a custom singularity job destination to run. 
+Alphafold needs a custom singularity job destination to run.
 The destination needs to be configured for singularity, and some
-extra singularity params need to be set as seen below. 
+extra singularity params need to be set as seen below.
 
 Specify the job runner. For example, a local runner
 
@@ -154,4 +156,4 @@ The settings below are mandatory, but you may include other settings as needed.
 
 ### Closing
 
-If you are experiencing technical issues, feel free to write to _____. We may be able to provide comment on setting up Alphafold on your compute environment.
+If you are experiencing technical issues, feel free to write to help@genome.edu.au. We may be able to provide advice on setting up Alphafold on your compute environment.

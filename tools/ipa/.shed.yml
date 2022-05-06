@@ -1,0 +1,12 @@
+name: ipa_hifi
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/ipa
+categories:
+  - Assembly
+type: unrestricted
+description: Improved Phased Assembler HiFi Genome Assembler
+include:
+  - ipa.xml
+  - macros.xml
+  - test-data
+  - README.md

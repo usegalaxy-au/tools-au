@@ -1,3 +1,5 @@
 .vscode/
 tools/alphafold/output
 venv
+tools/*/tool_test_output.html
+tools/*/tool_test_output.json
