@@ -1,55 +1,274 @@
-<tool id="quickmerge" name="QuickMerge" version="0.1.0" python_template_version="3.5">
-    <requirements>
-      <requirement type="package" version="@TOOL_VERSION@"> quickmerge </requirement>
-    </requirements>
-    <command detect_errors="exit_code"><![CDATA[
+<tool id="quickmerge" name="QuickMerge" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@+ga@GA_VERSION_SUFFIX@" python_template_version="3.5">
+  <description> - merge genome assemblies from long and short read sequencing </description>
+  <xrefs>
+    <xref type="bio.tools">quickmerge</xref>
+  </xrefs>
+  <macros>
+    <token name="@TOOL_VERSION@">0.3</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@GA_VERSION_SUFFIX@">1</token>
+  </macros>
 
-        ## TODO: Fill in command template.
+  <requirements>
+    <requirement type="package" version="@TOOL_VERSION@">quickmerge</requirement>
+  </requirements>
 
-        ## TODO PARAMS:
-        ## Nucmer
-        ##   l) Set the minimum length of a single match (default 20)
-        ##
-        ## delta-filter
-        ##   r) Maps each position of each reference to its best hit in the query, allowing for query overlaps
-        ##   q) Maps each position of each query to its best hit in the reference, allowing for reference overlaps
-        ##   l) Set the minimum alignment length, default 0
-        ##
-        ## Quickmerge
-        ##   hco) ? (default 5.0)
-        ##   c) ?
-        ##   l) Seed length cutoff
-        ##   ml) Merging length cutoff
+  <command detect_errors="exit_code"><![CDATA[
 
-        nucmer -l 100 -prefix out '$assembly_ref' '$assembly_query'
-        && delta-filter -r -q -l 10000 out.delta > out.rq.delta
-        && quickmerge
-            -d out.rq.delta
-            -q '$assembly_query'
-            -r '$assembly_ref'
-            -hco 5.0
-            -c 1.5
-            -l 2000
-            -ml 100
-            -p test
+## Nucmer step
+## ----------------------------------------------------------------------------
 
-    ]]></command>
-    <inputs>
-      <input> <!-- assembly 1 --> </input>
-      <input> <!-- assembly 2 --> </input>
-    </inputs>
+nucmer
 
-    <outputs>
-      <output>  </output>
-    </outputs>
+#if $advanced.selected:
+  $advanced.nucmer_match_protocol
+  #if $advanced.nucmer_min_len:
+  -l $advanced.nucmer_min_len
+  #end if
+#end if
 
-    <tests>
-      <test>  </test>
-    </tests>
+'$input_ref'
+'$input_query'
 
-    <help><![CDATA[
+
+## Delta-filter step
+## ----------------------------------------------------------------------------
+
+&& delta-filter
+
+#if $advanced.selected:
+  #if $advanced.delta_map_ref
+  -r
+  #end if
+
+  #if $advanced.delta_map_query
+  -q
+  #end if
+
+  #if $advanced.delta_min_len:
+  -l $advanced.delta_min_len
+  #end if
+#end if
+
+out.delta > out.rq.delta
+
+
+## Quickmerge step
+## ----------------------------------------------------------------------------
+
+&& quickmerge
+-d out.rq.delta
+-q '$input_query'
+-r '$input_ref'
+
+#if $advanced.selected:
+  #if $advanced.quickmerge_hco:
+  -hco $advanced.quickmerge_hco
+  #end if
+
+  #if $advanced.quickmerge_c:
+  -c $advanced.quickmerge_c
+  #end if
+
+  #if $advanced.quickmerge_seed_cutoff:
+  -l $advanced.quickmerge_seed_cutoff
+  #end if
+
+  #if $advanced.quickmerge_merge_cutoff:
+  -ml $advanced.quickmerge_merge_cutoff
+  #end if
+#end if
+
+  ]]></command>
+
+  <inputs>
+    <param
+      name="input_query"
+      type="data"
+      format="fasta,fasta.gz"
+      label="Query (hybrid) assembly"
+      help=""
+    />
+    <param
+      name="input_ref"
+      type="data"
+      format="fasta,fasta.gz"
+      label="Reference assembly"
+      help=""
+    />
+
+    <conditional name="advanced">
+      <param
+        name="selected"
+        type="boolean"
+        label="Set advanced parameters"
+      />
+
+      <when value="true">
+        <param
+          name="nucmer_match_protocol"
+          type="select"
+          display="radio"
+          label="Anchor matching protocol"
+          help="By default, nucmer will include anchor matches that are unique
+            in the reference but not necessarily unique in the query. You can
+            change the protocol to include all matches, or only those unique to
+            both the reference and query sequence."
+        >
+          <option value="">
+            Default (unique in reference only)
+          </option>
+          <option value="--mum">
+            Include matches that are unique to both reference and query
+          </option>
+          <option value="--maxmatch">
+            Include all matches
+          </option>
+        </param>
+
+        <param
+          name="nucmer_min_len"
+          type="integer"
+          label="Nucmer - minimum length for a single match (nt)"
+          value="20"
+          optional="true"
+        />
+
+        <param
+          name="delta_min_len"
+          type="integer"
+          label="Delta-filter: minimum alignment length (nt)"
+          help=""
+          value="0"
+          optional="true"
+        />
+
+        <param
+          name="delta_map_ref"
+          type="boolean"
+          value="1"
+          label="Map reference positions"
+          help="Maps each position of each reference to its best hit in the
+            query, allowing for query overlaps."
+        />
+
+        <param
+          name="delta_map_query"
+          type="boolean"
+          value="1"
+          label="Map query positions"
+          help="Maps each position of each query to its best hit in the
+            reference, allowing for reference overlaps."
+        />
+
+        <param
+          name="quickmerge_seed_cutoff"
+          type="integer"
+          label="Quickmerge: seed length cutoff (nt)"
+          help="Minimum seed contig length to be merged (default=0)"
+          value="0"
+          optional="true"
+        />
+
+        <param
+          name="quickmerge_merge_cutoff"
+          type="integer"
+          label="Quickmerge: merging length cutoff (nt)"
+          help="Set the merging length cutoff necessary for use in quickmerge
+            (default 5000)"
+          value="1000"
+          optional="true"
+        />
+
+        <param
+          name="quickmerge_hco"
+          type="float"
+          label="Quickmerge - hco parameter (default=5.0)"
+          help=""
+          value="5.0"
+          optional="true"
+        />
+
+        <param
+          name="quickmerge_c"
+          type="float"
+          label="Quickmerge - c parameter (default=1.5)"
+          help=""
+          value="1.5"
+          optional="true"
+        />
+      </when>
+    </conditional>
+
+    <section name="outputs" title="Optional outputs" expanded="true">
+      <param
+        name="align_summary"
+        type="boolean"
+        value="0"
+        label="Alignment summary table"
+      />
+      <param
+        name="anchor_summary"
+        type="boolean"
+        value='0'
+        label="Anchor summary table"
+      />
+      <param
+        name="param_summary"
+        type="boolean"
+        value='0'
+        label="Parameter summary table"
+      />
+    </section>
+  </inputs>
+
+  <outputs>
+    <data
+      name="merged_fasta"
+      format="fasta"
+      from_work_dir="merged_out.fasta"
+      label="${tool.name} on ${on_string}: Merged assembly"
+    />
+
+    <data
+      name="align_summary"
+      format="tabular"
+      from_work_dir="aln_summary_out.tsv"
+      label="${tool.name} on ${on_string}: Alignment summary"
+    >
+      <filter>outputs.align_summary</filter>
+    </data>
+
+    <data
+      name="anchor_summary"
+      format="txt"
+      from_work_dir="anchor_summary_out.txt"
+      label="${tool.name} on ${on_string}: Anchor summary"
+    >
+      <filter>outputs.anchor_summary</filter>
+    </data>
+
+    <data
+      name="param_summary"
+      format="txt"
+      from_work_dir="param_summary_out.txt"
+      label="${tool.name} on ${on_string}: Parameter summary"
+    >
+      <filter>outputs.param_summary</filter>
+    </data>
+  </outputs>
+
+  <tests>
+    <test>
+      <param name="input_query" value="ecoli_illumina.fasta" ftype="fasta" />
+      <param name="input_ref" value="ecoli_nanopore.fasta" ftype="fasta" />
+      <output name="merged_fasta" ftype="fasta" file="merged.fasta" />
+    </test>
+  </tests>
+
+  <help><![CDATA[
 
 ## TODO: Fill in help.
 
-    ]]></help>
+  ]]></help>
 </tool>
