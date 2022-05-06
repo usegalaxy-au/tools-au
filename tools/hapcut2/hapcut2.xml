@@ -9,7 +9,7 @@
     <token name="@GA_VERSION_SUFFIX@">1</token>
   </macros>
   <requirements>
-    <requirement type="package" version="1.3.3">hapcut2</requirement>
+    <requirement type="package" version="@TOOL_VERSION@">hapcut2</requirement>
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
