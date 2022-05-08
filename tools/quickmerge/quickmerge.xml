@@ -15,7 +15,9 @@
 
   <command detect_errors="exit_code"><![CDATA[
 
-ln -s '$input_ref' input.ref.fasta
+bash '${__tool_directory__}/fix_conda.sh'
+
+&& ln -s '$input_ref' input.ref.fasta
 && ln -s '$input_query' input.query.fasta
 
 ## Nucmer step
@@ -58,26 +60,20 @@ out.delta > out.rq.delta
 ## ----------------------------------------------------------------------------
 
 && quickmerge
--d out.rq.delta
--q input.query.fasta
--r input.ref.fasta
-
+  -d out.rq.delta
+  -q input.query.fasta
+  -r input.ref.fasta
+  -p out
 #if $advanced.selected:
-  #if $advanced.quickmerge_hco:
   -hco $advanced.quickmerge_hco
-  #end if
-
-  #if $advanced.quickmerge_c:
   -c $advanced.quickmerge_c
-  #end if
-
-  #if $advanced.quickmerge_seed_cutoff:
   -l $advanced.quickmerge_seed_cutoff
-  #end if
-
-  #if $advanced.quickmerge_merge_cutoff:
   -ml $advanced.quickmerge_merge_cutoff
-  #end if
+#else
+  -l 0
+  -ml 5000
+  -c 1.5
+  -hco 5.0
 #end if
 
   ]]></command>
@@ -177,7 +173,7 @@ out.delta > out.rq.delta
           label="Quickmerge: merging length cutoff (nt)"
           help="Set the merging length cutoff necessary for use in quickmerge
             (default 5000)"
-          value="1000"
+          value="5000"
           optional="true"
         />
 
@@ -261,8 +257,8 @@ out.delta > out.rq.delta
 
   <tests>
     <test>
-      <param name="input_query" value="ecoli_illumina.fasta" ftype="fasta" />
-      <param name="input_ref" value="ecoli_nanopore.fasta" ftype="fasta" />
+      <param name="input_query" value="ecoli_nanopore.fasta" ftype="fasta" />
+      <param name="input_ref" value="ecoli_illumina.fasta" ftype="fasta" />
       <output name="merged_fasta" ftype="fasta" file="merged.fasta" />
     </test>
   </tests>
