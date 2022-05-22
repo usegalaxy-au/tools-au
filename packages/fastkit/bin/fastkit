@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+BIN_ROOT=$( cd "$(dirname "${BASH_SOURCE[0]}")" ; pwd -P )
+ROOT=`dirname $BIN_ROOT`
+
+echo $ROOT;
+
+if [[ $1 == 'format' ]]; then
+  python $ROOT/lib/format.py ${@:2}
+else
+  echo "Please specify one of the available subcommands:"
+  echo "  - format"
+  echo ""
+fi
