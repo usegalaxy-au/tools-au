@@ -18,12 +18,14 @@
 
   <requirements>
     <requirement type="package" version="@TOOL_VERSION@">quickmerge</requirement>
+    <requirement type="package" version="0.1.4">fastkit</requirement>
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
 
-ln -s '$input_ref' input.ref.fasta
-&& ln -s '$input_query' input.query.fasta
+## Strip spaces from FASTA header
+fastkit format --strip-header-space '$input_ref' > input.ref.fasta
+&& fastkit format --strip-header-space '$input_query' > input.query.fasta
 
 ## Nucmer step
 ## ----------------------------------------------------------------------------
@@ -247,7 +249,7 @@ out.delta > out.rq.delta
 
     <data
       name="anchor_summary"
-      format="txt"
+      format="tabular"
       from_work_dir="anchor_summary_out.txt"
       label="${tool.name} on ${on_string}: Anchor summary"
     >
@@ -256,7 +258,7 @@ out.delta > out.rq.delta
 
     <data
       name="param_summary"
-      format="txt"
+      format="tabular"
       from_work_dir="param_summary_out.txt"
       label="${tool.name} on ${on_string}: Parameter summary"
     >
@@ -294,9 +296,9 @@ Please consult the `QuickMerge Wiki <https://github.com/mahulchak/quickmerge/wik
 
 **Inputs**
 
-- Query assembly: a hydrid or long-read assembly (see `QuickMerge Wiki <https://github.com/mahulchak/quickmerge/wiki>`_ for more details)
+- **Query assembly**: a hydrid or long-read assembly (see `QuickMerge Wiki <https://github.com/mahulchak/quickmerge/wiki>`_ for more details)
 
-- Reference assembly: "Self" assembly. Can also be a hybrid assembly
+- **Reference assembly**: "Self" assembly. Can also be a hybrid assembly
 
 - **hco**: controls the overlap cutoff used in selection of anchor contigs (default 5.0)
 
@@ -306,18 +308,18 @@ Please consult the `QuickMerge Wiki <https://github.com/mahulchak/quickmerge/wik
 
 - **ml**: controls the minimum alignment length to be considered for merging. This is especially helpful for repeat-rich genomes (default 5000; higher recommended).
 
-For both "hco" and "c", bigger the number, more stringent is the criteria for contig selection (which will lead to fewer contigs being merged). If they are too small (<1), chances of spurious merging will increase. It is better to be conservative while merging contigs!
+For both ``hco`` and ``c``, bigger the number, more stringent is the criteria for contig selection (which will lead to fewer contigs being merged). If they are too small (<1), chances of spurious merging will increase. It is better to be conservative while merging contigs!
 
 
 **Outputs**
 
-- Merged assembly: your merged assembly in FASTA format
+- **Merged assembly**: your merged assembly in FASTA format
 
-- Alignment summary: tabular summary of alignments used for merging
+- **Alignment summary**: tabular summary of alignments used for merging
 
-- Anchor summary: tabular summary of anchor matches used for merging
+- **Anchor summary**: tabular summary of anchor matches used for merging
 
-- Parameter summary: summary of merge parameters
+- **Parameter summary**: summary of merge parameters
 
 
 **Helpful tips**
@@ -330,7 +332,7 @@ For both "hco" and "c", bigger the number, more stringent is the criteria for co
 
 - Assembly polishing with Quiver and pilon before and after assembly merging is strongly recommended. However, if you are running finisherSC, you may perform the quiver polishing after the finisher step.
 
-- Check the merged assembly by aligning the hybrid and/or non-hybrid assembly to the merged assembly (you can use nucmer -mumreference and mummerplot for alignment and dot plot visualization).
+- Check the merged assembly by aligning the hybrid and/or non-hybrid assembly to the merged assembly. You can use ``nucmer`` for alignment (with default anchoring) and ``mummerplot`` for dot plot visualization.
 
   ]]></help>
   <citations>
