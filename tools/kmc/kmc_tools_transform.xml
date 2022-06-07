@@ -1,0 +1,320 @@
+<tool id="kmc_transform" name="KMC transform" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>single KMC's database</description>
+    <xrefs>
+        <xref type='bio.tools'>kmc</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    mkdir outdir &&
+	    #for $f in $input_collection:
+	    	#if '.kmc_suf' in str($f.element_identifier)
+	    	    ln -s '${f}' db.kmc_suf &&
+	        #else
+	    	    ln -s '${f}' db.kmc_pre &&
+	        #end if
+	    #end for
+	    kmc_tools 
+	      -t\${GALAXY_SLOTS:-2}
+	      transform
+	      db 
+              #set $operation_arr=[]
+              #for $i,$opt in enumerate($operations)
+	    	   #silent $operation_arr.append(str($opt.ops.transform_operation))
+		   #set $i = $i + 1
+	    	   #if str($opt.ops.transform_operation) == "sort" or str($opt.ops.transform_operation) == "reduce" or str($opt.ops.transform_operation) == "compact":
+	    		#if str($opt.ops.input_opt.min_kmer_occurrence) != '':
+	    		    -ci'$opt.ops.input_opt.min_kmer_occurrence'
+			#end if
+	    	        #if str($opt.ops.input_opt.max_kmer_occurrence) != '':
+	    		    -cx'$opt.ops.input_opt.max_kmer_occurrence'
+		        #end if
+			    $opt.ops.transform_operation
+	    		    '${opt.ops.transform_operation}_${i}_db'
+	    		#if str($opt.ops.output_opt.min_kmer_occurrence) != '':
+			     -ci'$opt.ops.output_opt.min_kmer_occurrence'
+			#end if
+	    		#if str($opt.ops.output_opt.max_kmer_occurrence) != '':
+	    		     -cx'$opt.ops.output_opt.max_kmer_occurrence'
+			#end if
+	    		#if str($opt.ops.output_opt.max_counter_value) != '':
+	    		     -cs'$opt.ops.output_opt.max_counter_value'
+	    		#end if
+		   #elif str($opt.ops.transform_operation) == "histogram":
+	    	        #if str($opt.ops.input_opt.min_kmer_occurrence) != '':
+                            -ci'$opt.ops.input_opt.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.input_opt.max_kmer_occurrence) != '':
+                            -cx'$opt.ops.input_opt.max_kmer_occurrence'
+                        #end if
+                            $opt.ops.transform_operation
+                            '${opt.ops.transform_operation}'.txt
+                        #if str($opt.ops.output_opt.min_kmer_value) != '':
+                             -ci'$opt.ops.output_opt.min_kmer_value'
+                        #end if
+                        #if str($opt.ops.output_opt.max_kmer_value) != '':
+                             -cx'$opt.ops.output_opt.max_kmer_value'
+	    		#end if
+		    #elif str($opt.ops.transform_operation) == "dump":
+	    		#if str($opt.ops.input_opt.min_kmer_occurrence) != '':
+                            -ci'$opt.ops.input_opt.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.input_opt.max_kmer_occurrence) != '':
+                            -cx'$opt.ops.input_opt.max_kmer_occurrence'
+                        #end if
+	    		    $opt.ops.transform_operation
+	    		#if str($opt.ops.output_opt.sort_output) == "true":
+	    		    -s
+		 	#end if
+	    		    '${opt.ops.transform_operation}'.txt
+	    	    #elif str($opt.ops.transform_operation) == "set_counts":
+                        #if str($opt.ops.input_opt.min_kmer_occurrence) != '':
+                            -ci'$opt.ops.input_opt.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.input_opt.max_kmer_occurrence) != '':
+                            -cx'$opt.ops.input_opt.max_kmer_occurrence'
+                        #end if
+			    $opt.ops.transform_operation
+                            $opt.ops.input_opt.kmer_counts_value    
+	    		    '${opt.ops.transform_operation}_${i}_db'
+                   #end if
+             #end for
+
+	    #for $i,$op in enumerate($operation_arr):
+		 #set $i = $i + 1
+                 #if str($op) == "sort" or str($op) == "reduce" or str($op) == "compact" or str($op) == "set_counts":
+	             && cp '${op}_${i}'_db.kmc_suf outdir/
+	             && cp '${op}_${i}'_db.kmc_pre outdir/
+                 #else if str($op) == "histogram":
+                     && cp histogram.txt outdir/
+                 #else if str($op) == "dump":
+                     && cp '${op}'.txt outdir/
+                 #end if
+             #end for
+
+
+	    ]]></command>
+    <inputs>
+	  <param name="input_collection" type="data_collection" collection_type="list" label="KMC db"/>
+            <repeat name="operations" title="Operations" min="1" max="5">
+                   <conditional name="ops">
+                     <expand macro="transform_operation"/>
+		     <when value="sort">
+			     <expand macro="transform_option"/>
+                     </when>
+		     <when value="reduce">
+			     <expand macro="transform_option"/>
+                    </when>
+		    <when value="compact">
+			     <expand macro="transform_option"/>
+                    </when>
+		    <when value="histogram">
+			     <expand macro="histogram_option"/>
+                    </when>
+		    <when value="dump">
+			     <expand macro="dump_option"/>
+                    </when>
+                    <when value="set_counts">
+                             <expand macro="set_count_option"/>
+                    </when>
+                  </conditional>
+          </repeat>
+    </inputs>
+    <outputs>
+	  <collection name="kmc_db" type="list" label="${tool.name} on ${on_string}: kmc outputs">
+		  <discover_datasets pattern="(?P&lt;designation&gt;.+)" format="binary" directory="outdir/" />
+	          <discover_datasets pattern="(?P&lt;designation&gt;.+)\.txt" format="tabular" directory="outdir/" />
+	  </collection>
+    </outputs>
+	
+    <tests>
+         <test>
+             <!-- #1 test perform sort operation on KMC DB -->
+            <param name="input_collection">
+                <collection type="list">
+                    <element name="db.kmc_suf" value="db.kmc_suf"/>
+                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                </collection>
+	    </param>
+            <conditional name="ops">
+                   <param name="transform_operation" value="sort"/>
+            </conditional>
+            <section name="input_opt">
+                   <param name="min_kmer_occurrence" value="2"/>
+                   <param name="max_kmer_occurrence" value="20"/>
+            </section>
+            <section name="output_opt">
+                   <param name="min_kmer_occurrence" value="3"/>
+                   <param name="max_kmer_occurrence" value="30"/>
+            </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="sort_1_db.kmc_suf" file="sort_1_db.kmc_suf"/>
+                <element name="sort_1_db.kmc_suf" file="sort_1_db.kmc_suf"/>
+            </output_collection>
+        </test>
+        <test>
+             <!-- #2 test Generate Histogram Table -->
+            <param name="input_collection">
+                <collection type="list">
+                    <element name="db.kmc_suf" value="db.kmc_suf"/>
+                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                </collection>
+            </param>
+            <conditional name="ops">
+                   <param name="transform_operation" value="histogram"/>
+            </conditional>
+            <section name="input_opt">
+                   <param name="min_kmer_occurrence" value="3"/>
+                   <param name="max_kmer_occurrence" value="30"/>
+            </section>
+            <section name="output_opt">
+                   <param name="min_kmer_occurrence" value="2"/>
+                   <param name="max_kmer_occurrence" value="255"/>
+            </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="histogram" file="histogram.txt" ftype="tabular"/>
+            </output_collection>
+        </test>
+        <test>
+             <!-- #3 test Generate dump Table -->
+            <param name="input_collection">
+                <collection type="list">
+                    <element name="db.kmc_suf" value="db.kmc_suf"/>
+                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                </collection>
+            </param>
+            <conditional name="ops">
+                   <param name="transform_operation" value="dump"/>
+            </conditional>
+            <section name="input_opt">
+                   <param name="min_kmer_occurrence" value="3"/>
+                   <param name="max_kmer_occurrence" value="30"/>
+            </section>
+            <section name="output_opt">
+                   <param name="min_kmer_occurrence" value="2"/>
+                   <param name="max_kmer_occurrence" value="255"/>
+            </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="dump" file="dump.txt" ftype="tabular"/>
+            </output_collection>
+        </test>
+        <test>
+             <!-- #4 test perform reduce operation -->
+            <param name="input_collection">
+                <collection type="list">
+                    <element name="db.kmc_suf" value="db.kmc_suf"/>
+                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                </collection>
+	    </param>
+	    <repeat name="operations">
+                 <conditional name="ops">
+                     <param name="transform_operation" value="reduce"/>
+                 </conditional>
+                 <section name="input_opt">
+                    <param name="min_kmer_occurrence" value="2"/>
+                    <param name="max_kmer_occurrence" value="20"/>
+	         </section>
+	   </repeat>
+           <repeat name="operations">
+                 <conditional name="ops">
+                     <param name="transform_operation" value="sort"/>
+                 </conditional>
+                 <section name="input_opt">
+                    <param name="min_kmer_occurrence" value="3"/>
+                    <param name="max_kmer_occurrence" value="30"/>
+                 </section>
+	   </repeat>
+           <repeat name="operations"> 
+                 <conditional name="ops">
+                     <param name="transform_operation" value="compact"/>
+                 </conditional>
+                 <section name="input_opt">
+                    <param name="min_kmer_occurrence" value="4"/>
+                    <param name="max_kmer_occurrence" value="40"/>
+                 </section>
+	    </repeat>
+            <output_collection name="kmc_db" type="list">
+                <element name="reduce_1_db.kmc_suf" file="reduce_1_db.kmc_suf"/>
+		<element name="reduce_1_db.kmc_pre" file="reduce_1_db.kmc_pre"/>
+	        <element name="sort_2_db.kmc_suf" file="sort_2_db.kmc_suf"/>
+                <element name="sort_2_db.kmc_pre" file="sort_2_db.kmc_pre"/>
+		<element name="compact_3_db.kmc_suf" file="compact_3_db.kmc_suf"/>
+                <element name="compact_3_db.kmc_pre" file="compact_3_db.kmc_pre"/>
+            </output_collection>
+        </test>
+      </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+	    
+*This operation transforms single KMC database to one or more KMC database(s) or text file(s).*
+	    
+**Input**
+	    
+- input file - path to databases generated by KMC (KMC generates 2 files with the same name, but different extensions (i.e kmc_suf and kmc_pre).
+
+**Available Operations:**
+
+-  sort                       - converts database produced by KMC2.x to KMC1.x database format (which contains k-mers in sorted order)
+-  reduce                     - exclude too rare and too frequent k-mers
+-  compact                    - remove counters of k-mers
+-  histogram                  - produce histogram of k-mers occurrences
+-  dump                       - produce text dump of kmc database
+-  set_counts <value>         - set all k-mer counts to specific value
+
+**Generate KMC DB**
+
+- kmc -k27 file.fastq kmers_db kmc_tmp_dir
+
+**Example 1: split k-mers on a valid and invalid database**
+
+*Let's suppose k-mers with occurences below 11 are erroneous due to sequencing erros. With reduce we can split k-mer set to one set with valid k-mers and one with invalid:*
+
+- kmc_tools transform kmers_db reduce reduce_1_db -cx10 reduce reduce_2_db -ci11 histogram histogram.txt dump dump.txt
+
+**Example 2: perform all operations**
+
+- kmc_tools transform kmers_db reduce -ci10 reduce_1_db sort sort_2_db compact compact_3_db histogram histogram.txt dump dump.txt
+
+**Output**
+
+*Example 1:*
+
+- reduce_1_db.kmc_suf
+- reduce_1_db.kmc_pre
+- reduce_2_db.kmc_suf
+- reduce_2_db.kmc_pre
+- histogram
+- dump
+
+*Example 2:*
+
+- reduce_1_db.kmc_suf
+- reduce_1_db.kmc_pre
+- sort_2_db.kmc_suf
+- sort_2_db.kmc_pre
+- compact_3_db.kmc_suf
+- compact_3_db.kmc_pre
+- histogram
+- dump
+
+
+ 
+.. class:: infomark
+	    
+**References**
+
+More information are available on `website <https://github.com/refresh-bio/KMC/blob/master/kmc_tools.pdf>`_.
+	]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1093/bioinformatics/btx304</citation>
+	<citation type="doi">DOI: 10.1093/bioinformatics/btv022</citation>
+	<citation type="doi">DOI: 10.1186/1471-2105-14-160</citation>
+    </citations>
+</tool>

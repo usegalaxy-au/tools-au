@@ -1,0 +1,105 @@
+<tool id="kmc" name="KMC Counter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>K-mer counting and filtering of reads</description>
+    <xrefs>
+        <xref type='bio.tools'>kmc</xref>
+    </xrefs> 
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    kmc
+	    -t\${GALAXY_SLOTS:-4}
+	    #if $params.k:
+	    	-k'$params.k'		
+	    #end if
+	    #if $params.m:
+	        -m'$params.m'
+	    #end if
+	    #if $params.j:
+	       -j'$statistic'
+	    #end if
+	    #if $params.exclude_length:
+	       -ci'$params.exclude_length'
+	    #end if
+	    #if $params.max_counter_value:
+	       -cs'$params.max_counter_value'
+	    #end if
+	    $input_file
+	    db
+	    . 
+
+	    ]]></command>
+    <inputs>
+	    <expand macro="macro_input" />
+	    <section name="params" title="parameter" expanded="false">
+                    <param argument="-k" type="integer" value="25" label="k-mer length (k from 1 to 256; default: 25)" />
+		    <param argument="-m" type="integer" value="12" label="max amount of RAM in GB (from 1 to 1024); default: 12" />
+		    <param name="signature_length" arguments="-p" type="integer" value="9" label="signature length (5, 6, 7, 8, 9, 10, 11); default: 9"/>
+		    <param name="exclude_length" arguments="-ci" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
+		    <param name="max_counter_value" arguments="-cs" type="integer" value="255" label="maximal value of a counter (default: 255)"/>
+		    <param name="exclude_kmer_occurence" arguments="-cx" type="integer" value="1000000000" label="xclude k-mers occurring more of than [value] times (default: 1e9)"/>
+		    <param argument="-j" type="boolean" truevalue="-j" falsevalue="" checked="True" label="file name with execution summary in JSON format"/>
+	    </section>
+    </inputs>
+    <outputs>
+	    <data format="json" name="statistic" label="${tool.name} on ${on_string}">
+		   <filter>params['j']</filter>
+	    </data>
+	  <collection name="kmc_db" type="list" label="${tool.name} on ${on_string}: kmc db">
+	          <data format="binary" name="db.kmc_suf" label="${tool.name} on ${on_string}" from_work_dir="db.kmc_suf" />
+                  <data format="binary" name="db.kmc_pre" label="${tool.name} on ${on_string}" from_work_dir="db.kmc_pre" />
+	  </collection>
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test with common parameters -->
+	    <param name="input_file" value="F3D0_R1.fastq" ftype="fastq"/>
+            <param name="k" value="25" />
+            <param name="m" value="12" />
+	    <param name="p" value="9" />
+	    <param name="ci" value="2" />
+            <param name="cs" value="255" />
+	    <output name="db.kmc_suf" file="db.kmc_suf" ftype="binary" />
+	    <output name="db.kmc_pre" file="db.kmc_pre" ftype="binary" />
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*K-mer Counter is a utility designed for counting k-mers (sequences of consecutive k symbols) in a set of reads from genome sequencing projects.*
+
+
+**Input**
+	    
+- input file - FASTA, FASTQ and BAM. Also, gipped versions of FASTA and FASTQ. 
+
+**Example:**
+
+- kmc -k27 -m24 NA19238.fastq NA.res /data/kmc_tmp_dir/
+- kmc -k27 -m24 @files.lst NA.res /data/kmc_tmp_dir/
+
+**Output**
+
+- filename.res.kmc_suf
+- filename.res.kmc_pre
+
+ 
+.. class:: infomark
+	    
+**References**
+	    
+More information are available on `website <http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about>`_.
+	]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1093/bioinformatics/btx304</citation>
+	<citation type="doi">DOI: 10.1093/bioinformatics/btv022</citation>
+	<citation type="doi">DOI: 10.1186/1471-2105-14-160</citation>
+    </citations>
+</tool>

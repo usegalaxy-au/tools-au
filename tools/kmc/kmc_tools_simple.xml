@@ -1,0 +1,421 @@
+<tool id="kmc_simple" name="KMC simple" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>simple operations for two input kmer sets</description>
+    <xrefs>
+        <xref type='bio.tools'>kmc</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    mkdir outdir &&
+	    #for $f in $input_collection_one:
+	    	#if '.kmc_suf' in str($f.element_identifier)
+	    	    ln -s '${f}' kmers_db_one.kmc_suf &&
+	        #else
+	    	    ln -s '${f}' kmers_db_one.kmc_pre &&
+	        #end if
+	    #end for
+	    #for $f in $input_collection_two:
+                #if '.kmc_suf' in str($f.element_identifier)
+                    ln -s '${f}' kmers_db_two.kmc_suf &&
+                #else
+                    ln -s '${f}' kmers_db_two.kmc_pre &&
+                #end if
+            #end for
+	    kmc_tools 
+	      -t\${GALAXY_SLOTS:-4}
+	      simple
+	      #if $input_options_cond.input_param == "None":
+	           kmers_db_one
+	    	   kmers_db_two
+	      #elif $input_options_cond.input_param == "kmc_one_params":
+	           kmers_db_one
+	     	   -ci'$input_options_cond.kmc_db_one_param.min_kmer_occurrence'
+	           -cx'$input_options_cond.kmc_db_one_param.max_kmer_occurrence'
+		   kmers_db_two
+	      #elif $input_options_cond.input_param == "kmc_two_params":
+	           kmers_db_one 
+	  	   kmers_db_two
+	           -ci'$input_options_cond.kmc_db_two_param.min_kmer_occurrence'
+                   -cx'$input_options_cond.kmc_db_two_param.max_kmer_occurrence'
+	      #elif $input_options_cond.input_param == "both_kmc_params":
+		   kmers_db_one
+	           -ci'$input_options_cond.both_db_one_param.min_kmer_occurrence'
+                   -cx'$input_options_cond.both_db_one_param.max_kmer_occurrence'
+                   kmers_db_two
+                   -ci'$input_options_cond.both_db_two_param.min_kmer_occurrence'
+                   -cx'$input_options_cond.both_db_two_param.max_kmer_occurrence'
+	      #end if
+	      #set $operation_arr=[]
+	      #for $i,$opt in enumerate($operations)
+	           #silent $operation_arr.append(str($opt.ops.select_operation))
+	    	   #if str($opt.ops.select_operation) == "intersect":
+	    		$opt.ops.select_operation
+			#if str($opt.ops.add_output_params.oc) != 'min':
+	    		    '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
+			    -oc'$opt.ops.add_output_params.oc'
+	    		#else
+			    '${opt.ops.select_operation}_min_db'
+	    		    -oc'min'
+	    		#end if
+		   	#if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
+	           		-ci'$opt.ops.add_output_params.min_kmer_occurrence'
+	           	#end if
+	           	#if str($opt.ops.add_output_params.max_kmer_occurrence) != '':
+	           		-cx'$opt.ops.add_output_params.max_kmer_occurrence'
+	    	   	#end if
+	    	   #elif str($opt.ops.select_operation) == "union":
+			$opt.ops.select_operation
+                        #if str($opt.ops.add_output_params.oc) != "None":
+                            '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
+                            -oc'$opt.ops.add_output_params.oc'
+                        #else  
+                            '${opt.ops.select_operation}_db' 
+                        #end if
+                        #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
+                                -ci'$opt.ops.add_output_params.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.add_output_params.max_kmer_occurrence) != '':
+                                -cx'$opt.ops.add_output_params.max_kmer_occurrence'
+	    		#end if
+ 		   #elif str($opt.ops.select_operation) == "kmers_subtract":
+                        $opt.ops.select_operation
+	    		${opt.ops.select_operation}_db
+	    		#if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
+                                -ci'$opt.ops.add_output_params.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.add_output_params.max_kmer_occurrence) != '':
+                                -cx'$opt.ops.add_output_params.max_kmer_occurrence'
+	    	        #end if
+		   #elif str($opt.ops.select_operation) == "reverse_kmers_subtract":
+                        $opt.ops.select_operation
+                        ${opt.ops.select_operation}_db
+                        #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
+                                -ci'$opt.ops.add_output_params.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.add_output_params.max_kmer_occurrence) != '':
+                                -cx'$opt.ops.add_output_params.max_kmer_occurrence'
+	    		#end if
+                   #elif str($opt.ops.select_operation) == "counters_subtract":
+                        $opt.ops.select_operation
+                        #if str($opt.ops.add_output_params.oc) != 'min':
+                            '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
+                            -oc'$opt.ops.add_output_params.oc'
+                        #else
+                            '${opt.ops.select_operation}_min_db'
+                            -oc'min'
+                        #end if
+                        #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
+                                -ci'$opt.ops.add_output_params.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.add_output_params.max_kmer_occurrence) != '':
+                                -cx'$opt.ops.add_output_params.max_kmer_occurrence'
+                        #end if
+                   #elif str($opt.ops.select_operation) == "reverse_counters_subtract":
+                        $opt.ops.select_operation
+                        #if str($opt.ops.add_output_params.oc) != 'min':
+                            '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
+                            -oc'$opt.ops.add_output_params.oc'
+                        #else
+                            '${opt.ops.select_operation}_min_db'
+                            -oc'min'
+                        #end if
+                        #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
+                                -ci'$opt.ops.add_output_params.min_kmer_occurrence'
+                        #end if
+                        #if str($opt.ops.add_output_params.max_kmer_occurrence) != '':
+                                -cx'$opt.ops.add_output_params.max_kmer_occurrence'
+                        #end if
+	           #end if 
+	     #end for
+	    
+	     #for $i,$op in enumerate($operation_arr):
+	        #if str($op) == "kmers_subtract" or str($op) == "reverse_kmers_subtract" or str($opt.ops.add_output_params.oc) == "None":
+	         && cp '${op}'_db.kmc_suf outdir/
+	         && cp '${op}'_db.kmc_pre outdir/ 
+	       #else
+		 && cp '${op}'_*_db.kmc_suf outdir/
+	         && cp '${op}'_*_db.kmc_pre outdir/
+	       #end if
+	     #end for
+	    ]]></command>
+    <inputs>
+	    <param name="input_collection_one" type="data_collection" collection_type="list" label="KMC db one"/>
+	    <param name="input_collection_two" type="data_collection" collection_type="list" label="KMC db two"/>
+	    <conditional name="input_options_cond">
+		    <param name="input_param" type="select" label="Input parameters">
+			 <option value="None" selected="true">Both KMC DB with default parameters</option>
+			 <option value="kmc_one_params">KMC db one only</option>
+			 <option value="kmc_two_params">KMC db two only</option>
+			 <option value="both_kmc_params">Both KMC DB with user parameters</option>
+		    </param>
+		    <when value="None"/>
+		    <when value="kmc_one_params">
+			 <section name="kmc_db_one_param" title="KMC DB one parameters">
+				 <expand macro="input_option"/>
+			 </section>
+		    </when>
+		    <when value="kmc_two_params">
+			 <section name="kmc_db_two_param" title="KMC DB two parameters">
+				 <expand macro="input_option"/>
+			 </section>
+		    </when>
+		    <when value="both_kmc_params">
+			 <section name="both_db_one_param" title="KMC DB one parameters">
+				 <expand macro="input_option"/>
+			 </section>
+			 <section name="both_db_two_param" title="KMC DB two parameters">
+				 <expand macro="input_option"/>
+			 </section>
+		    </when>
+	    </conditional>
+	    <repeat name="operations" title="Operations" min="1" max="3">
+		   <conditional name="ops">
+		     <expand macro="simple_operation"/>
+		     <when value="intersect">
+			    <section name="add_output_params" expanded="false" title="Additional output parameters">
+                               <expand macro="counter_calculation_option"/>
+                            </section>
+                     </when>
+		     <when value="union">
+			    <section name="add_output_params" expanded="false" title="Additional output parameters">
+                               <expand macro="counter_calculation_option"/>
+                            </section>
+		    </when>
+		    <when value="kmers_subtract">
+			    <section name="add_output_params" expanded="false" title="Additional output parameters">
+                               <expand macro="none_counter_calculation_option"/>
+                            </section>
+		    </when>
+                    <when value="reverse_kmers_subtract">
+                            <section name="add_output_params" expanded="false" title="Additional output parameters">
+                               <expand macro="none_counter_calculation_option"/>
+                            </section>
+		    </when>
+                    <when value="counters_subtract">
+                            <section name="add_output_params" expanded="false" title="Additional output parameters">
+                               <expand macro="counter_calculation_option"/>
+                            </section>
+                    </when>
+                    <when value="reverse_counters_subtract">
+                            <section name="add_output_params" expanded="false" title="Additional output parameters">
+                               <expand macro="counter_calculation_option"/>
+                            </section>
+                    </when>
+		  </conditional>
+          </repeat>
+    </inputs>
+    <outputs>
+          <collection name="kmc_db" type="list" label="${tool.name} on ${on_string}: kmc db">
+		  <discover_datasets pattern="(?P&lt;designation&gt;.+)" format="binary" directory="outdir/" />
+	  </collection>
+    </outputs>
+    <tests>
+	 <test>
+	    <!-- #1 test with default parameters -->
+            <param name="input_collection_one">
+                <collection type="list">
+		    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
+		    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                </collection>
+	    </param>
+            <param name="input_collection_two">
+                <collection type="list">
+		    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
+		    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                </collection>
+	    </param>
+	    <conditional name="input_options_cond">
+		   <param name="input_param" value="None"/>
+	    </conditional>
+	    <param name="select_operation" value="intersect" />
+	    <section name="add_output_params">
+		   <param name="oc" value="max"/>
+	    </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="intersect_max_db.kmc_suf" file="intersect_max_db.kmc_suf"/>
+                <element name="intersect_max_db.kmc_pre" file="intersect_max_db.kmc_pre"/>
+            </output_collection>
+         </test>
+         <test>
+            <!-- #2 test with input parameters for KMC DB one only -->
+            <param name="input_collection_one">
+                <collection type="list">
+                    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
+                    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                </collection>
+            </param>
+            <param name="input_collection_two">
+                <collection type="list">
+                    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
+                    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                </collection>
+            </param>
+            <conditional name="input_options_cond">
+                   <param name="input_param" value="kmc_one_params"/>
+            </conditional>
+	    <param name="select_operation" value="intersect" />
+	    <section name="kmc_db_one_param">
+		   <param name="min_kmer_occurrence" value="3"/>
+		   <param name="max_kmer_occurrence" value="30"/>
+	    </section>
+            <section name="add_output_params">
+                   <param name="oc" value="min"/>
+            </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="intersect_min_db.kmc_suf" file="intersect_min_db.kmc_suf"/>
+                <element name="intersect_min_db.kmc_pre" file="intersect_min_db.kmc_pre"/>
+            </output_collection>
+         </test>
+         <test>
+            <!-- #3 test with input parameters for KMC DB two only -->
+            <param name="input_collection_one">
+                <collection type="list">
+                    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
+                    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                </collection>
+            </param>
+            <param name="input_collection_two">
+                <collection type="list">
+                    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
+                    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                </collection>
+            </param>
+            <conditional name="input_options_cond">
+                   <param name="input_param" value="kmc_two_params"/>
+            </conditional>
+            <param name="select_operation" value="union" />
+            <section name="kmc_db_two_param">
+                   <param name="min_kmer_occurrence" value="3"/>
+                   <param name="max_kmer_occurrence" value="30"/>
+            </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="union_db.kmc_suf" file="union_db.kmc_suf"/>
+                <element name="union_db.kmc_pre" file="union_db.kmc_pre"/>
+            </output_collection>
+         </test>
+         <test>
+            <!-- #4 test with input parameters for both KMC DB -->
+            <param name="input_collection_one">
+                <collection type="list">
+                    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
+                    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                </collection>
+            </param>
+            <param name="input_collection_two">
+                <collection type="list">
+                    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
+                    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                </collection>
+            </param>
+            <conditional name="input_options_cond">
+                   <param name="input_param" value="both_kmc_params"/>
+            </conditional>
+            <param name="select_operation" value="counters_subtract" />
+            <section name="both_db_one_param">
+                   <param name="min_kmer_occurrence" value="2"/>
+                   <param name="max_kmer_occurrence" value="20"/>
+	    </section>
+            <section name="both_db_two_param">
+                   <param name="min_kmer_occurrence" value="3"/>
+                   <param name="max_kmer_occurrence" value="30"/>
+	    </section>
+            <section name="add_output_params">
+                   <param name="oc" value="sum"/>
+            </section>
+            <output_collection name="kmc_db" type="list">
+                <element name="counters_subtract_sum_db.kmc_suf" file="counters_subtract_sum_db.kmc_suf"/>
+                <element name="counters_subtract_sum_db.kmc_pre" file="counters_subtract_sum_db.kmc_pre"/>
+            </output_collection>
+         </test>
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+
+**What it does**
+	    
+*KMC simple operation performs set operation on two input KMC's databases*
+
+**General Syntax**
+
+kmc_tools simple <input1 [input1_params]> <input2 [input2_params]> <oper1 output1 [output_params1]> [<oper2 output2 [output_params2]> ...]
+
+**Input:**
+	    
+- input file - input1 and input2 are the databases generated by KMC ( kmc file suffix - kmc_pre and kmc_suf )
+
+**Available Operations:**
+
+- intersect - output database will contains only k-mers that are present in both input sets
+- union - output database will contains each k-mer present in any of input sets
+- kmers_subtract - difference of input sets based on k-mers. Output database will contains only k-mers that are present in first input set but absent in the second one
+- counters_subtract - difference of input sets based on k-mers and their counters (weaker version of kmers_subtract). Output database will contains all k-mers that are present in first input, beyond those for which counter operation will lead to remove (i.e. counter equal to 0 or negative number)
+- reverse_kmers_subtract - same as kmers_subtract but treat input2 as first and input1 as second
+- reverse_counters_subtract - same as counters_subtract but treat input2 as first and input1 as second
+
+**Additional Parameters for inputs:**
+
+- ci<value> - exclude k-mers occurring less than <value> times		
+- cx<value> - exclude k-mers occurring more of than <value> times
+
+**Additional Parameters for outputs:**
+
+- ci<value>  - exclude k-mers occurring less than <value> times
+- cx<value>  - exclude k-mers occurring more of than <value> times
+- cs<value>  - maximal value of a counter
+- o<kmc|kff> - output in KMC or KFF format (default: kmc)
+- oc<value>  - redefine counter calculation mode for equal k-mers
+
+**Available oc<value>**
+
+- min   - get lower value of a k-mer counter (default value for intersect operation)
+- max   - get upper value of a k-mer counter
+- sum   - get sum of counters from both databases
+- diff  - get difference between counters (default for counters_subtract operation)
+- left  - get counter from first database (input1)
+- right - get counter from second database (input2)
+
+
+**Example(1):**
+
+- kmc -k27 file1.fastq kmers1 kmc_tmp_dir
+- kmc -k27 file2.fastq kmers2 kmc_tmp_dir
+- kmc_tools simple kmers1 -ci10 -cx200 kmers2 -ci4 -cx100 intersect kmers1_kmers2_intersect -ci20 -cx150
+
+**Output(1)**
+
+- kmers1_kmers2_intersect.kmc_suf (i.e intersect_kmc_suf in galaxy)
+- kmers1_kmers2_intersect.kmc_pre (i.e intersect_kmc_pre in galaxy)
+
+**Example(2):**
+
+- kmc -k27 file1.fastq kmers1 kmc_tmp_dir
+- kmc -k27 file2.fastq kmers2 kmc_tmp_dir
+- kmc_tools simple kmers1 kmers2 intersect inter_k1_k2_max -ocmax intersect inter_k1_k2_min union union_k1_k2 -ci10
+
+**Output(2)**
+
+- inter_k1_k2_max.kmc_suf (i.e intersect.kmc_suf in galaxy)
+- inter_k1_k2_max.kmc_pre (i.e intersect.kmc_pre in galaxy)
+- inter_k1_k2_min.kmc_suf (i.e intersect.kmc_suf in galaxy)
+- inter_k1_k2_min.kmc_pre (i.e intersect.kmc_pre in galaxy)
+- union_k1_k2.kmc_suf (i.e union.kmc_suf in galaxy)
+- union_k1_k2.kmc_pre (i.e union.kmc_pre in galaxy
+ 
+.. class:: infomark
+	    
+**References**
+
+More information are available on `website <https://github.com/refresh-bio/KMC/blob/master/kmc_tools.pdf>`_.
+	]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1093/bioinformatics/btx304</citation>
+	<citation type="doi">DOI: 10.1093/bioinformatics/btv022</citation>
+	<citation type="doi">DOI: 10.1186/1471-2105-14-160</citation>
+    </citations>
+</tool>

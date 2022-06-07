@@ -1,0 +1,134 @@
+<tool id="kmc_filter" name="KMC filter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+    <description>filtering KMC's database</description>
+    <xrefs>
+        <xref type='bio.tools'>kmc</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    #for $f in $input_collection:
+	    	#if '.kmc_suf' in str($f.element_identifier)
+	    	    ln -s '${f}' db.kmc_suf &&
+	        #else
+	    	    ln -s '${f}' db.kmc_pre &&
+	        #end if
+	    #end for
+	    kmc_tools 
+	      filter
+	      -t\${GALAXY_SLOTS:-2}
+              #if $t:
+                  '$t'
+              #end if
+              #if $hm:
+                  '$hm'
+              #end if
+              db
+              -ci'$min_kmer_occurrence'
+	      -cx'$max_kmer_occurrence'
+	      $input_read_file
+              -f'$input_format'
+              -ci'$exclude_length'
+	      -cx'$exclude_kmer_occurence'
+	      #if str($output_format) == 'q':
+	         $filter_output_fastq
+	      #else
+		 $filter_output_fasta
+	      #end if
+              -f'$output_format'
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_collection" type="data_collection" collection_type="list" label="KMC db"/>
+	    <param name="input_read_file" type="data" format="fastq,fasta" label="input read file" help="Input file format FASTQ/FASTA [default:FASTQ]"/>
+            <expand macro="input_option"/>
+            <param name="input_format" argument="-f" type="select" label="input read file format [default:FASTQ]">
+                   <option value="q" selected="true">FASTQ</option>
+                   <option value="a">FASTA</option>
+            </param>
+            <param argument="-t" type="boolean" truevalue="-t" falsevalue="" checked="false" label="trim reads" help="trim reads on first invalid k-mer instead of remove entirely"/>
+            <param argument="-hm" type="boolean" truevalue="-hm" falsevalue="" checked="false" label="hard mask" help="hard mask invalid k-mers in a read"/>
+            <expand macro="general_option"/>
+            <param name="output_format" argument="-f" type="select" label="output read file format [default:FASTQ]">
+                   <option value="q" selected="true">FASTQ</option>
+                   <option value="a">FASTA</option>
+            </param>
+    </inputs>
+    <outputs>
+	    <data name="filter_output_fastq" format="fastq" label="${tool.name} on ${on_string}: filter">
+		    <filter>'q' in output_format</filter>
+	    </data>
+	    <data name="filter_output_fasta" format="fasta" label="${tool.name} on ${on_string}: filter">
+                    <filter>'a' in output_format</filter>
+            </data>
+
+    </outputs>
+	
+    <tests>
+	 <test>
+	     <!-- #1 test with common parameters -->
+            <param name="input_collection">
+                <collection type="list">
+                    <element name="db.kmc_suf" value="db.kmc_suf" dbkey="89"/>
+                    <element name="db.kmc_pre" value="db.kmc_pre" dbkey="89"/>
+                </collection>
+            </param>
+	    <param name="input_read_file" value="F3D0_R1.fastq" ftype="fastq"/>
+            <param name="min_kmer_occurrence" value="3" />
+            <param name="exclude_length" value="2" />
+            <param name="exclude_kmer_occurence" value="10" />
+            <output name="filtered_1.fastq" file="filtered_1.fastq" ftype="fastq" />
+        </test>
+         <test>
+             <!-- #2 test with common parameters -->
+            <param name="input_collection">
+                <collection type="list">
+                    <element name="db.kmc_suf" value="db.kmc_suf" dbkey="89"/>
+                    <element name="db.kmc_pre" value="db.kmc_pre" dbkey="89"/>
+                </collection>
+            </param>
+            <param name="input_read_file" value="F3D0_R1.fastq" ftype="fastq"/>
+            <param name="exclude_length" value="10" />
+            <param name="exclude_kmer_occurence" value="100" />
+            <output name="filtered_2.fastq" file="filtered_2.fastq" ftype="fastq" />
+        </test>
+
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+	    
+*K-mer Counter is a utility designed for counting k-mers (sequences of consecutive k symbols) in a set of reads from genome sequencing projects.*
+	    
+**Input**
+	    
+- input file - FASTA, FASTQ and BAM. Also, gipped versions of FASTA and FASTQ. 
+
+**Command line Example:**
+
+- kmc_tools filter kmc_db -ci3 input.fastq -ci0.5 -cx1.0 filtered_1.fastq
+- kmc_tools filter kmc_db input.fastq -ci10 -cx100 filtered_2.fastq
+
+**Output**
+
+- filtered_1.fastq
+- filtered_2.fastq
+
+ 
+.. class:: infomark
+	    
+**References**
+
+More information are available on `website <http://sun.aei.polsl.pl/REFRESH/index.php?page=projects&project=kmc&subpage=about>`_.
+	]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1093/bioinformatics/btx304</citation>
+	<citation type="doi">DOI: 10.1093/bioinformatics/btv022</citation>
+	<citation type="doi">DOI: 10.1186/1471-2105-14-160</citation>
+    </citations>
+</tool>
