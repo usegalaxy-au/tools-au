@@ -6,15 +6,15 @@
 >
   <description> - merge long-read and hybrid genome assemblies to increase contiguity </description>
 
-  <xrefs>
-    <xref type="bio.tools">quickmerge</xref>
-  </xrefs>
-
   <macros>
     <token name="@TOOL_VERSION@">0.3</token>
     <token name="@VERSION_SUFFIX@">0</token>
     <token name="@GA_VERSION_SUFFIX@">1</token>
   </macros>
+
+  <xrefs>
+    <xref type="bio.tools">quickmerge</xref>
+  </xrefs>
 
   <requirements>
     <requirement type="package" version="@TOOL_VERSION@">quickmerge</requirement>
@@ -209,6 +209,8 @@ out.delta > out.rq.delta
           optional="true"
         />
       </when>
+
+      <when value="false"></when>
     </conditional>
 
     <section name="output" title="Optional outputs" expanded="true">
