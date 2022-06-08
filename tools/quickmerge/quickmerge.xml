@@ -1,7 +1,7 @@
 <tool
   id="quickmerge"
   name="QuickMerge"
-  version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@+ga@GA_VERSION_SUFFIX@"
+  version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
   python_template_version="3.5"
 >
   <description> - merge long-read and hybrid genome assemblies to increase contiguity </description>
@@ -9,7 +9,6 @@
   <macros>
     <token name="@TOOL_VERSION@">0.3</token>
     <token name="@VERSION_SUFFIX@">0</token>
-    <token name="@GA_VERSION_SUFFIX@">1</token>
   </macros>
 
   <xrefs>
