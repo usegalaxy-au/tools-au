@@ -3,8 +3,9 @@
   name="QuickMerge"
   version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
   python_template_version="3.5"
+  profile="21.05"
 >
-  <description> - merge long-read and hybrid genome assemblies to increase contiguity </description>
+  <description>merge long-read and hybrid genome assemblies to increase contiguity</description>
 
   <macros>
     <token name="@TOOL_VERSION@">0.3</token>
@@ -268,9 +269,37 @@ out.delta > out.rq.delta
   </outputs>
 
   <tests>
+    <!-- Standard run -->
     <test>
       <param name="input_query" value="ecoli_nanopore.fasta" ftype="fasta" />
       <param name="input_ref" value="ecoli_illumina.fasta" ftype="fasta" />
+      <output name="merged_fasta" ftype="fasta" file="merged.fasta" />
+    </test>
+
+    <!-- Standard run with additional outputs -->
+    <test>
+      <param name="input_query" value="ecoli_nanopore.fasta" ftype="fasta" />
+      <param name="input_ref" value="ecoli_illumina.fasta" ftype="fasta" />
+      <param name="check_align_summary" value="true" />
+      <param name="check_anchor_summary" value="true" />
+      <param name="check_param_summary" value="true" />
+      <output name="merged_fasta" ftype="fasta" file="merged.fasta" />
+      <output name="align_summary" ftype="tabular" file="aln_summary_out.tsv" />
+      <output name="anchor_summary" ftype="tabular" file="anchor_summary_out.txt" />
+      <output name="param_summary" ftype="tabular" file="param_summary_out.txt" />
+    </test>
+
+    <!-- Standard run with advanced params set -->
+    <test>
+      <param name="input_query" value="ecoli_nanopore.fasta" ftype="fasta" />
+      <param name="input_ref" value="ecoli_illumina.fasta" ftype="fasta" />
+      <param name="advanced.selected" value="true" />
+      <param name="advanced.nucmer_min_len" value="20" />
+      <param name="advanced.delta_min_len" value="0" />
+      <param name="advanced.quickmerge_hco" value="0" />
+      <param name="advanced.quickmerge_c" value="5000" />
+      <param name="advanced.quickmerge_seed_cutoff" value="1.5" />
+      <param name="advanced.quickmerge_merge_cutoff" value="5.0" />
       <output name="merged_fasta" ftype="fasta" file="merged.fasta" />
     </test>
   </tests>
