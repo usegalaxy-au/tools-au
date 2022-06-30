@@ -1,0 +1,67 @@
+<tool id="gtdbtk_classify_wf" name="GTDB-Tk classify_wf" version="@TOOL_VERSION@+galaxy0" python_template_version="3.5">
+    <description>Determine taxonomic classification of genomes by running the classify workflow</description>
+    <macros>
+        <token name="@TOOL_VERSION@">1.7.0</token>
+    </macros>
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">gtdbtk</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+        export MODULEPATH=/apps/modules/modulefiles:/projects/workspace/modulefiles &&
+        eval \$(/cm/local/apps/environment-modules/current/libexec/modulecmd-compat bash load gtdbtk) &&
+        mkdir \$LOCALDIR/dastool_bins &&
+        #set $mydirs = []
+        #for item in $dastool_inputs:
+            cp $item \$LOCALDIR/dastool_bins/"$item.element_identifier" &&
+            $mydirs.append($item.element_identifier.replace(".fa", ""))
+        #end for
+        gtdbtk classify_wf --genome_dir \$LOCALDIR/dastool_bins --out_dir gtdbtk_out --extension fa --cpus \${GALAXY_SLOTS:-2} &&
+        #for dir in $mydirs:
+	    cp gtdbtk_out/identify/intermediate_results/marker_genes/${dir}/${dir}_* . &&
+            cp gtdbtk_out/identify/intermediate_results/marker_genes/${dir}/prodigal_translation_table.tsv ${dir}_prodigal_translation_table.tsv &&
+        #end for
+        echo done
+    ]]></command>
+    <inputs>
+        <param type="data_collection" name="dastool_inputs" label="DAS_Tool bins" help="Include DAS_Tool bins for GTDB-Tk classify_wf" format="fasta" />
+    </inputs>
+    <outputs>
+        <data name="pplacer_bac120_json" format="json" label="${tool.name} on ${on_string} (pplacer.bac120.json)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.json"/>
+        <data name="pplacer_bac120_out" format="txt" label="${tool.name} on ${on_string} (pplacer.bac120.out)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.out"/>
+        <data name="bac120_classification_pplacer" format="tabular" label="${tool.name} on ${on_string} (bac120.classification_pplacer.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.classification_pplacer.tsv"/>
+        <data name="bac120_classify_tree" format="newick" label="${tool.name} on ${on_string} (bac120.classify.tree)" from_work_dir="gtdbtk_out/gtdbtk.bac120.classify.tree"/>
+        <data name="bac120_filtered" format="tabular" label="${tool.name} on ${on_string} (bac120.filtered.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.filtered.tsv"/>
+        <data name="bac120_msa" format="fasta" label="${tool.name} on ${on_string} (bac120.msa.fasta)" from_work_dir="gtdbtk_out/gtdbtk.bac120.msa.fasta"/>
+        <data name="bac120_red_dictionary" format="tabular" label="${tool.name} on ${on_string} (bac120.red_dictionary.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.red_dictionary.tsv"/>
+        <data name="bac120_summary" format="tabular" label="${tool.name} on ${on_string} (bac120.summary.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.summary.tsv"/>
+        <data name="bac120_user_msa" format="fasta" label="${tool.name} on ${on_string} (bac120.user_msa.fasta)" from_work_dir="gtdbtk_out/gtdbtk.bac120.user_msa.fasta"/>
+        <data name="log" format="txt" label="${tool.name} on ${on_string} (gtdbtk.log)" from_work_dir="gtdbtk_out/gtdbtk.log"/>
+        <data name="ar122_markers_summary" format="tabular" label="${tool.name} on ${on_string} (gtdbtk_ar122_markers_summary.tsv)" from_work_dir="gtdbtk_out/gtdbtk_ar122_markers_summary.tsv"/>
+        <data name="bac120_markers_summary" format="tabular" label="${tool.name} on ${on_string} (gtdbtk_bac120_markers_summary.tsv)" from_work_dir="gtdbtk_out/gtdbtk_bac120_markers_summary.tsv"/>
+        <collection name="gtdbtk_marker_genes" type="list:list" label="${tool.name} on ${on_string}">
+            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.tsv)" format="tabular" visible="false" />
+            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.faa)" format="fasta" visible="false" />
+            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.fna)" format="fasta" visible="false" />
+            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.gff)" format="gff3" visible="false" />
+            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.out)" format="txt" visible="false" />
+        </collection>
+    </outputs>
+    <tests>
+        <test>
+            <param name="dastool_inputs">
+                <collection type="list">
+                    <element name="item1" value="concoct.4.fa"/>
+                    <element name="item1" value="concoct.4.fa"/>
+                </collection>
+            </param>
+            <output name="bac120_classify_tree" ftype="tsv" file="gtdbtk.bac120.classify.tree"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+Usage::
+  gtdbtk classify_wf (--genome_dir GENOME_DIR | --batchfile BATCHFILE) --out_dir OUT_DIR [-x EXTENSION] [--min_perc_aa MIN_PERC_AA] [--prefix PREFIX] [--cpus CPUS] [--debug] [-h]
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btz848</citation>
+    </citations>
+</tool>
