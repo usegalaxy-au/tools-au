@@ -1,30 +1,56 @@
 <tool id="gtdbtk_classify_wf" name="GTDB-Tk classify_wf" version="@TOOL_VERSION@+galaxy0" python_template_version="3.5">
     <description>Determine taxonomic classification of genomes by running the classify workflow</description>
+
     <macros>
-        <token name="@TOOL_VERSION@">1.7.0</token>
+        <token name="@TOOL_VERSION@">2.1.0</token>
     </macros>
+
     <requirements>
         <requirement type="package" version="@TOOL_VERSION@">gtdbtk</requirement>
     </requirements>
+
     <command detect_errors="exit_code"><![CDATA[
-        export MODULEPATH=/apps/modules/modulefiles:/projects/workspace/modulefiles &&
-        eval \$(/cm/local/apps/environment-modules/current/libexec/modulecmd-compat bash load gtdbtk) &&
-        mkdir \$LOCALDIR/dastool_bins &&
-        #set $mydirs = []
-        #for item in $dastool_inputs:
-            cp $item \$LOCALDIR/dastool_bins/"$item.element_identifier" &&
-            $mydirs.append($item.element_identifier.replace(".fa", ""))
+
+        ## Configure input variables
+        ## ---------------------------------------------------------------------
+
+        #set INPUT_DIR = 'input_genomes'
+        #set $OUTPUT_DIR = 'gtdbtk_out'
+
+        #if $input_genomes[0].is_of_type('fasta.gz'):
+        #set EXTENSION = 'gz'
+        #else
+        #set EXTENSION = 'fa'
+        #end if
+
+        ## Format collection as directory
+        ## ---------------------------------------------------------------------
+
+        && mkdir $INPUT_DIR
+        #for $i, $file in enumerate($input_genomes):
+            #if EXTENSION == 'fa':
+            && ln -s '$file' $INPUT_DIR/genome_${i}.fasta
+            #else
+            && ln -s '$file' $INPUT_DIR/genome_${i}.fasta.gz
+            #end if
         #end for
-        gtdbtk classify_wf --genome_dir \$LOCALDIR/dastool_bins --out_dir gtdbtk_out --extension fa --cpus \${GALAXY_SLOTS:-2} &&
-        #for dir in $mydirs:
-	    cp gtdbtk_out/identify/intermediate_results/marker_genes/${dir}/${dir}_* . &&
-            cp gtdbtk_out/identify/intermediate_results/marker_genes/${dir}/prodigal_translation_table.tsv ${dir}_prodigal_translation_table.tsv &&
-        #end for
-        echo done
+
+        ## Run GTDB-Tk classify
+        ## ---------------------------------------------------------------------
+
+        && gtdbtk classify_wf
+          --genome_dir $INPUT_DIR
+          --out_dir $OUTPUT_DIR
+          --extension $EXTENSION
+          --cpus \${GALAXY_SLOTS:-2}
+
     ]]></command>
+
     <inputs>
-        <param type="data_collection" name="dastool_inputs" label="DAS_Tool bins" help="Include DAS_Tool bins for GTDB-Tk classify_wf" format="fasta" />
+        <param type="data_collection" name="input_genomes" label="Genomes to annotate"
+          help="A collection of genomes in FASTA format to be classified by GTDB-Tk" format="fasta,fasta.gz"/>
     </inputs>
+
     <outputs>
         <data name="pplacer_bac120_json" format="json" label="${tool.name} on ${on_string} (pplacer.bac120.json)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.json"/>
         <data name="pplacer_bac120_out" format="txt" label="${tool.name} on ${on_string} (pplacer.bac120.out)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.out"/>
@@ -46,20 +72,21 @@
             <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.out)" format="txt" visible="false" />
         </collection>
     </outputs>
+
     <tests>
         <test>
-            <param name="dastool_inputs">
+            <param name="input_genomes">
                 <collection type="list">
-                    <element name="item1" value="concoct.4.fa"/>
-                    <element name="item1" value="concoct.4.fa"/>
+                    <element name="item1" value="genome_1.fasta.gz"/>
+                    <element name="item2" value="genome_2.fasta.gz"/>
+                    <element name="item3" value="genome_3.fasta.gz"/>
                 </collection>
             </param>
             <output name="bac120_classify_tree" ftype="tsv" file="gtdbtk.bac120.classify.tree"/>
         </test>
     </tests>
     <help><![CDATA[
-Usage::
-  gtdbtk classify_wf (--genome_dir GENOME_DIR | --batchfile BATCHFILE) --out_dir OUT_DIR [-x EXTENSION] [--min_perc_aa MIN_PERC_AA] [--prefix PREFIX] [--cpus CPUS] [--debug] [-h]
+      TODO
     ]]></help>
     <citations>
         <citation type="doi">10.1093/bioinformatics/btz848</citation>
