@@ -84,18 +84,16 @@
 
  
 .. class:: infomark
-	    
+
+**Contributor**
+
+Galaxy Australia is the contributor wrapping the HiFiadapterFilt `Github <https://github.com/usegalaxy-au/tools-au>`_.	   
+ 
 **References**
 	    
-More information are available on `website <https://github.com/sheinasim/HiFiAdapterFilt>`_.
+More information are available on `Github <https://github.com/sheinasim/HiFiAdapterFilt>`_.
 	]]></help>
      <citations>
 	 <citation type="doi">DOI: 10.1186/s12864-022-08375-1</citation>
-    	 <citation type="bibtex">@misc{GalaxyAustraliaHiFiAdapterFilt,
-      		author = {Mike Thang},
-		organization = {Galaxy Australia},
-		url = {https://github.com/usegalaxy-au/tools-au/},
-      		year = {2022},
-    	}</citation>
      </citations>
 </tool>
