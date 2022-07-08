@@ -28,9 +28,9 @@
 	    -t\${GALAXY_SLOTS:-4}
 	    -o . 
 	    && cp '$prefix'.filt.fastq.gz '$cleanfastq'
-	    && cp '$prefix'.contaminant.blastout '$blastout'  
-	    && cp '$prefix'.stats '$stats'
+	    && cp '$prefix'.contaminant.blastout '$blastout'
 	    && cp '$prefix'.blocklist '$blocklist'
+	    && cp '$prefix'.stats '$stats'
 	    ]]></command>
     <inputs>
 	    <param name="input_file" type="data" format="bam,fastq,fastq.gz" label="Input HiFi Reads" help="HiFi reads"/>
@@ -40,20 +40,23 @@
     <outputs>
 	    <data name="cleanfastq" format="fastq.gz" label="${tool.name} on ${on_string}: clean reads"/>
 	    <data name="blastout" format="tabular" label="${tool.name} on ${on_string}: contaminant blastout"/>
-	    <data name="stats" format="txt" label="${tool.name} on ${on_string}: contaminant statistic"/>
             <data name="blocklist" format="txt" label="${tool.name} on ${on_string}: blocklist"/>
+	    <data name="stats" format="txt" label="${tool.name} on ${on_string}: contaminant statistic"/>
     </outputs>
 	
     <tests>
 	 <test>
             <!-- #1 test with common parameters -->
-	    <param name="input_file" value="combine.fq" ftype="fastq"/>
+	    <param name="input_file" value="combine.fastq.gz" ftype="fastq.gz"/>
             <param name="l" value="44" />
 	    <param name="m" value="97" />
-	    <output name="cleanfastq" ftype="combine.filt.fastq.gz" file="fastq.gz" />
-            <output name="blastout" ftype="combine.contaminant.blastout" file="tabular" />
-            <output name="stats" ftype="combine.stats" file="txt" />
-	    <output name="blocklist" ftype="combine.blocklist" file="txt" />
+	    <output name="cleanfastq" file="combine.filt.fastq.gz" ftype="fastq.gz" >
+		    <assert_content>
+			    <has_size value="6777311" />
+		    </assert_content>
+	    </output>
+            <output name="blastout" file="combine.contaminant.blastout" ftype="tabular" />
+	    <output name="blocklist" file="combine.blocklist" ftype="txt" />
         </test>
     </tests>
     <help><![CDATA[
