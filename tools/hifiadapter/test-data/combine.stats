@@ -1,9 +1,0 @@
-Started on Wed Jul  6 02:26:20 UTC 2022
-For the combine2 dataset:
-Removing reads containing adapters a minimum of 44 bp in length and 97% match.
-
-Number of ccs reads: 1988
-Number of adapter contaminated ccs reads: 989 (49.7485% of total)
-Number of ccs reads retained: 999 (50.2515% of total)
-
-Finished on Wed Jul  6 02:26:23 UTC 2022
