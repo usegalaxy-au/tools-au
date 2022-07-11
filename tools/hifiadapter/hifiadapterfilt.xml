@@ -50,11 +50,7 @@
 	    <param name="input_file" value="combine.fastq.gz" ftype="fastq.gz"/>
             <param name="l" value="44" />
 	    <param name="m" value="97" />
-	    <output name="cleanfastq" file="combine.filt.fastq.gz" ftype="fastq.gz" >
-		    <assert_content>
-			    <has_size value="6777311" />
-		    </assert_content>
-	    </output>
+	    <output name="cleanfastq" file="combine.filt.fastq.gz" ftype="fastq.gz" decompress="true" />
             <output name="blastout" file="combine.contaminant.blastout" ftype="tabular" />
 	    <output name="blocklist" file="combine.blocklist" ftype="txt" />
         </test>
