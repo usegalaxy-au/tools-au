@@ -1,0 +1,12 @@
+name: HiFiAdapterFilt
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/hifiadapter
+categories:
+  - Sequence Analysis
+type: unrestricted
+description: Remove CCS reads with remnant PacBio adapter sequences and convert outputs to a compressed .fastq (.fastq.gz)
+include:
+  - hifiadapterfilt.xml 
+  - macros.xml
+  - test-data
+  - README.md
