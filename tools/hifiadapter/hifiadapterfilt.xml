@@ -1,5 +1,8 @@
 <tool id="hifiadapterfilt" name="HiFi Adapter Filter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
-    <description>HiFi reads adapter filter</description>
+    <description>Remove CCS reads with remnant PacBio adapter sequences</description>
+    <xrefs>
+        <xref type='bio.tools'>hifiadapterfilt</xref>
+    </xrefs>
     <macros>
 	  <import>macros.xml</import>
     </macros>
