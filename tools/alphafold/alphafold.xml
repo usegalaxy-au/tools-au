@@ -70,7 +70,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 ## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
 ## The working directory ends up two levels deep and the visualization html page
 ## fails to load the PDB files as static assets.
-[ -d working ] && cp -r working/* .
+(([ -d working ] && cp -r working/* .) || true)
 
     ]]></command>
     <inputs>
