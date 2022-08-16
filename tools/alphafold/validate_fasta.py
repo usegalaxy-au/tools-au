@@ -98,10 +98,10 @@ class FastaValidator:
     def validate_num_seqs(self) -> None:
         """Assert that only one sequence has been provided."""
         if len(self.fasta_list) > 1:
-            raise ValueError(
-                'Error encountered validating FASTA:\n'
-                f' More than 1 sequence detected ({len(self.fasta_list)}).'
-                ' Please use single FASTA sequence as input.')
+            sys.stderr.write(
+                'WARNING: More than 1 sequence detected.'
+                ' Using first FASTA sequence as input.')
+            self.fasta_list = self.fasta_list[:1]
         elif len(self.fasta_list) == 0:
             raise ValueError(
                 'Error encountered validating FASTA:\n'
