@@ -27,6 +27,15 @@
 	    #if $params.max_counter_value:
 	       -cs'$params.max_counter_value'
 	    #end if
+            #if $input_file.is_of_type("fastq"):
+               -fq
+            #elif $input_file.is_of_type("fasta"):
+               -fm
+            #elif $input_file.is_of_type("bam"):
+               -fbam
+            #elif $input_file.is_of_type("kmc_suf"):
+               -fkmc
+            #end if
 	    $input_file
 	    db
 	    . 
@@ -56,7 +65,7 @@
 	
     <tests>
 	 <test>
-            <!-- #1 test with common parameters -->
+            <!-- #1 test fastq with common parameters -->
 	    <param name="input_file" value="F3D0_R1.fastq" ftype="fastq"/>
             <param name="k" value="25" />
             <param name="m" value="12" />
@@ -66,7 +75,18 @@
 	    <output name="db.kmc_suf" file="db.kmc_suf" ftype="binary" />
 	    <output name="db.kmc_pre" file="db.kmc_pre" ftype="binary" />
         </test>
-    </tests>
+        <test>
+            <!-- #2 test fasta with common parameters -->
+            <param name="input_file" value="contigs.fa" ftype="fasta"/> 
+            <param name="k" value="27" />
+            <param name="m" value="24" />
+            <param name="ci" value="2" />
+            <param name="cs" value="255" />
+            <param name="fm" value="-fm" />
+            <output name="contig_kmer27.kmc_suf" file="contig_kmer27.kmc_suf" ftype="binary" />
+            <output name="contig_kmer27.kmc_pre" file="contig_kmer27.kmc_pre" ftype="binary" />
+        </test>
+   </tests>
     <help><![CDATA[
 	    
 .. class:: infomark
