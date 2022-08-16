@@ -3,7 +3,7 @@
 import re
 import sys
 import argparse
-from typing import List, TextIO
+from typing import List
 
 
 class Fasta:
@@ -159,7 +159,7 @@ class FastaWriter:
         formatted_seq = ''
         for i in range(0, len(aa_seq), self.line_wrap):
             formatted_seq += aa_seq[i: i + self.line_wrap] + '\n'
-        return formatted_seq
+        return formatted_seq.upper()
 
 
 def main():
