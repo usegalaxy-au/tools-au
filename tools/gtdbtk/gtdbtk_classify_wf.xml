@@ -14,6 +14,10 @@
         ## Configure input variables
         ## ---------------------------------------------------------------------
 
+        ## TODO: DEV ONLY!!
+        export GTDBTK_DATA_PATH=/mnt/vdc/gtdbtk/db &&
+        export GALAXY_SLOTS=12 &&
+
         #set INPUT_DIR = 'input_genomes'
         #set $OUTPUT_DIR = 'gtdbtk_out'
 
@@ -52,6 +56,7 @@
     </inputs>
 
     <outputs>
+<<<<<<< Updated upstream
         <data name="pplacer_bac120_json" format="json" label="${tool.name} on ${on_string} (pplacer.bac120.json)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.json"/>
         <data name="pplacer_bac120_out" format="txt" label="${tool.name} on ${on_string} (pplacer.bac120.out)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.out"/>
         <data name="bac120_classification_pplacer" format="tabular" label="${tool.name} on ${on_string} (bac120.classification_pplacer.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.classification_pplacer.tsv"/>
@@ -71,6 +76,88 @@
             <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.gff)" format="gff3" visible="false" />
             <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.out)" format="txt" visible="false" />
         </collection>
+=======
+      <!-- Standard outputs -->
+      <collection name="classify_tree" type="list:list" label="${tool.name} on ${on_string}: Classification trees">
+        <discover_datasets
+          pattern="gtdbtk\.(?P&lt;designation&gt;.+)\.classify\.tree"
+          directory="gtdbtk_out/classify"
+          format="newick"
+          visible="true"
+        />
+      </collection>
+      <collection name="classify_summary" type="list:list" label="${tool.name} on ${on_string}: Classification summary">
+        <discover_datasets
+          pattern="gtdbtk\.(?P&lt;designation&gt;.+)\.summary\.tsv"
+          directory="gtdbtk_out/classify"
+          format="tabular"
+          visible="true"
+        />
+      </collection>
+      <data
+        name="failed_genomes"
+        format="tabular"
+        label="${tool.name} on ${on_string}: failed genomes"
+        from_work_dir="gtdbtk_out/identify/gtdbtk.failed_genomes.tsv"
+      />
+
+      <!-- Optional -->
+      <data
+        name="gtdbtk_log"
+        format="txt"
+        label="${tool.name} on ${on_string}: GTDB-Tk log file"
+        from_work_dir="gtdbtk_out/gtdbtk.log"
+      />
+      <data
+        name="gtdbtk_warnings"
+        format="txt"
+        label="${tool.name} on ${on_string}: GTDB-Tk warnings"
+        from_work_dir="gtdbtk_out/gtdbtk.warnings.log"
+      />
+
+      <!-- Optional: align -->
+      <collection name="align_msa_fasta" type="list:list" label="${tool.name} on ${on_string}: Aligned MSA">
+        <discover_datasets
+          pattern="gtdbtk\.(?P&lt;designation&gt;.+)\.msa\.fasta.gz"
+          directory="gtdbtk_out/align"
+          format="fasta.gz"
+          visible="true"
+        />
+      </collection>
+      <collection name="align_user_msa_fasta" type="list:list" label="${tool.name} on ${on_string}: Aligned user MSA">
+        <discover_datasets
+          pattern="gtdbtk\.(?P&lt;designation&gt;.+)\.user_msa\.fasta.gz"
+          directory="gtdbtk_out/align"
+          format="fasta.gz"
+          visible="true"
+        />
+      </collection>
+      <collection name="align_msa_filtered" type="list:list" label="${tool.name} on ${on_string}: Aligned MSA - filtered">
+        <discover_datasets
+          pattern="gtdbtk\.(?P&lt;designation&gt;.+)\.filtered\.tsv"
+          directory="gtdbtk_out/align"
+          format="tabular"
+          visible="true"
+        />
+      </collection>
+
+      <!-- Optional: identify -->
+      <data
+        name="align_translation_table"
+        type="tabular"
+        label="${tool.name} on ${on_string}: translation summary table"
+        from_work_dir="identify/gtdbtk.translation_table_summary.tsv"
+      >
+      </data>
+      <collection name="marker_genes" type="list:list" label="${tool.name} on ${on_string}: Marker genes summary">
+        <discover_datasets
+          pattern="gtdbtk\.(?P&lt;designation&gt;.+)markers_summary\.tsv"
+          directory="gtdbtk_out/identify"
+          format="tabular"
+          visible="true"
+        />
+      </collection>
+>>>>>>> Stashed changes
     </outputs>
 
     <tests>
@@ -82,7 +169,24 @@
                     <element name="item3" value="genome_3.fasta.gz"/>
                 </collection>
             </param>
+<<<<<<< Updated upstream
             <output name="bac120_classify_tree" ftype="tsv" file="gtdbtk.bac120.classify.tree"/>
+=======
+            <output name="classify_summary">
+              <discovered_dataset
+                designation="ar53"
+                ftype="tabular"
+                file="classify/gtdbtk.ar53.summary.tsv"
+              />
+            </output>
+            <output name="classify_tree">
+              <discovered_dataset
+                designation="ar53"
+                ftype="newick"
+                file="classify/gtdbtk.ar53.classify.tree"
+              />
+            </output>
+>>>>>>> Stashed changes
         </test>
     </tests>
     <help><![CDATA[
