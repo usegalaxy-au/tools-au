@@ -9,7 +9,9 @@ needs a GPU, and access to a 2.2 Tb reference data store.
 
 This document is designed to provide details on the compute environment
 required for Alphafold operation, and the Galaxy job destination
-settings to run the wrapper.
+settings to run the wrapper. We strongly suggest reading this entire document
+to ensure that your setup is compatible with the hardware that you are
+deploying to.
 
 For full details on Alphafold requirements, see
 https://github.com/deepmind/alphafold.
@@ -163,6 +165,7 @@ CUSTOM PARAMETERS
 A few parameters can be customized with the use of environment variables set in the job destination:
 
 - ``ALPHAFOLD_DB``: path to the reference database root (default ``/data``)
+- ``ALPHAFOLD_NO_GPU``: set to ANY STRING to disable GPU dependency (defaults to ``False``)
 - ``ALPHAFOLD_AA_LENGTH_MIN``: minimum accepted sequence length (default ``30``)
 - ``ALPHAFOLD_AA_LENGTH_MAX``: maximum accepted sequence length (default ``2000``)
 
