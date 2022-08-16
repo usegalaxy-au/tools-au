@@ -79,7 +79,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
-            <param name="input_mode" type="select" label="Fasta Input" help="Single protein sequence to fold. Input can be fasta file from history, or text. Provide only 1 sequence per job.">
+            <param name="input_mode" type="select" label="Fasta Input" help="Single protein sequence to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. Provide only 1 sequence per job.">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
