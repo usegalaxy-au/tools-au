@@ -38,10 +38,9 @@ python3 '$__tool_directory__/validate_fasta.py' input.fasta
 export TF_FORCE_UNIFIED_MEMORY=1 &&
 export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
 export DATE=`date +"%Y-%m-%d"` &&
-ALPHAFOLD_USE_GPU=True
-if [[ ALPHAFOLD_NO_GPU ]]; then
-  ALPHAFOLD_USE_GPU=False
-fi
+
+## Set ALPHAFOLD_USE_GPU depending on presence of ALPHAFOLD_NO_GPU env variable
+ALPHAFOLD_USE_GPU=False && [[ \$ALPHAFOLD_NO_GPU ]] || ALPHAFOLD_USE_GPU=True &&
 
 ## run alphafold  -------------------------
 python /app/alphafold/run_alphafold.py
