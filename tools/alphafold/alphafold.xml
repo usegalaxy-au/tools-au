@@ -39,9 +39,6 @@ export TF_FORCE_UNIFIED_MEMORY=1 &&
 export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
 export DATE=`date +"%Y-%m-%d"` &&
 
-## Set ALPHAFOLD_USE_GPU depending on presence of ALPHAFOLD_NO_GPU env variable
-ALPHAFOLD_USE_GPU=False && [[ \$ALPHAFOLD_NO_GPU ]] || ALPHAFOLD_USE_GPU=True &&
-
 ## run alphafold  -------------------------
 python /app/alphafold/run_alphafold.py
 --fasta_paths alphafold.fasta
@@ -56,7 +53,7 @@ python /app/alphafold/run_alphafold.py
 --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
 --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
 ## Param introduced in AlphaFold v2.1.2:
---use_gpu_relax=\${ALPHAFOLD_USE_GPU}
+--use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
 &&
 
 ## Generate additional outputs ------------

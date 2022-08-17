@@ -100,7 +100,7 @@ class FastaValidator:
         if len(self.fasta_list) > 1:
             sys.stderr.write(
                 'WARNING: More than 1 sequence detected.'
-                ' Using first FASTA sequence as input.')
+                ' Using first FASTA sequence as input.\n')
             self.fasta_list = self.fasta_list[:1]
         elif len(self.fasta_list) == 0:
             raise ValueError(
