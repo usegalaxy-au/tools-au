@@ -165,12 +165,9 @@ CUSTOM PARAMETERS
 A few parameters can be customized with the use of environment variables set in the job destination:
 
 - ``ALPHAFOLD_DB``: path to the reference database root (default ``/data``)
-- ``ALPHAFOLD_NO_GPU``: set to ANY STRING to disable GPU dependency (defaults to ``False``)
-- ``ALPHAFOLD_AA_LENGTH_MIN``: minimum accepted sequence length (default ``30``)
-- ``ALPHAFOLD_AA_LENGTH_MAX``: maximum accepted sequence length (default ``2000``)
-
-For the last two, these could be set to ``0`` and ``50000`` respectively to remove the valiation entirely.
-
+- ``ALPHAFOLD_USE_GPU [True/False]``: set to ``False`` to disable GPU dependency (defaults to ``True``)
+- ``ALPHAFOLD_AA_LENGTH_MIN``: minimum accepted sequence length (default ``0``)
+- ``ALPHAFOLD_AA_LENGTH_MAX``: maximum accepted sequence length (default ``0`` - no validation)
 
 Closing
 ~~~~~~~

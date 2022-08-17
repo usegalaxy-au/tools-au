@@ -30,8 +30,8 @@
 #end if
 
 python3 '$__tool_directory__/validate_fasta.py' input.fasta
---min_length \${ALPHAFOLD_AA_LENGTH_MIN:-30}
---max_length \${ALPHAFOLD_AA_LENGTH_MAX:-2000}
+--min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
+--max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
 > alphafold.fasta &&
 
 ## env vars -------------------------------
