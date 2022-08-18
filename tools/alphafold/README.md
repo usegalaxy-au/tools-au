@@ -3,9 +3,9 @@
 
 ## Overview
 
-Alphafold requires a customised compute environment to run. The machine needs a GPU, and access to a 2.2 Tb reference data store.
+Alphafold requires a customised compute environment to run. The machine requires access to a 2.2 Tb reference data store and runs much faster with GPU.
 
-This document is designed to provide details on the compute environment required for Alphafold operation, and the Galaxy job destination settings to run the wrapper.
+We have done our best to detail the compute environment required for Alphafold deployment, and the Galaxy job destination settings to run the wrapper. We strongly suggest reading this entire document to ensure that your setup is compatible with the hardware that you deploy to.
 
 For full details on Alphafold requirements, see https://github.com/deepmind/alphafold.
 
@@ -17,7 +17,7 @@ The machine is recommended to have the following specs:
 - 12 cores
 - 80 Gb RAM
 - 2.5 Tb storage
-- A fast Nvidia GPU.
+- Nvidia GPU (optional)
 
 As a minimum, the Nvidia GPU must have 8Gb RAM. It also requires ***unified memory*** to be switched on. <br>
 Unified memory is usually enabled by default, but some HPC systems will turn it off so the GPU can be shared between multiple jobs concurrently.
@@ -154,6 +154,16 @@ The settings below are mandatory, but you may include other settings as needed.
 
 <br>
 
+### Custom parameters
+
+A few parameters can be customized with the use of environment variables set in the job destination:
+
+- `ALPHAFOLD_DB`: path to the reference database root (default `/data`)
+- `ALPHAFOLD_USE_GPU [True/False]`: set to `False` to disable GPU dependency (defaults to `True`)
+- `ALPHAFOLD_AA_LENGTH_MIN`: minimum accepted sequence length (default `0`; no validation)
+- `ALPHAFOLD_AA_LENGTH_MAX`: maximum accepted sequence length (default `0`; no validation)
+
+
 ### Closing
 
-If you are experiencing technical issues, feel free to write to help@genome.edu.au. We may be able to provide advice on setting up Alphafold on your compute environment.
+If you are experiencing technical issues, feel free to write to help@genome.edu.au. We may be able to provide advice on setting up AlphaFold on your compute environment.
