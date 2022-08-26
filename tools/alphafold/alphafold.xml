@@ -2,7 +2,7 @@
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
       <token name="@TOOL_VERSION@">2.1.2</token>
-      <token name="@VERSION_SUFFIX@">1</token>
+      <token name="@VERSION_SUFFIX@">2</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_0082</edam_topic>
@@ -32,6 +32,9 @@
 python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
+#if $multimer
+--multiple
+#endif
 > alphafold.fasta &&
 
 ## env vars -------------------------------
@@ -54,6 +57,10 @@ python /app/alphafold/run_alphafold.py
 --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
 ## Param introduced in AlphaFold v2.1.2:
 --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
+#if $multimer
+--model_preset=multimer
+--num_multimer_predictions_per_model=1
+#endif
 &&
 
 ## Generate additional outputs ------------
@@ -72,7 +79,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
-            <param name="input_mode" type="select" label="Fasta Input" help="Single protein sequence to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. Provide only 1 sequence per job.">
+            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. If multiple sequences FASTA file provided, multimer mode must be selected.">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
@@ -83,6 +90,13 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
             </when>
         </conditional>
+        <param
+          name="multimer"
+          type="boolean"
+          checked="false"
+          label="Multimer mode"
+          help="Fold a protein multimer from multiple input sequences. You must input multiple sequences to run this mode."
+        />
         <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
     </inputs>
     <outputs>
@@ -167,7 +181,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     *What is AlphaFold?*
 
     | AlphaFold is a program which uses neural networks to predict the tertiary (3D) structure of proteins. AlphaFold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
-    | NOTE: AlphaFold has a number of versions - this tool uses AlphaFold v2.0.
+    | NOTE: AlphaFold has a number of versions - this tool uses AlphaFold v2.1.2.
     |
 
     *What makes AlphaFold different?*
