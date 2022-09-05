@@ -1,8 +1,9 @@
 <tool id="gtdbtk_classify_wf" name="GTDB-Tk classify_wf" version="@TOOL_VERSION@+galaxy0" python_template_version="3.5">
-    <description>Determine taxonomic classification of genomes by running the classify workflow</description>
+    <description>Determine taxonomic classification of genomes</description>
 
     <macros>
         <token name="@TOOL_VERSION@">2.1.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
     </macros>
 
     <requirements>
@@ -11,42 +12,46 @@
 
     <command detect_errors="exit_code"><![CDATA[
 
-        ## Configure input variables
-        ## ---------------------------------------------------------------------
+## Configure input variables
+## ---------------------------------------------------------------------
+
 
         ## TODO: DEV ONLY!!
+        ## Set up data manager for production
         export GTDBTK_DATA_PATH=/mnt/vdc/gtdbtk/db &&
         export GALAXY_SLOTS=12 &&
+        ## TODO: DEV ONLY!!
 
-        #set INPUT_DIR = 'input_genomes'
-        #set $OUTPUT_DIR = 'gtdbtk_out'
 
-        #if $input_genomes[0].is_of_type('fasta.gz'):
-        #set EXTENSION = 'gz'
-        #else
-        #set EXTENSION = 'fa'
-        #end if
+#set INPUT_DIR = 'input_genomes'
+#set $OUTPUT_DIR = 'gtdbtk_out'
 
-        ## Format collection as directory
-        ## ---------------------------------------------------------------------
+#if $input_genomes[0].is_of_type('fasta.gz'):
+#set EXTENSION = 'gz'
+#else
+#set EXTENSION = 'fa'
+#end if
 
-        && mkdir $INPUT_DIR
-        #for $i, $file in enumerate($input_genomes):
-            #if EXTENSION == 'fa':
-            && ln -s '$file' $INPUT_DIR/genome_${i}.fasta
-            #else
-            && ln -s '$file' $INPUT_DIR/genome_${i}.fasta.gz
-            #end if
-        #end for
+## Format collection as directory
+## ---------------------------------------------------------------------
 
-        ## Run GTDB-Tk classify
-        ## ---------------------------------------------------------------------
+&& mkdir $INPUT_DIR
+#for $i, $file in enumerate($input_genomes):
+    #if EXTENSION == 'fa':
+    && ln -s '$file' $INPUT_DIR/genome_${i}.fasta
+    #else
+    && ln -s '$file' $INPUT_DIR/genome_${i}.fasta.gz
+    #end if
+#end for
 
-        && gtdbtk classify_wf
-          --genome_dir $INPUT_DIR
-          --out_dir $OUTPUT_DIR
-          --extension $EXTENSION
-          --cpus \${GALAXY_SLOTS:-2}
+## Run GTDB-Tk classify
+## ---------------------------------------------------------------------
+
+&& gtdbtk classify_wf
+  --genome_dir $INPUT_DIR
+  --out_dir $OUTPUT_DIR
+  --extension $EXTENSION
+  --cpus \${GALAXY_SLOTS:-2}
 
     ]]></command>
 
@@ -56,27 +61,6 @@
     </inputs>
 
     <outputs>
-<<<<<<< Updated upstream
-        <data name="pplacer_bac120_json" format="json" label="${tool.name} on ${on_string} (pplacer.bac120.json)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.json"/>
-        <data name="pplacer_bac120_out" format="txt" label="${tool.name} on ${on_string} (pplacer.bac120.out)" from_work_dir="gtdbtk_out/pplacer/pplacer.bac120.out"/>
-        <data name="bac120_classification_pplacer" format="tabular" label="${tool.name} on ${on_string} (bac120.classification_pplacer.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.classification_pplacer.tsv"/>
-        <data name="bac120_classify_tree" format="newick" label="${tool.name} on ${on_string} (bac120.classify.tree)" from_work_dir="gtdbtk_out/gtdbtk.bac120.classify.tree"/>
-        <data name="bac120_filtered" format="tabular" label="${tool.name} on ${on_string} (bac120.filtered.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.filtered.tsv"/>
-        <data name="bac120_msa" format="fasta" label="${tool.name} on ${on_string} (bac120.msa.fasta)" from_work_dir="gtdbtk_out/gtdbtk.bac120.msa.fasta"/>
-        <data name="bac120_red_dictionary" format="tabular" label="${tool.name} on ${on_string} (bac120.red_dictionary.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.red_dictionary.tsv"/>
-        <data name="bac120_summary" format="tabular" label="${tool.name} on ${on_string} (bac120.summary.tsv)" from_work_dir="gtdbtk_out/gtdbtk.bac120.summary.tsv"/>
-        <data name="bac120_user_msa" format="fasta" label="${tool.name} on ${on_string} (bac120.user_msa.fasta)" from_work_dir="gtdbtk_out/gtdbtk.bac120.user_msa.fasta"/>
-        <data name="log" format="txt" label="${tool.name} on ${on_string} (gtdbtk.log)" from_work_dir="gtdbtk_out/gtdbtk.log"/>
-        <data name="ar122_markers_summary" format="tabular" label="${tool.name} on ${on_string} (gtdbtk_ar122_markers_summary.tsv)" from_work_dir="gtdbtk_out/gtdbtk_ar122_markers_summary.tsv"/>
-        <data name="bac120_markers_summary" format="tabular" label="${tool.name} on ${on_string} (gtdbtk_bac120_markers_summary.tsv)" from_work_dir="gtdbtk_out/gtdbtk_bac120_markers_summary.tsv"/>
-        <collection name="gtdbtk_marker_genes" type="list:list" label="${tool.name} on ${on_string}">
-            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.tsv)" format="tabular" visible="false" />
-            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.faa)" format="fasta" visible="false" />
-            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.fna)" format="fasta" visible="false" />
-            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.gff)" format="gff3" visible="false" />
-            <discover_datasets pattern="(?P&lt;identifier_0&gt;.*\.[0-9]+)_(?P&lt;identifier_1&gt;.*\.out)" format="txt" visible="false" />
-        </collection>
-=======
       <!-- Standard outputs -->
       <collection name="classify_tree" type="list:list" label="${tool.name} on ${on_string}: Classification trees">
         <discover_datasets
@@ -157,7 +141,6 @@
           visible="true"
         />
       </collection>
->>>>>>> Stashed changes
     </outputs>
 
     <tests>
@@ -169,9 +152,6 @@
                     <element name="item3" value="genome_3.fasta.gz"/>
                 </collection>
             </param>
-<<<<<<< Updated upstream
-            <output name="bac120_classify_tree" ftype="tsv" file="gtdbtk.bac120.classify.tree"/>
-=======
             <output name="classify_summary">
               <discovered_dataset
                 designation="ar53"
@@ -186,7 +166,6 @@
                 file="classify/gtdbtk.ar53.classify.tree"
               />
             </output>
->>>>>>> Stashed changes
         </test>
     </tests>
     <help><![CDATA[

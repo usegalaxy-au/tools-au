@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<data_managers>
+    <data_manager tool_file="data_manager/gtdb_fetch_database.xml" id="gtdbtk_database_data_manager" version="2.1.0">
+        <data_table name="gtdb">
+            <output>
+                <column name="path" output_ref="out_file" >
+                    <move type="directory" relativize_symlinks="True">
+                        <!-- src default to out_file.extra_files_path -->
+                        <target base="${GALAXY_DATA_MANAGER_DATA_PATH}">gtdb</target>
+                    </move>
+                    <value_translation>${GALAXY_DATA_MANAGER_DATA_PATH}/gtdb</value_translation>
+                    <value_translation type="function">abspath</value_translation>
+                </column>
+            </output>
+        </data_table>
+    </data_manager>
+</data_managers>

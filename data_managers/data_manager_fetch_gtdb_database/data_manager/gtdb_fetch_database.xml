@@ -1,0 +1,57 @@
+<tool id="gtdbtk_database_data_manager" name="GTDB fetch" tool_type="manage_data" version="@TOOL_VERSION@">
+    <description>builder</description>
+    <macros>
+        <token name="@TOOL_VERSION@">2.1.0</token>
+    </macros>
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">gtdbtk</requirement>
+    </requirements>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+cd '${out_file.extra_files_path}'
+&& wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_v2_data.tar.gz
+&& tar xzf gtdbtk_v2_data.tar.gz
+
+## Move extracted content one level up?
+
+## Write data tables JSON
+&& echo "
+{
+  "data_tables": {
+    "gtdb": {
+      "dbkey": "gtdb",
+      "value": "gtdb",
+      "name": "GTDB R207_v2",
+      "path": ".",
+    }
+  }
+}
+" > '$out_file'
+
+    ]]></command>
+
+    <inputs>
+        <param
+            name="release"
+            type="select"
+            label="GTDB release to install"
+            help="See https://ecogenomics.github.io/GTDBTk/installing/index.html for release info. The database release must match the installed GTDB-Tk tool version."
+        >
+            <!-- Add more as they are released -->
+            <option value="R207_v2" selected="true">R207_v2</option>
+        </param>
+    </inputs>
+
+    <outputs>
+        <data name="out_file" format="data_manager_json"/>
+    </outputs>
+    <help><![CDATA[
+.. class:: infomark
+
+**Notice:** If you leave name, description, or id blank, it will be generated automatically.
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1093/bioinformatics/btz848</citation>
+    </citations>
+</tool>

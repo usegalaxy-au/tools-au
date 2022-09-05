@@ -1,0 +1,12 @@
+categories:
+- Data Managers
+description: Data Manager for downloading GTDB database
+homepage_url: https://ecogenomics.github.io/GTDBTk/installing/index.html
+long_description: |
+  The Genome Taxonomy Database (GTDB) is an initiative to establish a
+  standardised microbial taxonomy based on genome phylogeny. The database is
+  referenced by the GTDB-Tk tool for taxonomic classification of metagenomes.
+name: data_manager_fetch_gtdb_database
+owner: iuc
+remote_repository_url: https://github.com/galaxyproject/tools-iuc/tree/master/data_managers/data_manager_fetch_gtdb_database
+type: unrestricted
