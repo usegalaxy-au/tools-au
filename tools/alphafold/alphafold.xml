@@ -33,7 +33,7 @@ python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
 #if $multimer
---multiple
+--multimer
 #end if
 > alphafold.fasta &&
 
@@ -59,7 +59,7 @@ python /app/alphafold/run_alphafold.py
 --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
 #if $multimer
 --model_preset=multimer
---num_multimer_predictions_per_model=1
+##--num_multimer_predictions_per_model=1  ## For alphafold>=2.2.0
 #end if
 &&
 
@@ -84,7 +84,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
             <when value="history">
-                <param name="fasta_file" type="data" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
+                <param name="fasta_file" type="data" multiple="false" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
             </when>
             <when value="textbox">
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
