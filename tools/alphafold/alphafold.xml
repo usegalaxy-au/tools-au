@@ -34,7 +34,7 @@ python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
 #if $multimer
 --multiple
-#endif
+#end if
 > alphafold.fasta &&
 
 ## env vars -------------------------------
@@ -60,7 +60,7 @@ python /app/alphafold/run_alphafold.py
 #if $multimer
 --model_preset=multimer
 --num_multimer_predictions_per_model=1
-#endif
+#end if
 &&
 
 ## Generate additional outputs ------------
