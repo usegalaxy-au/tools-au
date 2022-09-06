@@ -49,7 +49,6 @@ python /app/alphafold/run_alphafold.py
 --data_dir \${ALPHAFOLD_DB:-/data}
 --uniref90_database_path \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
 --mgnify_database_path \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
---pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
 --template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
 --obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
 --max_template_date=\$DATE
@@ -59,7 +58,11 @@ python /app/alphafold/run_alphafold.py
 --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
 #if $multimer
 --model_preset=multimer
+--pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres
+--uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot
 ##--num_multimer_predictions_per_model=1  ## For alphafold>=2.2.0
+#else
+--pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
 #end if
 &&
 
