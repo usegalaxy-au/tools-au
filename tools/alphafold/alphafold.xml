@@ -90,12 +90,13 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
             <when value="history">
-                <param name="fasta_file" type="data" multiple="false" format="fasta" label="Fasta file from history" help="Select single fasta protein sequence from your history. If you wish to fold multiple proteins, submit an individual job for each protein." />
+                <param name="fasta_file" type="data" multiple="false" format="fasta" label="Fasta file from history" help="Select single FASTA protein file from your history. If you wish to fold multiple proteins, submit an individual job for each protein. If you wish to run AlphaFold multimer, please supply multiple sequences in this file." />
             </when>
             <when value="textbox">
-                <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
+                <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein. If you wish to run AlphaFold multimer, please supply multiple sequences in FASTA format." />
             </when>
         </conditional>
+
         <param
           name="multimer"
           type="boolean"
@@ -103,8 +104,10 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
           label="Multimer mode"
           help="Fold a protein multimer from multiple input sequences. You must input multiple sequences to run this mode."
         />
+
         <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
     </inputs>
+
     <outputs>
         <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: Model 5"/>
         <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: Model 4"/>
@@ -216,10 +219,10 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     *Amino acid sequence*
 
-    | AlphaFold accepts a **single amino acid sequence** in FASTA format.
+    | AlphaFold monomer accepts a **single amino acid sequence** in FASTA format.
     | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
-    | Please paste only a single sequence - we can only process a single sequence per job.
-    | Multiple sequences will return an error.
+    | If you choose the ``multimer`` option, you can supply a FASTA file
+    | containing multiple sequences to be folded concurrently into a multimer.
     |
 
     **Outputs**
