@@ -60,9 +60,9 @@ python /app/alphafold/run_alphafold.py
 
 #if $multimer
 --model_preset=multimer
---pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres
+--pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
 --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot
-##--num_multimer_predictions_per_model=1  ## For alphafold>=2.2.0
+##--num_multimer_predictions_per_model=1  ## introduced alphafold>=2.2.0
 
 #else
 --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
