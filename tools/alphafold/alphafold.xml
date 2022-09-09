@@ -37,7 +37,7 @@ python3 '$__tool_directory__/validate_fasta.py' input.fasta
 ## env vars -------------------------------
 export TF_FORCE_UNIFIED_MEMORY=1 &&
 export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
-export DATE=`date +"%Y-%m-%d"` &&
+export TODAY=`date +"%Y-%m-%d"` &&
 
 ## run alphafold  -------------------------
 python /app/alphafold/run_alphafold.py
@@ -49,11 +49,17 @@ python /app/alphafold/run_alphafold.py
 --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
 --template_mmcif_dir \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
 --obsolete_pdbs_path \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
---max_template_date=\$DATE
 --bfd_database_path \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
 --uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
 ## Param introduced in AlphaFold v2.1.2:
 --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
+
+#if date.value:
+--max_template_date=${date.value}
+#else
+--max_template_date=\$TODAY
+#end if
+
 &&
 
 ## Generate additional outputs ------------
@@ -83,6 +89,23 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein." />
             </when>
         </conditional>
+
+        <section name="date" title="Reference template date limit" expanded="false">
+          <param
+            name="value"
+            type="text"
+            value=""
+            option="true"
+            label="A date in the format YYYY-MM-DD"
+            help="If no date is entered, the full database will be used. Otherwise, only structural templates at or before the specified date will be used. This feature can be used for reproducibility, or to exclude templates that were discovered at a particular date."
+          >
+            <validator
+              type="regex"
+              message="Must be in format YYYY-MM-DD"
+            >^[1-2][0-9][0-9][0-9]-[0-1][0-9]-[0-3][0-9]$</validator>
+          </param>
+        </section>
+
         <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
     </inputs>
     <outputs>
