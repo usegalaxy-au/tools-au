@@ -188,13 +188,14 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     **What it does**
 
-    | AlphaFold v2.0: AI-guided 3D structure prediction of proteins
+    | AlphaFold v2.1: AI-guided 3D structure prediction of proteins
     |
 
     *What is AlphaFold?*
 
     | AlphaFold is a program which uses neural networks to predict the tertiary (3D) structure of proteins. AlphaFold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
-    | NOTE: AlphaFold has a number of versions - this tool uses AlphaFold v2.1.2.
+    |
+    | **NOTE: AlphaFold has numerous versions - this tool uses AlphaFold v2.1.2.**
     |
 
     *What makes AlphaFold different?*
@@ -219,28 +220,27 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
         To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
 
-    | Protein complex interactions are also commonly observed with AlphaFold's
-    | multimer prediction mode.
+    | Protein complex interactions are also commonly observed with AlphaFold's multimer prediction mode.
+    |
     |
 
     **Input**
 
     *Amino acid sequence*
 
-    | AlphaFold monomer (default) accepts a **single amino acid sequence** in
-    | FASTA format. You can choose to input either a file from your Galaxy
-    | history or paste a sequence into a text box. If you choose the
-    | ``multimer`` option, you can supply a FASTA file containing **multiple
-    | sequences** to be folded concurrently into a multimer.
+    | AlphaFold monomer (default) accepts a **single amino acid sequence** in FASTA format.
+    | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
+    | If you choose the ``multimer`` option, you can supply a FASTA file containing **multiple sequences** to be folded concurrently into a multimer.
+    |
+    |
 
     **Outputs**
 
     *Visualization*
 
-    | An interactive 3D graphic of the best predicted molecular structures.
-    | This output can be opened in Galaxy to give a visual impression of the results, with different structural representations to choose from.
-    | Open the "Visualization" history output by clicking on the "view data" icon:
-    |
+    An interactive 3D graphic of the best predicted molecular structures.
+    This output can be opened in Galaxy to give a visual impression of the results, with different structural representations to choose from.
+    Open the "Visualization" history output by clicking on the "view data" icon:
 
     .. image:: https://github.com/usegalaxy-au/galaxy-local-tools/blob/1a8d3e8daa7ccc5a345ca377697735ab95ed0666/tools/alphafold/static/img/alphafold-visualization.png?raw=true
         :height: 520
@@ -256,30 +256,21 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     *Model confidence scores (optional)*
 
-    | This optional output produces a file which describes the confidence scores
-    | for each model (based on `pLDDTs
-    | <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_, or the
-    | `iptm+ptm` score if run in multimer mode) which may be useful for
-    | downstream analysis. Model confidence scores are also included as a
-    | column (replacing bFactor) in the default PDB output.
+    | This optional output produces a file which describes the confidence scores for each model (based on `pLDDTs <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_, or the ``iptm+ptm`` score if run in multimer mode) which may be useful for downstream analysis.
+    | Model confidence scores are also included as a column (replacing ``bFactor``) in the default PDB output.
+    |
     |
 
     **AlphaFold configuration**
 
-    | We have configured AlphaFold to run with the parameters suggested by
-    | default on `AlphaFold's GitHub <https://github.com/deepmind/alphafold>`_.
-    | This means that it runs against the full database with Amber relaxation,
-    | with `max_template_date` set to today's date. If there are additonal
-    | parameters that you would like to interact with, please
-    | `send a support request <https://site.usegalaxy.org.au/request/support>`_
-    | to usegalaxy.org.au, or
-    | `open an issue <https://github.com/usegalaxy-au/tools-au>`_ on our GitHub.
+    | We have configured AlphaFold to run with the parameters suggested by default on `AlphaFold's GitHub <https://github.com/deepmind/alphafold>`_.
+    | This means that it runs against the full database with Amber relaxation, with ``max_template_date`` set to today's date. If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
     |
-
+    |
 
     **External Resources**
 
-    We recommend checking out the
+    We HIGHLY recommend checking out the
     `Alphafold Protein Structure Database <https://alphafold.ebi.ac.uk/>`_,
     which contains pre-computed structures for over 200 million known proteins.
     See also:
