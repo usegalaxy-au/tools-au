@@ -54,11 +54,11 @@
 	           #silent $operation_arr.append(str($opt.ops.select_operation))
 	    	   #if str($opt.ops.select_operation) == "intersect":
 	    		$opt.ops.select_operation
-			#if str($opt.ops.add_output_params.oc) != 'min':
+			#if str($opt.ops.add_output_params.oc) != 'None':  
 	    		    '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
-			    -oc'$opt.ops.add_output_params.oc'
+	                     -oc'$opt.ops.add_output_params.oc'
 	    		#else
-			    '${opt.ops.select_operation}_min_db'
+	    		    '${opt.ops.select_operation}_min_db'
 	    		    -oc'min'
 	    		#end if
 		   	#if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
@@ -69,11 +69,12 @@
 	    	   	#end if
 	    	   #elif str($opt.ops.select_operation) == "union":
 			$opt.ops.select_operation
-                        #if str($opt.ops.add_output_params.oc) != "None":
+                        #if str($opt.ops.add_output_params.oc) != 'None':
                             '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
                             -oc'$opt.ops.add_output_params.oc'
                         #else  
-                            '${opt.ops.select_operation}_db' 
+	    	            '${opt.ops.select_operation}_sum_db' 
+	    		     -oc'sum'
                         #end if
                         #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
                                 -ci'$opt.ops.add_output_params.min_kmer_occurrence'
@@ -101,12 +102,12 @@
 	    		#end if
                    #elif str($opt.ops.select_operation) == "counters_subtract":
                         $opt.ops.select_operation
-                        #if str($opt.ops.add_output_params.oc) != 'min':
+                        #if str($opt.ops.add_output_params.oc) != 'None':
                             '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
                             -oc'$opt.ops.add_output_params.oc'
                         #else
                             '${opt.ops.select_operation}_min_db'
-                            -oc'min'
+                            -oc'diff'
                         #end if
                         #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
                                 -ci'$opt.ops.add_output_params.min_kmer_occurrence'
@@ -116,12 +117,12 @@
                         #end if
                    #elif str($opt.ops.select_operation) == "reverse_counters_subtract":
                         $opt.ops.select_operation
-                        #if str($opt.ops.add_output_params.oc) != 'min':
+                        #if str($opt.ops.add_output_params.oc) != 'None':
                             '${opt.ops.select_operation}_${opt.ops.add_output_params.oc}_db'
                             -oc'$opt.ops.add_output_params.oc'
                         #else
                             '${opt.ops.select_operation}_min_db'
-                            -oc'min'
+                            -oc'diff'
                         #end if
                         #if str($opt.ops.add_output_params.min_kmer_occurrence) != '':
                                 -ci'$opt.ops.add_output_params.min_kmer_occurrence'
@@ -133,7 +134,7 @@
 	     #end for
 	    
 	     #for $i,$op in enumerate($operation_arr):
-	        #if str($op) == "kmers_subtract" or str($op) == "reverse_kmers_subtract" or str($opt.ops.add_output_params.oc) == "None":
+	        #if str($op) == "kmers_subtract" or str($op) == "reverse_kmers_subtract":
 	         && cp '${op}'_db.kmc_suf outdir/
 	         && cp '${op}'_db.kmc_pre outdir/ 
 	       #else
