@@ -206,7 +206,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     *Downstream analysis*
 
-    | Obtaining a protein fold is the first step in many analyses.
+    | Obtaining a protein structure prediction is the first step in many analyses.
     | The 3D models created by AlphaFold can be used in downstream analysis, including the following:
     |
 
@@ -219,15 +219,19 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
         To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
 
+    | Protein complex interactions are also commonly observed with AlphaFold's
+    | multimer prediction mode.
+    |
+
     **Input**
 
     *Amino acid sequence*
 
-    | AlphaFold monomer accepts a **single amino acid sequence** in FASTA format.
-    | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
-    | If you choose the ``multimer`` option, you can supply a FASTA file
-    | containing multiple sequences to be folded concurrently into a multimer.
-    |
+    | AlphaFold monomer (default) accepts a **single amino acid sequence** in
+    | FASTA format. You can choose to input either a file from your Galaxy
+    | history or paste a sequence into a text box. If you choose the
+    | ``multimer`` option, you can supply a FASTA file containing **multiple
+    | sequences** to be folded concurrently into a multimer.
 
     **Outputs**
 
@@ -252,15 +256,33 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     *Model confidence scores (optional)*
 
-    | This optional output produces a file which describes the confidence scores for each model (based on `pLDDTs <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_) which may be useful for downstream analysis.
-    | Model confidence scores are also included as a column in the default PDB output.
+    | This optional output produces a file which describes the confidence scores
+    | for each model (based on `pLDDTs
+    | <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3799472/>`_, or the
+    | `iptm+ptm` score if run in multimer mode) which may be useful for
+    | downstream analysis. Model confidence scores are also included as a
+    | column (replacing bFactor) in the default PDB output.
     |
+
+    **AlphaFold configuration**
+
+    | We have configured AlphaFold to run with the parameters suggested by
+    | default on `AlphaFold's GitHub <https://github.com/deepmind/alphafold>`_.
+    | This means that it runs against the full database with Amber relaxation,
+    | with `max_template_date` set to today's date. If there are additonal
+    | parameters that you would like to interact with, please
+    | `send a support request <https://site.usegalaxy.org.au/request/support>`_
+    | to usegalaxy.org.au, or
+    | `open an issue <https://github.com/usegalaxy-au/tools-au>`_ on our GitHub.
+    |
+
 
     **External Resources**
 
     We recommend checking out the
     `Alphafold Protein Structure Database <https://alphafold.ebi.ac.uk/>`_,
-    which contains predicted sequences for thousands of Human proteins. See also:
+    which contains pre-computed structures for over 200 million known proteins.
+    See also:
 
     - `Google Deepmind's article on AlphaFold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
     - `AlphaFold source code on GitHub <https://github.com/deepmind/alphafold>`_
@@ -268,5 +290,6 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     ]]></help>
     <citations>
         <citation type="doi">https://doi.org/10.1038/s41586-021-03819-2</citation>
+        <citation type="doi">https://doi.org/10.1101/2021.10.04.463034</citation>
     </citations>
 </tool>
