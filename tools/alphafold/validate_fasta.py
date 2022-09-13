@@ -5,6 +5,8 @@ import sys
 import argparse
 from typing import List
 
+MULTIMER_MAX_SEQUENCE_COUNT = 10
+
 
 class Fasta:
     def __init__(self, header_str: str, seq_str: str):
@@ -72,12 +74,12 @@ class FastaLoader:
 class FastaValidator:
     def __init__(
             self,
-            fasta_list: List[Fasta],
             min_length=None,
-            max_length=None):
+            max_length=None,
+            multiple=False):
+        self.multiple = multiple
         self.min_length = min_length
         self.max_length = max_length
-        self.fasta_list = fasta_list
         self.iupac_characters = {
             'A', 'B', 'C', 'D', 'E', 'F', 'G',
             'H', 'I', 'K', 'L', 'M', 'N', 'P',
@@ -85,27 +87,49 @@ class FastaValidator:
             'Y', 'Z', '-'
         }
 
-    def validate(self):
+    def validate(self, fasta_list: List[Fasta]):
         """Perform FASTA validation."""
+        self.fasta_list = fasta_list
         self.validate_num_seqs()
         self.validate_length()
         self.validate_alphabet()
-
         # not checking for 'X' nucleotides at the moment.
         # alphafold can throw an error if it doesn't like it.
         # self.validate_x()
+        return self.fasta_list
 
     def validate_num_seqs(self) -> None:
         """Assert that only one sequence has been provided."""
-        if len(self.fasta_list) > 1:
-            sys.stderr.write(
-                'WARNING: More than 1 sequence detected.'
-                ' Using first FASTA sequence as input.\n')
-            self.fasta_list = self.fasta_list[:1]
-        elif len(self.fasta_list) == 0:
-            raise ValueError(
-                'Error encountered validating FASTA:\n'
-                ' input file has no FASTA sequences')
+        fasta_count = len(self.fasta_list)
+
+        if self.multiple:
+            if fasta_count < 2:
+                raise ValueError(
+                    'Error encountered validating FASTA:\n'
+                    'Multimer mode requires multiple input sequence.'
+                    f' Only {fasta_count} sequences were detected in'
+                    ' the provided file.')
+                self.fasta_list = self.fasta_list
+
+            elif fasta_count > MULTIMER_MAX_SEQUENCE_COUNT:
+                sys.stderr.write(
+                    f'WARNING: detected {fasta_count} sequences but the'
+                    f' maximum allowed is {MULTIMER_MAX_SEQUENCE_COUNT}'
+                    ' sequences. The last'
+                    f' {fasta_count - MULTIMER_MAX_SEQUENCE_COUNT} sequence(s)'
+                    ' have been discarded.\n')
+                self.fasta_list = self.fasta_list[:MULTIMER_MAX_SEQUENCE_COUNT]
+        else:
+            if fasta_count > 1:
+                sys.stderr.write(
+                    'WARNING: More than 1 sequence detected.'
+                    ' Using first FASTA sequence as input.\n')
+                self.fasta_list = self.fasta_list[:1]
+
+            elif len(self.fasta_list) == 0:
+                raise ValueError(
+                    'Error encountered validating FASTA:\n'
+                    ' no FASTA sequences detected in input file.')
 
     def validate_length(self):
         """Confirm whether sequence length is valid."""
@@ -170,15 +194,16 @@ def main():
 
         # validate
         fv = FastaValidator(
-            fas.fastas,
             min_length=args.min_length,
             max_length=args.max_length,
+            multiple=args.multimer,
         )
-        fv.validate()
+        clean_fastas = fv.validate(fas.fastas)
 
-        # write cleaned version
+        # write clean data
         fw = FastaWriter()
-        fw.write(fas.fastas[0])
+        for fas in clean_fastas:
+            fw.write(fas)
 
     except ValueError as exc:
         sys.stderr.write(f"{exc}\n\n")
@@ -211,6 +236,11 @@ def parse_args() -> argparse.Namespace:
         help="Maximum length of input protein sequence (AA)",
         default=None,
         type=int,
+    )
+    parser.add_argument(
+        "--multimer",
+        action='store_true',
+        help="Require multiple input sequences",
     )
     return parser.parse_args()
 
