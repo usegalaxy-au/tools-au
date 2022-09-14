@@ -2,7 +2,7 @@
     <description>Remove CCS reads with remnant PacBio adapter sequences</description>
     <xrefs>
         <xref type='bio.tools'>hifiadapterfilt</xref>
-    </xrefs>
+    </xrefs>	
     <macros>
 	  <import>macros.xml</import>
     </macros>
@@ -68,7 +68,7 @@
 
 **Input**
 	    
-- input file - FASTQ and BAM. Also, gipped versions of FASTQ. 
+- input file - FASTQ and BAM. Also, gzipped versions of FASTQ. 
 
 **Example:**
 
@@ -77,21 +77,21 @@
 **Output**
 
 - {prefix}.contaminant.blastout (Output of BLAST search)
-- {prefix}.blocklist (Headers of PB adapter contaminated reads to be removed)
-- {prefix}.filt.fastq.gz (Fastq reads free of PB adapter sequence ready for assembly)
-- {prefix}.stats (File with simple math on number of reads removed, etc)
+- {prefix}.blocklist (Headers of PacBio adapter contaminated reads to be removed)
+- {prefix}.filt.fastq.gz (Fastq reads free of PacBio adapter sequence ready for assembly)
+- {prefix}.stats (File with simple statistics for the number of reads removed, etc)
 
  
 .. class:: infomark
 
 **Contributor**
 
-Galaxy Australia is the contributor wrapping the HiFiadapterFilt `Github <https://github.com/usegalaxy-au/tools-au>`_.	   
- 
+Galaxy Australia wrapped the HiFiadapterFilt: the original software is available in this Github repository `Github <https://github.com/sheinasim/HiFiAdapterFilt>`_.
+
 **References**
 	    
-More information are available on `Github <https://github.com/sheinasim/HiFiAdapterFilt>`_.
 	]]></help>
+
      <citations>
 	 <citation type="doi">DOI: 10.1186/s12864-022-08375-1</citation>
      </citations>
