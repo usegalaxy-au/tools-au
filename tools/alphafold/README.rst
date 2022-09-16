@@ -139,12 +139,14 @@ follows:
 In more recent releases of the AlphaFold tool, you will need to download an
 additional file to allow the ``reduced_dbs`` option:
 
-:
+::
+
    bash scripts/download_small_bfd.sh $ALPHAFOLD_DB_ROOT
 
 The ``$ALPHAFOLD_DB_ROOT`` directory should now contain this additional file:
 
-:
+::
+
    data/alphafold_databases
    ├── small_bfd
    │   └── bfd-first_non_consensus_sequences.fasta
