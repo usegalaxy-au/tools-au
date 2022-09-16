@@ -2,7 +2,7 @@
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
       <token name="@TOOL_VERSION@">2.1.2</token>
-      <token name="@VERSION_SUFFIX@">2</token>
+      <token name="@VERSION_SUFFIX@">3</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_0082</edam_topic>
