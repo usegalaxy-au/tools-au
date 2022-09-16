@@ -75,17 +75,20 @@ REFERENCE DATA
 ~~~~~~~~~~~~~~
 
 Alphafold needs reference data to run. The wrapper expects this data to
-be present at ``/data/alphafold_databases``. A custom path will be read from
+be present at ``/data/alphafold_databases``. A custom DB root can be read from
 the ALPHAFOLD_DB environment variable, if set. To download the AlphaFold,
 reference data, run the following shell script command in the tool directory.
 
 ::
 
+   # Set databases root
+   ALPHAFOLD_DB_ROOT=/data/alphafold_databases
+
    # make folders if needed
-   mkdir /data /data/alphafold_databases
+   mkdir -p $ALPHAFOLD_DB_ROOT
 
    # download ref data
-   bash scripts/download_all_data.sh /data/alphafold_databases
+   bash scripts/download_all_data.sh $ALPHAFOLD_DB_ROOT
 
 This will install the reference data to ``/data/alphafold_databases``.
 To check this has worked, ensure the final folder structure is as
@@ -132,6 +135,21 @@ follows:
    │   └── uniclust30_2018_08
    └── uniref90
        └── uniref90.fasta
+
+In more recent releases of the AlphaFold tool, you will need to download an
+additional file to allow the ``reduced_dbs`` option:
+
+:
+   bash scripts/download_small_bfd.sh $ALPHAFOLD_DB_ROOT
+
+The ``$ALPHAFOLD_DB_ROOT`` directory should now contain this additional file:
+
+:
+   data/alphafold_databases
+   ├── small_bfd
+   │   └── bfd-first_non_consensus_sequences.fasta
+
+
 
 JOB DESTINATION
 ~~~~~~~~~~~~~~~
