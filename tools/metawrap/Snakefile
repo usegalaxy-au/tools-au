@@ -56,6 +56,7 @@ rule metawrap_binning:
         '--metabat2 --maxbin2 --concoct '
         '-a {input.assembly} '
         '-t {threads} '
+        '-m {resources.mem_gb} '
         '-o {params.outdir} '
         '{input.r1} '
         '{input.r2} '
