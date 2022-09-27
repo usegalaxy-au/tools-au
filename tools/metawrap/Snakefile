@@ -27,7 +27,36 @@ all_samples = sorted(set(read_urls.keys()))
 
 rule target:
     input:
-        'test_pipeline/INITIAL_BINNING'
+        'test_pipeline/BIN_REFINEMENT'
+
+# checkm database location is hard coded, need to bind with e.g.
+# -B /path/to/DBs/MY_CHECKM_FOLDER:/srv/whitlam/bio/db/checkm_data/1.0.0
+rule metawrap_bin_refinement:
+    input:
+        a = 'test_pipeline/INITIAL_BINNING/metabat2_bins',
+        b = 'test_pipeline/INITIAL_BINNING/maxbin2_bins',
+        c = 'test_pipeline/INITIAL_BINNING/concoct_bins',
+    output:
+        directory('test_pipeline/BIN_REFINEMENT')
+    params:
+        outdir = 'test_pipeline/BIN_REFINEMENT'
+    log:
+        'test_pipeline/logs/metawrap_bin_refinement.log'
+    threads:
+        workflow.cores
+    resources:
+        mem_gb = 50
+    container:
+        metawrap
+    shell:
+        'metawrap bin_refinement '
+        '-t {threads} '
+        '-m {resources.mem_gb} '
+        '-o {params.outdir} '
+        '-A {input.a} '
+        '-B {input.b} '
+        '-C {input.c} '
+        '&> {log}'
 
 
 rule metawrap_binning:
@@ -40,7 +69,9 @@ rule metawrap_binning:
             sample=all_samples),
         assembly = 'test_pipeline/ASSEMBLY/final_assembly.fasta'
     output:    
-        directory('test_pipeline/INITIAL_BINNING')
+        directory('test_pipeline/INITIAL_BINNING/concoct_bins'),
+        directory('test_pipeline/INITIAL_BINNING/maxbin2_bins'),
+        directory('test_pipeline/INITIAL_BINNING/metabat2_bins')
     params:
         outdir = 'test_pipeline/INITIAL_BINNING'
     log:
@@ -63,7 +94,7 @@ rule metawrap_binning:
         '&> {log}'
 
 
-
+# directly downloaded 
 rule metawrap_assembly:
     input:
         r1 = 'test_pipeline/CLEAN_READS/ALL_READS_1.fastq',
