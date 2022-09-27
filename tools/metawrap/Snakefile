@@ -53,10 +53,10 @@ rule metawrap_binning:
         metawrap
     shell:
         'metawrap binning '
-        '-a {input.assembly}'
+        '--metabat2 --maxbin2 --concoct '
+        '-a {input.assembly} '
         '-t {threads} '
         '-o {params.outdir} '
-        '--metabat2 --maxbin2 --concoct '
         '{input.r1} '
         '{input.r2} '
         '&> {log}'
