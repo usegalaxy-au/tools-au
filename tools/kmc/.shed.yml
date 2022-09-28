@@ -1,0 +1,14 @@
+name: kmc
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/kmc
+categories:
+  - Sequence Analysis
+type: unrestricted
+description: KMC is a disk-based program for counting k-mers from (possibly gzipped) FASTQ/FASTA files.
+include:
+  - kmc.xml
+  - kmc_tools_simple.xml
+  - kmc_tools_transform.xml
+  - kmc_tools_filter.xml
+  - macros.xml
+  - test-data
