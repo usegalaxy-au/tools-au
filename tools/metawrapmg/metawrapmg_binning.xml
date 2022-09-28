@@ -16,11 +16,11 @@
             ln -s '$metagenome' $mg_fn &&
 
             ## should always be FASTQ
-            #set input1_fn = 'reads1.' + str($input_1.ext)
+            #set input1_fn = 'reads1.fastq'
             ln -s '$input_1' $input1_fn &&
 
             ## should always be FASTQ
-            #set input2_fn = 'reads2.' + str($input_2.ext)
+            #set input2_fn = 'reads2.fastq'
             ln -s '$input_2' $input2_fn &&
 
             ## run binning
@@ -28,7 +28,8 @@
             --metabat2 --maxbin2 --concoct 
             -a '$mg_fn'
             -t \${GALAXY_SLOTS:-4}
-            -m \${GALAXY_MEMORY_GB:-8}
+            ## FIXME
+            -m 50
             -o INITIAL_BINNING
             '$input1_fn'
             '$input2_fn'
