@@ -6,7 +6,32 @@
     <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
-            head '$metagenome'
+            ## should always be FASTA
+            #set mg_fn = 'metagenome.' + str($metagenome.ext)
+            ln -s '$metagenome' $mg_fn &&
+
+            ## should always be FASTQ
+            #set input1_fn = 'reads1.' + str($input_1.ext)
+            ln -s '$input_1' $input1_fn &&
+
+            ## should always be FASTQ
+            #set input2_fn = 'reads2.' + str($input_2.ext)
+            ln -s '$input_2' $input2_fn &&
+
+            ## run binning
+            metawrap binning 
+            --metabat2 --maxbin2 --concoct 
+            -a '$mg_fn'
+            -t \${GALAXY_SLOTS:-4}
+            -m \${GALAXY_MEMORY_GB:-8}
+            -o INITIAL_BINNING
+            '$input1_fn'            
+            '$input2_fn'
+
+            ############
+            ## FIXME! ##
+            ############
+            && touch output.fa
     ]]>
 </command>
     <inputs>
@@ -15,7 +40,7 @@
         <!-- fastq files (needs to be a repeat or a collection) -->
         <param name="input_1" format="@FASTQ_TYPES@" type="data" label="FASTQ/A file #1" help="Should be of datatype &quot;fastq.gz&quot;or &quot;fasta&quot;" />
         <param name="input_2" format="@FASTQ_TYPES@" type="data" label="FASTQ/A file #2" help="Should be of datatype &quot;fastq.gz&quot;or &quot;fasta&quot;" />
-    </inputs>
+    </inputs>git s
     <outputs>
         <data name="fa" format="fasta" from_work_dir="output.fa" label="${tool.name} on ${on_string} (contigs)">
         </data>
