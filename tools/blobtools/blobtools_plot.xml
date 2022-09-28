@@ -63,16 +63,41 @@
 
 **What it does**
 	    
-*K-mer Counter is a utility designed for counting k-mers (sequences of consecutive k symbols) in a set of reads from genome sequencing projects.*
+*To visualize, quality control and taxonomic partitioning of genome datasets. Blobtools plot is used to produce two coverage plot in png format and a statistic file.*
 	    
 **Input**
 	    
-- input file - FASTA, FASTQ and BAM. Also, gipped versions of FASTA and FASTQ. 
+- Blob file - a Blob json file. 
 
-**Example:**
+**Parameters**
 
-- kmc -k27 -m24 NA19238.fastq NA.res /data/kmc_tmp_dir/
-- kmc -k27 -m24 @files.lst NA.res /data/kmc_tmp_dir/
+- infile - BlobDB file (created with "blobtools create")
+- lib - Plot only certain covlib(s). Separated by ","
+- notitle - Do not add filename as title to plot
+- filelabel - Label axis based on filenames
+- plotgroups INT - Number of (taxonomic) groups to plot, remaining groups are placed in 'other' [default: 8]
+- length INT - Minimum sequence length considered for plotting [default: 100]
+- cindex - Colour blobs by 'c index' [default: False]
+- nohit - Hide sequences without taxonomic annotation [default: False] 
+- noscale - Do not scale sequences by length [default: False]
+- legend - Plot legend of blobplot in separate figure
+- multiplot - Multi-plot. Print blobplot for each (taxonomic) group separately
+- cumulative - Print plot after addition of each (taxonomic) group
+- sort <ORDER> - Sort order for plotting [default: span] 1) span  : plot with decreasing span 2) count : plot with decreasing count
+- hist <HIST> - Data for histograms [default: span] 1) span  : span-weighted histograms 2) count : count histograms
+- rank <RANK> - Taxonomic rank used for colouring of blobs [default: phylum] (Supported: species, genus, family, order,phylum, superkingdom)	
+- taxrule <TAXRULE> - Taxrule which has been used for computing taxonomy (Supported: bestsum, bestsumorder) [default: bestsum]
+- format FORMAT -  Figure format for plot (png, pdf, eps, jpeg,ps, svg, svgz, tiff) [default: png]
+- label GROUPS - Relabel (taxonomic) groups, can be used several times. e.g. "A=Actinobacteria,Proteobacteria
+- colours COLOURFILE - File containing colours for (taxonomic) groups. This allows having more than 9 colours.
+- exclude GROUPS - Exclude these (taxonomic) groups (also works for 'other') e.g. "Actinobacteria,Proteobacteria,other"
+- refcov <FILE> - File containing number of "total" and "mapped" reads per coverage file. (e.g.: bam0,900,100). If provided, info will be used in read coverage plot(s).
+-catcolour <FILE> - Colour plot based on categories from FILE (format : "seq category").
+
+
+**Command line Example:**
+
+- blobtools plot -i example_blobDB.json -o output_file_preifix
 
 **Output**
 
