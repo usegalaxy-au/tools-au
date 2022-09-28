@@ -27,7 +27,36 @@ all_samples = sorted(set(read_urls.keys()))
 
 rule target:
     input:
-        'test_pipeline/BIN_REFINEMENT'
+        'test_pipeline/BIN_REASSEMBLY'
+
+rule metawrap_reassemble_bins:
+    input:
+        r1 = 'test_pipeline/CLEAN_READS/ALL_READS_1.fastq',
+        r2 = 'test_pipeline/CLEAN_READS/ALL_READS_2.fastq',
+        bins = 'test_pipeline/BIN_REFINEMENT/metawrap_70_10_bins'
+    output:
+        directory('test_pipeline/BIN_REASSEMBLY')
+    params:
+        outdir = 'test_pipeline/BIN_REASSEMBLY'
+    log:
+        'test_pipeline/logs/metawrap_reassemble_bins.log'
+    threads:
+        workflow.cores
+    resources:
+        mem_gb = 50
+    container:
+        metawrap
+    shell:
+        'metawrap reassemble_bins '
+        '-t {threads} '
+        '-m {resources.mem_gb} '
+        '-o {params.outdir} '
+        '-1 {input.r1} '
+        '-2 {input.r2} '
+        '-b {input.bins} '
+        '&> {log}'
+
+
 
 # checkm database location is hard coded, need to bind with e.g.
 # -B /path/to/DBs/MY_CHECKM_FOLDER:/srv/whitlam/bio/db/checkm_data/1.0.0
@@ -37,7 +66,7 @@ rule metawrap_bin_refinement:
         b = 'test_pipeline/INITIAL_BINNING/maxbin2_bins',
         c = 'test_pipeline/INITIAL_BINNING/concoct_bins',
     output:
-        directory('test_pipeline/BIN_REFINEMENT')
+        directory('test_pipeline/BIN_REFINEMENT/metawrap_70_10_bins')
     params:
         outdir = 'test_pipeline/BIN_REFINEMENT'
     log:
