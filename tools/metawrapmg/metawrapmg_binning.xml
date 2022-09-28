@@ -6,6 +6,11 @@
     <expand macro="xrefs"/>
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
+            ## set memory usage
+            ## use GALAXY_MEMORY_MB if set 
+            ## otherwise `free -g | awk '/^Mem:/{print $2}'`
+
+
             ## should always be FASTA
             #set mg_fn = 'metagenome.' + str($metagenome.ext)
             ln -s '$metagenome' $mg_fn &&
@@ -25,15 +30,14 @@
             -t \${GALAXY_SLOTS:-4}
             -m \${GALAXY_MEMORY_GB:-8}
             -o INITIAL_BINNING
-            '$input1_fn'            
+            '$input1_fn'
             '$input2_fn'
 
             ############
             ## FIXME! ##
             ############
             && touch output.fa
-    ]]>
-</command>
+    ]]></command>
     <inputs>
         <!-- metagenome assembly -->
         <param name="metagenome" format="@FASTQ_TYPES@" type="data" label="FASTQ/A file #1" help="Should be of datatype &quot;fastq.gz&quot;or &quot;fasta&quot;" />
@@ -56,7 +60,6 @@
     </tests>
         <help><![CDATA[
             FIXME
-
         ]]></help>
     <expand macro="citations"/>
 </tool>
