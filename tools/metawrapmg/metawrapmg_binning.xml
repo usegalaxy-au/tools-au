@@ -7,12 +7,14 @@
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
             ## set memory usage
+            printenv &&
+            printf 'GALAXY_MEMORY_MB: %s\n' \${GALAXY_MEMORY_MB} &&
+
             if [ -n "\$GALAXY_MEMORY_MB" ] ; then
                 GALAXY_MEMORY_GB=\$((GALAXY_MEMORY_MB / 1024)) ;
             fi ;
-
-            printf '%s\n' \${GALAXY_MEMORY_MB} &&
-            printf '%s\n' \${GALAXY_MEMORY_GB} &&
+    
+            printf 'GALAXY_MEMORY_GB: %s\n' \${GALAXY_MEMORY_GB} &&
 
             ##################
             ## SET UP FILES ##
