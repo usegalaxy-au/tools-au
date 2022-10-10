@@ -9,25 +9,7 @@
 
     <command detect_errors="exit_code"><![CDATA[
 
-cd '${out_file.extra_files_path}'
-&& wget https://data.ace.uq.edu.au/public/gtdb/data/releases/latest/auxillary_files/gtdbtk_v2_data.tar.gz
-&& tar xzf gtdbtk_v2_data.tar.gz
-
-## Move extracted content one level up?
-
-## Write data tables JSON
-&& echo "
-{
-  "data_tables": {
-    "gtdb": {
-      "dbkey": "gtdb",
-      "value": "gtdb",
-      "name": "GTDB R207_v2",
-      "path": ".",
-    }
-  }
-}
-" > '$out_file'
+      python data_manager.py --name '$release' --out '$out_file'
 
     ]]></command>
 
@@ -38,8 +20,10 @@ cd '${out_file.extra_files_path}'
             label="GTDB release to install"
             help="See https://ecogenomics.github.io/GTDBTk/installing/index.html for release info. The database release must match the installed GTDB-Tk tool version."
         >
-            <!-- Add more as they are released -->
+            <!-- Add more as they are released, and add URL to data_manager.py URLS map -->
             <option value="R207_v2" selected="true">R207_v2</option>
+            <option value="R207" selected="true">R207</option>
+            <option value="R202" selected="true">R202</option>
         </param>
     </inputs>
 
@@ -52,6 +36,9 @@ cd '${out_file.extra_files_path}'
 **Notice:** If you leave name, description, or id blank, it will be generated automatically.
     ]]></help>
     <citations>
-        <citation type="doi">10.1093/bioinformatics/btz848</citation>
+        <citation type="doi">10.1038/nbt.4229</citation>
+        <citation type="doi">10.1038/s41587-020-0501-8</citation>
+        <citation type="doi">10.1038/s41564-021-00918-8</citation>
+        <citation type="doi">10.1093/nar/gkab776</citation>
     </citations>
 </tool>

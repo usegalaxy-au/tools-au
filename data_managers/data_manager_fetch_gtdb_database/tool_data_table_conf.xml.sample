@@ -1,7 +1,8 @@
+<?xml version="1.0"?>
 <tables>
     <!-- Location of GTDB database -->
     <table name="gtdb" comment_char="#" allow_duplicate_entries="False">
-        <columns>value, dbkey, name, path</columns>
+        <columns>value, name, path</columns>
         <file path="tool-data/gtdb.loc" />
     </table>
 </tables>
