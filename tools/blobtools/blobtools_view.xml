@@ -1,0 +1,101 @@
+<tool id="blobtools_view" name="Blobtools view" version="1.1" >
+    <description>Transform BlobDB json file into view format</description>
+    <xrefs>
+        <xref type='bio.tools'>blobtools</xref>
+    </xrefs>	
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    cp $input_json input.json &&
+	    blobtools view 
+	    $adv_options.hits
+	    -x $adv_options.taxrule
+	    -r $adv_options.rank
+	    #if $adv_options.cov:
+	        '$cov'
+	    #end if
+	    #if $adv_options.concoct:
+	        '$concoct'
+	    #end if
+	    -i input.json 
+	    -o output 
+	    && mv output.input.table.txt '$blobDB_table'
+	    2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_json" type="data" format="json" label="json File" help="Input BlobDB json file"/>
+	    <section name="adv_options" title="Advance Options" expanded="False">
+		    <param name="taxrule" type="select" display="radio" label="Taxonomy Rule" help="Taxonomy rule for computing taxonomy: default bestsum">
+		        <option selected="true" value="bestsum">best sum</option>
+		        <option value="bestsumorder">best sum order</option>
+		    </param>
+		    <param name="rank" type="select" display="radio" label="Taxonomic rank">
+			  <option value="species">Species</option>
+			  <option value="genus">Genus</option>
+		          <option value="family">Family</option>
+                          <option value="order">Order</option>
+                          <option value="phylum" selected="true">Phylum</option>
+			  <option value="superkingdom">Superkingdom</option>
+                          <option value="all">All</option>
+		    </param>
+		    <param name="hits" type="boolean" truevalue="--hits" falsevalue="" checked="False" label="Displays taxonomic hits from tax files that contributed to the taxonomy"/>
+		    <param argument="--concoct" type="boolean" truevalue="--concoct" falsevalue="" checked="false" label="Generate concoct files" help="default: False"/>
+		    <param argument="--cov" type="boolean" truevalue="--cov" falsevalue="" checked="false" label="Generate cov files" help="Generate cov files"/>
+	    </section>
+    </inputs>
+    <outputs>
+	    <data name="blobDB_table" format="tabular" label="${tool.name} on ${on_string}"/>
+    </outputs>
+
+    <tests>
+	 <test>
+            <!-- #1 test with common parameters -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+*Blobtools view is used to generate a blobDB.table.json before creating a plot using blobtools plot.*
+
+**Input**
+
+- a json file - output file created with Blobtools create.
+
+**Parameters**
+
+- taxrule - Taxrule used for computing taxonomy (supported: "bestsum", "bestsumorder") [ default: bestsum ]
+- rank - Taxonomic rank(s) at which output will be written. (supported: 'species', 'genus', 'family', 'order', 'phylum', 'superkingdom', 'all') [default: phylum]
+- hits - Displays taxonomic hits from tax files that contributed to the taxonomy.
+- concoct - Generate cov files [default: False]
+- calculate_cov - Legacy coverage when getting coverage from BAM file
+
+**Command line example:**
+
+- blobtools view -i prefix.blobDB.json
+
+**Output**
+
+- prefix.blobDB.table.json - a text base output file
+- coverage file - a text base coverage file output file with column # contig_id  read_cov  base_cov #  - if cov is specified 
+- prefix.blobDB.concoct_coverage_info.tsv - a text base coverage output file with base cov column only - if concoct is specified.
+
+
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Blobtools: the original software is available in this `Github repository <https://github.com/DRL/blobtools>`_.
+
+**References**
+
+     ]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.12688/f1000research.12232.1</citation>
+    </citations>
+</tool>

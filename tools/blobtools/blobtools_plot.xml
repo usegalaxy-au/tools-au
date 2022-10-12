@@ -1,0 +1,120 @@
+<tool id="blobtools_plot" name="Blobtools plot" version="1.1" >
+    <description>Generate Blobtools plot</description>
+    <xrefs>
+        <xref type='bio.tools'>blobtools</xref>
+    </xrefs>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <expand macro="version_command" /> 
+    <command><![CDATA[
+	    @SET_TMP_DIR@ &&
+	    cp $input_json input.json &&
+	    blobtools plot
+	    -i input.json 
+	    -o output 
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_json" type="data" format="json" label="json File" help="Input BlobDB json file"/>
+	    <section name="adv_options" title="Advance Options" expanded="False">
+		<param argument="--notitle" type="boolean" truevalue="--notitle" falsevalue="" checked="false" label="Title" help="Do not add filename as title to plot"/>
+		<param argument="--filelabel" type="boolean" truevalue="--filelabel" falsevalue="" checked="false" label="File Label" help="Label axis based on filenames"/>
+                <param argument="--length" type="integer" value="100" label="Minimum Sequence Length" help="Minimum sequence length considered for plotting [default: 100]"/>
+                <param argument="--cindex" type="boolean" truevalue="--cindex" falsevalue="" checked="false" label="Colour" help="Colour blobs by 'c index' [default: False]"/>
+                <param argument="--nohit" type="boolean" truevalue="--nohit" falsevalue="" checked="false" label="Hide sequence" help="Hide sequences without taxonomic annotation [default: False]"/>
+	        <param argument="--noscale" type="boolean" truevalue="--noscale" falsevalue="" checked="false" label="Scale sequence" help="Do no scale sequences by length [default: False]"/>
+                <param argument="--legend" type="boolean" truevalue="--legend" falsevalue="" checked="false" label="Plot legend" help="Plot legend of bobplot in separate figure"/>
+                <param argument="--multiplot" type="boolean" truevalue="--multiplot" falsevalue="" checked="false" label="Multi-plot" help="Print blobplot for each taxonomic separately"/>
+                <param argument="--sort" type="text" value="span" label="Sort order" help="Sort order for plotting [default: span]"/>
+                <param name="taxrule" type="select" display="radio" label="Taxonomy Rule" help="Taxonomy rule for computing taxonomy: default bestsum">
+                      <option selected="true" value="bestsum">best sum</option>
+                      <option value="bestsumorder">best sum order</option>
+                </param>
+                <param name="rank" type="select" display="radio" label="Taxonomic rank">
+                          <option value="species">Species</option>
+                          <option value="genus">Genus</option>
+                          <option value="family">Family</option>
+                          <option value="order">Order</option>
+                          <option value="phylum" selected="true">Phylum</option>
+                          <option value="superkingdom">Superkingdom</option>
+                          <option value="all">All</option>
+                </param>
+                <param argument="--label" type="text" value="" label="Groups label" help="Relabel (taxonomic) groups, can be used several times."/>
+	    </section>
+    </inputs>
+    <outputs>
+
+	    <data name="coverage" format="png" from_work_dir="output*.blobplot.cov0.*" label="${tool.name} on ${on_string} : coverage"/>
+	    <data name="read_coverage" format="png" from_work_dir="output*.read_cov.cov0.*" label="${tool.name} on ${on_string} : read coverage"/>
+	    <data name="statistic" format="txt" from_work_dir="output*.stats.txt" label="${tool.name} on ${on_string} : statistics "/>
+    </outputs>
+
+    <tests>
+	 <test>
+            <!-- #1 test with common parameters -->
+        </test>
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+	    
+*To visualize, quality control and taxonomic partitioning of genome datasets. Blobtools plot is used to produce two coverage plot in png format and a statistic file.*
+	    
+**Input**
+	    
+- Blob file - a Blob json file. 
+
+**Parameters**
+
+- infile - BlobDB file (created with "blobtools create")
+- lib - Plot only certain covlib(s). Separated by ","
+- notitle - Do not add filename as title to plot
+- filelabel - Label axis based on filenames
+- plotgroups INT - Number of (taxonomic) groups to plot, remaining groups are placed in 'other' [default: 8]
+- length INT - Minimum sequence length considered for plotting [default: 100]
+- cindex - Colour blobs by 'c index' [default: False]
+- nohit - Hide sequences without taxonomic annotation [default: False] 
+- noscale - Do not scale sequences by length [default: False]
+- legend - Plot legend of blobplot in separate figure
+- multiplot - Multi-plot. Print blobplot for each (taxonomic) group separately
+- cumulative - Print plot after addition of each (taxonomic) group
+- sort <ORDER> - Sort order for plotting [default: span] 1) span  : plot with decreasing span 2) count : plot with decreasing count
+- hist <HIST> - Data for histograms [default: span] 1) span  : span-weighted histograms 2) count : count histograms
+- rank <RANK> - Taxonomic rank used for colouring of blobs [default: phylum] (Supported: species, genus, family, order,phylum, superkingdom)	
+- taxrule <TAXRULE> - Taxrule which has been used for computing taxonomy (Supported: bestsum, bestsumorder) [default: bestsum]
+- format FORMAT -  Figure format for plot (png, pdf, eps, jpeg,ps, svg, svgz, tiff) [default: png]
+- label GROUPS - Relabel (taxonomic) groups, can be used several times. e.g. "A=Actinobacteria,Proteobacteria
+- colours COLOURFILE - File containing colours for (taxonomic) groups. This allows having more than 9 colours.
+- exclude GROUPS - Exclude these (taxonomic) groups (also works for 'other') e.g. "Actinobacteria,Proteobacteria,other"
+- refcov <FILE> - File containing number of "total" and "mapped" reads per coverage file. (e.g.: bam0,900,100). If provided, info will be used in read coverage plot(s).
+-catcolour <FILE> - Colour plot based on categories from FILE (format : "seq category").
+
+
+**Command line Example:**
+
+- blobtools plot -i example_blobDB.json -o output_file_preifix
+
+**Output**
+
+- Coverage PNG file
+- Read Coverage PNG file
+- Statistic file
+ 
+.. class:: infomark
+	    
+**Contributor**
+
+Galaxy Australia wrapped the Blobtools: the original software is available in this `Github repository <https://github.com/DRL/blobtools>`_.
+
+**References**
+ 
+     ]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.12688/f1000research.12232.1</citation>
+     </citations>
+</tool>
