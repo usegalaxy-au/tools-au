@@ -2,7 +2,7 @@ name: blobtools
 owner: galaxy-australia
 remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/blobtools
 categories:
-  - Metagenomic Analysis
+  - Metagenomics
 type: unrestricted
 description: A modular command-line solution for visualisation, quality control and taxonomic partitioning of genome datasets
 include:
