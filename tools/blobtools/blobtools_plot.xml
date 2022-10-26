@@ -54,7 +54,11 @@
 
     <tests>
 	 <test>
-            <!-- #1 test with common parameters -->
+	     <!-- #1 blobtools create -->
+            <param name="input_json" value="test.blobDB.json" ftype="json"/>
+	    <output name="coverage" file="test.blobDB.json.bestsum.phylum.p8.span.100.blobplot.bam0.png" ftype="png"/>
+	    <output name="read_coverage" file="test.blobDB.json.bestsum.phylum.p8.span.100.blobplot.read_cov.bam0.png" ftype="png"/>
+            <output name="statistic" file="test.blobDB.json.bestsum.phylum.p8.span.100.blobplot.stats.txt" ftype="txt"/>
         </test>
     </tests>
     <help><![CDATA[

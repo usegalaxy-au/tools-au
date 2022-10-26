@@ -54,8 +54,10 @@
 
     <tests>
 	 <test>
-            <!-- #1 test with common parameters -->
-        </test>
+	     <!-- #1 blobtools view test -->
+	    <param name="input_json" value="test.blobDB.json" ftype="json"/>
+	    <output name="blobDB_table" file="test.blobDB.table.txt" ftype="tabular"/>
+         </test>
     </tests>
     <help><![CDATA[
 	    
