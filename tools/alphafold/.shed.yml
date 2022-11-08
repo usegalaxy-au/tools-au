@@ -12,7 +12,9 @@ type: unrestricted
 include:
   - strip_components: 0
     source:
-    - test-data/
+    - test-data/multimer.fasta
+    - test-data/multimer_exceeds_count.fasta
+    - test-data/test1.fasta
     - static/
     - alphafold.xml
     - alphafold.html

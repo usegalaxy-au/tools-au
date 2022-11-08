@@ -35,6 +35,7 @@ class Settings:
             action="store_true"
         )
         parser.add_argument(
+            "-m",
             "--multimer",
             help="parse output from AlphaFold multimer",
             action="store_true"
@@ -50,6 +51,12 @@ class ExecutionContext:
     """uses program settings to get paths to files etc"""
     def __init__(self, settings: Settings):
         self.settings = settings
+
+    def get_model_key(self, ix):
+        """Return json key for model index."""
+        if self.settings.is_multimer:
+            return f'model_{ix}_multimer'
+        return f'model_{ix}'
 
     @property
     def ranking_debug(self) -> str:
@@ -110,7 +117,7 @@ class FileLoader:
             pklfile = model_pkls[i]
             with open(pklfile, 'rb') as fp:
                 data = pickle.load(fp)
-            plddts[f'model_{i+1}'] = [
+            plddts[self.context.get_model_key(i+1)] = [
                 float(f'{x:.2f}')
                 for x in data['plddt']
             ]
@@ -121,20 +128,25 @@ class OutputGenerator:
     """generates the output data we are interested in creating"""
     def __init__(self, loader: FileLoader):
         self.loader = loader
+        self.context = loader.context
 
     def gen_conf_scores(self):
         mapping = self.loader.get_model_mapping()
         scores = self.loader.get_conf_scores()
         ranked = list(scores.items())
         ranked.sort(key=lambda x: x[1], reverse=True)
-        return {f'model_{mapping[name]}': score
-                for name, score in ranked}
+        return {
+            self.context.get_model_key(mapping[name]): score
+            for name, score in ranked
+        }
 
     def gen_residue_scores(self) -> Dict[str, List[float]]:
         mapping = self.loader.get_model_mapping()
         model_plddts = self.loader.get_model_plddts()
-        return {f'model_{mapping[name]}': plddts
-                for name, plddts in model_plddts.items()}
+        return {
+            self.context.get_model_key(mapping[name]): plddts
+            for name, plddts in model_plddts.items()
+        }
 
 
 class OutputWriter:
