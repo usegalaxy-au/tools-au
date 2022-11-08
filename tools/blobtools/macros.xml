@@ -1,0 +1,30 @@
+<macros>
+    <xml name="requirements">
+	   <requirements>
+		   <requirement type="package" version="1.1.1">blobtools</requirement>
+		   <requirement type="package" version="3.2.2">matplotlib</requirement>
+           </requirements>
+   </xml>
+   <xml name="stdio">
+     <stdio>
+        <exit_code range=":-1"  level="fatal" description="Error: Cannot open file" />
+        <exit_code range="1:"  level="fatal" description="Error" />
+     </stdio>
+   </xml>
+  <xml name="version_command">
+      <version_command><![CDATA[
+	      blobtools --version 2>&1 | head -1       
+      ]]></version_command>
+  </xml>
+  <xml name="macro_create_input">
+	  <param name="input_fasta" type="data" format="fasta" label="Sequence file"/>
+	  <param name="input_bam" type="data" format="bam" label="Alignment file"/>
+	  <param name="input_blast" type="data" format="tabular" label="Simplified Blast file"/>
+  </xml>
+  <xml name="macro_view_input">
+	  <param name="input_json" type="data" format="json" label="Json input file"/>
+  </xml>
+  <token name="@SET_TMP_DIR@">
+	export MPLCONFIGDIR="/tmp"
+  </token>
+</macros>

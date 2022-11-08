@@ -136,10 +136,12 @@
 	     #for $i,$op in enumerate($operation_arr):
 	        #if str($op) == "kmers_subtract" or str($op) == "reverse_kmers_subtract":
 	         && cp '${op}'_db.kmc_suf outdir/
-	         && cp '${op}'_db.kmc_pre outdir/ 
+	         && cp '${op}'_db.kmc_pre outdir/
+                 2>&1 | tee -a '$out_log'
 	       #else
 		 && cp '${op}'_*_db.kmc_suf outdir/
 	         && cp '${op}'_*_db.kmc_pre outdir/
+                 2>&1 | tee -a '$out_log'
 	       #end if
 	     #end for
 	    ]]></command>
@@ -213,6 +215,7 @@
           <collection name="kmc_db" type="list" label="${tool.name} on ${on_string}: kmc db">
 		  <discover_datasets pattern="(?P&lt;designation&gt;.+)" format="binary" directory="outdir/" />
 	  </collection>
+          <data name="out_log" format="txt" label="${tool.name} on ${on_string}: log"/>
     </outputs>
     <tests>
 	 <test>
