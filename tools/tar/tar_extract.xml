@@ -1,0 +1,85 @@
+<tool id="tar_extract" name="Tar extract" version="0.1.0" python_template_version="3.5">
+
+    <command detect_errors="exit_code"><![CDATA[
+
+mkdir archive
+&& cd archive
+
+## Handle .tar.gz
+#if $input_tar.is_of_type('tgz'):
+  #set $input_fname = 'input.tar.gz'
+#else
+  #set $input_fname = 'input.tar'
+#end if
+
+&& ln '$input_tar' $input_fname
+&& tar xf $input_fname --transform='s/.*\///'
+
+## Remove empty dirs from extracted archive
+&& rm $input_fname
+&& cd ..
+&& ls -l archive
+
+    ]]></command>
+
+    <inputs>
+      <param
+        name="input_tar" type="data" format="tar,tgz" label="Tar archive to extract"
+        help="Can be either 'tar' or 'tgz' (.tar.gz) datatype. The archive will
+          be flattened and output as a collection."
+      />
+    </inputs>
+
+    <outputs>
+      <collection name="archive_output" type="list" label="Extracted archive">
+        <discover_datasets pattern="__name_and_ext__" directory="archive" format="txt"/>
+      </collection>
+    </outputs>
+
+    <tests>
+      <!-- Test flat archive -->
+      <test>
+        <param name="input_tar" ftype="tar" value="test.tar" />
+        <output_collection name="archive_output" type="list">
+          <element name="file1">
+            <assert_contents>
+              <has_text_matching expression="a file with content" />
+            </assert_contents>
+          </element>
+        </output_collection>
+      </test>
+
+      <!-- Test archive with one subfolder -->
+      <test>
+        <param name="input_tar" ftype="tar" value="test_dir.tar" />
+        <output_collection name="archive_output" type="list">
+          <element name="file1">
+            <assert_contents>
+              <has_text_matching expression="a file with content" />
+            </assert_contents>
+          </element>
+        </output_collection>
+      </test>
+
+      <!-- Test flat .tar.gz archive -->
+      <test>
+        <param name="input_tar" ftype="tgz" value="test.tar.gz" />
+        <output_collection name="archive_output" type="list">
+          <element name="file1">
+            <assert_contents>
+              <has_text_matching expression="a file with content" />
+            </assert_contents>
+          </element>
+        </output_collection>
+      </test>
+    </tests>
+
+    <help><![CDATA[
+**Extract tar archive**
+
+This tool allows you to extract files from a tar archive and output them to a
+collection. The supplied archive will be flattened before the files are
+collected, so the internal directory structure will not be preserved.
+
+    ]]></help>
+</tool>
