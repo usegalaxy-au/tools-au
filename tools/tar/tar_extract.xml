@@ -1,4 +1,4 @@
-<tool id="tar_extract" name="Tar extract" version="0.1.0" python_template_version="3.5">
+<tool id="tar_extract" name="Untar" version="0.1.0" profile="21.05">
 
     <command detect_errors="exit_code"><![CDATA[
 
@@ -75,7 +75,8 @@ mkdir archive
     </tests>
 
     <help><![CDATA[
-**Extract tar archive**
+
+**Extract a tar archive**
 
 This tool allows you to extract files from a tar archive and output them to a
 collection. The supplied archive will be flattened before the files are
