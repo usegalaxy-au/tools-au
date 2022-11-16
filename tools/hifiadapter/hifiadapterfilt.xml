@@ -10,17 +10,15 @@
     <expand macro="stdio" />
     <command><![CDATA[
 
-	    @CLEAN_EXT@
-
 	    #if $input_file.is_of_type("fastq.gz"):
-	    	#set $inputfile = $clean_ext($input_file.element_identifier) + '.fastq.gz'
-		#set prefix = $clean_ext($input_file.element_identifier)
+	    	#set $inputfile = "input" + '.fastq.gz'
+		#set prefix = "input"
 	    #elif $input_file.is_of_type("fastq"):
-	        #set $inputfile = $clean_ext($input_file.element_identifier) + '.fastq'
-	        #set prefix = $clean_ext($input_file.element_identifier)
+	        #set $inputfile = "input" + '.fastq'
+	        #set prefix = "input"
 	    #elif $input_file.is_of_type("bam"):
-	    	#set $inputfile = $clean_ext($input_file.element_identifier) + '.bam'
-                #set prefix = $clean_ext($input_file.element_identifier)
+	    	#set $inputfile = "input" + '.bam'
+                #set prefix = "input"
 	    #end if
 	    ln -s '${input_file}' '${inputfile}' &&
 
