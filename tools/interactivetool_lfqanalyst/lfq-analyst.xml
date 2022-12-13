@@ -1,0 +1,77 @@
+<tool id="lfq_analyst" name="LFQ Analyst" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01" license="MIT">
+    <description>Analyze and Visualize Label-Free Proteomics output from MaxQuant</description>
+
+    <xrefs>
+        <xref type="bio.tools">LFQ-Analyst</xref>
+    </xrefs>
+
+    <macros>
+        <token name="@TOOL_VERSION@">1.2.2</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@PORT@">8888</token>
+    </macros>
+
+    <!-- TODO: please annotate this tool with topics and operations from http://edamontology.org -->
+    <!-- TODO: for more information see: https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/tool_xml.html#edam-topics-and-operations -->
+    <edam_topics>
+        <edam_topic>topic_0121</edam_topic>
+    </edam_topics>
+
+    <edam_operations>
+        <edam_operation>operation_3214</edam_operation>
+    </edam_operations>
+
+    <requirements>
+        <container type="docker">haileyzhang/lfq-analyst:v1.2.2</container>
+    </requirements>
+
+    <entry_points>
+        <entry_point name="LFQ-Analyst proteomics analysis" requires_domain="true">
+            <port>@PORT@</port>
+            <url>/lfq-analyst</url>
+        </entry_point>
+    </entry_points>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+cd /srv/shiny-server/lfq-analyst
+R -e "shiny::runApp('.', port=@PORT@, host='0.0.0.0')"
+
+    ]]></command>
+
+    <inputs>
+        <!-- TODO: figure out how to hook up Galaxy inputs to LFQ-Analyst -->
+        <!-- <param name="protein_groups" type="data" format="txt" label="ProteinGroups.txt" help="" /> -->
+    </inputs>
+
+    <outputs>
+    </outputs>
+
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    </tests>
+
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+TODO: Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+Hint: If you want, you can preview your help section using this online editor: http://rst.ninjs.org/
+
+Usage
+.....
+
+
+**Input**
+
+
+**Output**
+
+
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1021/acs.jproteome.9b00496</citation>
+    </citations>
+</tool>
