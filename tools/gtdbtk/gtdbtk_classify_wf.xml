@@ -1,4 +1,7 @@
 <tool id="gtdbtk_classify_wf" name="GTDB-Tk classify_wf" version="@TOOL_VERSION@+galaxy0" python_template_version="3.5">
+
+  <!-- THIS HAS BEEN SUPERCEDED BY https://github.com/galaxyproject/tools-iuc/tree/master/tools/gtdbtk -->
+
     <description>Determine taxonomic classification of genomes</description>
 
     <macros>
@@ -14,14 +17,6 @@
 
 ## Configure input variables
 ## ---------------------------------------------------------------------
-
-
-        ## TODO: DEV ONLY!!
-        ## Set up data manager for production
-        export GTDBTK_DATA_PATH=/mnt/vdc/gtdbtk/db &&
-        export GALAXY_SLOTS=12 &&
-        ## TODO: DEV ONLY!!
-
 
 #set INPUT_DIR = 'input_genomes'
 #set $OUTPUT_DIR = 'gtdbtk_out'
