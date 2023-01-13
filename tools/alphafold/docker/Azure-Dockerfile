@@ -18,6 +18,10 @@
 # Look for latest version that matches NVIDIA drivers on the Azure GPU machines:
 #   https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=cudnn8-runtime-ubuntu18
 
+
+# docker build -t image:tag -f Azure-Dockerfile /path/to/alphafold_v2.1.2
+
+
 ARG CUDA=11.4.2
 FROM nvidia/cuda:${CUDA}-cudnn8-runtime-ubuntu18.04
 
@@ -26,9 +30,10 @@ FROM nvidia/cuda:${CUDA}-cudnn8-runtime-ubuntu18.04
 # Must match CUDA ARG earlier, with just major.minor values (e.g., "11.4")
 # To find latest version that matches the runtime version:
 #   https://ubuntu.pkgs.org/18.04/cuda-amd64/
+ARG CUDA_MAJOR=11
 ARG CUDACMDTOOLS=11.4
-ARG JAXLIBVER=0.1.76
-ARG JAXLIBCUDAVER=11.cudnn82
+ARG JAXLIB=0.1.76
+ARG JAXLIBCUDA=11.cudnn82
 
 # Use bash to support string substitution.
 SHELL ["/bin/bash", "-c"]
@@ -78,8 +83,8 @@ RUN wget -q -P /app/alphafold/alphafold/common/ \
 # Install pip packages.
 RUN pip3 install --upgrade pip \
     && pip3 install -r /app/alphafold/requirements.txt \
-    && pip3 install --upgrade jax==0.2.14 jaxlib==${JAXLIBVER}+cuda${JAXLIBCUDAVER} -f \
-      https://storage.googleapis.com/jax-releases/jax_releases.html
+    && pip3 install --upgrade jax==0.2.14 jaxlib==${JAXLIB}+cuda${JAXLIBCUDA} -f \
+      "https://storage.googleapis.com/jax-releases/cuda${CUDA_MAJOR}/jaxlib-${JAXLIB}+cuda${JAXLIBCUDA}-cp37-none-manylinux2010_x86_64.whl"
 
 # Apply OpenMM patch.
 WORKDIR /opt/conda/lib/python3.7/site-packages
@@ -104,7 +109,7 @@ python /app/alphafold/run_alphafold.py "$@"' > /app/run_alphafold.sh \
 
 # To build:
 # 1. Run:
-#       git clone https://github.com/deepmind/alphafold.git
+#       git clone https://github.com/deepmind/alphafold/releases/tag/vx.x.x
 #       cd ./alphafold
 # 2. Run:
-#       sudo docker build -t <repo/tag:version> -f docker/<Dockerfile name> .
+#       sudo docker build -t <repo/tag:version> -f ./path/to/Dockerfile .

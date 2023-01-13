@@ -14,7 +14,7 @@
       <xref type="bio.tools">alphafold_2.0</xref>
     </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:v2.1.2_0</container>
+        <container type="docker">neoformit/alphafold:v2.1.2_1</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 
