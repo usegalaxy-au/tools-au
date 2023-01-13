@@ -74,16 +74,30 @@ REFERENCE DATA
 
 Alphafold needs reference data to run. The wrapper expects this data to
 be present at ``/data/alphafold_databases``. A custom path will be read from
-the ALPHAFOLD_DB environment variable, if set. To download the AlphaFold,
-reference data, run the following shell script command in the tool directory.
+the ``ALPHAFOLD_DB`` environment variable, if set.
+
+To download the AlphaFold reference DBs:
 
 ::
 
-   # make folders if needed
-   mkdir /data /data/alphafold_databases
+   # Set your AlphaFold DB path
+   ALPHAFOLD_DB=/data/alphafold_databases
 
-   # download ref data
-   bash scripts/download_all_data.sh /data/alphafold_databases
+   # Set your target AlphaFold version
+   ALPHAFOLD_VERSION=  # e.g. 2.1.1
+
+   # Download repo
+   wget https://github.com/deepmind/alphafold/releases/tag/v${ALPHAFOLD_VERSION}.tar.gz
+   tar xzf v${ALPHAFOLD_VERSION}.tar.gz
+
+   # Ensure dirs
+   mkdir -p $ALPHAFOLD_DB
+
+   # Download
+   bash alphafold*/scripts/download_all_data.sh $ALPHAFOLD_DB
+
+You will most likely want to run this as a background job, as it will take a
+very long time (7+ days in Australia).
 
 This will install the reference data to ``/data/alphafold_databases``.
 To check this has worked, ensure the final folder structure is as

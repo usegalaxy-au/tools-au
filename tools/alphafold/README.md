@@ -70,18 +70,27 @@ If you can see something similar to this output (details depend on your GPU), it
 
 Alphafold needs reference data to run. The wrapper expects this data to
 be present at `/data/alphafold_databases`. A custom path will be read from
-the ALPHAFOLD_DB environment variable, if set. To download the AlphaFold,
-reference data, run the following shell script command in the tool directory.
+the ALPHAFOLD_DB environment variable, if set.
+
+To download the AlphaFold reference DB, run the command below:
 
 ```
-# make folders if needed
-mkdir /data /data/alphafold_databases
+# Set your target version of AlphaFold
+ALPHAFOLD_VERSION=  # e.g. 2.1.1
 
-# download ref data
-bash scripts/download_all_data.sh /data/alphafold_databases
+# Download AlphaFold repo
+wget https://github.com/deepmind/alphafold/releases/tag/v${ALPHAFOLD_VERSION}.tar.gz
+tar xzf v${ALPHAFOLD_VERSION}.tar.gz
+
+# Ensure dirs
+mkdir -p /data/alphafold_databases
+
+# Download ref data
+bash alphafold*/scripts/download_all_data.sh /data/alphafold_databases
 ```
 
-This will install the reference data to `/data/alphafold_databases`. To check this has worked, ensure the final folder structure is as follows:
+This will install the reference data to `/data/alphafold_databases`.
+To check this has worked, ensure the final folder structure is as follows:
 
 ```
 data/alphafold_databases
