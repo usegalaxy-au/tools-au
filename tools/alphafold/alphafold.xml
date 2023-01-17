@@ -137,8 +137,8 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: Model 3"/>
         <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: Model 2"/>
         <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: Model 1"/>
-        <data name="confidence_scores" format="tsv" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
-        <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
+        <data name="confidence_scores" format="tabular" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
+        <data name="plddts" format="tabular" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
             <filter>(output_plddts)</filter>
         </data>
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
