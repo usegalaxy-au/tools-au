@@ -28,5 +28,3 @@ The test data can be downloaded from ([bam](https://downloads.pacbcloud.com/publ
 or 
 3. run planemo test  --update_test_data (i.e. planemo test --galaxy_root=/path/to/your/galaxy/folder ipa.xml) to update the test data
 or
-3. run planemoe test (i.e. planemo test --galaxy_root=/path/to/your/galaxy/folder ipa.xml)
-
