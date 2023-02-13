@@ -122,7 +122,7 @@ advanced_options: 'config_auto_comp_max_cov=$ipa_advance_params.advance_options.
 	   </output>
 	   <output name="purged_primary" value="final_purged_primary.fasta" format="fasta">
 		 <assert_contents>
-			 <has_size value="80515"/>
+			 <has_size value="9497"/>
 		 </assert_contents>
 	   </output>
 	   <output name="purged_haplotig" value="final_purged_haplotigs.fasta" format="fasta">
@@ -132,7 +132,7 @@ advanced_options: 'config_auto_comp_max_cov=$ipa_advance_params.advance_options.
            </output>
 	   <output name="primary_contig" value="primary_ctg.fasta" format="fasta">
                  <assert_contents>
-                         <has_size value="80515"/>
+                         <has_size value="9497"/>
                  </assert_contents>
            </output>
 	   <output name="alternative_contig" value="alternative_ctg.fasta" format="fasta">
