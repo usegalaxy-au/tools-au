@@ -28,6 +28,9 @@
 ARG CUDA=11.4.2
 FROM nvidia/cuda:${CUDA}-cudnn8-runtime-ubuntu18.04
 
+# Remove entrypoint messaging to stdout
+RUN rm /opt/nvidia/entrypoint.d/*
+
 # FROM directive resets ARGS, so we specify again
 
 # Must match CUDA ARG earlier, with just major.minor values (e.g., "11.4")
