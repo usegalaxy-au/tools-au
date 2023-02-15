@@ -23,32 +23,32 @@
 
 ## fasta setup ----------------------------
 #if $fasta_or_text.input_mode == 'history':
-    cp '$fasta_or_text.fasta_file' input.fasta &&
+    cp '$fasta_or_text.fasta_file' input.fasta
 
 #elif $fasta_or_text.input_mode == 'textbox':
-    echo '$fasta_or_text.fasta_text' > input.fasta &&
+    echo '$fasta_or_text.fasta_text' > input.fasta
 #end if
 
-python3 '$__tool_directory__/validate_fasta.py' input.fasta
+&& python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
 #if $multimer:
 --multimer
 #end if
-> alphafold.fasta &&
+> alphafold.fasta
 
 ## env vars -------------------------------
-export TF_FORCE_UNIFIED_MEMORY=1 &&
-export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
-export TODAY=`date +"%Y-%m-%d"` &&
+&& export TF_FORCE_UNIFIED_MEMORY=1
+&& export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
+&& export TODAY=`date +"%Y-%m-%d"`
 
 ## run alphafold  -------------------------
-python /app/alphafold/run_alphafold.py
+&& python /app/alphafold/run_alphafold.py
 --fasta_paths alphafold.fasta
 --output_dir output
 --data_dir \${ALPHAFOLD_DB:-/data}
 
-## Set reference data explicitly
+## Set reference database paths
 --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
 --mgnify_database_path     \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2022_05.fa
 --template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
@@ -74,28 +74,25 @@ python /app/alphafold/run_alphafold.py
 --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
 --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
 --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
-
 #else
 --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
 #end if
-&&
 
 ## Generate additional outputs ------------
-python3 '$__tool_directory__/outputs.py' output/alphafold $outputs.plddts
+&& python3 '$__tool_directory__/outputs.py' output/alphafold $outputs.plddts
 #if $multimer:
 --multimer
 #end if
-&&
 
 ## HTML output
-mkdir -p '${ html.files_path }' &&
-cp '$__tool_directory__/alphafold.html' '${html}' &&
-cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+&& mkdir -p '${ html.files_path }'
+&& cp '$__tool_directory__/alphafold.html' '${html}'
+&& cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
 ## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
 ## The working directory ends up two levels deep and the visualization html page
 ## fails to load the PDB files as static assets.
-(([ -d working ] && cp -r working/* .) || true)
+&& (([ -d working ] && cp -r working/* .) || true)
 
     ]]></command>
     <inputs>
@@ -115,16 +112,16 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         <param
             name="max_template_date"
             type="text"
-            label="Max template date (dd-mm-yyyy)"
+            label="Max template date (yyyy-mm-dd) (optional)"
             help="The model will reference PDB structures deposited before this date only. Defaults to today's date."
             optional="true"
         >
-            <sanitizer invalid_char="">
+            <sanitizer>
                 <valid initial="string.digits">
                     <add value="-" />
                 </valid>
             </sanitizer>
-            <validator type="regex">[0-9]{2}-[0-9]{2}-[0-9]{4}</validator>
+            <validator type="regex">[0-9]{4}-[0-9]{2}-[0-9]{2}</validator>
         </param>
 
         <param
@@ -155,34 +152,34 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
                 label="Per-residue confidence scores"
                 truevalue="--plddts"
                 falsevalue=""
-                help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. "
+                help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. This output is a tabular file with five rows (one for each output PDB model), with each column providing a pLDDT score for a single residue."
             />
             <param
                 name="model_pkls"
                 type="boolean"
                 checked="false"
-                label="Model pickle files"
-                help="Can be used to estimate the confidence in binding between two proteins or domains within a structure."
+                label="result_model_*.pkl"
+                help="Binary data files relating to each of the predicted PDB models. Can be used in downstream analysis tools to estimate confidence in binding between two proteins or domains within a structure."
             />
             <param
                 name="features_pkl"
                 type="boolean"
                 checked="false"
-                label="Features pickle file"
+                label="features.pkl"
                 help=""
             />
             <param
                 name="relax_json"
                 type="boolean"
                 checked="false"
-                label="Relax metrics JSON"
+                label="relax_metrics.json"
                 help=""
             />
             <param
                 name="timings_json"
                 type="boolean"
                 checked="false"
-                label="Timings JSON"
+                label="timings.json"
                 help=""
             />
 
@@ -196,7 +193,12 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: Model 2"/>
         <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: Model 1"/>
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
-        <data name="confidence_scores" format="tabular" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
+        <data
+            name="confidence_scores"
+            format="tabular"
+            from_work_dir="output/alphafold/model_confidence_scores.tsv"
+            label="${tool.name} on ${on_string}: Model confidence scores"
+        />
 
         <!-- Optional output files -->
         <data
@@ -207,11 +209,13 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
         >
             <filter>(outputs.plddts)</filter>
         </data>
+
+        <!-- TODO: check that pkl files match model # -->
         <data
             name="output_model_5_pkl"
             format="binary"
             from_work_dir="output/alphafold/model_5.pkl"
-            label="${tool.name} on ${on_string}: Pickle data - model 5"
+            label="${tool.name} on ${on_string}: result_model_5.pkl"
         >
             <filter>(outputs.model_pkls)</filter>
         </data>
@@ -219,7 +223,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
             name="output_model_4_pkl"
             format="binary"
             from_work_dir="output/alphafold/model_4.pkl"
-            label="${tool.name} on ${on_string}: Pickle data - model 4"
+            label="${tool.name} on ${on_string}: result_model_4.pkl"
         >
             <filter>(outputs.model_pkls)</filter>
         </data>
@@ -227,7 +231,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
             name="output_model_3_pkl"
             format="binary"
             from_work_dir="output/alphafold/model_3.pkl"
-            label="${tool.name} on ${on_string}: Pickle data - model 3"
+            label="${tool.name} on ${on_string}: result_model_3.pkl"
         >
             <filter>(outputs.model_pkls)</filter>
         </data>
@@ -235,7 +239,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
             name="output_model_2_pkl"
             format="binary"
             from_work_dir="output/alphafold/model_2.pkl"
-            label="${tool.name} on ${on_string}: Pickle data - model 2"
+            label="${tool.name} on ${on_string}: result_model_2.pkl"
         >
             <filter>(outputs.model_pkls)</filter>
         </data>
@@ -243,7 +247,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
             name="output_model_1_pkl"
             format="binary"
             from_work_dir="output/alphafold/model_1.pkl"
-            label="${tool.name} on ${on_string}: Pickle data - model 1"
+            label="${tool.name} on ${on_string}: result_model_1.pkl"
         >
             <filter>(outputs.model_pkls)</filter>
         </data>
@@ -339,6 +343,9 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     |
     | **NOTE: this tool packages AlphaFold v2.3.1.**
     |
+    | This means that the neural network has been trained on PDBs with a cutoff
+    | date of 2021-09-30. Find out more in the technical and release notes:
+    |
 
     - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.1>`_
     - `Technical notes for v2.3 <https://github.com/deepmind/alphafold/blob/main/docs/technical_note_v2.3.0.md>`_
@@ -402,7 +409,7 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     *PDB files*
 
-    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by AlphaFold.
+    | Five PDB (Protein Data Bank) files will be created, ordered by rank, as predicted by AlphaFold.
     | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
     |
 
@@ -413,10 +420,27 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     |
     |
 
+    *Model data files (result_model_n.pkl)*
+
+    | Per-model data stored in pickle files (a Python binary data format). These files can be used as inputs to downstream analysis software (such as Chimera X) for visualizing structures and computing kinetics between protein multimers and domains.
+    | The tool will produce one .pkl output for each of the PDB models.
+    |
+    |
+
+    *features.pkl (optional)*
+
+    |
+    |
+
+    *relax_metrics.json (optional)*
+
+    |
+    |
+
     **AlphaFold configuration**
 
     | We have configured AlphaFold to run with the parameters suggested by default on `AlphaFold's GitHub <https://github.com/deepmind/alphafold>`_.
-    | This means that it runs against the full database with Amber relaxation. If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
+    | This means that it runs with Amber relaxation enabled, with relaxed PDB models collected as output datasets. If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
     |
     |
 
