@@ -22,6 +22,14 @@ import pickle as pk
 from pathlib import Path
 from typing import List
 
+# Output file names
+OUTPUT_DIR = 'extra'
+OUTPUTS = {
+    'model_pkl': OUTPUT_DIR + '/model_{rank}.pkl',
+    'model_confidence_scores': OUTPUT_DIR + '/model_confidence_scores.tsv',
+    'plddts': OUTPUT_DIR + '/plddts.tsv',
+}
+
 # Keys for accessing confidence data from JSON/pkl files
 # They change depending on whether the run was monomer or multimer
 PLDDT_KEY = {
@@ -68,6 +76,8 @@ class Settings:
         self.output_residue_scores = args.plddts
         self.output_model_pkls = args.model_pkl
         self.is_multimer = args.multimer
+        self.output_dir = self.workdir / OUTPUT_DIR
+        os.makedirs(self.output_dir, exist_ok=True)
 
 
 class ExecutionContext:
@@ -106,14 +116,6 @@ class ExecutionContext:
             for f in os.listdir(self.settings.workdir)
             if f.startswith('result_model_') and f.endswith('.pkl')
         ])
-
-    @property
-    def model_conf_score_output(self) -> str:
-        return self.settings.workdir / 'model_confidence_scores.tsv'
-
-    @property
-    def plddt_output(self) -> str:
-        return self.settings.workdir / 'plddts.tsv'
 
 
 class ResultModelPrediction:
@@ -160,7 +162,8 @@ class ResultRanking:
 def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     """Write per-model confidence scores."""
     print("Writing per-model confidence scores...")
-    with open(context.model_conf_score_output, 'w') as f:
+    path = context.settings.workdir / OUTPUTS['model_confidence_scores']
+    with open(path, 'w') as f:
         for rank in range(1, 6):
             score = ranking.get_plddt_for_rank(rank)
             f.write(f'model_{rank}\t{score:.2f}\n')
@@ -180,7 +183,8 @@ def write_per_residue_scores(
         rank = ranking.get_rank_for_model(model)
         model_plddts[rank] = model.plddts
 
-    with open(context.plddt_output, 'w') as f:
+    path = context.settings.workdir / OUTPUTS['plddts']
+    with open(path, 'w') as f:
         for i in sorted(list(model_plddts.keys())):
             print(f"Writing plddt row for key {i}...")
             row = [f'model_{i}'] + [
@@ -194,7 +198,10 @@ def rename_model_pkls(ranking: ResultRanking, context: ExecutionContext):
     for path in context.model_pkl_paths:
         model = ResultModelPrediction(path, context)
         rank = ranking.get_rank_for_model(model)
-        new_path = context.settings.workdir / f'model_{rank}.pkl'
+        new_path = (
+            context.settings.workdir
+            / OUTPUTS['model_pkl'].format(rank=rank)
+        )
         shutil.copyfile(path, new_path)
 
 

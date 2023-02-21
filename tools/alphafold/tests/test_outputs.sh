@@ -6,20 +6,20 @@
 set -e
 
 EXPECT_OUTPUTS="
-test-data/monomer_output/plddts.tsv
-test-data/monomer_output/model_confidence_scores.tsv
-test-data/monomer_output/model_1.pkl
-test-data/monomer_output/model_2.pkl
-test-data/monomer_output/model_3.pkl
-test-data/monomer_output/model_4.pkl
-test-data/monomer_output/model_5.pkl
-test-data/multimer_output/plddts.tsv
-test-data/multimer_output/model_confidence_scores.tsv
-test-data/multimer_output/model_1.pkl
-test-data/multimer_output/model_2.pkl
-test-data/multimer_output/model_3.pkl
-test-data/multimer_output/model_4.pkl
-test-data/multimer_output/model_5.pkl"
+test-data/monomer_output/extra/plddts.tsv
+test-data/monomer_output/extra/model_confidence_scores.tsv
+test-data/monomer_output/extra/model_1.pkl
+test-data/monomer_output/extra/model_2.pkl
+test-data/monomer_output/extra/model_3.pkl
+test-data/monomer_output/extra/model_4.pkl
+test-data/monomer_output/extra/model_5.pkl
+test-data/multimer_output/extra/plddts.tsv
+test-data/multimer_output/extra/model_confidence_scores.tsv
+test-data/multimer_output/extra/model_1.pkl
+test-data/multimer_output/extra/model_2.pkl
+test-data/multimer_output/extra/model_3.pkl
+test-data/multimer_output/extra/model_4.pkl
+test-data/multimer_output/extra/model_5.pkl"
 
 echo "TEST monomer output with per-residue scores"
 python outputs.py test-data/monomer_output -p --model-pkl
@@ -35,12 +35,17 @@ for path in $EXPECT_OUTPUTS; do
   fi
 done
 
-echo ""
-echo "Removing output data..."
-rm -f \
-   test-data/*mer_output/plddts.tsv \
-   test-data/*mer_output/model_confidence_scores.tsv \
-   test-data/*mer_output/model_*.pkl
+if [[ "$@" != *"--keep"* ]]; then
+  echo ""
+  echo "Removing output data..."
+  rm -rf \
+    test-data/*mer_output/extra \
+else
+    echo "Output files created:
+    test-data/*mer_output/extra/plddts.tsv
+    test-data/*mer_output/extra/model_confidence_scores.tsv
+    test-data/*mer_output/extra/model_*.pkl"
+fi
 
 echo ""
 echo "PASS"
