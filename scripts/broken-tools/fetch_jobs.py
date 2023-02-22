@@ -56,6 +56,7 @@ def parse_args():
     )
     parser.add_argument(
         'tool_id',
+        required=False,
         help=(
             'Tool ID to filter on e.g. "antismash".'
             ' Will match against partial IDs',
@@ -184,4 +185,10 @@ def get_connection():
 
 if __name__ == '__main__':
     args = parse_args()
-    fetch_all_tools(limit=args.limit, outfile=args.out)
+    if args.tool_id:
+        df = fetch_rows_for_tool(args.tool_id)
+        fname = args.out or f"{args.tool_id}.csv"
+        print(f"Writing job rows to {fname}...")
+        df.to_csv(fname, index=False)
+    else:
+        fetch_all_tools(limit=args.limit, outfile=args.out)
