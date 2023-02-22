@@ -55,7 +55,7 @@ def parse_args():
         formatter_class=argparse.RawDescriptionHelpFormatter,
     )
     parser.add_argument(
-        'tool_id',
+        '--tool_id',
         required=False,
         help=(
             'Tool ID to filter on e.g. "antismash".'
