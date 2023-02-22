@@ -86,6 +86,7 @@ def fetch_all_tools(limit=None, outfile=None):
     """Fetch all tools and save flattened rows to CSV."""
     tool_status = {}
     tool_ids = fetch_tool_ids(strip=True, limit=limit)
+    print(f"Fetched {len(tool_ids)} tool IDs to query.")
 
     for tool_id in tool_ids:
         print(f"\nFetching jobs for tool '{tool_id}'...")
