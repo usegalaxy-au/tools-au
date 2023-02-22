@@ -37,7 +37,7 @@ COLUMNS = [
 ]
 FLATTEN_ROWS_ON = [
     # All these fields must be the same for a row to be considered a duplicate
-    'create_date',
+    'create_date',  # must be created from create_time field
     'session_id',
     'state',
 ]
@@ -46,6 +46,18 @@ ENV_VARS_ERROR_MSG = (
     "Env vars GXTOOLS_PG_PASSWORD and GXTOOLS_PG_HOST must be set.\n"
     "These variables will be read from a .env file in the working directory."
 )
+
+
+def main():
+    """Do the thing."""
+    args = parse_args()
+    if args.tool_id:
+        df = fetch_rows_for_tool(args.tool_id)
+        fname = args.out or f"{args.tool_id}.csv"
+        print(f"Writing job rows to {fname}...")
+        df.to_csv(fname, index=False)
+    else:
+        fetch_all_tools(limit=args.limit, outfile=args.out)
 
 
 def parse_args():
@@ -82,8 +94,16 @@ def parse_args():
     return args
 
 
-def fetch_all_tools(limit=None, outfile=None):
-    """Fetch all tools and save flattened rows to CSV."""
+def fetch_all_tools(limit: int = None, outfile: str = None):
+    """Fetch job rows for all tools and extract status counts.
+
+    Flatten rows by FLATTEN_ROWS_ON fields before enumerating, such that
+    a user running multiple jobs in one day is counted only once. This
+    eliminates inflated counts due to submission of collections.
+
+    Write output to CSV file with fields <tool_id, ok, paused, deleted, error,
+    error:ok> where the last field is the ratio of errored jobs.
+    """
     tool_status = {}
     tool_ids = fetch_tool_ids(strip=True, limit=limit)
     print(f"Fetched {len(tool_ids)} tool IDs to query.")
@@ -91,14 +111,11 @@ def fetch_all_tools(limit=None, outfile=None):
     for tool_id in tool_ids:
         print(f"\nFetching jobs for tool '{tool_id}'...")
         df = fetch_rows_for_tool(tool_id)
-        # df.to_csv(f"{tool_id}_job_rows.csv")
         df = flatten_rows(df)
-        # df.to_csv(f"{tool_id}_job_rows_flat.csv")
         tool_state_counts = (
             df.groupby('tool_id')
             .agg({'state': 'value_counts'})
         )
-        # tool_state_counts.to_csv(f"{tool_id}_status_count.csv")
         for multi_ix in tool_state_counts.index:
             tool_id = multi_ix[0]
             state = multi_ix[1]
@@ -122,18 +139,18 @@ def fetch_all_tools(limit=None, outfile=None):
     print(f"\nTool status dataframe written to {fname}")
 
 
-def flatten_rows(df):
-    """Flatten dataframe to one row per session/day."""
-    # Create a date column
+def flatten_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """Flatten dataframe to specified distinct fields."""
     df['create_date'] = df['create_time'].apply(lambda x: x.date())
-    # Keep only the first row for each session/date. This way we eliminate
-    # multiple jobs from one user on a single day.
     df = df.drop_duplicates(subset=FLATTEN_ROWS_ON, keep="first")
     return df
 
 
-def fetch_tool_ids(strip=False, limit=None):
-    """Return a list of unique tool_ids from the database."""
+def fetch_tool_ids(strip: bool = False, limit: int = None) -> list[str]:
+    """Return a list of unique tool_ids from the database.
+
+    Tool versions are stripped from the end of the ID.
+    """
     def strip_id(i):
         """Strip version from tool ID."""
         if '/' in i:
@@ -154,8 +171,11 @@ def fetch_tool_ids(strip=False, limit=None):
     return ids
 
 
-def fetch_rows_for_tool(tool_id, error=None, limit=None):
-    """Fetch job rows from database and return as dataframe."""
+def fetch_rows_for_tool(
+        tool_id: str,
+        error: bool = None,
+        limit: int = None) -> pd.DataFrame:
+    """Fetch job rows from database for given tool_id (fuzzy)."""
     query = f"SELECT {','.join(COLUMNS)} FROM {TABLE_NAME}"
     query += f" WHERE tool_id LIKE '%{tool_id}%' AND"
     if error is True:
@@ -185,11 +205,4 @@ def get_connection():
 
 
 if __name__ == '__main__':
-    args = parse_args()
-    if args.tool_id:
-        df = fetch_rows_for_tool(args.tool_id)
-        fname = args.out or f"{args.tool_id}.csv"
-        print(f"Writing job rows to {fname}...")
-        df.to_csv(fname, index=False)
-    else:
-        fetch_all_tools(limit=args.limit, outfile=args.out)
+    main()
