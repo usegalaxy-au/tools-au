@@ -1,3 +1,9 @@
+# Output files
+*.txt
+*.csv
+*.tab
+*.tsv
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
