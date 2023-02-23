@@ -11,7 +11,7 @@
       <edam_operation>operation_0474</edam_operation>
     </edam_operations>
     <xrefs>
-      <xref type="bio.tools">alphafold_2.0</xref>
+      <xref type="bio.tools">alphafold_2</xref>
     </xrefs>
     <requirements>
         <container type="docker">neoformit/alphafold:v2.3.1_1</container>
@@ -165,8 +165,8 @@
                 name="model_pkls"
                 type="boolean"
                 checked="false"
-                label="result_model_*.pkl"
-                help="A pickle file containing metrics used for the assessment of the model's accuracy. These include per-residue pLDDT scores (see above), predicted TM (Template Modelling) score, which is a global superposition metric and predicted aligned error (a matrix size (number of residues) x (number of residues) where each position describes the confidence of the residue's 3D position relative to another residue in the model; can be used for the interpretation of relative positions of domains). Pickle files can be read and processed using the pickle Python library."
+                label="model_*.pkl"
+                help="A pickle file containing metrics used for the assessment of the model's accuracy. These include per-residue pLDDT scores (see above), predicted TM (Template Modelling) score, which is a global superposition metric and predicted aligned error (a matrix size (number of residues) x (number of residues) where each position describes the confidence of the residue's 3D position relative to another residue in the model; can be used for the interpretation of relative positions of domains). Pickle files can be read and processed using the pickle Python library. The output names relate to the ranking order (respective to PDB model output names)."
             />
             <param
                 name="features_pkl"
@@ -180,17 +180,17 @@
                 type="boolean"
                 checked="false"
                 label="relax_metrics.json"
-                help="A JSON formatted text file containing relax metrics, for instance remaining violations."
+                help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
             />
         </section>
     </inputs>
 
     <outputs>
-        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: Model 5"/>
-        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: Model 4"/>
-        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: Model 3"/>
-        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: Model 2"/>
-        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: Model 1"/>
+        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: Model 5 (ranked_4)"/>
+        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: Model 4 (ranked_3)"/>
+        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: Model 3 (ranked_2)"/>
+        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: Model 2 (ranked_1)"/>
+        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: Model 1 (ranked_0)"/>
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
 
         <!-- Optional outputs -->
@@ -216,7 +216,7 @@
             name="output_model_5_pkl"
             format="binary"
             from_work_dir="output/alphafold/extra/model_5.pkl"
-            label="${tool.name} on ${on_string}: result_model_5.pkl"
+            label="${tool.name} on ${on_string}: result_model_5.pkl (ranked_4)"
         >
             <filter>outputs['model_pkls']</filter>
         </data>
@@ -224,7 +224,7 @@
             name="output_model_4_pkl"
             format="binary"
             from_work_dir="output/alphafold/extra/model_4.pkl"
-            label="${tool.name} on ${on_string}: result_model_4.pkl"
+            label="${tool.name} on ${on_string}: result_model_4.pkl (ranked_3)"
         >
             <filter>outputs['model_pkls']</filter>
         </data>
@@ -232,7 +232,7 @@
             name="output_model_3_pkl"
             format="binary"
             from_work_dir="output/alphafold/extra/model_3.pkl"
-            label="${tool.name} on ${on_string}: result_model_3.pkl"
+            label="${tool.name} on ${on_string}: result_model_3.pkl (ranked_2)"
         >
             <filter>outputs['model_pkls']</filter>
         </data>
@@ -240,7 +240,7 @@
             name="output_model_2_pkl"
             format="binary"
             from_work_dir="output/alphafold/extra/model_2.pkl"
-            label="${tool.name} on ${on_string}: result_model_2.pkl"
+            label="${tool.name} on ${on_string}: result_model_2.pkl (ranked_1)"
         >
             <filter>outputs['model_pkls']</filter>
         </data>
@@ -248,7 +248,7 @@
             name="output_model_1_pkl"
             format="binary"
             from_work_dir="output/alphafold/extra/model_1.pkl"
-            label="${tool.name} on ${on_string}: result_model_1.pkl"
+            label="${tool.name} on ${on_string}: result_model_1.pkl (ranked_0)"
         >
             <filter>outputs['model_pkls']</filter>
         </data>
@@ -412,8 +412,9 @@
 
     *PDB files*
 
-    | Five PDB (Protein Data Bank) files will be created, ordered by rank, as predicted by AlphaFold.
+    | Five PDB (Protein Data Bank) files are be created, ordered by rank, as predicted by AlphaFold.
     | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
+    | **PLEASE NOTE** that all outputs have been renamed to their respective rank order, including model and model.pkl files.
     |
 
     *Model confidence scores (optional)*
@@ -423,7 +424,7 @@
     |
     |
 
-    *Model data files (result_model_n.pkl)*
+    *Model data files (model_n.pkl)*
 
     | Per-model data stored in pickle files (a Python binary data format). These files can be used as inputs to downstream analysis software (such as Chimera X) for visualizing structures and computing kinetics between protein multimers and domains.
     | The tool will produce one .pkl output for each of the PDB models.
@@ -432,12 +433,12 @@
 
     *features.pkl (optional)*
 
-    |
+    | A pickle file containing the input feature NumPy arrays used by the models to produce the structures.
     |
 
     *relax_metrics.json (optional)*
 
-    |
+    | A JSON-formatted text file containing relax metrics (mostly remaining violations).
     |
 
     **AlphaFold configuration**

@@ -166,7 +166,7 @@ def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     with open(path, 'w') as f:
         for rank in range(1, 6):
             score = ranking.get_plddt_for_rank(rank)
-            f.write(f'model_{rank}\t{score:.2f}\n')
+            f.write(f'rank_{rank - 1}\t{score:.2f}\n')
 
 
 def write_per_residue_scores(
@@ -187,7 +187,7 @@ def write_per_residue_scores(
     with open(path, 'w') as f:
         for i in sorted(list(model_plddts.keys())):
             print(f"Writing plddt row for key {i}...")
-            row = [f'model_{i}'] + [
+            row = [f'ranked_{i - 1}'] + [
                 str(x) for x in model_plddts[i]
             ]
             f.write('\t'.join(row) + '\n')
