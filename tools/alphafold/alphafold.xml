@@ -344,8 +344,10 @@
     |
     | **NOTE: this tool packages AlphaFold v2.3.1.**
     |
-    | This means that the neural network has been trained on PDBs with a cutoff
-    | date of 2021-09-30. Find out more in the technical and release notes:
+    | This means that the neural network has been trained on PDBs with a release
+    | date before 2021-09-30 (the training cutoff was 2018-04-30 until v2.3.0).
+    |
+    |Find out more in the technical and release notes:
     |
 
     - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.1>`_
@@ -380,7 +382,7 @@
         This is especially useful in screening drug candidates.
     - Protein-protein interactions
         Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
-        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
+        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_, `SwissDock <http://www.swissdock.ch/>`_, `DockQ<https://github.com/bjornwallner/DockQ>`_, `MM-Align<https://zhanggroup.org/MM-align/>`_ and `TM-Align<https://zhanggroup.org/TM-align/>`_.
 
     | Protein complex interactions are also commonly observed with AlphaFold's multimer prediction mode.
     |
