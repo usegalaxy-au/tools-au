@@ -114,13 +114,32 @@ advanced_options: 'config_auto_comp_max_cov=$ipa_advance_params.advance_options.
                   <param name="genome_size" argument="--genome-size" type="integer" value="0"/>
                   <param name="coverage" argument="--coverage" type="integer" value="0"/>
 	   </section>
-	   <output name="log" value="log.txt" format="txt"/>
-		   <!--<output name="config" value="config.txt" format="txt"/>-->
-		   <!--<output name="fofn" value="fofn.txt" format="txt"/>-->
-           <output name="purged_primary" value="final_purged_primary.fasta" format="fasta"/>
-	   <output name="purged_haplotig" value="final_purged_haplotigs.fasta" format="fasta"/>
-	   <output name="primary_contig" value="primary_ctg.fasta" format="fasta"/>
-	   <output name="alternative_contig" value="alternative_ctg.fasta" format="fasta"/>
+	   <output name="log" value="log.txt" format="txt">
+		  <assert_contents>
+			 <has_n_lines n="31"/>
+		         <has_size value="1470"/>
+	          </assert_contents>
+	   </output>
+	   <output name="purged_primary" value="final_purged_primary.fasta" format="fasta">
+		 <assert_contents>
+			 <has_size value="9497"/>
+		 </assert_contents>
+	   </output>
+	   <output name="purged_haplotig" value="final_purged_haplotigs.fasta" format="fasta">
+                 <assert_contents>
+                         <has_size value="0"/>
+                 </assert_contents>
+           </output>
+	   <output name="primary_contig" value="primary_ctg.fasta" format="fasta">
+                 <assert_contents>
+                         <has_size value="9497"/>
+                 </assert_contents>
+           </output>
+	   <output name="alternative_contig" value="alternative_ctg.fasta" format="fasta">
+		   <assert_contents>
+                         <has_size value="0"/>
+                 </assert_contents>
+           </output>
         </test>
     </tests>
     <help><![CDATA[

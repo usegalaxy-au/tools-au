@@ -1,31 +1,31 @@
-INFO: /home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/ipa local --nthreads 1 --njobs 1 -i input.bam --only-print
-INFO: ipa.py ipa (wrapper) version=1.5.0 ... Checking dependencies ...
+INFO: /home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/ipa local --nthreads 1 --njobs 1 -i input.bam --only-print
+INFO: ipa.py ipa (wrapper) version=1.8.0 ... Checking dependencies ...
 INFO: Dependencies
-/home/mthang/galaxy/.venv/bin/python3
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/ipa2-task
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/falconc
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/minimap2
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/nighthawk
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/pancake
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/pblayout
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/racon
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/samtools
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/ipa_purge_dups
-/home/mthang/anaconda3/envs/__pbipa@1.5.0/bin/ipa_purge_dups_split_fa
-snakemake version=6.5.3
-ipa2-task 1.5.0 (commit c875fce13bdacbafc2f4f750c6438f4453e1354d)
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/python3
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/ipa2-task
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/falconc
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/minimap2
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/nighthawk
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/pancake
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/pblayout
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/racon
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/samtools
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/ipa_purge_dups
+/home/m.thang/anaconda3/envs/__pbipa@1.8.0/bin/ipa_purge_dups_split_fa
+snakemake version=7.21.0
+ipa2-task 1.8.0 (commit 89f9124a7aa07d170db0eb490c12a5aeb36bcf64)
  Machine name: 'Linux'
 Copyright (C) 2004-2021     Pacific Biosciences of California, Inc.
 This program comes with ABSOLUTELY NO WARRANTY; it is intended for
 Research Use Only and not for use in diagnostic procedures.
 
-falconc version=1.13.1+git.f9d1b5651e891efe379bd9727a0fa0931b875d7b, nim-version=1.5.1
-minimap2 version=2.23-r1111
-Nighthawk 0.1.0 (commit SL-release-10.1.0-7-gbe5dfb1*)
-pancake 1.3.0 (commit SEQII-release-10.1.0-432-gf2693fd*)
-pblayout 1.0.0 (commit SL-release-10.1.0-152-g66936d1*)
-racon version=v1.4.20
-samtools 1.7
-Using htslib 1.7
+falconc version=1.15.0+git., nim-version=1.2.0
+minimap2 version=2.24-r1122
+Nighthawk 1.0.0 (commit SL-release-10.2.0-11-g332ccaa)
+pancake 1.6.0 (commit SL-release-10.2.0-175-gb750c42)
+pblayout 1.4.0 (commit SL-release-10.2.0-64-gd59326a)
+racon version=1.5.0
+samtools 1.15.1
+Using htslib 1.15.1
 ipa_purge_dups Version: 1.2.5
 
