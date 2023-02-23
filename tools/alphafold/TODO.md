@@ -2,7 +2,7 @@
 
 - [x] Clarify model_x and ranked_x outputs
 - [x] Fix Biotools ref
-- [ ] Link to external resources e.g. software
+- [x] Link to external resources e.g. software
 
 # Future
 
