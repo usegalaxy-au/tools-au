@@ -25,7 +25,7 @@ from typing import List
 # Output file names
 OUTPUT_DIR = 'extra'
 OUTPUTS = {
-    'model_pkl': OUTPUT_DIR + '/model_{rank}.pkl',
+    'model_pkl': OUTPUT_DIR + '/ranked_{rank}.pkl',
     'model_confidence_scores': OUTPUT_DIR + '/model_confidence_scores.tsv',
     'plddts': OUTPUT_DIR + '/plddts.tsv',
 }
@@ -110,6 +110,14 @@ class ExecutionContext:
         return self.settings.workdir / 'ranking_debug.json'
 
     @property
+    def relax_metrics(self) -> str:
+        return self.settings.workdir / 'relax_metrics.json'
+
+    @property
+    def relax_metrics_ranked(self) -> str:
+        return self.settings.workdir / 'relax_metrics_ranked.json'
+
+    @property
     def model_pkl_paths(self) -> List[str]:
         return sorted([
             self.settings.workdir / f
@@ -152,11 +160,11 @@ class ResultRanking:
         return self.data[self.context.plddt_key][self.data['order'][rank - 1]]
 
     def get_rank_for_model(self, model: ResultModelPrediction) -> int:
-        """Return 1-indexed rank for given model name.
+        """Return 0-indexed rank for given model name.
 
         Model names are expressed in result_model_*.pkl file names.
         """
-        return self.data['order'].index(model.name) + 1
+        return self.data['order'].index(model.name)
 
 
 def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
@@ -166,7 +174,7 @@ def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     with open(path, 'w') as f:
         for rank in range(1, 6):
             score = ranking.get_plddt_for_rank(rank)
-            f.write(f'rank_{rank - 1}\t{score:.2f}\n')
+            f.write(f'ranked_{rank - 1}\t{score:.2f}\n')
 
 
 def write_per_residue_scores(
@@ -187,7 +195,7 @@ def write_per_residue_scores(
     with open(path, 'w') as f:
         for i in sorted(list(model_plddts.keys())):
             print(f"Writing plddt row for key {i}...")
-            row = [f'ranked_{i - 1}'] + [
+            row = [f'ranked_{i}'] + [
                 str(x) for x in model_plddts[i]
             ]
             f.write('\t'.join(row) + '\n')
@@ -205,6 +213,17 @@ def rename_model_pkls(ranking: ResultRanking, context: ExecutionContext):
         shutil.copyfile(path, new_path)
 
 
+def rekey_relax_metrics(ranking: ResultRanking, context: ExecutionContext):
+    """Replace keys in relax_metrics.json with 0-indexed rank."""
+    with open(context.relax_metrics) as f:
+        data = json.load(f)
+        for k in data:
+            rank = ranking.get_rank_for_model(k)
+            data[f'ranked_{rank}'] = data.pop(k)
+    with open(context.relax_metrics_ranked, 'w') as f:
+        json.dump(data, f)
+
+
 def main():
     """Parse output files and generate additional output files."""
     settings = Settings()
@@ -212,6 +231,7 @@ def main():
     context = ExecutionContext(settings)
     ranking = ResultRanking(context)
     write_confidence_scores(ranking, context)
+    rekey_relax_metrics(ranking, context)
 
     # Optional outputs
     if settings.output_model_pkls:
