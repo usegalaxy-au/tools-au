@@ -17,8 +17,8 @@ several output paths are determined dynamically.
 import argparse
 import json
 import os
-import shutil
 import pickle as pk
+import shutil
 from pathlib import Path
 from typing import List
 
