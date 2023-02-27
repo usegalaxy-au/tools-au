@@ -1,8 +1,8 @@
 """Validate input FASTA sequence."""
 
+import argparse
 import re
 import sys
-import argparse
 from typing import List
 
 MULTIMER_MAX_SEQUENCE_COUNT = 10

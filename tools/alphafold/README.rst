@@ -75,26 +75,40 @@ REFERENCE DATA
 ~~~~~~~~~~~~~~
 
 Alphafold needs reference data to run. The wrapper expects this data to
-be present at ``/data/alphafold_databases``. A custom DB root can be read from
-the ALPHAFOLD_DB environment variable, if set. To download the AlphaFold,
-reference data, run the following shell script command in the tool directory.
+be present at ``/data/alphafold_databases``. A custom path will be read from
+the ``ALPHAFOLD_DB`` environment variable, if set.
+
+To download the AlphaFold reference DBs:
 
 ::
 
-   # Set databases root
-   ALPHAFOLD_DB_ROOT=/data/alphafold_databases
+   # Set your AlphaFold DB path
+   ALPHAFOLD_DB=/data/alphafold_databases
 
-   # make folders if needed
-   mkdir -p $ALPHAFOLD_DB_ROOT
+   # Set your target AlphaFold version
+   ALPHAFOLD_VERSION=  # e.g. 2.1.2
 
-   # download ref data
-   bash scripts/download_all_data.sh $ALPHAFOLD_DB_ROOT
+   # Download repo
+   wget https://github.com/deepmind/alphafold/releases/tag/v${ALPHAFOLD_VERSION}.tar.gz
+   tar xzf v${ALPHAFOLD_VERSION}.tar.gz
 
-This will install the reference data to ``/data/alphafold_databases``.
+   # Ensure dirs
+   mkdir -p $ALPHAFOLD_DB
+
+   # Download
+   bash alphafold*/scripts/download_all_data.sh $ALPHAFOLD_DB
+
+You will most likely want to run this as a background job, as it will take a
+very long time (7+ days in Australia).
+
+This will install the reference data to your ``$ALPHAFOLD_DB``.
 To check this has worked, ensure the final folder structure is as
 follows:
 
 ::
+
+   # NOTE: this structure will change between minor AlphaFold versions
+   # The tree shown below was updated for v2.3.1
 
    data/alphafold_databases
    ├── bfd
@@ -105,18 +119,23 @@ follows:
    │   ├── bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt_hhm.ffdata
    │   └── bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt_hhm.ffindex
    ├── mgnify
-   │   └── mgy_clusters_2018_12.fa
+   │   └── mgy_clusters_2022_05.fa
    ├── params
    │   ├── LICENSE
    │   ├── params_model_1.npz
+   │   ├── params_model_1_multimer_v3.npz
    │   ├── params_model_1_ptm.npz
    │   ├── params_model_2.npz
+   │   ├── params_model_2_multimer_v3.npz
    │   ├── params_model_2_ptm.npz
    │   ├── params_model_3.npz
+   │   ├── params_model_3_multimer_v3.npz
    │   ├── params_model_3_ptm.npz
    │   ├── params_model_4.npz
+   │   ├── params_model_4_multimer_v3.npz
    │   ├── params_model_4_ptm.npz
    │   ├── params_model_5.npz
+   │   ├── params_model_5_multimer_v3.npz
    │   └── params_model_5_ptm.npz
    ├── pdb70
    │   ├── md5sum
@@ -131,10 +150,20 @@ follows:
    ├── pdb_mmcif
    │   ├── mmcif_files
    │   └── obsolete.dat
-   ├── uniclust30
-   │   └── uniclust30_2018_08
+   ├── pdb_seqres
+   │   └── pdb_seqres.txt
+   ├── uniprot
+   │   └── uniprot.fasta
+   ├── uniref30
+   │   ├── UniRef30_2021_03.md5sums
+   │   ├── UniRef30_2021_03_a3m.ffdata
+   │   ├── UniRef30_2021_03_a3m.ffindex
+   │   ├── UniRef30_2021_03_cs219.ffdata
+   │   ├── UniRef30_2021_03_cs219.ffindex
+   │   ├── UniRef30_2021_03_hhm.ffdata
+   │   └── UniRef30_2021_03_hhm.ffindex
    └── uniref90
-       └── uniref90.fasta
+      └── uniref90.fasta
 
 In more recent releases of the AlphaFold tool, you will need to download an
 additional file to allow the ``reduced_dbs`` option:
@@ -151,6 +180,25 @@ The ``$ALPHAFOLD_DB_ROOT`` directory should now contain this additional file:
    ├── small_bfd
    │   └── bfd-first_non_consensus_sequences.fasta
 
+
+**Upgrading database versions**
+
+When upgrading to a new minor version of AlphaFold, you will most likely have to
+upgrade the reference database. This can be a pain, due to the size of the
+databases and the obscurity around what has changed. The simplest way to do
+this is simply create a new directory and download the DBs from scratch.
+However, you can save a considerable amount of time by downloading only the
+components that have changed.
+
+If you wish to continue hosting prior versions of the tool, you must maintain
+the reference DBs for each version. The ``ALPHAFOLD_DB`` environment variable
+must then be set respectively for each tool version in your job conf (on Galaxy
+AU this is currently `configured with TPV<https://github.com/usegalaxy-au/infrastructure/blob/master/files/galaxy/dynamic_job_rules/production/total_perspective_vortex/tools.yml#L1515-L1554>`_).
+
+To minimize redundancy between DB version, we have symlinked the database
+components that are unchanging between versions. In ``v2.1.2 -> v2.3.1`` the BFD
+database is the only component that is persistent, but they are by far the
+largest on disk.
 
 
 JOB DESTINATION
