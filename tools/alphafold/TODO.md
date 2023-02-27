@@ -3,7 +3,7 @@
 - [x] Clarify model_x and ranked_x outputs
 - [x] Fix Biotools ref
 - [x] Link to external resources e.g. software
-- [ ] Re-key relax_metrics.json output as ranked_x
+- [x] Re-key relax_metrics.json output as ranked_x
 
 # Future
 
