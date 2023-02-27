@@ -28,6 +28,7 @@ OUTPUTS = {
     'model_pkl': OUTPUT_DIR + '/ranked_{rank}.pkl',
     'model_confidence_scores': OUTPUT_DIR + '/model_confidence_scores.tsv',
     'plddts': OUTPUT_DIR + '/plddts.tsv',
+    'relax': OUTPUT_DIR + '/relax_metrics_ranked.json',
 }
 
 # Keys for accessing confidence data from JSON/pkl files
@@ -159,17 +160,16 @@ class ResultRanking:
         """Get pLDDT score for model instance."""
         return self.data[self.context.plddt_key][self.data['order'][rank - 1]]
 
-    def get_rank_for_model(self, model: ResultModelPrediction) -> int:
+    def get_rank_for_model(self, model_name: str) -> int:
         """Return 0-indexed rank for given model name.
 
         Model names are expressed in result_model_*.pkl file names.
         """
-        return self.data['order'].index(model.name)
+        return self.data['order'].index(model_name)
 
 
 def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     """Write per-model confidence scores."""
-    print("Writing per-model confidence scores...")
     path = context.settings.workdir / OUTPUTS['model_confidence_scores']
     with open(path, 'w') as f:
         for rank in range(1, 6):
@@ -188,13 +188,12 @@ def write_per_residue_scores(
     model_plddts = {}
     for i, path in enumerate(context.model_pkl_paths):
         model = ResultModelPrediction(path, context)
-        rank = ranking.get_rank_for_model(model)
+        rank = ranking.get_rank_for_model(model.name)
         model_plddts[rank] = model.plddts
 
     path = context.settings.workdir / OUTPUTS['plddts']
     with open(path, 'w') as f:
         for i in sorted(list(model_plddts.keys())):
-            print(f"Writing plddt row for key {i}...")
             row = [f'ranked_{i}'] + [
                 str(x) for x in model_plddts[i]
             ]
@@ -205,7 +204,7 @@ def rename_model_pkls(ranking: ResultRanking, context: ExecutionContext):
     """Rename model.pkl files so the rank order is implicit."""
     for path in context.model_pkl_paths:
         model = ResultModelPrediction(path, context)
-        rank = ranking.get_rank_for_model(model)
+        rank = ranking.get_rank_for_model(model.name)
         new_path = (
             context.settings.workdir
             / OUTPUTS['model_pkl'].format(rank=rank)
@@ -217,10 +216,11 @@ def rekey_relax_metrics(ranking: ResultRanking, context: ExecutionContext):
     """Replace keys in relax_metrics.json with 0-indexed rank."""
     with open(context.relax_metrics) as f:
         data = json.load(f)
-        for k in data:
+        for k in list(data.keys()):
             rank = ranking.get_rank_for_model(k)
             data[f'ranked_{rank}'] = data.pop(k)
-    with open(context.relax_metrics_ranked, 'w') as f:
+    new_path = context.settings.workdir / OUTPUTS['relax']
+    with open(new_path, 'w') as f:
         json.dump(data, f)
 
 
