@@ -18,6 +18,6 @@ include:
     - static/
     - alphafold.xml
     - alphafold.html
-    - gen_extra_outputs.py
+    - outputs.py
     - README.rst
     - validate_fasta.py

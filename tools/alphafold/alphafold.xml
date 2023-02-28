@@ -1,8 +1,8 @@
 <tool id="alphafold" name="Alphafold 2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
-      <token name="@TOOL_VERSION@">2.1.2</token>
-      <token name="@VERSION_SUFFIX@">4</token>
+      <token name="@TOOL_VERSION@">2.3.1</token>
+      <token name="@VERSION_SUFFIX@">0</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_0082</edam_topic>
@@ -11,92 +11,93 @@
       <edam_operation>operation_0474</edam_operation>
     </edam_operations>
     <xrefs>
-      <xref type="bio.tools">alphafold_2.0</xref>
+      <xref type="bio.tools">alphafold_2</xref>
     </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:v2.1.2_0</container>
+        <container type="docker">neoformit/alphafold:v2.3.1_1</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 
 ## $ALPHAFOLD_DB variable should point to the location of the AlphaFold
 ## databases - defaults to /data
 
-## fasta setup ----------------------------
+## Read FASTA input ----------------------------
 #if $fasta_or_text.input_mode == 'history':
-    cp '$fasta_or_text.fasta_file' input.fasta &&
+    cp '$fasta_or_text.fasta_file' input.fasta
 
 #elif $fasta_or_text.input_mode == 'textbox':
-    echo '$fasta_or_text.fasta_text' > input.fasta &&
+    echo '$fasta_or_text.fasta_text' > input.fasta
 #end if
 
-python3 '$__tool_directory__/validate_fasta.py' input.fasta
+&& python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
 #if $multimer:
 --multimer
 #end if
-> alphafold.fasta &&
+> alphafold.fasta
 
-## env vars -------------------------------
-export TF_FORCE_UNIFIED_MEMORY=1 &&
-export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0 &&
-export DATE=`date +"%Y-%m-%d"` &&
+## Env vars -------------------------------
+&& export TF_FORCE_UNIFIED_MEMORY=1
+&& export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
+&& export TODAY=`date +"%Y-%m-%d"`
 
-## run alphafold  -------------------------
-python /app/alphafold/run_alphafold.py
---fasta_paths alphafold.fasta
---output_dir output
---data_dir \${ALPHAFOLD_DB:-/data}
---max_template_date=\$DATE
+## Run alphafold  -------------------------
+&& python /app/alphafold/run_alphafold.py
+    --fasta_paths alphafold.fasta
+    --output_dir output
+    --data_dir \${ALPHAFOLD_DB:-/data}
 
-## Set reference data explicitly
---uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
---mgnify_database_path     \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2018_12.fa
---template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
---obsolete_pdbs_path       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
-#if $dbs == 'full':
---bfd_database_path        \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
---uniclust30_database_path \${ALPHAFOLD_DB:-/data}/uniclust30/uniclust30_2018_08/uniclust30_2018_08
-#else
---db_preset=reduced_dbs
---small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/small_bfd/bfd-first_non_consensus_sequences.fasta
-#end if
+    ## Set reference database paths
+    --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
+    --mgnify_database_path     \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2022_05.fa
+    --template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
+    --obsolete_pdbs_path       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
+    #if $dbs == 'full':
+    --bfd_database_path        \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+    --uniref30_database_path   \${ALPHAFOLD_DB:-/data}/uniref30/UniRef30_2021_03
+    #else
+    --db_preset=reduced_dbs
+    --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/small_bfd/bfd-first_non_consensus_sequences.fasta
+    #end if
 
-## Param introduced in AlphaFold v2.1.2:
---use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
+    #if $max_template_date:
+    --max_template_date=$max_template_date
+    #else
+    --max_template_date=\$TODAY
+    #end if
 
-#if $multimer:
---model_preset=multimer
---pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
---uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
-##--num_multimer_predictions_per_model=1  ## introduced alphafold>=2.2.0
+    --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
 
-#else
---pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
-#end if
-&&
+    #if $multimer:
+    --model_preset=multimer
+    --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
+    --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
+    --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
+    #else
+    --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
+    #end if
 
 ## Generate additional outputs ------------
-python3 '$__tool_directory__/gen_extra_outputs.py' output/alphafold $output_plddts
+&& python3 '$__tool_directory__/outputs.py' output/alphafold $outputs.plddts
 #if $multimer:
 --multimer
 #end if
-&&
 
 ## HTML output
-mkdir -p '${ html.files_path }' &&
-cp '$__tool_directory__/alphafold.html' '${html}' &&
-cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
+&& mkdir -p '${ html.files_path }'
+&& cp '$__tool_directory__/alphafold.html' '${html}'
+&& cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
 ## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
 ## The working directory ends up two levels deep and the visualization html page
 ## fails to load the PDB files as static assets.
-(([ -d working ] && cp -r working/* .) || true)
+&& (([ -d working ] && cp -r working/* .) || true)
 
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
-            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. If multiple sequences FASTA file provided, multimer mode must be selected.">
+            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. If multiple-sequence FASTA file provided, multimer mode must be selected.">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
@@ -107,6 +108,21 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein. If you wish to run AlphaFold multimer, please supply multiple sequences in FASTA format." />
             </when>
         </conditional>
+
+        <param
+            name="max_template_date"
+            type="text"
+            label="Max template date (yyyy-mm-dd) (optional)"
+            help="The model will reference PDB structures deposited before this date only. Defaults to today's date."
+            optional="true"
+        >
+            <sanitizer>
+                <valid initial="string.digits">
+                    <add value="-" />
+                </valid>
+            </sanitizer>
+            <validator type="regex">[0-9]{4}-[0-9]{2}-[0-9]{2}</validator>
+        </param>
 
         <param
           name="dbs"
@@ -125,39 +141,135 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
           type="boolean"
           checked="false"
           label="Multimer mode"
-          help="Fold a protein multimer from multiple input sequences. You must input multiple sequences to run this mode."
+          help="Fold a protein multimer from multiple input sequences. You must input multiple sequences in FASTA to run this mode."
         />
 
-        <param name="output_plddts" type="boolean" checked="false" label="Output per-residue confidence scores" truevalue="--plddts" falsevalue="" help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. Sections of low confidence often occur in disordered regions. " />
+        <section name="outputs" title="Optional outputs" expanded="false">
+            <param
+                name="confidence_scores"
+                type="boolean"
+                checked="false"
+                label="Per-model confidence scores"
+                help="A tabular file showing average confidence score for each model (predicted template modelling (PTM) score; interface PTM is incorporated into this score for multimer predictions)."
+            />
+            <param
+                name="plddts"
+                type="boolean"
+                checked="false"
+                label="Per-residue confidence scores"
+                truevalue="--plddts"
+                falsevalue=""
+                help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. This output is a tabular file with five rows (one for each output PDB model), with each column providing a pLDDT score for a single residue. These data have been parsed from the model pickle files (below)."
+            />
+            <param
+                name="model_pkls"
+                type="boolean"
+                checked="false"
+                label="ranked_*.pkl"
+                help="A pickle file containing metrics used for the assessment of the model's accuracy. These include per-residue pLDDT scores (see above), predicted TM (Template Modelling) score, which is a global superposition metric and predicted aligned error (a matrix size (number of residues) x (number of residues) where each position describes the confidence of the residue's 3D position relative to another residue in the model; can be used for the interpretation of relative positions of domains). Pickle files can be read and processed using the Python 'pickle' library. Outputs are named respectively to PDB outputs."
+            />
+            <param
+                name="relax_json"
+                type="boolean"
+                checked="false"
+                label="relax_metrics.json"
+                help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
+            />
+        </section>
     </inputs>
 
     <outputs>
-        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: Model 5"/>
-        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: Model 4"/>
-        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: Model 3"/>
-        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: Model 2"/>
-        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: Model 1"/>
-        <data name="confidence_scores" format="tsv" from_work_dir="output/alphafold/model_confidence_scores.tsv" label="${tool.name} on ${on_string}: Model confidence scores"/>
-        <data name="plddts" format="tsv" from_work_dir="output/alphafold/plddts.tsv" label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)">
-            <filter>(output_plddts)</filter>
-        </data>
+        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: PDB ranked 4"/>
+        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: PDB ranked 3"/>
+        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: PDB ranked 2"/>
+        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: PDB ranked 1"/>
+        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: PDB ranked 0"/>
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
+
+        <!-- Optional outputs -->
+        <data
+            name="output_confidence_scores"
+            format="tabular"
+            from_work_dir="output/alphafold/extra/model_confidence_scores.tsv"
+            label="${tool.name} on ${on_string}: Model confidence scores"
+        >
+            <filter>outputs['confidence_scores']</filter>
+        </data>
+
+        <data
+            name="output_plddts"
+            format="tabular"
+            from_work_dir="output/alphafold/extra/plddts.tsv"
+            label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)"
+        >
+            <filter>outputs['plddts']</filter>
+        </data>
+
+        <data
+            name="output_ranked_4_pkl"
+            format="binary"
+            from_work_dir="output/alphafold/extra/ranked_4.pkl"
+            label="${tool.name} on ${on_string}: ranked_4.pkl"
+        >
+            <filter>outputs['model_pkls']</filter>
+        </data>
+        <data
+            name="output_ranked_3_pkl"
+            format="binary"
+            from_work_dir="output/alphafold/extra/ranked_3.pkl"
+            label="${tool.name} on ${on_string}: ranked_3.pkl"
+        >
+            <filter>outputs['model_pkls']</filter>
+        </data>
+        <data
+            name="output_ranked_2_pkl"
+            format="binary"
+            from_work_dir="output/alphafold/extra/ranked_2.pkl"
+            label="${tool.name} on ${on_string}: ranked_2.pkl"
+        >
+            <filter>outputs['model_pkls']</filter>
+        </data>
+        <data
+            name="output_ranked_1_pkl"
+            format="binary"
+            from_work_dir="output/alphafold/extra/ranked_1.pkl"
+            label="${tool.name} on ${on_string}: ranked_1.pkl"
+        >
+            <filter>outputs['model_pkls']</filter>
+        </data>
+        <data
+            name="output_ranked_0_pkl"
+            format="binary"
+            from_work_dir="output/alphafold/extra/ranked_0.pkl"
+            label="${tool.name} on ${on_string}: ranked_0.pkl"
+        >
+            <filter>outputs['model_pkls']</filter>
+        </data>
+        <data
+            name="output_relax_json"
+            format="json"
+            from_work_dir="output/alphafold/extra/relax_metrics_ranked.json"
+            label="${tool.name} on ${on_string}: relax_metrics_ranked.json"
+        >
+            <filter>outputs['relax_json']</filter>
+        </data>
     </outputs>
+
     <tests>
         <test expect_num_outputs="8">
             <conditional name="fasta_or_text">
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="output_plddts" value="true"/>
-            <output name="plddts">
+            <param name="plddts" value="true"/>
+            <output name="output_plddts">
                 <assert_contents>
                     <has_n_columns n="2"/>
                     <has_n_lines n="6"/>
                     <has_size value="2900" delta="300"/>
                 </assert_contents>
             </output>
-            <output name="confidence_scores">
+            <output name="output_confidence_scores">
                 <assert_contents>
                     <has_n_columns n="2"/>
                     <has_n_lines n="6"/>
@@ -205,43 +317,36 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     .. class:: infomark
 
-    **What it does**
-
-    | AlphaFold v2.1: AI-guided 3D structure prediction of proteins
+    | AlphaFold v2: AI-guided 3D structural prediction of proteins
     |
+    | **NOTE: this tool packages AlphaFold v2.3.1.**
+    |
+    | This means that the neural network has been trained on PDBs with a release
+    | date before 2021-09-30 (the training cutoff was 2018-04-30 until ``v2.3.0``).
+    |
+    | Find out more in the technical and release notes:
+    |
+
+    - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.1>`_
+    - `Technical notes for v2.3 <https://github.com/deepmind/alphafold/blob/main/docs/technical_note_v2.3.0.md>`_
+
+    | If you want to use AlphaFold trained against an older cutoff date, switch to Galaxy version ``2.1.2`` (which was trained to data up to 2018-04-30).
+    |
+
+    **What it does**
 
     *What is AlphaFold?*
 
-    | AlphaFold is a program which uses neural networks to predict the tertiary (3D) structure of proteins. AlphaFold accepts an amino acid sequence (in Fasta format), then will 'fold' that sequence into a 3D model.
-    |
-    | **NOTE: AlphaFold has numerous versions - this tool uses AlphaFold v2.1.2.**
+    | AlphaFold is a program which uses neural networks to predict the tertiary (3D) structure of proteins. AlphaFold accepts an amino acid sequence in Fasta format, which will be "folded" into a 3D model.
     |
 
     *What makes AlphaFold different?*
 
     | The ability to use computers to predict 3D protein structures with high accuracy is desirable because it removes the time-consuming and costly process of determining structures experimentally.
-    | In-silico protein folding has been an active field of research for decades, but existing tools ran more slowly and with less reliability than AlphaFold.
+    | In-silico protein folding has been an active field of research for decades, but existing tools were slower and far less reliable than AlphaFold.
     | AlphaFold represents a leap forward by regularly predicting structures to atomic-level accuracy, even when no similar structures are known.
     |
 
-    *Downstream analysis*
-
-    | Obtaining a protein structure prediction is the first step in many analyses.
-    | The 3D models created by AlphaFold can be used in downstream analysis, including the following:
-    |
-
-    - Inspecting protein features
-        3D viewers (pymol, chimera, ngl, blender) can be used to inspect active sites, regulatory domains, binding sites.
-    - Molecular docking
-        3D structures can be used to predict the binding affinity of different compounds.
-        This is especially useful in screening drug candidates.
-    - Protein-protein interactions
-        Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
-        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_ and `SwissDock <http://www.swissdock.ch/>`_.
-
-    | Protein complex interactions are also commonly observed with AlphaFold's multimer prediction mode.
-    |
-    |
 
     **Input**
 
@@ -269,8 +374,9 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
 
     *PDB files*
 
-    | Five PDB (Protein Data Bank) files will be created for the best ranking models predicted by AlphaFold.
+    | Five PDB (Protein Data Bank) files are be created, ordered by rank, as predicted by AlphaFold.
     | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
+    | **PLEASE NOTE** that all outputs have been renamed to their respective rank order, including model and model.pkl files.
     |
 
     *Model confidence scores (optional)*
@@ -280,22 +386,49 @@ cp output/alphafold/ranked_*.pdb '${html.files_path}' &&
     |
     |
 
+    *Model data files (ranked_n.pkl)*
+
+    | Per-model data stored in pickle files (a Python binary data format). These files can be used as inputs to downstream analysis software (such as Chimera X) for visualizing structures and computing kinetics between protein multimers and domains.
+    | The tool will produce one ``.pkl`` output for each of the PDB models.
+    |
+    |
+
+    *relax_metrics.json (optional)*
+
+    | A JSON-formatted text file containing relax metrics (mostly remaining violations).
+    |
+
     **AlphaFold configuration**
 
     | We have configured AlphaFold to run with the parameters suggested by default on `AlphaFold's GitHub <https://github.com/deepmind/alphafold>`_.
-    | This means that it runs against the full database with Amber relaxation, with ``max_template_date`` set to today's date. If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
+    | This means that it runs with Amber relaxation enabled, with relaxed PDB models collected as output datasets. If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
     |
     |
 
     **External Resources**
 
-    We HIGHLY recommend checking out the
+    We highly recommend checking out the
     `Alphafold Protein Structure Database <https://alphafold.ebi.ac.uk/>`_,
     which contains pre-computed structures for over 200 million known proteins.
     See also:
 
     - `Google Deepmind's article on AlphaFold <https://deepmind.com/blog/article/alphafold-a-solution-to-a-50-year-old-grand-challenge-in-biology>`_
     - `AlphaFold source code on GitHub <https://github.com/deepmind/alphafold>`_
+
+    *Downstream analysis*
+
+    | Obtaining a protein structure prediction is the first step in many analyses.
+    | The 3D models created by AlphaFold can be used in downstream analysis, including the following:
+    |
+
+    - Inspecting protein features
+        3D viewers (pymol, chimera, ngl, blender) can be used to inspect active sites, regulatory domains, binding sites.
+    - Molecular docking
+        3D structures can be used to predict the binding affinity of different compounds.
+        This is especially useful in screening drug candidates.
+    - Protein-protein interactions
+        Proteins associate in many biological processes, including intracellular signalling pathways and protein complex formation.
+        To predict these interactions, other programs may ingest 3D models predicted by AlphaFold. Proprietary softwares include `GOLD <https://www.ccdc.cam.ac.uk/solutions/csd-discovery/components/gold/>`_ and `SeeSAR <https://www.biosolveit.de/SeeSAR>`_, but many `free and open-source options <https://en.wikipedia.org/wiki/List_of_protein-ligand_docking_software>`_ are available such as `AutoDock <https://autodock.scripps.edu/>`_, `SwissDock <http://www.swissdock.ch/>`_, `DockQ <https://github.com/bjornwallner/DockQ>`_, `MM-Align <https://zhanggroup.org/MM-align/>`_ and `TM-Align <https://zhanggroup.org/TM-align/>`_. Protein-protein interactions are often inferred from AlphaFold-Multimer predictions, which provide a level of confidence in binding affinity between homomer/heteromer subunits.
 
     ]]></help>
     <citations>
