@@ -2,7 +2,7 @@
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
       <token name="@TOOL_VERSION@">2.3.1</token>
-      <token name="@VERSION_SUFFIX@">0</token>
+      <token name="@VERSION_SUFFIX@">1</token>
     </macros>
     <edam_topics>
       <edam_topic>topic_0082</edam_topic>
@@ -32,7 +32,7 @@
 && python3 '$__tool_directory__/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
-#if $multimer:
+#if $model_preset == 'multimer':
 --multimer
 #end if
 > alphafold.fasta
@@ -47,6 +47,7 @@
     --fasta_paths alphafold.fasta
     --output_dir output
     --data_dir \${ALPHAFOLD_DB:-/data}
+    --model_preset=$model_preset
 
     ## Set reference database paths
     --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
@@ -69,8 +70,7 @@
 
     --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
 
-    #if $multimer:
-    --model_preset=multimer
+    #if $model_preset == 'multimer':
     --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
     --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
     --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
@@ -79,8 +79,11 @@
     #end if
 
 ## Generate additional outputs ------------
-&& python3 '$__tool_directory__/outputs.py' output/alphafold $outputs.plddts
-#if $multimer:
+&& python3 '$__tool_directory__/outputs.py' output/alphafold
+$outputs.plddts
+$outputs.model_pkls
+$outputs.pae_csv
+#if $model_preset == 'multimer':
 --multimer
 #end if
 
@@ -137,12 +140,19 @@
         </param>
 
         <param
-          name="multimer"
-          type="boolean"
-          checked="false"
-          label="Multimer mode"
-          help="Fold a protein multimer from multiple input sequences. You must input multiple sequences in FASTA to run this mode."
-        />
+            name="model_preset"
+            type="select"
+            label="Model preset"
+            help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction."
+        >
+            <option value="monomer" selected="true">monomer - default prediction model</option>
+            <option value="monomer_ptm">
+                monomer_ptm - slightly less accurate version of the monomer model, but provides a pairwise alignment error (PAE) matrix.
+            </option>
+            <option value="multimer">
+                multimer - allows modelling of protein complexes. Requires multi-sequence FASTA input.
+            </option>
+        </param>
 
         <section name="outputs" title="Optional outputs" expanded="false">
             <param
@@ -162,18 +172,29 @@
                 help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. This output is a tabular file with five rows (one for each output PDB model), with each column providing a pLDDT score for a single residue. These data have been parsed from the model pickle files (below)."
             />
             <param
-                name="model_pkls"
-                type="boolean"
-                checked="false"
-                label="ranked_*.pkl"
-                help="A pickle file containing metrics used for the assessment of the model's accuracy. These include per-residue pLDDT scores (see above), predicted TM (Template Modelling) score, which is a global superposition metric and predicted aligned error (a matrix size (number of residues) x (number of residues) where each position describes the confidence of the residue's 3D position relative to another residue in the model; can be used for the interpretation of relative positions of domains). Pickle files can be read and processed using the Python 'pickle' library. Outputs are named respectively to PDB outputs."
-            />
-            <param
                 name="relax_json"
                 type="boolean"
                 checked="false"
                 label="relax_metrics.json"
                 help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
+            />
+            <param
+                name="pae_csv"
+                type="boolean"
+                checked="false"
+                truevalue="--pae"
+                falsevalue=""
+                label="Paired-alignment error (PAE)"
+                help="A CSV-formatted matrix for each model. Only available for monomer_ptm and multimer model presets. Predicted aligned error (PAE) gives a distance error for every pair of residues. It gives AlphaFold's estimate of position error at residue X when the predicted and true structures are aligned on residue Y. Values range from 0 - 35 Angstroms."
+            />
+            <param
+                name="model_pkls"
+                type="boolean"
+                checked="false"
+                truevalue="--pkl"
+                falsevalue=""
+                label="ranked_*.pkl"
+                help="A pickle file containing metrics used for the assessment of the model's accuracy. These include per-residue pLDDT scores (see above), predicted TM (Template Modelling) score, which is a global superposition metric and predicted aligned error (a matrix size (number of residues) x (number of residues) where each position describes the confidence of the residue's 3D position relative to another residue in the model; can be used for the interpretation of relative positions of domains). Pickle files can be read and processed using the Python 'pickle' library (requires the jax Python library). Outputs are named respective to PDB outputs."
             />
         </section>
     </inputs>
@@ -245,6 +266,48 @@
         >
             <filter>outputs['model_pkls']</filter>
         </data>
+
+        <data
+            name="pae_ranked_4"
+            format="csv"
+            from_work_dir="output/alphafold/extra/pae_ranked_4.csv"
+            label="${tool.name} on ${on_string}: pae_ranked_4.csv"
+        >
+            <filter>outputs['pae_csv']</filter>
+        </data>
+        <data
+            name="pae_ranked_3"
+            format="csv"
+            from_work_dir="output/alphafold/extra/pae_ranked_3.csv"
+            label="${tool.name} on ${on_string}: pae_ranked_3.csv"
+        >
+            <filter>outputs['pae_csv']</filter>
+        </data>
+        <data
+            name="pae_ranked_2"
+            format="csv"
+            from_work_dir="output/alphafold/extra/pae_ranked_2.csv"
+            label="${tool.name} on ${on_string}: pae_ranked_2.csv"
+        >
+            <filter>outputs['pae_csv']</filter>
+        </data>
+        <data
+            name="pae_ranked_1"
+            format="csv"
+            from_work_dir="output/alphafold/extra/pae_ranked_1.csv"
+            label="${tool.name} on ${on_string}: pae_ranked_1.csv"
+        >
+            <filter>outputs['pae_csv']</filter>
+        </data>
+        <data
+            name="pae_ranked_0"
+            format="csv"
+            from_work_dir="output/alphafold/extra/pae_ranked_0.csv"
+            label="${tool.name} on ${on_string}: pae_ranked_0.csv"
+        >
+            <filter>outputs['pae_csv']</filter>
+        </data>
+
         <data
             name="output_relax_json"
             format="json"
@@ -389,7 +452,14 @@
     *Model data files (ranked_n.pkl)*
 
     | Per-model data stored in pickle files (a Python binary data format). These files can be used as inputs to downstream analysis software (such as Chimera X) for visualizing structures and computing kinetics between protein multimers and domains.
-    | The tool will produce one ``.pkl`` output for each of the PDB models.
+    | The tool will produce one ``.pkl`` output for each PDB model.
+    |
+    |
+
+    *Model predicted-alignment error matrix (pae_ranked_n.csv)*
+
+    | Per-model predicted-alignment error (PAE) matrix - only available with the ``monomer_ptm`` and ``multimer`` model presets.
+    | The tool will produce one ``.csv`` output for each PDB model.
     |
     |
 

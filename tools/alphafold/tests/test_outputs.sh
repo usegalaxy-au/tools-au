@@ -20,6 +20,11 @@ test-data/monomer_output/extra/ranked_3.pkl
 test-data/monomer_output/extra/ranked_4.pkl
 test-data/multimer_output/extra/plddts.tsv
 test-data/multimer_output/extra/model_confidence_scores.tsv
+test-data/multimer_output/extra/pae_ranked_0.csv
+test-data/multimer_output/extra/pae_ranked_1.csv
+test-data/multimer_output/extra/pae_ranked_2.csv
+test-data/multimer_output/extra/pae_ranked_3.csv
+test-data/multimer_output/extra/pae_ranked_4.csv
 test-data/multimer_output/extra/ranked_0.pkl
 test-data/multimer_output/extra/ranked_1.pkl
 test-data/multimer_output/extra/ranked_2.pkl
@@ -27,11 +32,11 @@ test-data/multimer_output/extra/ranked_3.pkl
 test-data/multimer_output/extra/ranked_4.pkl"
 
 printf "${KYEL}TEST monomer output with per-residue scores${KNRM}\n"
-python outputs.py test-data/monomer_output -p --model-pkl
+python outputs.py test-data/monomer_output -p --pkl
 
 echo ""
 printf "${KYEL}TEST multimer output with per-residue scores${KNRM}\n"
-python outputs.py test-data/multimer_output -p -m --model-pkl
+python outputs.py test-data/multimer_output -p -m --pkl --pae
 
 for path in $EXPECT_OUTPUTS; do
   if [ ! -f $path ]; then

@@ -26,6 +26,7 @@ from typing import List
 OUTPUT_DIR = 'extra'
 OUTPUTS = {
     'model_pkl': OUTPUT_DIR + '/ranked_{rank}.pkl',
+    'model_pae': OUTPUT_DIR + '/pae_ranked_{rank}.csv',
     'model_confidence_scores': OUTPUT_DIR + '/model_confidence_scores.tsv',
     'plddts': OUTPUT_DIR + '/plddts.tsv',
     'relax': OUTPUT_DIR + '/relax_metrics_ranked.json',
@@ -67,15 +68,20 @@ class Settings:
             action="store_true"
         )
         parser.add_argument(
-            "--model-pkl",
-            dest="model_pkl",
+            "--pkl",
             help="rename model pkl outputs with rank order",
+            action="store_true"
+        )
+        parser.add_argument(
+            "--pae",
+            help="extract PAE from pkl files to CSV format",
             action="store_true"
         )
         args = parser.parse_args()
         self.workdir = Path(args.workdir.rstrip('/'))
         self.output_residue_scores = args.plddts
-        self.output_model_pkls = args.model_pkl
+        self.output_model_pkls = args.pkl
+        self.output_pae = args.pae
         self.is_multimer = args.multimer
         self.output_dir = self.workdir / OUTPUT_DIR
         os.makedirs(self.output_dir, exist_ok=True)
@@ -212,6 +218,32 @@ def rename_model_pkls(ranking: ResultRanking, context: ExecutionContext):
         shutil.copyfile(path, new_path)
 
 
+def extract_pae_to_csv(context: ExecutionContext):
+    """Extract predicted alignment error matrix from pickle files.
+
+    Creates a CSV file for each of five ranked models.
+    """
+    for rank in range(5):
+        path = (
+            context.settings.workdir
+            / OUTPUTS['model_pkl'].format(rank=rank)
+        )
+        with open(path, 'rb') as f:
+            data = pk.load(f)
+        if 'predicted_aligned_error' not in data:
+            print("Skipping PAE output"
+                  " - not available for model_preset=monomer")
+            return
+        pae = data['predicted_aligned_error']
+        out_path = (
+            context.settings.workdir
+            / OUTPUTS['model_pae'].format(rank=rank)
+        )
+        with open(out_path, 'w') as f:
+            for row in pae:
+                f.write(','.join([str(x) for x in row]) + '\n')
+
+
 def rekey_relax_metrics(ranking: ResultRanking, context: ExecutionContext):
     """Replace keys in relax_metrics.json with 0-indexed rank."""
     with open(context.relax_metrics) as f:
@@ -236,6 +268,10 @@ def main():
     # Optional outputs
     if settings.output_model_pkls:
         rename_model_pkls(ranking, context)
+
+    if settings.output_pae and settings.is_multimer:
+        # Only present in multimer output
+        extract_pae_to_csv(context)
 
     if settings.output_residue_scores:
         write_per_residue_scores(ranking, context)
