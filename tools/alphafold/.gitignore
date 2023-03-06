@@ -1,2 +1,3 @@
-sync
+test-data/*/extra
 .lsyncd.lua
+sync
