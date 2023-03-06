@@ -1,0 +1,33 @@
+# STOCKHOLM 1.0
+#=GF ID UPI0015CE2E61-i1
+
+#=GS UPI0015CE2E61                                                     DE status=active
+#=GS LauGreDrversion4_2_1035121.scaffolds.fasta_scaffold5139386_1/2-37 DE [subseq from] LauGreDrversion4_2_1035121.scaffolds.fasta_scaffold5139386_1
+#=GS A0A0A2VTJ0_BEABA/510-545                                          DE [subseq from] A0A0A2VTJ0_BEABA
+#=GS SRR5690625_364640/30-65                                           DE [subseq from] SRR5690625_364640
+#=GS SRR3990167_8892972/304-339                                        DE [subseq from] SRR3990167_8892972
+#=GS H3Z9S7_9ALTE/122-156                                              DE [subseq from] H3Z9S7_9ALTE
+#=GS SRR3989338_8262325/11-45                                          DE [subseq from] SRR3989338_8262325
+#=GS SRR5690606_22456031/382-417                                       DE [subseq from] SRR5690606_22456031
+#=GS A0A1G3EQP5_9GAMM/126-160                                          DE [subseq from] A0A1G3EQP5_9GAMM
+
+UPI0015CE2E61                                                             DGKILADKVSDKLEQTATLTGLDYGRFTRSMLLSQG
+LauGreDrversion4_2_1035121.scaffolds.fasta_scaffold5139386_1/2-37         DGKILADKVSDKLEQTAALTGLDYGRFTRSMLLSQG
+#=GR LauGreDrversion4_2_1035121.scaffolds.fasta_scaffold5139386_1/2-37 PP 8**********************************8
+A0A0A2VTJ0_BEABA/510-545                                                  DGKILADKIKDKLEIIASLTGLDYDRFTRSMMLSQG
+#=GR A0A0A2VTJ0_BEABA/510-545                                          PP 8**********************************8
+SRR5690625_364640/30-65                                                   DGTILADKVDEKLKMMSELTGLDFGRFTKSMLLAQG
+#=GR SRR5690625_364640/30-65                                           PP 89********************************98
+SRR3990167_8892972/304-339                                                DGQIITDKINEKLRETERLTGLDFERFTKSMLLAQG
+#=GR SRR3990167_8892972/304-339                                        PP 8*********************************98
+H3Z9S7_9ALTE/122-156                                                      -GKVLANQIKPKLDEVERLTGLDFGRFTKSMLLSQG
+#=GR H3Z9S7_9ALTE/122-156                                              PP .9*********************************8
+SRR3989338_8262325/11-45                                                  -GQILTDKLGEKLKLTESLTGLDFERFTKSMLLAQG
+#=GR SRR3989338_8262325/11-45                                          PP .89*******************************98
+SRR5690606_22456031/382-417                                               DGTILTEKLNEKLSRVEQLTGLDYARFTRSMMLAQG
+#=GR SRR5690606_22456031/382-417                                       PP 89********************************98
+A0A1G3EQP5_9GAMM/126-160                                                  -GQILTDKLNEKLKLTESLTGLDFERFTKSMLLAQG
+#=GR A0A1G3EQP5_9GAMM/126-160                                          PP .89*******************************98
+#=GC PP_cons                                                              89********************************98
+#=GC RF                                                                   xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+//
