@@ -1,0 +1,199 @@
+<macros>
+    <xml name="test_output_plddts">
+        <output name="output_plddts">
+            <assert_contents>
+                <has_n_lines n="5"/>
+                <has_size min="2000" />
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_confidence_scores">
+        <output name="output_confidence_scores">
+            <assert_contents>
+                <has_n_columns n="2"/>
+                <has_n_lines n="5"/>
+                <has_size value="70" delta="50"/>
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_relax_json">
+        <output name="output_relax_json">
+            <assert_contents>
+                <has_size min="500" />
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_pdb_models">
+        <output name="model1">
+            <assert_contents>
+                <has_size min="20000"/>
+            </assert_contents>
+        </output>
+        <output name="model2">
+            <assert_contents>
+                <has_size min="20000"/>
+            </assert_contents>
+        </output>
+        <output name="model3">
+            <assert_contents>
+                <has_size min="20000"/>
+            </assert_contents>
+        </output>
+        <output name="model4">
+            <assert_contents>
+                <has_size min="20000"/>
+            </assert_contents>
+        </output>
+        <output name="model5">
+            <assert_contents>
+                <has_size min="20000"/>
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_plots_1">
+        <!-- For one-panel plot without PAE heatmap -->
+        <output name="plot_ranked_0">
+            <assert_contents>
+                <has_size min="10000" max="50000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_1">
+            <assert_contents>
+                <has_size min="10000" max="50000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_2">
+            <assert_contents>
+                <has_size min="10000" max="50000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_3">
+            <assert_contents>
+                <has_size min="10000" max="50000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_4">
+            <assert_contents>
+                <has_size min="10000" max="50000" />
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_plots_2">
+        <!-- For two-panel plot with PAE heatmap -->
+        <output name="plot_ranked_0">
+            <assert_contents>
+                <has_size min="50000" max="63000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_1">
+            <assert_contents>
+                <has_size min="50000" max="63000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_2">
+            <assert_contents>
+                <has_size min="50000" max="63000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_3">
+            <assert_contents>
+                <has_size min="50000" max="63000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_4">
+            <assert_contents>
+                <has_size min="50000" max="63000" />
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_plots_3">
+        <!-- For two-panel plot with PAE heatmap -->
+        <output name="plot_ranked_0">
+            <assert_contents>
+                <has_size min="220000" max="270000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_1">
+            <assert_contents>
+                <has_size min="220000" max="270000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_2">
+            <assert_contents>
+                <has_size min="220000" max="270000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_3">
+            <assert_contents>
+                <has_size min="220000" max="270000" />
+            </assert_contents>
+        </output>
+        <output name="plot_ranked_4">
+            <assert_contents>
+                <has_size min="220000" max="270000" />
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_pae_csv">
+        <output name="pae_ranked_0">
+            <assert_contents>
+                <has_size min="5000"/>
+            </assert_contents>
+        </output>
+        <output name="pae_ranked_1">
+            <assert_contents>
+                <has_size min="5000"/>
+            </assert_contents>
+        </output>
+        <output name="pae_ranked_2">
+            <assert_contents>
+                <has_size min="5000"/>
+            </assert_contents>
+        </output>
+        <output name="pae_ranked_3">
+            <assert_contents>
+                <has_size min="5000"/>
+            </assert_contents>
+        </output>
+        <output name="pae_ranked_4">
+            <assert_contents>
+                <has_size min="5000"/>
+            </assert_contents>
+        </output>
+    </xml>
+
+    <xml name="test_output_pickles">
+        <output name="output_ranked_4_pkl">
+            <assert_contents>
+                <has_size min="1000000"/>
+            </assert_contents>
+        </output>
+        <output name="output_ranked_3_pkl">
+            <assert_contents>
+                <has_size min="1000000"/>
+            </assert_contents>
+        </output>
+        <output name="output_ranked_2_pkl">
+            <assert_contents>
+                <has_size min="1000000"/>
+            </assert_contents>
+        </output>
+        <output name="output_ranked_1_pkl">
+            <assert_contents>
+                <has_size min="1000000"/>
+            </assert_contents>
+        </output>
+        <output name="output_ranked_0_pkl">
+            <assert_contents>
+                <has_size min="1000000"/>
+            </assert_contents>
+        </output>
+    </xml>
+</macros>

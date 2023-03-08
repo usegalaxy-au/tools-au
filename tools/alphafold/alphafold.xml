@@ -3,6 +3,8 @@
     <macros>
       <token name="@TOOL_VERSION@">2.3.1</token>
       <token name="@VERSION_SUFFIX@">1</token>
+      <import>macro_output.xml</import>
+      <import>macro_test_output.xml</import>
     </macros>
     <edam_topics>
       <edam_topic>topic_0082</edam_topic>
@@ -14,17 +16,16 @@
       <xref type="bio.tools">alphafold_2</xref>
     </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:v2.3.1_1</container>
+        <container type="docker">neoformit/alphafold:v2.3.1_2</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 
 ## $ALPHAFOLD_DB variable should point to the location of the AlphaFold
 ## databases - defaults to /data
 
-## Read FASTA input ----------------------------
+## Read FASTA input -----------------------------------------------------------
 #if $fasta_or_text.input_mode == 'history':
     cp '$fasta_or_text.fasta_file' input.fasta
-
 #elif $fasta_or_text.input_mode == 'textbox':
     echo '$fasta_or_text.fasta_text' > input.fasta
 #end if
@@ -35,54 +36,63 @@
 #if $model_preset == 'multimer':
 --multimer
 #end if
-> alphafold.fasta
+> validated.fasta
 
-## Env vars -------------------------------
+## Env vars -------------------------------------------------------------------
 && export TF_FORCE_UNIFIED_MEMORY=1
 && export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
 && export TODAY=`date +"%Y-%m-%d"`
 
-## Run alphafold  -------------------------
-&& python /app/alphafold/run_alphafold.py
-    --fasta_paths alphafold.fasta
-    --output_dir output
-    --data_dir \${ALPHAFOLD_DB:-/data}
-    --model_preset=$model_preset
+## Run AlphaFold  -------------------------------------------------------------
+## Set `export PLANEMO_TESTING=1` in planemo's gx_venv_n/bin/activate script to run in testing mode:
+#if os.environ.get('PLANEMO_TESTING'):
+    ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
+    && echo "Creating dummy outputs for model_preset=$model_preset..."
+    && bash '$__tool_directory__/fetch_test_data.sh' $model_preset
+#else:
+    ## Run AlphaFold
+    && python /app/alphafold/run_alphafold.py
+        --fasta_paths validated.fasta
+        --output_dir output
+        --data_dir \${ALPHAFOLD_DB:-/data}
+        --model_preset=$model_preset
 
-    ## Set reference database paths
-    --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
-    --mgnify_database_path     \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2022_05.fa
-    --template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
-    --obsolete_pdbs_path       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
-    #if $dbs == 'full':
-    --bfd_database_path        \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
-    --uniref30_database_path   \${ALPHAFOLD_DB:-/data}/uniref30/UniRef30_2021_03
-    #else
-    --db_preset=reduced_dbs
-    --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/small_bfd/bfd-first_non_consensus_sequences.fasta
-    #end if
+        ## Set reference database paths
+        --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
+        --mgnify_database_path     \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2022_05.fa
+        --template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
+        --obsolete_pdbs_path       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
+        #if $dbs == 'full':
+        --bfd_database_path        \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+        --uniref30_database_path   \${ALPHAFOLD_DB:-/data}/uniref30/UniRef30_2021_03
+        #else
+        --db_preset=reduced_dbs
+        --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/small_bfd/bfd-first_non_consensus_sequences.fasta
+        #end if
 
-    #if $max_template_date:
-    --max_template_date=$max_template_date
-    #else
-    --max_template_date=\$TODAY
-    #end if
+        #if $max_template_date:
+        --max_template_date=$max_template_date
+        #else
+        --max_template_date=\$TODAY
+        #end if
 
-    --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
+        --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
 
-    #if $model_preset == 'multimer':
-    --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
-    --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
-    --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
-    #else
-    --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
-    #end if
+        #if $model_preset == 'multimer':
+        --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
+        --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
+        --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
+        #else
+        --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
+        #end if
+#end if
 
-## Generate additional outputs ------------
+## Generate additional outputs ------------------------------------------------
 && python3 '$__tool_directory__/outputs.py' output/alphafold
 $outputs.plddts
 $outputs.model_pkls
 $outputs.pae_csv
+$outputs.plots
 #if $model_preset == 'multimer':
 --multimer
 #end if
@@ -143,18 +153,27 @@ $outputs.pae_csv
             name="model_preset"
             type="select"
             label="Model preset"
-            help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction."
+            help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction. The multimer model allows prediction of protein complexes."
         >
             <option value="monomer" selected="true">monomer - default prediction model</option>
             <option value="monomer_ptm">
-                monomer_ptm - slightly less accurate version of the monomer model, but provides a pairwise alignment error (PAE) matrix.
+                monomer_ptm - slightly less accurate version of the monomer model, but provides a pairwise alignment error (PAE) matrix
             </option>
             <option value="multimer">
-                multimer - allows modelling of protein complexes. Requires multi-sequence FASTA input.
+                multimer - model a protein complex (requires multi-sequence FASTA input)
             </option>
         </param>
 
         <section name="outputs" title="Optional outputs" expanded="false">
+            <param
+                name="plots"
+                type="boolean"
+                checked="false"
+                truevalue="--plot"
+                falsevalue=""
+                label="pLDDT and PAE matrix plots (per model)"
+                help="A two-panel plot showing pLDDT against residue position (left) and PAE (paired-alignment error) as a heatmap image with residue numbers running along vertical and horizontal axes and color at each pixel indicating PAE value for the corresponding pair of residues. (right). PAE heatmap is only produced with monomer_ptm and multimer model presets."
+            />
             <param
                 name="confidence_scores"
                 type="boolean"
@@ -169,14 +188,7 @@ $outputs.pae_csv
                 label="Per-residue confidence scores"
                 truevalue="--plddts"
                 falsevalue=""
-                help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. This output is a tabular file with five rows (one for each output PDB model), with each column providing a pLDDT score for a single residue. These data have been parsed from the model pickle files (below)."
-            />
-            <param
-                name="relax_json"
-                type="boolean"
-                checked="false"
-                label="relax_metrics.json"
-                help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
+                help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. This output is a tabular file with five rows (one for each output PDB model), with each column providing a pLDDT score for a single residue."
             />
             <param
                 name="pae_csv"
@@ -196,184 +208,102 @@ $outputs.pae_csv
                 label="ranked_*.pkl"
                 help="A pickle file containing metrics used for the assessment of the model's accuracy. These include per-residue pLDDT scores (see above), predicted TM (Template Modelling) score, which is a global superposition metric and predicted aligned error (a matrix size (number of residues) x (number of residues) where each position describes the confidence of the residue's 3D position relative to another residue in the model; can be used for the interpretation of relative positions of domains). Pickle files can be read and processed using the Python 'pickle' library (requires the jax Python library). Outputs are named respective to PDB outputs."
             />
+            <param
+                name="relax_json"
+                type="boolean"
+                checked="false"
+                label="relax_metrics.json"
+                help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
+            />
         </section>
     </inputs>
 
     <outputs>
-        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: PDB ranked 4"/>
-        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: PDB ranked 3"/>
-        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: PDB ranked 2"/>
-        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: PDB ranked 1"/>
-        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: PDB ranked 0"/>
+        <expand macro="output_pdb_models" />
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
-
         <!-- Optional outputs -->
-        <data
-            name="output_confidence_scores"
-            format="tabular"
-            from_work_dir="output/alphafold/extra/model_confidence_scores.tsv"
-            label="${tool.name} on ${on_string}: Model confidence scores"
-        >
-            <filter>outputs['confidence_scores']</filter>
-        </data>
-
-        <data
-            name="output_plddts"
-            format="tabular"
-            from_work_dir="output/alphafold/extra/plddts.tsv"
-            label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)"
-        >
-            <filter>outputs['plddts']</filter>
-        </data>
-
-        <data
-            name="output_ranked_4_pkl"
-            format="binary"
-            from_work_dir="output/alphafold/extra/ranked_4.pkl"
-            label="${tool.name} on ${on_string}: ranked_4.pkl"
-        >
-            <filter>outputs['model_pkls']</filter>
-        </data>
-        <data
-            name="output_ranked_3_pkl"
-            format="binary"
-            from_work_dir="output/alphafold/extra/ranked_3.pkl"
-            label="${tool.name} on ${on_string}: ranked_3.pkl"
-        >
-            <filter>outputs['model_pkls']</filter>
-        </data>
-        <data
-            name="output_ranked_2_pkl"
-            format="binary"
-            from_work_dir="output/alphafold/extra/ranked_2.pkl"
-            label="${tool.name} on ${on_string}: ranked_2.pkl"
-        >
-            <filter>outputs['model_pkls']</filter>
-        </data>
-        <data
-            name="output_ranked_1_pkl"
-            format="binary"
-            from_work_dir="output/alphafold/extra/ranked_1.pkl"
-            label="${tool.name} on ${on_string}: ranked_1.pkl"
-        >
-            <filter>outputs['model_pkls']</filter>
-        </data>
-        <data
-            name="output_ranked_0_pkl"
-            format="binary"
-            from_work_dir="output/alphafold/extra/ranked_0.pkl"
-            label="${tool.name} on ${on_string}: ranked_0.pkl"
-        >
-            <filter>outputs['model_pkls']</filter>
-        </data>
-
-        <data
-            name="pae_ranked_4"
-            format="csv"
-            from_work_dir="output/alphafold/extra/pae_ranked_4.csv"
-            label="${tool.name} on ${on_string}: pae_ranked_4.csv"
-        >
-            <filter>outputs['pae_csv']</filter>
-        </data>
-        <data
-            name="pae_ranked_3"
-            format="csv"
-            from_work_dir="output/alphafold/extra/pae_ranked_3.csv"
-            label="${tool.name} on ${on_string}: pae_ranked_3.csv"
-        >
-            <filter>outputs['pae_csv']</filter>
-        </data>
-        <data
-            name="pae_ranked_2"
-            format="csv"
-            from_work_dir="output/alphafold/extra/pae_ranked_2.csv"
-            label="${tool.name} on ${on_string}: pae_ranked_2.csv"
-        >
-            <filter>outputs['pae_csv']</filter>
-        </data>
-        <data
-            name="pae_ranked_1"
-            format="csv"
-            from_work_dir="output/alphafold/extra/pae_ranked_1.csv"
-            label="${tool.name} on ${on_string}: pae_ranked_1.csv"
-        >
-            <filter>outputs['pae_csv']</filter>
-        </data>
-        <data
-            name="pae_ranked_0"
-            format="csv"
-            from_work_dir="output/alphafold/extra/pae_ranked_0.csv"
-            label="${tool.name} on ${on_string}: pae_ranked_0.csv"
-        >
-            <filter>outputs['pae_csv']</filter>
-        </data>
-
-        <data
-            name="output_relax_json"
-            format="json"
-            from_work_dir="output/alphafold/extra/relax_metrics_ranked.json"
-            label="${tool.name} on ${on_string}: relax_metrics_ranked.json"
-        >
-            <filter>outputs['relax_json']</filter>
-        </data>
+        <expand macro="output_plddts" />
+        <expand macro="output_confidence_scores" />
+        <expand macro="output_pickles" />
+        <expand macro="output_pae_csv" />
+        <expand macro="output_plots" />
+        <expand macro="output_relax_json" />
     </outputs>
 
     <tests>
-        <test expect_num_outputs="8">
+        <!-- Test monomer with default outputs -->
+        <test expect_num_outputs="6">
             <conditional name="fasta_or_text">
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="plddts" value="true"/>
-            <output name="output_plddts">
-                <assert_contents>
-                    <has_n_columns n="2"/>
-                    <has_n_lines n="6"/>
-                    <has_size value="2900" delta="300"/>
-                </assert_contents>
-            </output>
-            <output name="output_confidence_scores">
-                <assert_contents>
-                    <has_n_columns n="2"/>
-                    <has_n_lines n="6"/>
-                    <has_size value="70" delta="50"/>
-                </assert_contents>
-            </output>
-            <output name="model1">
-                <assert_contents>
-                    <has_n_columns n="12"/>
-                    <has_n_lines n="1517"/>
-                    <has_size value="123000" delta="10000"/>
-                </assert_contents>
-            </output>
-            <output name="model2">
-                <assert_contents>
-                    <has_n_columns n="12"/>
-                    <has_n_lines n="1517"/>
-                    <has_size value="123000" delta="10000"/>
-                </assert_contents>
-            </output>
-            <output name="model3">
-                <assert_contents>
-                    <has_n_columns n="12"/>
-                    <has_n_lines n="1517"/>
-                    <has_size value="123000" delta="10000"/>
-                </assert_contents>
-            </output>
-            <output name="model4">
-                <assert_contents>
-                    <has_n_columns n="12"/>
-                    <has_n_lines n="1517"/>
-                    <has_size value="123000" delta="10000"/>
-                </assert_contents>
-            </output>
-            <output name="model5">
-                <assert_contents>
-                    <has_n_columns n="12"/>
-                    <has_n_lines n="1517"/>
-                    <has_size value="123000" delta="10000"/>
-                </assert_contents>
-            </output>
+            <param name="model_preset" value="monomer"/>
+            <expand macro="test_output_pdb_models" />
+        </test>
+
+        <!-- Test monomer with all outputs -->
+        <test expect_num_outputs="19">
+            <conditional name="fasta_or_text">
+                <param name="input_mode" value="history"/>
+                <param name="fasta_file" value="test1.fasta"/>
+            </conditional>
+            <param name="model_preset" value="monomer"/>
+            <param name="outputs|plots" value="true"/>
+            <param name="outputs|confidence_scores" value="true"/>
+            <param name="outputs|plddts" value="true"/>
+            <param name="outputs|pae_csv" value="true"/>
+            <param name="outputs|model_pkls" value="true"/>
+            <param name="outputs|relax_json" value="true"/>
+            <expand macro="test_output_plots_1" />
+            <expand macro="test_output_confidence_scores" />
+            <expand macro="test_output_plddts" />
+            <expand macro="test_output_pdb_models" />
+            <expand macro="test_output_pickles" />
+            <expand macro="test_output_relax_json" />
+        </test>
+
+        <!-- Test monomer_ptm with all outputs -->
+        <test expect_num_outputs="24">
+            <conditional name="fasta_or_text">
+                <param name="input_mode" value="history"/>
+                <param name="fasta_file" value="test1.fasta"/>
+            </conditional>
+            <param name="model_preset" value="monomer_ptm"/>
+            <param name="outputs|plots" value="true"/>
+            <param name="outputs|confidence_scores" value="true"/>
+            <param name="outputs|plddts" value="true"/>
+            <param name="outputs|pae_csv" value="true"/>
+            <param name="outputs|model_pkls" value="true"/>
+            <param name="outputs|relax_json" value="true"/>
+            <expand macro="test_output_plots_2" />
+            <expand macro="test_output_confidence_scores" />
+            <expand macro="test_output_plddts" />
+            <expand macro="test_output_pdb_models" />
+            <expand macro="test_output_pickles" />
+            <expand macro="test_output_relax_json" />
+            <expand macro="test_output_pae_csv" />
+        </test>
+
+        <!-- Test multimer with all outputs -->
+        <test expect_num_outputs="24">
+            <conditional name="fasta_or_text">
+                <param name="input_mode" value="history"/>
+                <param name="fasta_file" value="multimer.fasta"/>
+            </conditional>
+            <param name="model_preset" value="multimer"/>
+            <param name="outputs|plots" value="true"/>
+            <param name="outputs|confidence_scores" value="true"/>
+            <param name="outputs|plddts" value="true"/>
+            <param name="outputs|pae_csv" value="true"/>
+            <param name="outputs|model_pkls" value="true"/>
+            <param name="outputs|relax_json" value="true"/>
+            <expand macro="test_output_plots_3" />
+            <expand macro="test_output_confidence_scores" />
+            <expand macro="test_output_plddts" />
+            <expand macro="test_output_pdb_models" />
+            <expand macro="test_output_pickles" />
+            <expand macro="test_output_relax_json" />
+            <expand macro="test_output_pae_csv" />
         </test>
     </tests>
     <help><![CDATA[
@@ -456,6 +386,15 @@ $outputs.pae_csv
     |
     |
 
+    *pLDDT + PAE plots (optional)*
+
+    | A two-panel figure in PNG format showing:
+    | a) pLDDT score plotted against residue position
+    | b) a heatmap of predicted-alignment error (PAE) with residue position running along vertical and horizontal axes and color at each pixel indicating PAE value for the corresponding pair of residues.
+    | Panel b) is only produced for ``monomer_ptm`` and ``multimer`` model presets.
+    |
+    |
+
     *Model predicted-alignment error matrix (pae_ranked_n.csv)*
 
     | Per-model predicted-alignment error (PAE) matrix - only available with the ``monomer_ptm`` and ``multimer`` model presets.
@@ -465,13 +404,14 @@ $outputs.pae_csv
 
     *relax_metrics.json (optional)*
 
-    | A JSON-formatted text file containing relax metrics (mostly remaining violations).
+    | A JSON-formatted text file containing relax metrics (primarily remaining violations).
+    |
     |
 
     **AlphaFold configuration**
 
     | We have configured AlphaFold to run with the parameters suggested by default on `AlphaFold's GitHub <https://github.com/deepmind/alphafold>`_.
-    | This means that it runs with Amber relaxation enabled, with relaxed PDB models collected as output datasets. If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
+    | This means that it runs with Amber relaxation enabled, with relaxed PDB models collected as output datasets (ranked\_*.pdb files). If there are additonal parameters that you would like to interact with, please `send a support request to Galaxy AU <https://site.usegalaxy.org.au/request/support>`_, or open an issue on `our GitHub <https://github.com/usegalaxy-au/tools-au>`_.
     |
     |
 

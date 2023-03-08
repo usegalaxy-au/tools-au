@@ -19,14 +19,16 @@ import json
 import os
 import pickle as pk
 import shutil
+from matplotlib import pyplot as plt
 from pathlib import Path
 from typing import List
 
-# Output file names
+# Output file paths
 OUTPUT_DIR = 'extra'
 OUTPUTS = {
     'model_pkl': OUTPUT_DIR + '/ranked_{rank}.pkl',
     'model_pae': OUTPUT_DIR + '/pae_ranked_{rank}.csv',
+    'model_plot': OUTPUT_DIR + '/ranked_{rank}.png',
     'model_confidence_scores': OUTPUT_DIR + '/model_confidence_scores.tsv',
     'plddts': OUTPUT_DIR + '/plddts.tsv',
     'relax': OUTPUT_DIR + '/relax_metrics_ranked.json',
@@ -77,10 +79,16 @@ class Settings:
             help="extract PAE from pkl files to CSV format",
             action="store_true"
         )
+        parser.add_argument(
+            "--plot",
+            help="Plot pLDDT and PAE for each model",
+            action="store_true"
+        )
         args = parser.parse_args()
         self.workdir = Path(args.workdir.rstrip('/'))
         self.output_residue_scores = args.plddts
         self.output_model_pkls = args.pkl
+        self.output_model_plots = args.plot
         self.output_pae = args.pae
         self.is_multimer = args.multimer
         self.output_dir = self.workdir / OUTPUT_DIR
@@ -232,7 +240,8 @@ def extract_pae_to_csv(context: ExecutionContext):
             data = pk.load(f)
         if 'predicted_aligned_error' not in data:
             print("Skipping PAE output"
-                  " - not available for model_preset=monomer")
+                  f" - not found in {path}."
+                  " Running with model_preset=monomer?")
             return
         pae = data['predicted_aligned_error']
         out_path = (
@@ -256,6 +265,44 @@ def rekey_relax_metrics(ranking: ResultRanking, context: ExecutionContext):
         json.dump(data, f)
 
 
+def plddt_pae_plots(ranking: ResultRanking, context: ExecutionContext):
+    """Generate a pLDDT + PAE plot for each model."""
+
+    num_plots = 2
+
+    for path in context.model_pkl_paths:
+        model = ResultModelPrediction(path, context)
+        rank = ranking.get_rank_for_model(model.name)
+        png_path = (
+            context.settings.workdir
+            / OUTPUTS['model_plot'].format(rank=rank)
+        )
+
+        plddts = model.data['plddt']
+        if 'predicted_aligned_error' in model.data:
+            pae = model.data['predicted_aligned_error']
+            max_pae = model.data['max_predicted_aligned_error']
+        else:
+            num_plots = 1
+
+        plt.figure(figsize=[8 * num_plots, 6])
+        plt.subplot(1, num_plots, 1)
+        plt.plot(plddts)
+        plt.title('Predicted LDDT')
+        plt.xlabel('Residue')
+        plt.ylabel('pLDDT')
+
+        if num_plots == 2:
+            plt.subplot(1, 2, 2)
+            plt.imshow(pae, vmin=0., vmax=max_pae, cmap='Greens_r')
+            plt.colorbar(fraction=0.046, pad=0.04)
+            plt.title('Predicted Aligned Error')
+            plt.xlabel('Scored residue')
+            plt.ylabel('Aligned residue')
+
+        plt.savefig(png_path)
+
+
 def main():
     """Parse output files and generate additional output files."""
     settings = Settings()
@@ -268,11 +315,11 @@ def main():
     # Optional outputs
     if settings.output_model_pkls:
         rename_model_pkls(ranking, context)
-
-    if settings.output_pae and settings.is_multimer:
-        # Only present in multimer output
+    if settings.output_model_plots:
+        plddt_pae_plots(ranking, context)
+    if settings.output_pae:
+        # Only created by monomer_ptm and multimer models
         extract_pae_to_csv(context)
-
     if settings.output_residue_scores:
         write_per_residue_scores(ranking, context)
 

@@ -18,6 +18,29 @@ test-data/monomer_output/extra/ranked_1.pkl
 test-data/monomer_output/extra/ranked_2.pkl
 test-data/monomer_output/extra/ranked_3.pkl
 test-data/monomer_output/extra/ranked_4.pkl
+test-data/monomer_output/extra/ranked_0.png
+test-data/monomer_output/extra/ranked_1.png
+test-data/monomer_output/extra/ranked_2.png
+test-data/monomer_output/extra/ranked_3.png
+test-data/monomer_output/extra/ranked_4.png
+
+test-data/monomer_ptm_output/extra/model_confidence_scores.tsv
+test-data/monomer_ptm_output/extra/pae_ranked_0.csv
+test-data/monomer_ptm_output/extra/pae_ranked_1.csv
+test-data/monomer_ptm_output/extra/pae_ranked_2.csv
+test-data/monomer_ptm_output/extra/pae_ranked_3.csv
+test-data/monomer_ptm_output/extra/pae_ranked_4.csv
+test-data/monomer_ptm_output/extra/ranked_0.pkl
+test-data/monomer_ptm_output/extra/ranked_1.pkl
+test-data/monomer_ptm_output/extra/ranked_2.pkl
+test-data/monomer_ptm_output/extra/ranked_3.pkl
+test-data/monomer_ptm_output/extra/ranked_4.pkl
+test-data/monomer_ptm_output/extra/ranked_0.png
+test-data/monomer_ptm_output/extra/ranked_1.png
+test-data/monomer_ptm_output/extra/ranked_2.png
+test-data/monomer_ptm_output/extra/ranked_3.png
+test-data/monomer_ptm_output/extra/ranked_4.png
+
 test-data/multimer_output/extra/plddts.tsv
 test-data/multimer_output/extra/model_confidence_scores.tsv
 test-data/multimer_output/extra/pae_ranked_0.csv
@@ -29,14 +52,23 @@ test-data/multimer_output/extra/ranked_0.pkl
 test-data/multimer_output/extra/ranked_1.pkl
 test-data/multimer_output/extra/ranked_2.pkl
 test-data/multimer_output/extra/ranked_3.pkl
-test-data/multimer_output/extra/ranked_4.pkl"
+test-data/multimer_output/extra/ranked_4.pkl
+test-data/multimer_output/extra/ranked_0.png
+test-data/multimer_output/extra/ranked_1.png
+test-data/multimer_output/extra/ranked_2.png
+test-data/multimer_output/extra/ranked_3.png
+test-data/multimer_output/extra/ranked_4.png"
 
-printf "${KYEL}TEST monomer output with per-residue scores${KNRM}\n"
-python outputs.py test-data/monomer_output -p --pkl
+printf "${KYEL}TEST monomer output${KNRM}\n"
+python outputs.py test-data/monomer_output -p --pkl --plot
 
 echo ""
-printf "${KYEL}TEST multimer output with per-residue scores${KNRM}\n"
-python outputs.py test-data/multimer_output -p -m --pkl --pae
+printf "${KYEL}TEST monomer_ptm output${KNRM}\n"
+python outputs.py test-data/monomer_ptm_output -p --pkl --plot --pae
+
+echo ""
+printf "${KYEL}TEST multimer output${KNRM}\n"
+python outputs.py test-data/multimer_output -p -m --pkl --plot --pae
 
 for path in $EXPECT_OUTPUTS; do
   if [ ! -f $path ]; then
@@ -49,12 +81,14 @@ if [[ "$@" != *"--keep"* ]]; then
   echo ""
   printf "${KGRN}Removing output data...\n"
   rm -rf \
-    test-data/*mer_output/extra
+    test-data/*mer*output/extra
 else
-    printf "${KGRN}Output files created:
-    test-data/*mer_output/extra/plddts.tsv
-    test-data/*mer_output/extra/model_confidence_scores.tsv
-    test-data/*mer_output/extra/model_*.pkl\n"
+    printf "\n${KGRN}Output files created:
+    test-data/*_output/extra/model_confidence_scores.tsv
+    test-data/*_output/extra/plddts.tsv
+    test-data/*_output/extra/relax_metrics_ranked.json
+    test-data/*_output/extra/ranked_*.pkl
+    test-data/*_output/extra/ranked_*.png\n"
 fi
 
 printf "\nPASS\n\n${KNRM}"

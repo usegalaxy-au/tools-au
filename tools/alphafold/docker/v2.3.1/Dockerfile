@@ -101,7 +101,8 @@ RUN wget -O ${JAXLIB_TMP_PATH} ${JAXLIBURL}
 RUN pip3 install --upgrade pip \
     && pip3 install -r /app/alphafold/requirements.txt --no-cache-dir \
     && pip3 install --no-cache-dir \
-      --upgrade jax==${JAX} jaxlib==${JAX}+${JAXLIBCUDA} -f $(dirname $JAXLIB_TMP_PATH)
+      --upgrade jax==${JAX} jaxlib==${JAX}+${JAXLIBCUDA} -f $(dirname $JAXLIB_TMP_PATH) \
+    && pip3 install --no-cache-dir matplotlib
 RUN rm -rf $(dirname $JAXLIB_TMP_PATH)
 
 # Apply OpenMM patch.
@@ -111,11 +112,11 @@ RUN patch -p0 < /app/alphafold/docker/openmm.patch
 # Add SETUID bit to the ldconfig binary so that non-root users can run it.
 RUN chmod u+s /sbin/ldconfig.real
 
+# ENTRYPOINT does not support easily running multiple commands, so instead we
+# write a shell script to wrap them up.
 # We need to run `ldconfig` first to ensure GPUs are visible, due to some quirk
 # with Debian. See https://github.com/NVIDIA/nvidia-docker/issues/1399 for
 # details.
-# ENTRYPOINT does not support easily running multiple commands, so instead we
-# write a shell script to wrap them up.
 WORKDIR /app/alphafold
 RUN echo $'#!/bin/bash\n\
 ldconfig\n\
