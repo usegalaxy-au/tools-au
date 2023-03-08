@@ -7,5 +7,5 @@
 
 # Future
 
-- [ ] Copy script to create PAE plots from [colab](https://github.com/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb)
+- [x] Copy script to create PAE plots from [colab](https://github.com/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb)
 - [ ] Visualisation output: click on protein sequence residue to focus atom

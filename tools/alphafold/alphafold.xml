@@ -20,6 +20,10 @@
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 
+## Developers: to test with mock alphafold run, set `export PLANEMO_TESTING=1`
+## in planemo's gx_venv_n/bin/activate script. AlphaFold outputs will be copied
+## from the test-data directory instead of running the tool.
+
 ## $ALPHAFOLD_DB variable should point to the location of the AlphaFold
 ## databases - defaults to /data
 
@@ -44,7 +48,6 @@
 && export TODAY=`date +"%Y-%m-%d"`
 
 ## Run AlphaFold  -------------------------------------------------------------
-## Set `export PLANEMO_TESTING=1` in planemo's gx_venv_n/bin/activate script to run in testing mode:
 #if os.environ.get('PLANEMO_TESTING'):
     ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
     && echo "Creating dummy outputs for model_preset=$model_preset..."
