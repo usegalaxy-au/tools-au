@@ -44,16 +44,16 @@ else
 
     # I don't think remote fetch makes sense in any case... if the tool is deployed we should probably be running it properly:
 
-    # echo "Fetching mock outputs from $REMOTE_URL..."
-    # wget -nv -O $ZIPFILE $REMOTE_URL
-    # echo "Unzipping $ZIPFILE..."
-    # unzip $ZIPFILE "${ZIPFILE_ROOT}/${REPO_PATH}/*"
-    # echo "Moving mock outputs to $OUT..."
-    # mv "${ZIPFILE_ROOT}/${REPO_PATH}/*" $OUT
-    # echo "Removing zipfile..."
-    # rm $ZIPFILE
-    # echo "Removing temporary directory..."
-    # rm -rf "${ZIPFILE_ROOT}"
+    echo "Fetching mock outputs from $REMOTE_URL..."
+    wget -nv -O $ZIPFILE $REMOTE_URL
+    echo "Unzipping $ZIPFILE..."
+    unzip $ZIPFILE "${ZIPFILE_ROOT}/${REPO_PATH}/*"
+    echo "Moving mock outputs to $OUT..."
+    mv "${ZIPFILE_ROOT}/${REPO_PATH}/*" $OUT
+    echo "Removing zipfile..."
+    rm $ZIPFILE
+    echo "Removing temporary directory..."
+    rm -rf "${ZIPFILE_ROOT}"
 fi
 
 echo Done

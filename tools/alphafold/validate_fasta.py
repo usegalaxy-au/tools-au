@@ -205,6 +205,11 @@ def main():
         for fas in clean_fastas:
             fw.write(fas)
 
+        sys.stderr.write("Validated FASTA sequence(s):\n\n")
+        for fas in clean_fastas:
+            sys.stderr.write(fas.header + '\n')
+            sys.stderr.write(fas.aa_seq + '\n\n')
+
     except ValueError as exc:
         sys.stderr.write(f"{exc}\n\n")
         raise exc

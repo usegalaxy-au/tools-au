@@ -40,7 +40,7 @@
 #if $model_preset == 'multimer':
 --multimer
 #end if
-> validated.fasta
+> alphafold.fasta
 
 ## Env vars -------------------------------------------------------------------
 && export TF_FORCE_UNIFIED_MEMORY=1
@@ -51,11 +51,11 @@
 #if os.environ.get('PLANEMO_TESTING'):
     ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
     && echo "Creating dummy outputs for model_preset=$model_preset..."
-    && bash '$__tool_directory__/fetch_test_data.sh' $model_preset
+    && bash '$__tool_directory__/mock_alphafold.sh' $model_preset
 #else:
     ## Run AlphaFold
     && python /app/alphafold/run_alphafold.py
-        --fasta_paths validated.fasta
+        --fasta_paths alphafold.fasta
         --output_dir output
         --data_dir \${ALPHAFOLD_DB:-/data}
         --model_preset=$model_preset
