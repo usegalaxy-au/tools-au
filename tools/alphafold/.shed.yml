@@ -17,6 +17,8 @@ include:
     - test-data/test1.fasta
     - static/
     - alphafold.xml
+    - macro_output.xml
+    - macro_test_output.xml
     - alphafold.html
     - outputs.py
     - README.rst
