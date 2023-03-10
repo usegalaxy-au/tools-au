@@ -49,8 +49,9 @@ class Settings:
         self.output_confidence_scores = True
         self.output_residue_scores = False
         self.is_multimer = False
+        self.parse()
 
-    def parse_settings(self) -> None:
+    def parse(self) -> None:
         parser = argparse.ArgumentParser()
         parser.add_argument(
             "workdir",
@@ -226,16 +227,14 @@ def rename_model_pkls(ranking: ResultRanking, context: ExecutionContext):
         shutil.copyfile(path, new_path)
 
 
-def extract_pae_to_csv(context: ExecutionContext):
+def extract_pae_to_csv(ranking: ResultRanking, context: ExecutionContext):
     """Extract predicted alignment error matrix from pickle files.
 
     Creates a CSV file for each of five ranked models.
     """
-    for rank in range(5):
-        path = (
-            context.settings.workdir
-            / OUTPUTS['model_pkl'].format(rank=rank)
-        )
+    for path in context.model_pkl_paths:
+        model = ResultModelPrediction(path, context)
+        rank = ranking.get_rank_for_model(model.name)
         with open(path, 'rb') as f:
             data = pk.load(f)
         if 'predicted_aligned_error' not in data:
@@ -267,17 +266,14 @@ def rekey_relax_metrics(ranking: ResultRanking, context: ExecutionContext):
 
 def plddt_pae_plots(ranking: ResultRanking, context: ExecutionContext):
     """Generate a pLDDT + PAE plot for each model."""
-
-    num_plots = 2
-
     for path in context.model_pkl_paths:
+        num_plots = 2
         model = ResultModelPrediction(path, context)
         rank = ranking.get_rank_for_model(model.name)
         png_path = (
             context.settings.workdir
             / OUTPUTS['model_plot'].format(rank=rank)
         )
-
         plddts = model.data['plddt']
         if 'predicted_aligned_error' in model.data:
             pae = model.data['predicted_aligned_error']
@@ -306,7 +302,6 @@ def plddt_pae_plots(ranking: ResultRanking, context: ExecutionContext):
 def main():
     """Parse output files and generate additional output files."""
     settings = Settings()
-    settings.parse_settings()
     context = ExecutionContext(settings)
     ranking = ResultRanking(context)
     write_confidence_scores(ranking, context)
@@ -319,7 +314,7 @@ def main():
         plddt_pae_plots(ranking, context)
     if settings.output_pae:
         # Only created by monomer_ptm and multimer models
-        extract_pae_to_csv(context)
+        extract_pae_to_csv(ranking, context)
     if settings.output_residue_scores:
         write_per_residue_scores(ranking, context)
 

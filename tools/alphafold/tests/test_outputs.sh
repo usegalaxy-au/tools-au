@@ -70,6 +70,13 @@ echo ""
 printf "${KYEL}TEST multimer output${KNRM}\n"
 python outputs.py test-data/multimer_output -p -m --pkl --plot --pae
 
+echo ""
+printf "${KYEL}TEST monomer_ptm outputs individually...${KNRM}\n"
+python outputs.py test-data/monomer_ptm_output -p
+python outputs.py test-data/monomer_ptm_output --pkl
+python outputs.py test-data/monomer_ptm_output --plot
+python outputs.py test-data/monomer_ptm_output --pae
+
 for path in $EXPECT_OUTPUTS; do
   if [ ! -f $path ]; then
     printf "${KRED}FAIL: output file '$path' not found${KNRM}\n"
