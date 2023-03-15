@@ -193,7 +193,7 @@ components that have changed.
 If you wish to continue hosting prior versions of the tool, you must maintain
 the reference DBs for each version. The ``ALPHAFOLD_DB`` environment variable
 must then be set respectively for each tool version in your job conf (on Galaxy
-AU this is currently `configured with TPV<https://github.com/usegalaxy-au/infrastructure/blob/master/files/galaxy/dynamic_job_rules/production/total_perspective_vortex/tools.yml#L1515-L1554>`_).
+AU this is currently `configured with TPV <https://github.com/usegalaxy-au/infrastructure/blob/master/files/galaxy/dynamic_job_rules/production/total_perspective_vortex/tools.yml#L1515-L1554>`_).
 
 To minimize redundancy between DB version, we have symlinked the database
 components that are unchanging between versions. In ``v2.1.2 -> v2.3.1`` the BFD
