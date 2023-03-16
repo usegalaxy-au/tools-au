@@ -59,23 +59,28 @@ test-data/multimer_output/extra/ranked_2.png
 test-data/multimer_output/extra/ranked_3.png
 test-data/multimer_output/extra/ranked_4.png"
 
+# Check PWD
+if [[ ! "$PWD" == *"/tests" ]]; then
+  cd ..
+fi
+
 printf "${KYEL}TEST monomer output${KNRM}\n"
-python outputs.py test-data/monomer_output -p --pkl --plot
+python scripts/outputs.py test-data/monomer_output -p --pkl --plot
 
 echo ""
 printf "${KYEL}TEST monomer_ptm output${KNRM}\n"
-python outputs.py test-data/monomer_ptm_output -p --pkl --plot --pae
+python scripts/outputs.py test-data/monomer_ptm_output -p --pkl --plot --pae
 
 echo ""
 printf "${KYEL}TEST multimer output${KNRM}\n"
-python outputs.py test-data/multimer_output -p -m --pkl --plot --pae
+python scripts/outputs.py test-data/multimer_output -p -m --pkl --plot --pae
 
 echo ""
 printf "${KYEL}TEST monomer_ptm outputs individually...${KNRM}\n"
-python outputs.py test-data/monomer_ptm_output -p
-python outputs.py test-data/monomer_ptm_output --pkl
-python outputs.py test-data/monomer_ptm_output --plot
-python outputs.py test-data/monomer_ptm_output --pae
+python scripts/outputs.py test-data/monomer_ptm_output -p
+python scripts/outputs.py test-data/monomer_ptm_output --pkl
+python scripts/outputs.py test-data/monomer_ptm_output --plot
+python scripts/outputs.py test-data/monomer_ptm_output --pae
 
 for path in $EXPECT_OUTPUTS; do
   if [ ! -f $path ]; then
