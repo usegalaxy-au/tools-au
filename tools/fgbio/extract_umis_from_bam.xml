@@ -1,0 +1,141 @@
+<tool id="extract_umis_from_bam" name="fgbio: ExtractUmisFromBam" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01" license="MIT">
+    <description>Extracts unique molecular indexes into tags</description>
+    <macros>
+        <token name="@TOOL_VERSION@">2.1.0</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <edam_topics>
+        <edam_topic>topic_0196</edam_topic>
+        <edam_topic>topic_2533</edam_topic>
+        <edam_topic>topic_2885</edam_topic>
+    </edam_topics>
+    <edam_operations>
+        <edam_operation>operation_0525</edam_operation>
+    </edam_operations>
+    <xrefs>
+        <xref type="bio.tools">fgbio</xref>
+    </xrefs>
+    <requirements>
+        <requirement type="package" version="@TOOL_VERSION@">fgbio</requirement>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+
+fgbio ExtractUmisFromBam
+    -i '$input_bam'
+    -o '$output_bam'
+    -r $read_structure
+    --molecular-index-tags='$molecular_index_tags'
+    ## Optional parameters
+    #if $single_tag:
+    --single-tag='$single_tag'
+    #end if
+    #if $clipping_attribute:
+    --clipping-attribute='$clipping_attribute'
+    #end if
+    $annotate_read_names
+
+    ]]></command>
+
+    <inputs>
+        <param name="input_bam" type="data" format="sam,bam" label="Input BAM file" help="Extract unique molecular indexes from this file." />
+        <param name="read_structure" type="text" label="ReadStructure+ template" help="A read structure patterns, one per read in a template. See help text below to learn about ReadStructure+ syntax, or refer to https://github.com/fulcrumgenomics/fgbio/wiki/Read-Structures." />
+        <param argument="--molecular-index-tags" type="text" label="Molecular index tags" help="SAM tag(s) in which to store the molecular indices." />
+        <!-- Optionals -->
+        <param argument="--single-tag" type="text" optional="true" label="Single tag" help="SAM tag in which to store the molecular indices." />
+        <param argument="--clipping-attribute" type="text" optional="true" label="Clipping attribute" help="The SAM tag with the position in read to clip adapters (e.g. 'XT' as produced by Picard's 'MarkIlluminaAdapters')." />
+        <param argument="--annotate-read-names" type="boolean" truevalue="--annotate-read-names=true" falsevalue="" checked="false" label="Annotate read names with molecular indexes" />
+    </inputs>
+
+    <outputs>
+        <data format="bam" name="output_bam" label="${tool.name} on ${on_string}: UMI BAM file" />
+    </outputs>
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+        <test expect_num_outputs="1">
+            <param name="input_bam" value="input.sam" ftype="sam" />
+            <param name="read_structure" value="4S3M+T" />
+            <param name="molecular_index_tags" value="MI" />
+            <!--
+            <param name="single_tag" value="MI" />
+            <param name="clipping_attribute" value="XT" />
+            <param name="annotate_read_names" value="true" />
+            -->
+            <output name="output_bam" file="output/extract_umis_from_bam.bam" ftype="bam" />
+        </test>
+    </tests>
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+Extract unique molecular indexes (UMIs) from reads in a BAM file into tags.
+
+Currently only unmapped reads are supported.
+
+Only template bases will be retained as read bases (stored in the 'SEQ' field) as specified by the read structure.
+
+A read structure should be provided for each read of a template. For example, paired end reads should have two read
+structures specified. The tags to store the molecular indices will be associated with the molecular index segment(s) in
+the read structure based on the order specified. If only one molecular index tag is given, then the molecular indices
+will be concatenated and stored in that tag. Otherwise the number of molecular indices in the read structure should
+match the number of tags given. In the resulting BAM file each end of a pair will contain the same molecular index tags
+and values. Additionally, when multiple molecular indices are present the ``--single-tag`` option may be used to write
+all indices, concatenated, to a single tag in addition to the tags specified in ``--molecular-index-tags``.
+
+Optionally, the read names can be annotated with the molecular indices directly. In this case, the read name will be
+formatted ``<NAME>+<UMIs1><UMIs2>`` where ``<UMIs1>`` is the concatenation of read one's molecular indices. Similarly for
+``<UMIs2>``.
+
+Mapping information will not be adjusted, as such, this tool should not be used on reads that have been mapped since it
+will lead to an BAM with inconsistent records.
+
+The read structure describes the structure of a given read as one or more read segments. A read segment describes a
+contiguous stretch of bases of the same type (ex. template bases) of some length and some offset from the start of the
+read. Read structures are made up of ``<number><operator>`` pairs much like the CIGAR string in BAM files. Four kinds
+of operators are recognized:
+
+  1. ``T`` identifies a template read
+  2. ``B`` identifies a sample barcode read
+  3. ``M`` identifies a unique molecular index read
+  4. ``S`` identifies a set of bases that should be skipped or ignored
+
+The last ``<number><operator>`` pair may be specified using a ``+`` sign instead of number to denote "all remaining bases".
+This is useful if, e.g., fastqs have been trimmed and contain reads of varying length.
+
+An example would be ``10B3M7S100T`` which describes 120 bases, comprising:
+
+- ``10B``: 10 bases of sample barcode
+- ``3M``: 3 bases of molecular index
+- ``7S``: 7 bases ignored
+- ``100T``: 100 template bases
+
+See the `fgbio documentation <https://github.com/fulcrumgenomics/fgbio/wiki/Read-Structures>`_ for more information.
+
+You can validate your ReadStructure+ syntax with `this online tool <https://fulcrumgenomics.github.io/fgbio/validate-read-structure.html>`_.
+
+
+**Input**
+
+- BAM file to read UMI's from
+- Read structure file (described above)
+
+
+**Output**
+
+- BAM file with UMI's in tags
+
+
+For more information, please refer to the `fgbio docs <http://fulcrumgenomics.github.io/fgbio/tools/latest/ExtractUmisFromBam.html>`_.
+
+    ]]></help>
+    <citations>
+        <citation type="bibtex">@online{fgbio,
+              author = {Tim Fennell, Nils Homer},
+              title = {fgbio},
+              year = 2015,
+              url = {https://github.com/fulcrumgenomics/fgbio},
+              urldate = {2021-03-01}
+        }</citation>
+    </citations>
+</tool>
