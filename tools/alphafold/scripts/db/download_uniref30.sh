@@ -14,9 +14,9 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 #
-# Downloads and unzips the PDB SeqRes database for AlphaFold.
+# Downloads and unzips the Uniclust30 database for AlphaFold.
 #
-# Usage: bash download_pdb_seqres.sh /path/to/download/directory
+# Usage: bash download_uniclust30.sh /path/to/download/directory
 set -e
 
 if [[ $# -eq 0 ]]; then
@@ -30,13 +30,14 @@ if ! command -v aria2c &> /dev/null ; then
 fi
 
 DOWNLOAD_DIR="$1"
-ROOT_DIR="${DOWNLOAD_DIR}/pdb_seqres"
-SOURCE_URL="ftp://ftp.wwpdb.org/pub/pdb/derived_data/pdb_seqres.txt"
+ROOT_DIR="${DOWNLOAD_DIR}/uniref30"
+# Mirror of:
+# https://wwwuser.gwdg.de/~compbiol/uniclust/2021_03/UniRef30_2021_03.tar.gz
+SOURCE_URL="https://storage.googleapis.com/alphafold-databases/v2.3/UniRef30_2021_03.tar.gz"
 BASENAME=$(basename "${SOURCE_URL}")
 
 mkdir --parents "${ROOT_DIR}"
 aria2c "${SOURCE_URL}" --dir="${ROOT_DIR}"
-
-# Keep only protein sequences.
-grep --after-context=1 --no-group-separator '>.* mol:protein' "${ROOT_DIR}/pdb_seqres.txt" > "${ROOT_DIR}/pdb_seqres_filtered.txt"
-mv "${ROOT_DIR}/pdb_seqres_filtered.txt" "${ROOT_DIR}/pdb_seqres.txt"
+tar --extract --verbose --file="${ROOT_DIR}/${BASENAME}" \
+  --directory="${ROOT_DIR}"
+rm "${ROOT_DIR}/${BASENAME}"
