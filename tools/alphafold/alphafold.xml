@@ -2,7 +2,7 @@
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
       <token name="@TOOL_VERSION@">2.3.1</token>
-      <token name="@VERSION_SUFFIX@">1</token>
+      <token name="@VERSION_SUFFIX@">2</token>
       <import>macro_output.xml</import>
       <import>macro_test_output.xml</import>
     </macros>
@@ -34,7 +34,7 @@
     echo '$fasta_or_text.fasta_text' > input.fasta
 #end if
 
-&& python3 '$__tool_directory__/validate_fasta.py' input.fasta
+&& python3 '$__tool_directory__/scripts/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
 #if $model_preset == 'multimer':
@@ -51,7 +51,7 @@
 #if os.environ.get('PLANEMO_TESTING'):
     ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
     && echo "Creating dummy outputs for model_preset=$model_preset..."
-    && bash '$__tool_directory__/mock_alphafold.sh' $model_preset
+    && bash '$__tool_directory__/scripts/mock_alphafold.sh' $model_preset
 #else:
     ## Run AlphaFold
     && python /app/alphafold/run_alphafold.py
@@ -91,7 +91,7 @@
 #end if
 
 ## Generate additional outputs ------------------------------------------------
-&& python3 '$__tool_directory__/outputs.py' output/alphafold
+&& python3 '$__tool_directory__/scripts/outputs.py' output/alphafold
 $outputs.plddts
 $outputs.model_pkls
 $outputs.pae_csv
