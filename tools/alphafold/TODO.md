@@ -9,4 +9,5 @@
 
 - [x] Copy script to create PAE plots from [colab](https://github.com/deepmind/alphafold/blob/main/notebooks/AlphaFold.ipynb)
 - [ ] Include plots in HTML vis output as tabs above stage (Model/pLDDT/PAE)
+- [ ] Consider additional plots from UTS (Katie Mitchie)
 - [ ] Visualisation output: click on protein sequence residue to focus atom
