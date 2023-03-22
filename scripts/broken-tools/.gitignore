@@ -3,6 +3,9 @@
 *.csv
 *.tab
 *.tsv
+*.odf
+.~*
+clusters/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
