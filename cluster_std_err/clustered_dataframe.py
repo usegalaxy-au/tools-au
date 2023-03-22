@@ -28,7 +28,7 @@ class ClusteredDataFrame(pd.DataFrame):
         self.tokenize_err()
 
         # Run the similarity calculations
-        self.compute_wmd_similarity()
+        # self.compute_wmd_similarity(model_name='codebert')
         self.compute_levenshtein_similarity()
         self.compute_jaccard_similarity()
         self.compute_tfidf_similarity()
@@ -40,6 +40,7 @@ class ClusteredDataFrame(pd.DataFrame):
         # Download stopwords and WordNet lemmatizer if necessary
         download('stopwords')
         download('wordnet')
+        download('punkt')
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
 
@@ -77,7 +78,7 @@ class ClusteredDataFrame(pd.DataFrame):
 
         # Load pre-trained model and tokenizer
         if model_name == 'codebert':
-            model = AutoModel.from_pretrained('microsoft/codeberta-base')
+            model = AutoModel.from_pretrained('microsoft/codebert-base')
         else:  # model_name == 'codegpt'
             model = AutoModel.from_pretrained('microsoft/codegpt-small-java')
 
@@ -158,14 +159,20 @@ class ClusteredDataFrame(pd.DataFrame):
         self.tfidf_similarity_matrix = sim_matrix
 
     def cluster_errors(self, eps=0.5, min_samples=5):
-        dbscan = DBSCAN(metric='precomputed', eps=eps, min_samples=min_samples)
+        dbscan = DBSCAN(
+            metric='precomputed',
+            eps=eps,
+            min_samples=min_samples)
         similarity_matrices = {
-            'wmd': self.wmd_similarity_matrix,
+            # 'wmd': self.wmd_similarity_matrix,
             'levenshtein': self.levenshtein_similarity_matrix,
             'jaccard': self.jaccard_similarity_matrix,
             'tfidf': self.tfidf_similarity_matrix,
         }
         for matrix_name, matrix in similarity_matrices.items():
             new_col_name = f"{matrix_name}_cluster_id"
-            labels = dbscan.fit_predict(matrix)
-            self[new_col_name] = labels
+            distance_matrix = 1 - matrix
+            distance_matrix[distance_matrix < 0] = 0
+            labels = dbscan.fit_predict(distance_matrix)
+            print(labels)
+            self.loc[:, new_col_name] = labels
