@@ -4,7 +4,6 @@
 *.tab
 *.tsv
 *.odf
-.~*
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
