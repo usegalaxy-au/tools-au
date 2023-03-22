@@ -71,7 +71,7 @@ def parse_args():
         required=False,
         help=(
             'Tool ID to filter on e.g. "antismash".'
-            ' Will match against partial IDs',
+            ' Will match against partial IDs'
         ),
     )
     parser.add_argument(
@@ -80,14 +80,14 @@ def parse_args():
         required=False,
         default=DEFAULT_OUTFILE,
         help=(
-            'Output CSV file name. Defaults to <tool_id>.csv',
+            'Output CSV file name. Defaults to <tool_id>.csv'
         ),
     )
     parser.add_argument(
         '--limit',
         required=False,
         help=(
-            'Limit number of tool IDs to fetch. Useful for testing.',
+            'Limit number of tool IDs to fetch. Useful for testing.'
         ),
     )
     args = parser.parse_args()
@@ -111,9 +111,9 @@ def fetch_all_tools(limit: int = None, outfile: str = None):
     for tool_id in tool_ids:
         print(f"\nFetching jobs for tool '{tool_id}'...")
         df = fetch_rows_for_tool(tool_id)
-        df = flatten_rows(df)
+        dff = flatten_rows(df)
         tool_state_counts = (
-            df.groupby('tool_id')
+            dff.groupby('tool_id')
             .agg({'state': 'value_counts'})
         )
         for multi_ix in tool_state_counts.index:
@@ -126,6 +126,8 @@ def fetch_all_tools(limit: int = None, outfile: str = None):
                     'paused': 0,
                     'deleted': 0,
                     'error': 0,
+                    'total_users': count_unique_users(df),
+                    'error_users': count_unique_users(df, state='error'),
                 }
             tool_status[tool_id][state] = count
 
@@ -137,6 +139,13 @@ def fetch_all_tools(limit: int = None, outfile: str = None):
     fname = outfile or DEFAULT_OUTFILE
     df_out.to_csv(fname, index=True)
     print(f"\nTool status dataframe written to {fname}")
+
+
+def count_unique_users(df: pd.DataFrame, state: str = None) -> int:
+    """Return number of unique users for errored jobs."""
+    if state:
+        df = df.loc[df['state'] == state]
+    return df['user_id'].nunique()
 
 
 def flatten_rows(df: pd.DataFrame) -> pd.DataFrame:
