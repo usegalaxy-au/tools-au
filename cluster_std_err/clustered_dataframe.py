@@ -46,6 +46,7 @@ class ClusteredDataFrame(pd.DataFrame):
         # Pre-process error messages
         preprocessed_errors = []
         for error in self.error_messages:
+            print(error)
             # Tokenize
             tokens = word_tokenize(error.lower())
 
