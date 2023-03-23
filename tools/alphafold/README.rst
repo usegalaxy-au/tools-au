@@ -74,9 +74,16 @@ GPU), it has been set up correctly.
 REFERENCE DATA
 ~~~~~~~~~~~~~~
 
-Alphafold needs reference data to run. The wrapper expects this data to
-be present at ``/data/alphafold_databases``. A custom path will be read from
-the ``ALPHAFOLD_DB`` environment variable, if set.
+Alphafold needs reference data to run. The path(s) are configured in the
+alphafold_db.loc data table. The table has three tab separated columns:
+
+1. a name (that will be visible to the user)
+2. the path
+3. the version which should be equal to the tool version.
+
+Hence the user will have only one preselected choice. One entry is needed for each
+version of alphafold. In case that reference data does not change a symlink should
+be created.
 
 To download the AlphaFold reference DBs:
 
@@ -190,11 +197,6 @@ this is simply create a new directory and download the DBs from scratch.
 However, you can save a considerable amount of time by downloading only the
 components that have changed.
 
-If you wish to continue hosting prior versions of the tool, you must maintain
-the reference DBs for each version. The ``ALPHAFOLD_DB`` environment variable
-must then be set respectively for each tool version in your job conf (on Galaxy
-AU this is currently `configured with TPV <https://github.com/usegalaxy-au/infrastructure/blob/master/files/galaxy/dynamic_job_rules/production/total_perspective_vortex/tools.yml#L1515-L1554>`_).
-
 To minimize redundancy between DB version, we have symlinked the database
 components that are unchanging between versions. In ``v2.1.2 -> v2.3.1`` the BFD
 database is the only component that is persistent, but they are by far the
@@ -232,7 +234,6 @@ CUSTOM PARAMETERS
 
 A few parameters can be customized with the use of environment variables set in the job destination:
 
-- ``ALPHAFOLD_DB``: path to the reference database root (default ``/data``)
 - ``ALPHAFOLD_USE_GPU [True/False]``: set to ``False`` to disable GPU dependency (defaults to ``True``)
 - ``ALPHAFOLD_AA_LENGTH_MIN``: minimum accepted sequence length (default ``0``)
 - ``ALPHAFOLD_AA_LENGTH_MAX``: maximum accepted sequence length (default ``0`` - no validation)

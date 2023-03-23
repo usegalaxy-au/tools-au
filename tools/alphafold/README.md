@@ -6,7 +6,7 @@ The AlphaFold tool comprises several components:
 - Input FASTA validation `validate_fasta.py`
 - Output file generation `outputs.py`
 - Docker image - see `docker/` for building (hosted at hub.docker.com/neoformit/alphafold)
-- AlphaFold mock for testing `fetch_test_data.sh`
+- AlphaFold mock for testing `scripts/mock_alphafold.sh`
 - Test script for `outputs.py` - `tests/test_outputs.sh`
 - Output data from different model presets for mocking - `test-data/*mer*_output/`
 - HTML visualization output - `alphafold.html`
