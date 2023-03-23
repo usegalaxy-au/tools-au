@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-from collections import Counter
 from nltk import word_tokenize, download
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
@@ -48,7 +47,6 @@ class ClusteredDataFrame(pd.DataFrame):
         # Pre-process error messages
         preprocessed_errors = []
         for error in self._error_messages:
-            print(error)
             # Tokenize
             tokens = word_tokenize(error.lower())
 
@@ -110,10 +108,16 @@ class ClusteredDataFrame(pd.DataFrame):
             min_samples=min_samples)
         distance_matrix = 1 - self._similarity_matrix 
         distance_matrix[distance_matrix < 0] = 0
+
+        # Check for an all-zero distance matrix
+        if np.all(distance_matrix == 0):
+            self.loc[:, 'cluster_id'] = -1
+            return
+
         labels = dbscan.fit_predict(distance_matrix)
         self.loc[:, 'cluster_id'] = labels
 
-    def summarize_clusters(self):
+    def get_cluster_summary(self):
         # create an empty dataframe to store the cluster summaries
         summary_df = pd.DataFrame(columns=[
             'cluster_id',
