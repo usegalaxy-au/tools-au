@@ -178,7 +178,7 @@ The ``$ALPHAFOLD_DB_ROOT`` directory should now contain this additional file:
 
 ::
 
-   data/alphafold_databases/2.3.1.
+   data/alphafold_databases/2.3.1/
    ├── small_bfd
    │   └── bfd-first_non_consensus_sequences.fasta
 
