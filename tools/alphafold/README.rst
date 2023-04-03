@@ -75,18 +75,20 @@ REFERENCE DATA
 ~~~~~~~~~~~~~~
 
 Alphafold needs reference data to run. The wrapper expects this data to
-be present at ``/data/alphafold_databases``. A custom path will be read from
-the ``ALPHAFOLD_DB`` environment variable, if set.
+be present at ``/$ALPHAFOLD_DB/TOOL_VERSION``. 
+Where ``ALPHAFOLD_DB`` is a custom path that will be read from
+the ``ALPHAFOLD_DB`` environment variable (defaulting to ``/data``).
+And TOOL_VERSION is the alphafold version, e.g. ``2.3.1``.
 
 To download the AlphaFold reference DBs:
 
 ::
 
    # Set your AlphaFold DB path
-   ALPHAFOLD_DB=/data/alphafold_databases
+   ALPHAFOLD_DB=/data/alphafold_databases/2.3.1
 
    # Set your target AlphaFold version
-   ALPHAFOLD_VERSION=  # e.g. 2.1.2
+   ALPHAFOLD_VERSION=2.3.1
 
    # Download repo
    wget https://github.com/deepmind/alphafold/releases/tag/v${ALPHAFOLD_VERSION}.tar.gz
@@ -110,7 +112,7 @@ follows:
    # NOTE: this structure will change between minor AlphaFold versions
    # The tree shown below was updated for v2.3.1
 
-   data/alphafold_databases
+   data/alphafold_databases/2.3.1/
    ├── bfd
    │   ├── bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt_a3m.ffdata
    │   ├── bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt_a3m.ffindex
@@ -176,7 +178,7 @@ The ``$ALPHAFOLD_DB_ROOT`` directory should now contain this additional file:
 
 ::
 
-   data/alphafold_databases
+   data/alphafold_databases/2.3.1/
    ├── small_bfd
    │   └── bfd-first_non_consensus_sequences.fasta
 

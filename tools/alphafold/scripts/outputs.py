@@ -19,9 +19,10 @@ import json
 import os
 import pickle as pk
 import shutil
-from matplotlib import pyplot as plt
 from pathlib import Path
 from typing import List
+
+from matplotlib import pyplot as plt
 
 # Output file paths
 OUTPUT_DIR = 'extra'

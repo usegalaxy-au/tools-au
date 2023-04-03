@@ -24,8 +24,11 @@
 ## in planemo's gx_venv_n/bin/activate script. AlphaFold outputs will be copied
 ## from the test-data directory instead of running the tool.
 
-## $ALPHAFOLD_DB variable should point to the location of the AlphaFold
-## databases - defaults to /data
+## $ALPHAFOLD_DB variable should point to the location containing the versioned
+## AlphaFold databases - defaults to /data
+## that is the directory should contain a subdir / symlink named identical as
+## the value of the TOOL_VERSION token which contains the AF reference data
+## for the corresponding version
 
 ## Read FASTA input -----------------------------------------------------------
 #if $fasta_or_text.input_mode == 'history':
@@ -57,20 +60,20 @@
     && python /app/alphafold/run_alphafold.py
         --fasta_paths alphafold.fasta
         --output_dir output
-        --data_dir \${ALPHAFOLD_DB:-/data}
+        --data_dir \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/
         --model_preset=$model_preset
 
         ## Set reference database paths
-        --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/uniref90/uniref90.fasta
-        --mgnify_database_path     \${ALPHAFOLD_DB:-/data}/mgnify/mgy_clusters_2022_05.fa
-        --template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/mmcif_files
-        --obsolete_pdbs_path       \${ALPHAFOLD_DB:-/data}/pdb_mmcif/obsolete.dat
+        --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/uniref90/uniref90.fasta
+        --mgnify_database_path     \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/mgnify/mgy_clusters_2022_05.fa
+        --template_mmcif_dir       \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/pdb_mmcif/mmcif_files
+        --obsolete_pdbs_path       \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/pdb_mmcif/obsolete.dat
         #if $dbs == 'full':
-        --bfd_database_path        \${ALPHAFOLD_DB:-/data}/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
-        --uniref30_database_path   \${ALPHAFOLD_DB:-/data}/uniref30/UniRef30_2021_03
+        --bfd_database_path        \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/bfd/bfd_metaclust_clu_complete_id30_c90_final_seq.sorted_opt
+        --uniref30_database_path   \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/uniref30/UniRef30_2021_03
         #else
         --db_preset=reduced_dbs
-        --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/small_bfd/bfd-first_non_consensus_sequences.fasta
+        --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/small_bfd/bfd-first_non_consensus_sequences.fasta
         #end if
 
         #if $max_template_date:
@@ -82,11 +85,11 @@
         --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
 
         #if $model_preset == 'multimer':
-        --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/pdb_seqres/pdb_seqres.txt
-        --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/uniprot/uniprot.fasta
+        --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/pdb_seqres/pdb_seqres.txt
+        --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/uniprot/uniprot.fasta
         --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
         #else
-        --pdb70_database_path \${ALPHAFOLD_DB:-/data}/pdb70/pdb70
+        --pdb70_database_path \${ALPHAFOLD_DB:-/data}/@TOOL_VERSION@/pdb70/pdb70
         #end if
 #end if
 
