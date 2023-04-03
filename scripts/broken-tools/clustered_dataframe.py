@@ -17,9 +17,9 @@ class ClusteredDataFrame(pd.DataFrame):
         "_similarity_matrix",
         "_similarity_metric"]
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args, cluster_min_samples=5, eps=0.5, **kwargs):
         super().__init__(*args, **kwargs)
-        
+
         if 'tool_stderr' not in self.columns:
             raise ValueError(
                 "The 'tool_stderr' column is missing from the DataFrame.")
@@ -34,7 +34,7 @@ class ClusteredDataFrame(pd.DataFrame):
         self.compute_similarity_matrix()
 
         # add the cluster IDs
-        self.cluster_errors()
+        self.cluster_errors(eps=eps, min_samples=cluster_min_samples)
 
     def tokenize_err(self):
         # Download stopwords and WordNet lemmatizer if necessary
@@ -63,9 +63,9 @@ class ClusteredDataFrame(pd.DataFrame):
             raise ValueError(
                 ("Invalid similarity method. Choose "
                  "from 'levenshtein', 'jaccard', or 'tfidf'."))       
-        
+
         preprocessed_errors = self.tokenized_err
-        
+
         # Levenshtein distance
         if method == 'levenshtein':
             sim_matrix = np.zeros(
@@ -73,9 +73,16 @@ class ClusteredDataFrame(pd.DataFrame):
                  len(preprocessed_errors)))
             for i in range(len(preprocessed_errors)):
                 for j in range(i, len(preprocessed_errors)):
-                    sim_matrix[i, j] = sim_matrix[j, i] = 1 - Levenshtein.distance(
-                        preprocessed_errors[i], preprocessed_errors[j]) / max(
-                        len(preprocessed_errors[i]), len(preprocessed_errors[j]))
+                    sim_matrix[i, j] = sim_matrix[j, i] = (
+                        1 - Levenshtein.distance(
+                            preprocessed_errors[i],
+                            preprocessed_errors[j],
+                        ) / max(
+                            len(preprocessed_errors[i]),
+                            len(preprocessed_errors[j]),
+                            1,
+                        )
+                    )
 
         # Jaccard distance
         if method == "jaccard":
@@ -102,11 +109,12 @@ class ClusteredDataFrame(pd.DataFrame):
         setattr(self, '_similarity_metric', method)
 
     def cluster_errors(self, eps=0.5, min_samples=5):
+        print(f"Clustering with an epsilon of {eps}...")
         dbscan = DBSCAN(
             metric='precomputed',
             eps=eps,
             min_samples=min_samples)
-        distance_matrix = 1 - self._similarity_matrix 
+        distance_matrix = 1 - self._similarity_matrix
         distance_matrix[distance_matrix < 0] = 0
 
         # Check for an all-zero distance matrix
