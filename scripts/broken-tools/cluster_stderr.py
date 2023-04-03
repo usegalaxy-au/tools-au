@@ -7,7 +7,7 @@ import Levenshtein
 from fetch_jobs import fetch_rows_for_tool, fetch_tool_ids
 
 CLUSTER_OUT_DIR = 'clusters'
-TOOLS_LIMIT = 10
+TOOLS_LIMIT = 100
 STDERR_MAX_LINES = 15
 LEVENSHTEIN_CUTOFF = 0.8
 OUTFILE = f'tool_stderr_clustered_LEV{LEVENSHTEIN_CUTOFF}.csv'

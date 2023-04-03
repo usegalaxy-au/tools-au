@@ -1,5 +1,37 @@
 import Levenshtein
 
+a = """File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 312, in run
+    _run_main(main, args)
+  File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 258, in _run_main
+    sys.exit(main(argv))
+  File "/app/alphafold/run_alphafold.py", line 429, in main
+    is_prokaryote=is_prokaryote)
+  File "/app/alphafold/run_alphafold.py", line 250, in predict_structure
+    relaxed_pdb_str, _, _ = amber_relaxer.process(prot=unrelaxed_protein)
+  File "/app/alphafold/alphafold/relax/relax.py", line 66, in process
+    use_gpu=self._use_gpu)
+  File "/app/alphafold/alphafold/relax/amber_minimize.py", line 466, in run_pipeline
+    _check_residues_are_well_defined(prot)
+  Error message produced by error string "A"
+"""
+aa = "Error message produced by error string 'A'"
+
+b = """File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 312, in run
+    _run_main(main, args)
+  File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 258, in _run_main
+    sys.exit(main(argv))
+  File "/app/alphafold/run_alphafold.py", line 429, in main
+    is_prokaryote=is_prokaryote)
+  File "/app/alphafold/run_alphafold.py", line 250, in predict_structure
+    relaxed_pdb_str, _, _ = amber_relaxer.process(prot=unrelaxed_protein)
+  File "/app/alphafold/alphafold/relax/relax.py", line 66, in process
+    use_gpu=self._use_gpu)
+  File "/app/alphafold/alphafold/relax/amber_minimize.py", line 466, in run_pipeline
+    _check_residues_are_well_defined(prot)
+  A completely different last line that should match with a low score.
+"""
+bb = "A completely different last line that should match with a low score."
+
 x = """  File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 312, in run
     _run_main(main, args)
   File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 258, in _run_main
@@ -51,8 +83,17 @@ ValueError: Error encountered validating FASTA:
 Multimer mode requires multiple input sequence. Only 1 sequences were detected in the provided file.
 """
 
-# Different
-print("X:Y - ", Levenshtein.ratio(x, y))
 
+def compare(x, y):
+    print(f"{x}:{y} - ", eval(f"Levenshtein.ratio({x}, {y})"))
+
+
+# Different
+compare('x', 'y')
 # Similar
-print("Y:Z - ", Levenshtein.ratio(y, z))
+compare('y', 'z')
+
+# Long
+compare('a', 'b')
+# Same diff, last line only
+compare('aa', 'bb')
