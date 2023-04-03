@@ -75,10 +75,10 @@ REFERENCE DATA
 ~~~~~~~~~~~~~~
 
 Alphafold needs reference data to run. The wrapper expects this data to
-be present at ``/$ALPHAFOLD_DB/TOOL_VERSION``. 
+be present at ``/$ALPHAFOLD_DB/TOOL_MINOR_VERSION``.
 Where ``ALPHAFOLD_DB`` is a custom path that will be read from
 the ``ALPHAFOLD_DB`` environment variable (defaulting to ``/data``).
-And TOOL_VERSION is the alphafold version, e.g. ``2.3.1``.
+And TOOL_MINOR_VERSION is the alphafold version, e.g. ``2.3.1``.
 
 To download the AlphaFold reference DBs:
 
