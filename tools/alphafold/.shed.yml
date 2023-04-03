@@ -20,6 +20,6 @@ include:
     - macro_output.xml
     - macro_test_output.xml
     - alphafold.html
-    - outputs.py
+    - scripts/outputs.py
+    - scripts/validate_fasta.py
     - README.rst
-    - validate_fasta.py
