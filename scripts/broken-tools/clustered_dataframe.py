@@ -17,15 +17,15 @@ class ClusteredDataFrame(pd.DataFrame):
         "_similarity_matrix",
         "_similarity_metric"]
 
-    def __init__(self, *args, cluster_min_samples=5, eps=0.5, **kwargs):
+    def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
+        
         if 'tool_stderr' not in self.columns:
             raise ValueError(
                 "The 'tool_stderr' column is missing from the DataFrame.")
 
         # create list of error messages for quick access
-        self._error_messages = self.collectErrors()
+        setattr(self, "_error_messages", self['tool_stderr'].tolist())
 
         # tokenise the errors
         self.tokenize_err()
@@ -34,14 +34,7 @@ class ClusteredDataFrame(pd.DataFrame):
         self.compute_similarity_matrix()
 
         # add the cluster IDs
-        self.cluster_errors(eps=eps, min_samples=cluster_min_samples)
-
-    def collectErrors(self):
-        """Populate list of errors from stderr, stdout or info columns."""
-        err = self['tool_stderr']
-        err.loc[err == ''] = self['tool_stdout']
-        err.loc[err == ''] = self['info']
-        return err.tolist()
+        self.cluster_errors()
 
     def tokenize_err(self):
         # Download stopwords and WordNet lemmatizer if necessary
@@ -54,9 +47,6 @@ class ClusteredDataFrame(pd.DataFrame):
         # Pre-process error messages
         preprocessed_errors = []
         for error in self._error_messages:
-            if type(error) == float:
-                preprocessed_errors.append('')
-                continue
             # Tokenize
             tokens = word_tokenize(error.lower())
 
@@ -72,10 +62,10 @@ class ClusteredDataFrame(pd.DataFrame):
         if method not in ['levenshtein', 'jaccard', 'tfidf']:
             raise ValueError(
                 ("Invalid similarity method. Choose "
-                 "from 'levenshtein', 'jaccard', or 'tfidf'."))
-
+                 "from 'levenshtein', 'jaccard', or 'tfidf'."))       
+        
         preprocessed_errors = self.tokenized_err
-
+        
         # Levenshtein distance
         if method == 'levenshtein':
             sim_matrix = np.zeros(
@@ -83,16 +73,9 @@ class ClusteredDataFrame(pd.DataFrame):
                  len(preprocessed_errors)))
             for i in range(len(preprocessed_errors)):
                 for j in range(i, len(preprocessed_errors)):
-                    sim_matrix[i, j] = sim_matrix[j, i] = (
-                        1 - Levenshtein.distance(
-                            preprocessed_errors[i],
-                            preprocessed_errors[j],
-                        ) / max(
-                            len(preprocessed_errors[i]),
-                            len(preprocessed_errors[j]),
-                            1,
-                        )
-                    )
+                    sim_matrix[i, j] = sim_matrix[j, i] = 1 - Levenshtein.distance(
+                        preprocessed_errors[i], preprocessed_errors[j]) / max(
+                        len(preprocessed_errors[i]), len(preprocessed_errors[j]))
 
         # Jaccard distance
         if method == "jaccard":
@@ -115,24 +98,20 @@ class ClusteredDataFrame(pd.DataFrame):
             sim_matrix = cosine_similarity(tf_idf_matrix)
 
         # store the result
-        self._similarity_matrix = sim_matrix
-        self._similarity_metric = method
+        setattr(self, '_similarity_matrix', sim_matrix)
+        setattr(self, '_similarity_metric', method)
 
     def cluster_errors(self, eps=0.5, min_samples=5):
-        print(f"Clustering with an epsilon of {eps}...")
         dbscan = DBSCAN(
             metric='precomputed',
             eps=eps,
             min_samples=min_samples)
-        distance_matrix = 1 - self._similarity_matrix
+        distance_matrix = 1 - self._similarity_matrix 
         distance_matrix[distance_matrix < 0] = 0
 
         # Check for an all-zero distance matrix
         if np.all(distance_matrix == 0):
-            self.loc[:, 'cluster_id'] = [
-                -1
-                for _ in range(len(distance_matrix))
-            ]
+            self.loc[:, 'cluster_id'] = -1
             return
 
         labels = dbscan.fit_predict(distance_matrix)
@@ -142,9 +121,9 @@ class ClusteredDataFrame(pd.DataFrame):
         # create an empty dataframe to store the cluster summaries
         summary_df = pd.DataFrame(columns=[
             'cluster_id',
-            'count',
+            'num_messages',
             'representative_error'])
-
+        
         # loop over the cluster groups
         for cluster_id in self.cluster_id.unique():
             if cluster_id == -1:
@@ -157,7 +136,7 @@ class ClusteredDataFrame(pd.DataFrame):
 
             cluster_summary = pd.DataFrame({
                 'cluster_id': [cluster_id],
-                'count': [num_messages],
+                'num_messages': [num_messages],
                 'representative_error': [representative_error]
             })
 
