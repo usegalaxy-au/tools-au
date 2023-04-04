@@ -25,7 +25,7 @@ class ClusteredDataFrame(pd.DataFrame):
                 "The 'tool_stderr' column is missing from the DataFrame.")
 
         # create list of error messages for quick access
-        setattr(self, "_error_messages", self['tool_stderr'].tolist())
+        self._error_messages = self.collectErrors()
 
         # tokenise the errors
         self.tokenize_err()
@@ -35,6 +35,13 @@ class ClusteredDataFrame(pd.DataFrame):
 
         # add the cluster IDs
         self.cluster_errors(eps=eps, min_samples=cluster_min_samples)
+
+    def collectErrors(self):
+        """Populate list of errors from stderr, stdout or info columns."""
+        err = self['tool_stderr']
+        err.loc[err == ''] = self['tool_stdout']
+        err.loc[err == ''] = self['info']
+        return err.tolist()
 
     def tokenize_err(self):
         # Download stopwords and WordNet lemmatizer if necessary
@@ -47,6 +54,9 @@ class ClusteredDataFrame(pd.DataFrame):
         # Pre-process error messages
         preprocessed_errors = []
         for error in self._error_messages:
+            if type(error) == float:
+                preprocessed_errors.append('')
+                continue
             # Tokenize
             tokens = word_tokenize(error.lower())
 
@@ -62,7 +72,7 @@ class ClusteredDataFrame(pd.DataFrame):
         if method not in ['levenshtein', 'jaccard', 'tfidf']:
             raise ValueError(
                 ("Invalid similarity method. Choose "
-                 "from 'levenshtein', 'jaccard', or 'tfidf'."))       
+                 "from 'levenshtein', 'jaccard', or 'tfidf'."))
 
         preprocessed_errors = self.tokenized_err
 
@@ -105,8 +115,8 @@ class ClusteredDataFrame(pd.DataFrame):
             sim_matrix = cosine_similarity(tf_idf_matrix)
 
         # store the result
-        setattr(self, '_similarity_matrix', sim_matrix)
-        setattr(self, '_similarity_metric', method)
+        self._similarity_matrix = sim_matrix
+        self._similarity_metric = method
 
     def cluster_errors(self, eps=0.5, min_samples=5):
         print(f"Clustering with an epsilon of {eps}...")
@@ -119,7 +129,10 @@ class ClusteredDataFrame(pd.DataFrame):
 
         # Check for an all-zero distance matrix
         if np.all(distance_matrix == 0):
-            self.loc[:, 'cluster_id'] = -1
+            self.loc[:, 'cluster_id'] = [
+                -1
+                for _ in range(len(distance_matrix))
+            ]
             return
 
         labels = dbscan.fit_predict(distance_matrix)
@@ -129,9 +142,9 @@ class ClusteredDataFrame(pd.DataFrame):
         # create an empty dataframe to store the cluster summaries
         summary_df = pd.DataFrame(columns=[
             'cluster_id',
-            'num_messages',
+            'count',
             'representative_error'])
-        
+
         # loop over the cluster groups
         for cluster_id in self.cluster_id.unique():
             if cluster_id == -1:
@@ -144,7 +157,7 @@ class ClusteredDataFrame(pd.DataFrame):
 
             cluster_summary = pd.DataFrame({
                 'cluster_id': [cluster_id],
-                'num_messages': [num_messages],
+                'count': [num_messages],
                 'representative_error': [representative_error]
             })
 
