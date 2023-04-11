@@ -5,6 +5,8 @@
 *.tsv
 *.odf
 .~lock*
+clusters/
+data/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
