@@ -1,3 +1,5 @@
+"""Manually test distance between error logs to get a feel for the metric."""
+
 import Levenshtein
 
 a = """File "/opt/conda/lib/python3.7/site-packages/absl/app.py", line 312, in run

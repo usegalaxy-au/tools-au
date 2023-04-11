@@ -130,8 +130,7 @@ class ClusteredDataFrame(pd.DataFrame):
         # Check for an all-zero distance matrix
         if np.all(distance_matrix == 0):
             self.loc[:, 'cluster_id'] = [
-                0
-                for _ in range(len(distance_matrix))
+                0 for _ in range(len(distance_matrix))
             ]
             return
 
