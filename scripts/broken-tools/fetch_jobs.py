@@ -12,11 +12,11 @@ load_dotenv()
 
 DEFAULT_OUTFILE = 'tool_status_flat.csv'
 DATABASE = {
-    'database': 'galaxy-tools',
-    'user': 'ubuntu',
+    'database': os.environ.get('GXTOOLS_PG_DATABASE'),
+    'user': os.environ.get('GXTOOLS_PG_USER'),
     'password': os.environ.get('GXTOOLS_PG_PASSWORD'),
     'host': os.environ.get('GXTOOLS_PG_HOST'),
-    'port': '5432',
+    'port': os.environ.get('GXTOOLS_PG_PORT'),
 }
 TABLE_NAME = 'jobs'
 COLUMNS = [
