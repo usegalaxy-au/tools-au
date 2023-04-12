@@ -4,6 +4,7 @@ import os
 import shutil
 import pandas as pd
 from pathlib import Path
+from datetime import datetime
 
 from fetch_jobs import GalaxyDB
 from clustered_dataframe import ClusteredDataFrame
@@ -12,13 +13,14 @@ from clustered_dataframe import ClusteredDataFrame
 EPSILON = 0.2
 CLUSTER_MIN_SAMPLES = 3
 TOOL_ID_LIMIT = 10
+FETCH_JOBS_SINCE = datetime.fromisoformat('2023-01-01')
 APPEND = False  # Append to summary file, if exists, otherwise overwrite
 
 OUT_DIR = Path('data/dbscan')
 OUT_DIR_CLUSTERS = OUT_DIR / 'clusters'
 OUT_CACHE_DIR = OUT_DIR / 'cache'
 SUMMARY_OUTFILE = OUT_DIR / 'tool_err_summary.csv'
-OUTPUT_COLS = [
+OUTPUT_COLUMNS = [
     'tool_id',
     'latest_version',
     'cluster_id',
@@ -26,6 +28,7 @@ OUTPUT_COLS = [
     'last_seen',
     'representative_error',
 ]
+
 CLUSTER_OUTPUT_COLUMNS = [
     "create_time",
     "tool_id",
@@ -52,7 +55,11 @@ def get_data_for_id(db, tool_id, tool_id_safe):
     if tool_data_path.exists():
         df = pd.read_csv(tool_data_path)
     else:
-        df = db.fetch_rows_for_tool(tool_id, error=True)
+        df = db.fetch_rows_for_tool(
+            tool_id,
+            error=True,
+            since=FETCH_JOBS_SINCE,
+        )
         df.to_csv(tool_data_path, index=False)
     return df
 
@@ -107,7 +114,7 @@ def main():
                 header=True,
             )
             summary = cl.get_cluster_summary()
-            summary[OUTPUT_COLS].to_csv(
+            summary[OUTPUT_COLUMNS].to_csv(
                 SUMMARY_OUTFILE,
                 mode='a',
                 header=not SUMMARY_OUTFILE.exists(),

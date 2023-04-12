@@ -6,8 +6,9 @@ import os
 import argparse
 import psycopg2
 import pandas as pd
-from sshtunnel import SSHTunnelForwarder
+from datetime import datetime
 from dotenv import load_dotenv
+from sshtunnel import SSHTunnelForwarder
 
 load_dotenv()
 
@@ -245,18 +246,21 @@ class GalaxyDB:
         error: bool = None,
         limit: int = None,
         exact: bool = True,
+        since: datetime = None,
     ) -> pd.DataFrame:
-        """Fetch job rows from database for given tool_id (fuzzy)."""
+        """Fetch job rows from database for given tool_id."""
         query = f"SELECT {','.join(COLUMNS)} FROM {DATABASE['table']}"
         if exact:
-            query += f" WHERE tool_id = '{tool_id}' AND"
+            query += f" WHERE tool_id = '{tool_id}'"
         else:
-            query += f" WHERE tool_id LIKE '%{tool_id}%' AND"
+            query += f" WHERE tool_id LIKE '%{tool_id}%'"
         if error is True:
-            query += " state = 'error'"
+            query += " AND state = 'error'"
         if error is False:
-            query += " state = 'ok'"
-        query = query.strip(' AND')
+            query += " AND state = 'ok'"
+        if since:
+            since_str = since.strftime('%Y-%m-%d %H:%M:%S')
+            query += f" AND create_time > '{since_str}'"
         if limit:
             query += f" LIMIT {limit}"
         query += ';'
