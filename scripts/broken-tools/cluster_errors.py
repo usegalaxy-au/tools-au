@@ -5,14 +5,14 @@ import shutil
 import pandas as pd
 from pathlib import Path
 
-from fetch_jobs import fetch_rows_for_tool, fetch_tool_ids
+from fetch_jobs import GalaxyDB
 from clustered_dataframe import ClusteredDataFrame
 
 # Params
 EPSILON = 0.2
 CLUSTER_MIN_SAMPLES = 3
-TOOL_ID_LIMIT = 20
-APPEND = False  # Append to summary file, if exists
+TOOL_ID_LIMIT = 10
+APPEND = False  # Append to summary file, if exists, otherwise overwrite
 
 OUT_DIR = Path('data/dbscan')
 OUT_DIR_CLUSTERS = OUT_DIR / 'clusters'
@@ -46,13 +46,13 @@ CLUSTER_OUTPUT_COLUMNS = [
 ]
 
 
-def get_data_for_id(tool_id, tool_id_safe):
+def get_data_for_id(db, tool_id, tool_id_safe):
     """Fetch tool error data."""
     tool_data_path = OUT_CACHE_DIR / f'{tool_id_safe}.rows.csv'
     if tool_data_path.exists():
         df = pd.read_csv(tool_data_path)
     else:
-        df = fetch_rows_for_tool(tool_id, error=True)
+        df = db.fetch_rows_for_tool(tool_id, error=True)
         df.to_csv(tool_data_path, index=False)
     return df
 
@@ -78,40 +78,41 @@ def main():
     for d in [OUT_DIR, OUT_CACHE_DIR]:
         os.makedirs(d, exist_ok=True)
 
-    tool_id_list = fetch_tool_ids(strip=True, limit=TOOL_ID_LIMIT)
+    with GalaxyDB() as db:
+        tool_id_list = db.fetch_tool_ids(strip=True, limit=TOOL_ID_LIMIT)
 
-    print(f"\nCollected {len(tool_id_list)} tool IDs to cluster.\n")
+        print(f"\nCollected {len(tool_id_list)} tool IDs to cluster.\n")
 
-    for tool_id in tool_id_list:
-        tool_id_safe = tool_id.replace('/', '_')
-        if data_exists_for_tool(tool_id):
-            continue
-        df = get_data_for_id(tool_id, tool_id_safe)
-        if df.empty:
-            continue
+        for tool_id in tool_id_list:
+            tool_id_safe = tool_id.replace('/', '_')
+            if data_exists_for_tool(tool_id):
+                continue
+            df = get_data_for_id(db, tool_id, tool_id_safe)
+            if df.empty:
+                continue
 
-        print(f"Clustering errors for tool: {tool_id}")
+            print(f"Clustering errors for tool: {tool_id}")
 
-        # TODO: manually assign clusters for "out of mem" and "core dumped"?
+            # TODO: manually set "out of mem" and "core dumped" clusters?
 
-        cl = ClusteredDataFrame(
-            df,
-            cluster_min_samples=CLUSTER_MIN_SAMPLES,
-            eps=EPSILON,
-        )
-        # Output cluster data for debugging
-        cl[CLUSTER_OUTPUT_COLUMNS].to_csv(
-            OUT_DIR_CLUSTERS / f'{tool_id_safe}.clusters.csv',
-            index=False,
-            header=True,
-        )
-        summary = cl.get_cluster_summary()
-        summary[OUTPUT_COLS].to_csv(
-            SUMMARY_OUTFILE,
-            mode='a',
-            header=not SUMMARY_OUTFILE.exists(),
-            index=False,
-        )
+            cl = ClusteredDataFrame(
+                df,
+                cluster_min_samples=CLUSTER_MIN_SAMPLES,
+                eps=EPSILON,
+            )
+            # Output cluster data for debugging
+            cl[CLUSTER_OUTPUT_COLUMNS].to_csv(
+                OUT_DIR_CLUSTERS / f'{tool_id_safe}.clusters.csv',
+                index=False,
+                header=True,
+            )
+            summary = cl.get_cluster_summary()
+            summary[OUTPUT_COLS].to_csv(
+                SUMMARY_OUTFILE,
+                mode='a',
+                header=not SUMMARY_OUTFILE.exists(),
+                index=False,
+            )
 
     print("\nDone\n")
 
