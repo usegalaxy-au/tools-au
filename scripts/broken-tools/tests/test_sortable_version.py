@@ -15,8 +15,19 @@ class TestSortableVersion(TestCase):
         v3 = '0.1.0+galaxy2'
         v4 = '0.1.1+galaxy1'
         v5 = '0.10.0+galaxy1'
-        self.assertTrue(sortable_version(v1) < sortable_version(v2))
-        self.assertTrue(sortable_version(v2) < sortable_version(v3))
-        self.assertTrue(sortable_version(v3) < sortable_version(v4))
-        self.assertTrue(sortable_version(v3) < sortable_version(v5))
-        self.assertTrue(sortable_version(v4) < sortable_version(v5))
+        v6 = '2.3.7'
+
+        comparisons = [
+            (v1, v2),
+            (v2, v3),
+            (v3, v4),
+            (v3, v5),
+            (v4, v5),
+        ]
+
+        for va, vb in comparisons:
+            a = sortable_version(va)
+            b = sortable_version(vb)
+            self.assertTrue(a < b, f'{a} !< {b}')
+
+        self.assertEqual(sortable_version(v6), ('002', '003', '007'))

@@ -177,7 +177,11 @@ def fetch_tool_ids(strip: bool = False, limit: int = None) -> list[str]:
     ids = df['tool_id'].tolist()
     if strip:
         ids = [strip_id(i) for i in ids]
-    return ids
+    unique_ids = []
+    for i in ids:
+        if i not in unique_ids:
+            unique_ids.append(i)
+    return unique_ids
 
 
 def fetch_rows_for_tool(

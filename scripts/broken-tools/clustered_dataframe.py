@@ -8,6 +8,9 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import Levenshtein
 import numpy as np
+
+import warnings
+warnings.simplefilter(action='ignore', category=UserWarning)
 import pandas as pd
 
 
@@ -17,7 +20,18 @@ class ClusteredDataFrame(pd.DataFrame):
         "_similarity_matrix",
         "_similarity_metric"]
 
-    def __init__(self, *args, cluster_min_samples=5, eps=0.5, **kwargs):
+    def __init__(
+        self,
+        *args,
+        cluster_min_samples=5,
+        eps=0.5,
+        download_stopwords=False,
+        **kwargs,
+    ):
+        if download_stopwords:
+            download('stopwords')
+            download('wordnet')
+            download('punkt')
         super().__init__(*args, **kwargs)
 
         if 'tool_stderr' not in self.columns:
@@ -38,23 +52,20 @@ class ClusteredDataFrame(pd.DataFrame):
 
     def collectErrors(self):
         """Populate list of errors from stderr, stdout or info columns."""
-        err = self['tool_stderr']
+        err = self['tool_stderr'].copy(deep=True)
         err.loc[err == ''] = self['tool_stdout']
         err.loc[err == ''] = self['info']
         return err.tolist()
 
     def tokenize_err(self):
         # Download stopwords and WordNet lemmatizer if necessary
-        download('stopwords')
-        download('wordnet')
-        download('punkt')
         stop_words = set(stopwords.words('english'))
         lemmatizer = WordNetLemmatizer()
 
         # Pre-process error messages
         preprocessed_errors = []
         for error in self._error_messages:
-            if type(error) == float:
+            if type(error) != str:
                 preprocessed_errors.append('')
                 continue
             # Tokenize
