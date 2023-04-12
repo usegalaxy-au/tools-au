@@ -164,7 +164,7 @@ class GalaxyDB:
         """
         tool_status = {}
         tool_ids = self.fetch_tool_ids(strip=True, limit=limit)
-        print(f"Fetched {len(tool_ids)} tool IDs to query.")
+        print(f"Fetched {len(tool_ids)} tool IDs to query")
 
         for tool_id in tool_ids:
             print(f"\nFetching jobs for tool '{tool_id}'...")
@@ -251,7 +251,10 @@ class GalaxyDB:
         """Fetch job rows from database for given tool_id."""
         query = f"SELECT {','.join(COLUMNS)} FROM {DATABASE['table']}"
         if exact:
-            query += f" WHERE tool_id = '{tool_id}'"
+            query += (
+                f" WHERE (tool_id = '{tool_id}'"
+                f" OR tool_id LIKE '{tool_id}/%')"  # for version stripped ID
+            )
         else:
             query += f" WHERE tool_id LIKE '%{tool_id}%'"
         if error is True:
@@ -265,7 +268,7 @@ class GalaxyDB:
             query += f" LIMIT {limit}"
         query += ';'
         df = pd.read_sql_query(query, self.conn)
-        print(f"Fetched {len(df)} rows for tool ID {tool_id}.")
+        print(f"Fetched {len(df)} rows for tool ID {tool_id}")
         return df
 
 
