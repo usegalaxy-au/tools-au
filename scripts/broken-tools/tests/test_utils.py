@@ -2,7 +2,7 @@
 
 from unittest import TestCase
 
-from cluster_errors import sortable_version
+from utils import sortable_version
 
 
 class TestSortableVersion(TestCase):

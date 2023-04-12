@@ -13,6 +13,8 @@ import warnings
 warnings.simplefilter(action='ignore', category=UserWarning)
 import pandas as pd
 
+from utils import sortable_version
+
 
 class ClusteredDataFrame(pd.DataFrame):
     __slots__ = [
@@ -130,7 +132,6 @@ class ClusteredDataFrame(pd.DataFrame):
         self._similarity_metric = method
 
     def cluster_errors(self, eps=0.5, min_samples=5):
-        print(f"Clustering with an epsilon of {eps}...")
         dbscan = DBSCAN(
             metric='precomputed',
             eps=eps,
@@ -147,6 +148,7 @@ class ClusteredDataFrame(pd.DataFrame):
 
         labels = dbscan.fit_predict(distance_matrix)
         self.loc[:, 'cluster_id'] = labels
+        self.sort_values('cluster_id', inplace=True)
 
     def get_cluster_summary(self):
         # create an empty dataframe to store the cluster summaries
@@ -175,5 +177,26 @@ class ClusteredDataFrame(pd.DataFrame):
             summary_df = pd.concat(
                 [summary_df, cluster_summary],
                 ignore_index=True)
+
+        tool_id = self['tool_id'].iloc[0]
+        summary_df['tool_id'] = [tool_id for i in range(len(summary_df))]
+        summary_df['last_seen'] = (
+            summary_df['cluster_id']
+            .apply(
+                lambda x:
+                    self.loc[self['cluster_id'] == x]
+                    .sort_values('create_time', ascending=False)['create_time']
+                    .iloc[0]
+            )
+        )
+        self['sortable_version'] = self['tool_version'].apply(sortable_version)
+        self.sort_values('sortable_version', inplace=True, ascending=False)
+        summary_df['latest_version'] = (
+            summary_df['cluster_id']
+            .apply(
+                lambda x: self.loc[self['cluster_id'] == x, 'tool_version'].iloc[0]
+            )
+        )
+        summary_df.sort_values('count', ascending=False, inplace=True)
         
         return summary_df
