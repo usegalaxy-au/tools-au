@@ -187,10 +187,14 @@ def fetch_tool_ids(strip: bool = False, limit: int = None) -> list[str]:
 def fetch_rows_for_tool(
         tool_id: str,
         error: bool = None,
-        limit: int = None) -> pd.DataFrame:
+        limit: int = None,
+        exact: bool = True) -> pd.DataFrame:
     """Fetch job rows from database for given tool_id (fuzzy)."""
     query = f"SELECT {','.join(COLUMNS)} FROM {TABLE_NAME}"
-    query += f" WHERE tool_id LIKE '%{tool_id}%' AND"
+    if exact:
+        query += f" WHERE tool_id = '{tool_id}' AND"
+    else:
+        query += f" WHERE tool_id LIKE '%{tool_id}%' AND"
     if error is True:
         query += " state = 'error'"
     if error is False:
