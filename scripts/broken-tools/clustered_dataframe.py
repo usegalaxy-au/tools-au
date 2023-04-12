@@ -159,9 +159,8 @@ class ClusteredDataFrame(pd.DataFrame):
 
         # loop over the cluster groups
         for cluster_id in self.cluster_id.unique():
-            if cluster_id == -1:
-                continue
-
+            # if cluster_id == -1:
+            #     continue
             cluster_indices = self.index[self.cluster_id == cluster_id]
             num_messages = len(cluster_indices)
             representative_error_index = self._similarity_matrix[
