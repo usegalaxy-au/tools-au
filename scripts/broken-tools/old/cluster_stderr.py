@@ -1,6 +1,10 @@
-"""Cluster stderr to enumerate errors per tool."""
+"""Cluster stderr to enumerate errors per tool.
 
-# cosine similarity
+This script creates clusters by comparing error strings using Levenshtein
+distance. Errors with a small distance are considered similar and will be added
+to the first cluster that is below a given distance cutoff. If no matching
+cluster is found, a new cluster is formed.
+"""
 
 import os
 import Levenshtein
