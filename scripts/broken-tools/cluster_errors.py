@@ -10,12 +10,26 @@ from fetch_jobs import GalaxyDB
 from clustered_dataframe import ClusteredDataFrame
 
 # Params
+# -----------------------------------------------------------------------------
+TOOL_ID_LIMIT = 10
+FETCH_JOBS_SINCE = datetime.fromisoformat('2022-01-01')
+
+# Be wary of inexact match - will likely result in redundant matches
+# e.g. "alphafold" will match toolshed, local and test alphafold jobs.
+EXACT_ID_MATCH = True
+
+# Clustering params
 EPSILON = 0.2
 CLUSTER_MIN_SAMPLES = 3
-TOOL_ID_LIMIT = 10
-FETCH_JOBS_SINCE = datetime.fromisoformat('2023-01-01')
-APPEND = False  # Append to summary file, if exists, otherwise overwrite
 
+# Append to the summary file, if exists, otherwise overwrite
+APPEND = False
+
+# Prefer cached job data before fetching from DB
+USE_CACHE = True
+
+# Paths
+# -----------------------------------------------------------------------------
 OUT_DIR = Path('data/dbscan')
 OUT_DIR_CLUSTERS = OUT_DIR / 'clusters'
 OUT_CACHE_DIR = OUT_DIR / 'cache'
@@ -28,7 +42,6 @@ OUTPUT_COLUMNS = [
     'last_seen',
     'representative_error',
 ]
-
 CLUSTER_OUTPUT_COLUMNS = [
     "create_time",
     "tool_id",
@@ -49,15 +62,16 @@ CLUSTER_OUTPUT_COLUMNS = [
 ]
 
 
-def get_data_for_id(db, tool_id, tool_id_safe):
+def get_data_for_id(db, tool_id, tool_id_safe, exact=True):
     """Fetch tool error data."""
     tool_data_path = OUT_CACHE_DIR / f'{tool_id_safe}.rows.csv'
-    if tool_data_path.exists():
+    if USE_CACHE and tool_data_path.exists():
         df = pd.read_csv(tool_data_path)
     else:
         df = db.fetch_rows_for_tool(
             tool_id,
             error=True,
+            exact=exact,
             since=FETCH_JOBS_SINCE,
         )
         df.to_csv(tool_data_path, index=False)
@@ -86,6 +100,7 @@ def main():
         os.makedirs(d, exist_ok=True)
 
     with GalaxyDB() as db:
+        # tool_id_list = ['toolshed.g2.bx.psu.edu/repos/iuc/pycoqc/pycoqc']
         tool_id_list = db.fetch_tool_ids(strip=True, limit=TOOL_ID_LIMIT)
 
         print(f"\nCollected {len(tool_id_list)} tool IDs to cluster.\n")
@@ -94,7 +109,12 @@ def main():
             tool_id_safe = tool_id.replace('/', '_')
             if data_exists_for_tool(tool_id):
                 continue
-            df = get_data_for_id(db, tool_id, tool_id_safe)
+            df = get_data_for_id(
+                db,
+                tool_id,
+                tool_id_safe,
+                exact=EXACT_ID_MATCH,
+            )
             if df.empty:
                 continue
 
