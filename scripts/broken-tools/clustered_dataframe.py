@@ -164,8 +164,12 @@ class ClusteredDataFrame(pd.DataFrame):
 
             cluster_indices = self.index[self.cluster_id == cluster_id]
             num_messages = len(cluster_indices)
-            representative_error_index = self._similarity_matrix[cluster_indices, :].sum(axis=0).argmax()
-            representative_error = self._error_messages[representative_error_index]
+            representative_error_index = self._similarity_matrix[
+                cluster_indices, :
+            ].sum(axis=0).argmax()
+            representative_error = self._error_messages[
+                representative_error_index
+            ]
 
             cluster_summary = pd.DataFrame({
                 'cluster_id': [cluster_id],
@@ -194,9 +198,13 @@ class ClusteredDataFrame(pd.DataFrame):
         summary_df['latest_version'] = (
             summary_df['cluster_id']
             .apply(
-                lambda x: self.loc[self['cluster_id'] == x, 'tool_version'].iloc[0]
+                lambda x:
+                    self.loc[
+                        self['cluster_id'] == x,
+                        'tool_version'
+                    ].iloc[0]
             )
         )
         summary_df.sort_values('count', ascending=False, inplace=True)
-        
+
         return summary_df
