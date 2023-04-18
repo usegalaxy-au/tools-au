@@ -194,7 +194,14 @@ class GalaxyDB:
         df_out['error:ok'] = (
             df_out['error']
             / df_out['ok'].apply(lambda x: x or 0.1)
+        ).round(2)
+        df_out['total'] = (
+            df_out['ok']
+            + df_out['paused']
+            + df_out['deleted']
+            + df_out['error']
         )
+
         fname = outfile or DEFAULT_OUTFILE
         df_out.to_csv(fname, index=True)
         print(f"\nTool status dataframe written to {fname}")
