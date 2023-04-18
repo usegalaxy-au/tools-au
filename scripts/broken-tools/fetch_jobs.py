@@ -120,7 +120,7 @@ class GalaxyDB:
             self.server.stop()
 
     def get_connection(self):
-        """Return a connection to the remote PG database.
+        """Return a connection to the remote postgres database.
 
         Can use an SSH tunnel but defaults to remote psql connection.
         """
@@ -159,7 +159,7 @@ class GalaxyDB:
         a user running multiple jobs in one day is counted only once. This
         eliminates inflated counts due to submission of collections.
 
-        Write output to CSV file with fields <tool_id, ok, paused, deleted,
+        Write output to CSV file with fields<tool_id, ok, paused, deleted,
         error, error:ok> where the last field is the ratio of errored jobs.
         """
         tool_status = {}
@@ -169,7 +169,7 @@ class GalaxyDB:
         for tool_id in tool_ids:
             print(f"\nFetching jobs for tool '{tool_id}'...")
             df = self.fetch_rows_for_tool(tool_id)
-            dff = self.flatten_rows(df)
+            dff = flatten_rows(df)
             tool_state_counts = (
                 dff.groupby('tool_id')
                 .agg({'state': 'value_counts'})
@@ -184,9 +184,8 @@ class GalaxyDB:
                         'paused': 0,
                         'deleted': 0,
                         'error': 0,
-                        'total_users': self.count_unique_users(df),
-                        'error_users': self.count_unique_users(
-                            df, state='error'),
+                        'total_users': count_unique_users(df),
+                        'error_users': count_unique_users(df, state='error'),
                     }
                 tool_status[tool_id][state] = count
 
@@ -205,18 +204,6 @@ class GalaxyDB:
         fname = outfile or DEFAULT_OUTFILE
         df_out.to_csv(fname, index=True)
         print(f"\nTool status dataframe written to {fname}")
-
-    def count_unique_users(self, df: pd.DataFrame, state: str = None) -> int:
-        """Return number of unique users for errored jobs."""
-        if state:
-            df = df.loc[df['state'] == state]
-        return df['user_id'].nunique()
-
-    def flatten_rows(self, df: pd.DataFrame) -> pd.DataFrame:
-        """Flatten dataframe to specified distinct fields."""
-        df['create_date'] = df['create_time'].apply(lambda x: x.date())
-        df = df.drop_duplicates(subset=FLATTEN_ROWS_ON, keep="first")
-        return df
 
     def fetch_tool_ids(
         self,
@@ -277,6 +264,20 @@ class GalaxyDB:
         df = pd.read_sql_query(query, self.conn)
         print(f"Fetched {len(df)} rows for tool ID {tool_id}")
         return df
+
+
+def count_unique_users(df: pd.DataFrame, state: str = None) -> int:
+    """Return number of unique users for errored jobs."""
+    if state:
+        df = df.loc[df['state'] == state]
+    return df['user_id'].nunique()
+
+
+def flatten_rows(df: pd.DataFrame) -> pd.DataFrame:
+    """Flatten dataframe to specified distinct fields."""
+    df['create_date'] = df['create_time'].apply(lambda x: x.date())
+    df = df.drop_duplicates(subset=FLATTEN_ROWS_ON, keep="first")
+    return df
 
 
 if __name__ == '__main__':
