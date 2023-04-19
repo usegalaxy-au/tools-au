@@ -45,6 +45,12 @@ FLATTEN_ROWS_ON = [
     'session_id',
     'state',
 ]
+DROP_JOB_STATES = [
+    'deleting',
+    'waiting',
+    'running',
+    'new',
+]
 
 REQUIRED_ENV_VARS = [
     'GALAXY_PG_JOB_TABLE',
@@ -160,7 +166,7 @@ class GalaxyDB:
         eliminates inflated counts due to submission of collections.
 
         Write output to CSV file with fields<tool_id, ok, paused, deleted,
-        error, error:ok> where the last field is the ratio of errored jobs.
+        error, error_ratio> where the last field is the ratio of errored jobs.
         """
         tool_status = {}
         tool_ids = self.fetch_tool_ids(strip=True, limit=limit)
@@ -177,29 +183,30 @@ class GalaxyDB:
             for multi_ix in tool_state_counts.index:
                 tool_id = multi_ix[0]
                 state = multi_ix[1]
+                if state in DROP_JOB_STATES:
+                    continue
                 count = tool_state_counts.loc[multi_ix, 'state']
                 if tool_id not in tool_status:
                     tool_status[tool_id] = {
                         'ok': 0,
-                        'paused': 0,
-                        'deleted': 0,
                         'error': 0,
+                        'total': len(df),
                         'total_users': count_unique_users(df),
                         'error_users': count_unique_users(df, state='error'),
                     }
-                tool_status[tool_id][state] = count
+                tool_status[tool_id][state] = count.astype(int)
 
         df_out = pd.DataFrame.from_dict(tool_status, orient='index')
-        df_out['error:ok'] = (
+        df_out['error_ratio'] = (
             df_out['error']
-            / df_out['ok'].apply(lambda x: x or 0.1)
+            / df_out['ok'].apply(lambda x: x or 0.1)  # Avoid zero-division
         ).round(2)
         df_out['total'] = (
             df_out['ok']
             + df_out['paused']
             + df_out['deleted']
             + df_out['error']
-        )
+        ).astype(int)
 
         fname = outfile or DEFAULT_OUTFILE
         df_out.to_csv(fname, index=True)

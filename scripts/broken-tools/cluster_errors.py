@@ -11,7 +11,7 @@ from clustered_dataframe import ClusteredDataFrame
 
 # Params
 # -----------------------------------------------------------------------------
-TOOL_ID_LIMIT = 10
+TOOL_ID_LIMIT = None
 FETCH_JOBS_SINCE = datetime.fromisoformat('2022-01-01')
 
 # Be wary of inexact match - will likely result in redundant matches
