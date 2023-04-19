@@ -1,0 +1,13 @@
+                                                                        Table "public.clusters"
+        Column        |            Type             | Collation | Nullable |               Default                | Storage  | Compression | Stats target | Description
+----------------------+-----------------------------+-----------+----------+--------------------------------------+----------+-------------+--------------+-------------
+ id                   | integer                     |           | not null | nextval('clusters_id_seq'::regclass) | plain    |             |              |
+ tool_id              | character varying(200)      |           |          |                                      | extended |             |              |
+ latest_version       | character varying(100)      |           |          |                                      | extended |             |              |
+ cluster_id           | integer                     |           |          |                                      | plain    |             |              |
+ count                | integer                     |           |          |                                      | plain    |             |              |
+ last_seen            | timestamp without time zone |           |          |                                      | plain    |             |              |
+ representative_error | character varying           |           |          |                                      | extended |             |              |
+Indexes:
+    "clusters_pkey" PRIMARY KEY, btree (id)
+Access method: heap

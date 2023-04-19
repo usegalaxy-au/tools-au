@@ -1,0 +1,40 @@
+
+                                                                         Table "public.jobs"
+         Column         |            Type             | Collation | Nullable |             Default              | Storage  | Compression | Stats target | Description
+------------------------+-----------------------------+-----------+----------+----------------------------------+----------+-------------+--------------+-------------
+ id                     | integer                     |           | not null | nextval('jobs_id_seq'::regclass) | plain    |             |              |
+ create_time            | timestamp without time zone |           |          |                                  | plain    |             |              |
+ update_time            | timestamp without time zone |           |          |                                  | plain    |             |              |
+ history_id             | integer                     |           |          |                                  | plain    |             |              |
+ tool_id                | character varying(200)      |           |          |                                  | extended |             |              |
+ tool_version           | character varying(100)      |           |          |                                  | extended |             |              |
+ state                  | character varying(200)      |           |          |                                  | extended |             |              |
+ info                   | character varying(5000)     |           |          |                                  | extended |             |              |
+ command_line           | character varying           |           |          |                                  | extended |             |              |
+ param_filename         | character varying(1000)     |           |          |                                  | extended |             |              |
+ runner_name            | character varying(1000)     |           |          |                                  | extended |             |              |
+ tool_stdout            | character varying           |           |          |                                  | extended |             |              |
+ tool_stderr            | character varying           |           |          |                                  | extended |             |              |
+ traceback              | character varying           |           |          |                                  | extended |             |              |
+ session_id             | integer                     |           |          |                                  | plain    |             |              |
+ job_runner_name        | character varying(200)      |           |          |                                  | extended |             |              |
+ job_runner_external_id | integer                     |           |          |                                  | plain    |             |              |
+ library_folder_id      | character varying(200)      |           |          |                                  | extended |             |              |
+ user_id                | integer                     |           |          |                                  | plain    |             |              |
+ imported               | character varying(200)      |           |          |                                  | extended |             |              |
+ object_store_id        | character varying(200)      |           |          |                                  | extended |             |              |
+ params                 | character varying(100000)   |           |          |                                  | extended |             |              |
+ handler                | character varying(200)      |           |          |                                  | extended |             |              |
+ exit_code              | integer                     |           |          |                                  | plain    |             |              |
+ destination_id         | character varying(100)      |           |          |                                  | extended |             |              |
+ destination_params     | character varying(10000)    |           |          |                                  | extended |             |              |
+ dependencies           | character varying           |           |          |                                  | extended |             |              |
+ copied_from_job_id     | character varying(200)      |           |          |                                  | extended |             |              |
+ job_messages           | character varying           |           |          |                                  | extended |             |              |
+ job_stdout             | character varying           |           |          |                                  | extended |             |              |
+ job_stderr             | character varying           |           |          |                                  | extended |             |              |
+ dynamic_tool_id        | character varying(200)      |           |          |                                  | extended |             |              |
+ galaxy_version         | character varying(20)       |           |          |                                  | extended |             |              |
+Indexes:
+    "jobs_pkey" PRIMARY KEY, btree (id)
+Access method: heap

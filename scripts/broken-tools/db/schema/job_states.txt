@@ -1,0 +1,12 @@
+                                                                 Table "public.job_states"
+   Column    |          Type          | Collation | Nullable |                Default                 | Storage  | Compression | Stats target | Description
+-------------+------------------------+-----------+----------+----------------------------------------+----------+-------------+--------------+-------------
+ id          | integer                |           | not null | nextval('job_states_id_seq'::regclass) | plain    |             |              |
+ tool_id     | character varying(200) |           |          |                                        | extended |             |              |
+ ok          | integer                |           |          |                                        | plain    |             |              |
+ total       | integer                |           |          |                                        | plain    |             |              |
+ error       | integer                |           |          |                                        | plain    |             |              |
+ error_ratio | numeric(8,2)           |           |          |                                        | main     |             |              |
+Indexes:
+    "job_states_pkey" PRIMARY KEY, btree (id)
+Access method: heap
