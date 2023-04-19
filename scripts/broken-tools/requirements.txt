@@ -1,4 +1,8 @@
 pandas
+numpy
 psycopg2-binary
 python-dotenv
 sshtunnel
+nltk
+sklearn
+Levenshtein
