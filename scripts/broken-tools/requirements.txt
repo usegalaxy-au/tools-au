@@ -4,5 +4,5 @@ psycopg2-binary
 python-dotenv
 sshtunnel
 nltk
-sklearn
+scikit-learn
 Levenshtein
