@@ -207,3 +207,11 @@ class ClusteredDataFrame(pd.DataFrame):
         summary_df.sort_values('count', ascending=False, inplace=True)
 
         return summary_df
+
+
+if __name__ == '__main__':
+    import sys
+    if '--download' in sys.argv:
+        download('stopwords')
+        download('wordnet')
+        download('punkt')
