@@ -6,7 +6,7 @@
     </xrefs>
 
     <macros>
-        <token name="@TOOL_VERSION@">1.2.2</token>
+        <token name="@TOOL_VERSION@">1.2.4</token>
         <token name="@VERSION_SUFFIX@">0</token>
         <token name="@PORT@">8888</token>
     </macros>
@@ -22,7 +22,8 @@
     </edam_operations>
 
     <requirements>
-        <container type="docker">haileyzhang/lfq-analyst:v1.2.2</container>
+        <!-- Galaxy version is not yet version-tagged. -->
+        <container type="docker">haileyzhang/lfq-analyst:v@TOOL_VERSION@_galaxy</container>
     </requirements>
 
     <entry_points>
@@ -32,19 +33,34 @@
         </entry_point>
     </entry_points>
 
+    <!-- Should be able to specify SHINY_HOST and SHINY_PORT in
+    <environment_variables>. --> 
+
     <command detect_errors="exit_code"><![CDATA[
 
-cd /srv/shiny-server/lfq-analyst
-R -e "shiny::runApp('.', port=@PORT@, host='0.0.0.0')"
+cp '$run_lfqanalyst' '$outfile' &&
+cd /srv/shiny-server/lfq-analyst &&
+Rscript '$run_lfqanalyst'
 
     ]]></command>
 
+    <configfiles>
+        <configfile name="run_lfqanalyst"><![CDATA[
+## wrapper to run LFQAnalyst from the shiny-server directory
+source('runApp.R')
+LFQAnalyst(protein_path="$protein_groups", exp_path="$design")
+
+        ]]></configfile>
+    </configfiles>
+
     <inputs>
-        <!-- TODO: figure out how to hook up Galaxy inputs to LFQ-Analyst -->
-        <!-- <param name="protein_groups" type="data" format="txt" label="ProteinGroups.txt" help="" /> -->
+        <param name="protein_groups" type="data" format="txt" label="ProteinGroups.txt" help="" />
+        <param name="design" type="data" format="txt" label="Experimental Design Matrix" help="" />
     </inputs>
 
     <outputs>
+        <data name="outfile" format="txt"
+          label="${tool.name} on ${on_string}: Rscript" />
     </outputs>
 
     <tests>
