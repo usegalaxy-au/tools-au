@@ -27,9 +27,8 @@
     </requirements>
 
     <entry_points>
-        <entry_point name="LFQ-Analyst proteomics analysis" requires_domain="true">
+        <entry_point name="LFQ-Analyst proteomics analysis" requires_domain="False">
             <port>@PORT@</port>
-            <url>/lfq-analyst</url>
         </entry_point>
     </entry_points>
 
@@ -48,6 +47,8 @@ Rscript '$run_lfqanalyst'
         <configfile name="run_lfqanalyst"><![CDATA[
 ## wrapper to run LFQAnalyst from the shiny-server directory
 source('runApp.R')
+options(shiny.port=@PORT@)
+
 LFQAnalyst(protein_path="$protein_groups", exp_path="$design")
 
         ]]></configfile>
