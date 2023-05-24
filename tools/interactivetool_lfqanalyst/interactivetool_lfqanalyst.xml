@@ -27,7 +27,6 @@
     <entry_points>
         <entry_point name="LFQ-Analyst proteomics analysis" requires_domain="True">
             <port>@PORT@</port>
-            <url>/</url>
         </entry_point>
     </entry_points>
 
