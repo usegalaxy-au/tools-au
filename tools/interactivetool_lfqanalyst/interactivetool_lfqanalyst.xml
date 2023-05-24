@@ -11,8 +11,6 @@
         <token name="@PORT@">8888</token>
     </macros>
 
-    <!-- TODO: please annotate this tool with topics and operations from http://edamontology.org -->
-    <!-- TODO: for more information see: https://galaxy-iuc-standards.readthedocs.io/en/latest/best_practices/tool_xml.html#edam-topics-and-operations -->
     <edam_topics>
         <edam_topic>topic_0121</edam_topic>
     </edam_topics>
@@ -22,8 +20,8 @@
     </edam_operations>
 
     <requirements>
-        <!-- Galaxy version is not yet version-tagged. -->
-        <container type="docker">haileyzhang/lfq-analyst:v@TOOL_VERSION@_galaxy</container>
+        <!-- this container has port 8888 exposed -->
+        <container type="docker">ghcr.io/tomharrop/container-lfq-analyst:v@TOOL_VERSION@_galaxy</container>
     </requirements>
 
     <entry_points>
@@ -32,9 +30,6 @@
             <url>/</url>
         </entry_point>
     </entry_points>
-
-    <!-- Should be able to specify SHINY_HOST and SHINY_PORT in
-    <environment_variables>. --> 
 
     <command detect_errors="exit_code"><![CDATA[
 
