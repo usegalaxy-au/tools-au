@@ -1,4 +1,4 @@
-<tool id="interactive_tool_lfqanalyst" name="LFQ Analyst" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01" license="MIT">
+<tool id="interactive_tool_lfqanalyst" tool_type="interactive" name="LFQ Analyst" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01" license="MIT">
     <description>Analyze and Visualize Label-Free Proteomics output from MaxQuant</description>
 
     <xrefs>
