@@ -1,0 +1,563 @@
+#This is a sample file that enables the diamind to find the protein databases
+#You will need to create these data files and then create
+#a diamond_database.loc file similar to this one (store it in this directory)
+#that points to the directories in which those files are stored.
+#The diamond_database_indices.loc file has this format (longer white space characters are TAB characters):
+#
+#So, for example:
+#value	name	path
+celegans	celegans_matrix (2022-09-30)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/C_elegans_nGASP
+CheloniaMydas	Chelonia_mydas_matrix (2022-09-30)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/Chelonia_mydas.mpar.dat
+chicken	chicken_matrix (2022-12-21)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/Chicken.dat
+Acinonyx_jubatus	Acinonyx jubatus ( Cheetah )	Acinonyx_jubatus.mpar.dat
+Ailuropoda_melanoleuca	Ailuropoda melanoleuca ( Giant panda )	Ailuropoda_melanoleuca.mpar.dat
+Aotus_nancymaae	Aotus nancymaae ( Ma's night monkey, Aotus nancymai )	Aotus_nancymaae.mpar.dat
+Apodemus_sylvaticus	Apodemus sylvaticus ( wood mouse )	Apodemus_sylvaticus.mpar.dat
+Balaena_mysticetus	Balaena mysticetus ( bowhead whale )	Balaena_mysticetus.mpar.dat
+Balaenoptera_acutorostrata	Balaenoptera acutorostrata ( common minke whale or northern minke whale )	Balaenoptera_acutorostrata.mpar.dat
+Bison_bison	Bison bison ( American bison )	Bison_bison.mpar.dat
+Bos_mutus	Bos mutus ( wild yak )	Bos_mutus.mpar.dat
+Bos_taurus	Bos taurus ( cattle )	Bos_taurus.dat
+Bubalus_bubalis	Bubalus bubalis ( Water buffalo )	Bubalus_bubalis.mpar.dat
+Callitrix_jacchus	Callitrix jacchus ( White-tufted-ear marmoset )	Callitrix_jacchus.mpar.dat
+Camelus_bactrianus	Camelus bactrianus ( Bactrian camel )	Camelus_bactrianus.mpar.dat
+Camelus_dromedarius	Camelus dromedarius ( Arabian camel )	Camelus_dromedarius.mpar.dat
+Canis_lupus	Canis lupus ( gray wolf )	Canis_lupus.mpar.dat
+Capra_hircus	Capra hircus ( Goat )	Capra_hircus.mpar.dat
+Ceratotherium_simum	Ceratotherium simum ( White rhinoceros )	Ceratotherium_simum.mpar.dat
+Cerocebus_atys	Cerocebus atys ( Sooty mangabey )	Cerocebus_atys.mpar.dat
+Chinchilla_lanigera	Chinchilla lanigera ( Long-tailed chinchilla )	Chinchilla_lanigera.mpar.dat
+Chlorocebus_sabaeus	Chlorocebus sabaeus ( Green monkey )	Chlorocebus_sabaeus.mpar.dat
+Choloepus_hoffmanni	Choloepus hoffmanni ( Hoffmann's two-fingered sloth )	Choloepus_hoffmanni.mpar.dat
+Chrysochloris_asiatica	Chrysochloris asiatica ( Cape golden mole )	Chrysochloris_asiatica.mpar.dat
+Colobus_angolensis	Colobus angolensis ( Angolan colobus )	Colobus_angolensis.mpar.dat
+Condylura_cristata	Condylura cristata ( Star-nosed mole )	Condylura_cristata.mpar.dat
+Cricetulus_griseus	Cricetulus griseus ( Chinese hamster )	Cricetulus_griseus.mpar.dat
+Dasypus_novemcinctus	Dasypus novemcinctus ( Nine-banded armadillo )	Dasypus_novemcinctus.mpar.dat
+Dipodomys_ordii	Dipodomys ordii ( Kangaroo rat )	Dipodomys_ordii.mpar.dat
+Elephantulus_edwardii	Elephantulus edwardii ( Cape long-eared elephant shrew )	Elephantulus_edwardii.mpar.dat
+Eptesicus_fuscus	Eptesicus fuscus ( Big brown bat )	Eptesicus_fuscus.mpar.dat
+Erinaceus_europaeus	Erinaceus europaeus ( hedgehog )	Erinaceus_europaeus.mpar.dat
+Felis_catus	Felis catus ( domestic cat )	Felis_catus.mpar.dat
+Fox	Fox ( Fox generic )	Fox.mpar.dat
+Fukomys_damarensis	Fukomys damarensis ( Damaraland mole-rat, Damara mole rat, Damaraland blesmol )	Fukomys_damarensis.mpar.dat
+Galeopterus_variegatus	Galeopterus variegatus ( Sunda flying lemur, Malayan flying lemur, Sunda Colugo or Malayan colugo )	Galeopterus_variegatus.mpar.dat
+Gorilla_gorilla	Gorilla gorilla ( Western gorilla )	Gorilla_gorilla.mpar.dat
+Heterocephalus_glaber	Heterocephalus glaber ( naked mole-rat, sand puppy, desert mole rat )	Heterocephalus_glaber.mpar.dat
+Human	Human ( Homo sapiens )	Human.dat
+Ictidomys_tridecemlineatus	Ictidomys tridecemlineatus ( thirteen-lined ground squirrel,striped gopher )	Ictidomys_tridecemlineatus.mpar.dat
+Jaculus_jaculus	Jaculus jaculus ( lesser Egyptian jerboa )	Jaculus_jaculus.mpar.dat
+Leptonychotes_weddellii	Leptonychotes weddellii ( Weddell seal )	Leptonychotes_weddellii.mpar.dat
+Lipotes_vexillifer	Lipotes vexillifer ( baiji, Chinese river dolphin )	Lipotes_vexillifer.mpar.dat
+Lynx_pardinus	Lynx pardinus ( Iberian lynx )	Lynx_pardinus.mpar.dat
+Macaca_mulatta	Macaca mulatta (Rhesus monkey)	Macaca_mulatta.mpar.dat
+Mandrillus_leucophaeus	Mandrillus leucophaeus ( drill )	Mandrillus_leucophaeus.mpar.dat
+Manis_pentadactyla	Manis pentadactyla ( Chinese pangolin )	Manis_pentadactyla.mpar.dat
+Marmota_marmota	Marmota marmota ( alpine marmot )	Marmota_marmota.mpar.dat
+Monodelphis_domestica	Monodelphis domestica ( gray short-tailed opossum )	Monodelphis_domestica.mpar.dat
+Mouse	Mouse (generic)	Mouse.dat
+Mustela_putorius	Mustela putorius ( European Polecat )	Mustela_putorius.mpar.dat
+Myotis_lucifugus	Myotis lucifugus ( Little brown bat )	Myotis_lucifugus.mpar.dat
+Nomascus_leucogenys	Nomascus leucogenys ( gibbon )	Nomascus_leucogenys.mpar.dat
+Ochotona_princeps	Ochotona princeps ( American pika )	Ochotona_princeps.mpar.dat
+Ornithorhynchus_anatinus	Ornithorhynchus anatinus ( Platypus )	Ornithorhynchus_anatinus.mpar.dat
+Oryctolagus_cuniculus	Oryctolagus cuniculus ( European rabbit )	Oryctolagus_cuniculus.mpar.dat
+Otolemur_garnettii	Otolemur garnettii ( Northern greater galago, small-eared galago )	Otolemur_garnettii.mpar.dat
+Pan_troglodytes	Pan troglodytes ( Common chimpanzee )	Pan_troglodytes.mpar.dat
+Procavia_capensis	Procavia capensis ( Rock hyrax )	Procavia_capensis.mpar.dat
+Pteropus_vampyrus	Pteropus vampyrus ( Large flying fox )	Pteropus_vampyrus.mpar.dat
+Sarcophilus_harrisii	Sarcophilus harrisii ( Tasmanian devil )	Sarcophilus_harrisii.mpar.dat
+Sorex_araneus	Sorex araneus ( Common shrew )	Sorex_araneus.mpar.dat
+Vicugna_pacos	Vicugna pacos ( alpaca )	Vicugna_pacos.mpar.dat	
+Acanthisitta_chloris	Acanthisitta chloris ( Rifleman )	Acanthisitta_chloris.mpar.dat
+Anas_platyrhynchos	Anas platyrhynchos ( Mallard )	Anas_platyrhynchos.mpar.dat
+Anser_cygnoides	Anser cygnoides ( Swan goose, Chinese goose )	Anser_cygnoides.mpar.dat
+Aptenodytes_forsteri	Aptenodytes forsteri ( Emperor penguin )	Aptenodytes_forsteri.mpar.dat
+Apteryx_australis	Apteryx australis ( Brown kiwi )	Apteryx_australis.mpar.dat
+Aquila_chrysaetos	Aquila chrysaetos ( Golden eagle )	Aquila_chrysaetos.mpar.dat
+Buceros_rhinoceros	Buceros rhinoceros ( Rhinoceros hornbill )	Buceros_rhinoceros.mpar.dat
+Calidris_pugnax	Calidris pugnax ( Ruff, Philomachus pugnax )	Calidris_pugnax.mpar.dat
+Calypte_anna	Calypte anna ( Anna's hummingbird )	Calypte_anna.mpar.dat
+Caprimulgus_carolinensis	Caprimulgus carolinensis ( Chuck-will's-widow )	Caprimulgus_carolinensis.mpar.dat
+Cariama_cristata	Cariama cristata ( Red-legged seriema )	Cariama_cristata.mpar.dat
+Chaetura_pelagica	Chaetura pelagica ( Chimney swift )	Chaetura_pelagica.mpar.dat
+Charadrius_vociferus	Charadrius vociferus ( Killdeer )	Charadrius_vociferus.mpar.dat
+Chicken	Chicken (Aves generic)	Chicken.dat
+Chlamydotis_macqueenii	Chlamydotis macqueenii ( MacQueen's bustard )	Chlamydotis_macqueenii.mpar.dat
+Colius_striatus	Colius striatus ( Speckled mousebird )	Colius_striatus.mpar.dat
+Columba_livia	Columba livia ( Rock pigeon )	Columba_livia.mpar.dat
+Corvus_brachyrhynchos	Corvus brachyrhynchos ( American crow )	Corvus_brachyrhynchos.mpar.dat
+Cuculus_canorus	Cuculus canorus ( Common cuckoo )	Cuculus_canorus.mpar.dat
+Egretta_garzetta	Egretta garzetta ( Little egret )	Egretta_garzetta.mpar.dat
+Falco_cherrug	Falco cherrug ( Saker falcon )	Falco_cherrug.mpar.dat
+Ficedula_albicollis	Ficedula albicollis ( collared flycatcher )	Ficedula_albicollis.mpar.dat
+Geospiza_fortis	Geospiza fortis ( medium ground finch )	Geospiza_fortis.mpar.dat
+Haliaeetus_leucocephalus	Haliaeetus leucocephalus ( bald eagle )	Haliaeetus_leucocephalus.mpar.dat
+Manacus_vitellinus	Manacus vitellinus ( golden-collared manakin )	Manacus_vitellinus.mpar.dat
+Meleagris_gallopavo	Meleagris gallopavo ( Wild Turkey )	Meleagris_gallopavo.mpar.dat	
+Amphilophus_citrinellus	Amphilophus citrinellus ( Midas cichlid, red devil cichlid )	Amphilophus_citrinellus.mpar.dat
+Anguilla_anguilla	Anguilla anguilla ( European eel, 109 genes )	Anguilla_anguilla.mpar.dat
+Anoplopoma_fimbria	Anoplopoma fimbria ( sablefish )	Anoplopoma_fimbria.mpar.dat
+Astyanax_mexicanus	Astyanax mexicanus ( Mexican tetra or blind cave fish )	Astyanax_mexicanus.mpar.dat
+Austrofundulus_limnaeus	Austrofundulus_limnaeus ( bony fishes )	Austrofundulus_limnaeus.mpar.dat
+Boleophthalmus_pectinirostris	Boleophthalmus pectinirostris ( great blue-spotted mudskipper, 122 genes )	Boleophthalmus_pectinirostris.mpar.dat
+Callorhinchus_milii	Callorhinchus milii ( Elephant shark )	Callorhinchus_milii.mpar.dat
+Clupea_harengus	Clupea harengus ( Atlantic herring )	Clupea_harengus.mpar.dat
+Cottus_rhenanus	Cottus rhenanus ( small benthic Rhine sculpin )	Cottus_rhenanus.mpar.dat
+Ctenopharyngodon_idella	Ctenopharyngodon idella ( grass carp )	Ctenopharyngodon_idella.mpar.dat
+Cynoglossus_semilaevis	Cynoglossus semilaevis ( Tonguefish )	Cynoglossus_semilaevis.mpar.dat
+Cyprinodon	Cyprinodon ( Cyprinodon_nevadensis+variega )	Cyprinodon.mpar.dat
+Cyprinus_carpio	Cyprinus carpio ( mirror carp, common carp )	Cyprinus_carpio.mpar.dat
+Danio_rerio_3	Danio rerio ( Zebrafish, additional variant )	Danio_rerio_3.mpar.dat
+Danio_rerio_1	Danio rerio ( Zebrafish, leopard danio )	Danio_rerio_1.mpar.dat
+Dicentrarchus_labrax	Dicentrarchus labrax ( European seabass )	Dicentrarchus_labrax.mpar.dat
+Esox_lucius	Esox lucius ( northern pike )	Esox_lucius.mpar.dat
+Fish	Fish	Fish.dat
+Fundulus_heteroclitus	Fundulus heteroclitus ( Mummichog, killifish )	Fundulus_heteroclitus.mpar.dat
+Gadus_morhua	Gadus morhua ( Atlantic cod )	Gadus_morhua.mpar.dat
+Gasterosteus_aculeatus	Gasterosteus aculeatus ( Three-spined stickleback )	Gasterosteus_aculeatus.mpar.dat
+Haplochromis_burtoni	Haplochromis burtoni ( Burton's mouthbrooder )	Haplochromis_burtoni.mpar.dat
+Larimichthys_crocea	Larimichthys crocea ( large yellow croaker )	Larimichthys_crocea.mpar.dat
+Latimeria_chalumnae	Latimeria chalumnae ( coelacanth )	Latimeria_chalumnae.mpar.dat
+Lepisosteus_oculatus	Lepisosteus oculatus ( spotted gar )	Lepisosteus_oculatus.mpar.dat
+Neolamprologus_brichardi	Neolamprologus brichardi ( Lyretail cichlid, Princess of Burundi )	Neolamprologus_brichardi.mpar.dat
+Notothenia_coriiceps	Notothenia coriiceps ( yellowbelly rockcod, black rockcod )	Notothenia_coriiceps.mpar.dat
+Oncorhynchus_mykiss	Oncorhynchus mykiss ( rainbow trout )	Oncorhynchus_mykiss.mpar.dat
+Oreochromis_niloticus	Oreochromis niloticus ( African cichlid )	Oreochromis_niloticus.mpar.dat
+Oryzias_latipes	Oryzias latipes ( Japanese rice fish )	Oryzias_latipes.mpar.dat
+Petromyzon_marinus	Petromyzon marinus ( Sea lamprey )	Petromyzon_marinus.mpar.dat
+Takifugu_rubripes	Takifugu rubripes ( Torafugu )	Takifugu_rubripes.mpar.dat
+Tetraodon_nigroviridis	Tetraodon nigroviridis ( Spotted green pufferfish )	Tetraodon_nigroviridis.mpar.dat	
+Alligator_mississippiensis	Alligator mississippiensis ( American alligator )	Alligator_mississippiensis.mpar.dat
+Alligator_sinensis	Alligator sinensis ( Chinese alligator )	Alligator_sinensis.mpar.dat
+Anolis_carolinensis	Anolis carolinensis ( Green anole, Carolina anole )	Anolis_carolinensis.mpar.dat
+Chelonia_mydas	Chelonia mydas ( Green sea turtle )	Chelonia_mydas.mpar.dat
+Chrysemys_picta	Chrysemys picta ( Painted turtle )	Chrysemys_picta.mpar.dat
+Xenopodinae	Xenopus ( generic, frog )	Xenopodinae.dat		
+Branchiostoma_floridae	Branchiostoma floridae ( lancelet )	Branchiostoma_floridae.mpar.dat
+Strongylocentrotus_purpuratus	Strongylocentrotus purpuratus ( sea urchin )	Strongylocentrotus_purpuratus.mpar.dat
+Strongylocentrotus_purpuratus	Strongylocentrotus purpuratus ( sea urchin, additional variant )	Strongylocentrotus_purpuratus.dat	
+Acromyrmex_echinatior	Acromyrmex echinatior ( Panamanian leaf-cutter ant )	Acromyrmex_echinatior.mpar.dat
+Acyrthosiphon_pisum	Acyrthosiphon pisum ( pea aphid )	Acyrthosiphon_pisum.mpar.dat
+Aedes_aegypti	Aedes aegypti ( yellow fever mosquito )	Aedes_aegypti.mpar.dat
+Anopheles_gambiae	Anopheles gambiae ( malaria mosquito )	Anopheles_gambiae.dat
+Honey_bee	Apis (generic, apis )	Honey_bee.dat
+Apis_dorsata	Apis dorsata ( giant honey bee )	Apis_dorsata.mpar.dat
+Apis_florea	Apis florea ( red dwarf honey bee )	Apis_florea.mpar.dat
+Athalia_rosae	Athalia rosae ( turnip sawfly )	Athalia_rosae.mpar.dat
+Atta_cephalotes	Atta cephalotes ( leaf cutting ant )	Atta_cephalotes.mpar.dat
+Bactrocera_cucurbitae	Bactrocera cucurbitae ( melon fly )	Bactrocera_cucurbitae.mpar.dat
+Bactrocera_dorsalis	Bactrocera dorsalis ( oriental fruit fly )	Bactrocera_dorsalis.mpar.dat
+Bombus_impatiens	Bombus impatiens ( common eastern bumble bee )	Bombus_impatiens.mpar.dat
+Bombus_terrestris	Bombus terrestris ( buff-tailed bumble bee )	Bombus_terrestris.mpar.dat
+Bombyx_mori	Bombyx mori ( silkworm )	Bombyx_mori.mpar.dat
+Cerataphis_brasiliensis	Cerataphis brasiliensis ( Palm Aphid )	Cerataphis_brasiliensis.mpar.dat
+Culex	Culex ( generic, culex )	Culex.dat
+Danaus_plexippus	Danaus plexippus ( butterfly )	Danaus_plexippus.mpar.dat
+Drosophila	Drosophila (generic, fruit fly)	Drosophila.dat
+Heliconius_melpomene	Heliconius melpomene ( postman butterfly )	Heliconius_melpomene.mpar.dat
+Nasonia_vitripennis_1	Nasonia vitripennis ( parasitoid wasp )	Nasonia_vitripennis_1.dat
+Nasonia_vitripennis_3	Nasonia vitripennis ( parasitoid wasp, additional variant )	Nasonia_vitripennis_3.mpar.dat
+Nilaparvata_lugens	Nilaparvata lugens ( brown planthopper )	Nilaparvata_lugens.mpar.dat
+Pediculus_humanus	Pediculus humanus ( human louse )	Pediculus_humanus.mpar.dat
+Tribolium_castaneum	Tribolium castaneum ( red flour beetle )	Tribolium_castaneum.dat
+Daphnia_pulex	Daphnia pulex ( water flea )	Daphnia_pulex.mpar.dat
+Ixodes_scapularis	Ixodes scapularis ( deer tick )	Ixodes_scapularis.mpar.dat
+Strigamia_maritima	Strigamia maritima ( centipede )	Strigamia_maritima.mpar.dat
+Brugia_malayi	Brugia malayi ( parasitic nematode )	Brugia_malayi.dat
+C_brenneri	Caenorhabditis brenneri	C_brenneri.mpar.dat
+C_elegans	Caenorhabditis elegans ( C.elegans )	C_elegans.dat
+Pristionchus_pacificus	Pristionchus pacificus ( nematode )	Pristionchus_pacificus.mpar.dat
+Trichinella_spiralis	Trichinella spiralis ( parasitic nematode )	Trichinella_spiralis.mpar.dat
+Amphimedon_queenslandica	Amphimedon queenslandica ( sponge )	Amphimedon_queenslandica.mpar.dat
+Aplysia_californica	Aplysia californica ( california sea hare )	Aplysia_californica.mpar.dat
+Mnemiopsis_leidyi	Mnemiopsis leidyi ( warty comb jelly )	Mnemiopsis_leidyi.mpar.dat
+Nematostella_vectensis	Nematostella vectensis ( sea anemone )	Nematostella_vectensis.mpar.dat
+Schistosoma_mansoni	Schistosoma mansoni ( parasitic trematode )	Schistosoma_mansoni.mpar.dat
+Trichoplax_adhaerens	Trichoplax adhaerens (placozoans)	Trichoplax_adhaerens.mpar.dat
+Actinidia_chinensis	Actinidia chinensis ( fruit tree and medicinal plant )	Actinidia_chinensis.mpar.dat
+Aethionema_arabicum	Aethionema arabicum	Aethionema_arabicum.mpar.dat
+Amborella_trichopoda	Amborella trichopoda ( rare understory shrub )	Amborella_trichopoda.mpar.dat
+Arabidopsis_thaliana	Arabidopsis thaliana( rockcress, thale cress )	Arabidopsis_thaliana.mpar.dat
+Arabis	Arabis ( generic, Arabis alpina+montbretiana+nordmanniana )	Arabis.mpar.dat
+Arachis_duranensis	Arachis duranensis ( Arachis spegazzinii )	Arachis_duranensis.mpar.dat
+Beta_vulgaris	Beta vulgaris ( beet )	Beta_vulgaris.mpar.dat
+Betula_nana	Betula nana ( alpine birch )	Betula_nana.mpar.dat
+Brassica_rapa	Brassica rapa ( turnip, field mustard )	Brassica_rapa.mpar.dat
+Cajanus_cajan	Cajanus cajan ( pigeon pea )	Cajanus_cajan.mpar.dat
+Camelina_sativa	Camelina sativa ( false flax, gold-of-pleasure )	Camelina_sativa.mpar.dat
+Cannabis	Cannabis	Cannabis.mpar.dat
+Capsella_rubella	Capsella rubella ( pink shepherd's-purse )	Capsella_rubella.mpar.dat
+Capsicum_annuum	Capsicum annuum ( chilli pepper, bell pepper, paprika, cayenne, halapenos )	Capsicum_annuum.mpar.dat
+Castanea_mollissima	Castanea mollissima ( Chinese chestnut )	Castanea_mollissima.mpar.dat
+Catharanthus_roseus	Catharanthus roseus ( Madagascar periwinkle , old-maid, chula, chatas )	Catharanthus_roseus.mpar.dat
+Cicer_arietinum	Cicer arietinum ( chickpea )	Cicer_arietinum.mpar.dat
+Citrullus_lanatus	Citrullus lanatus ( wild melon )	Citrullus_lanatus.mpar.dat
+Citrus_sinensis	Citrus sinensis ( sweet orange )	Citrus_sinensis.mpar.dat
+Coffea_canephora	Coffea canephora ( robusta coffee )	Coffea_canephora.mpar.dat
+Conyza_canadensis	Conyza canadensis ( horseweed )	Conyza_canadensis.mpar.dat
+Cucumis_melo	Cucumis melo ( muskmelon )	Cucumis_melo.mpar.dat
+Cynara_cardunculus	Cynara cardunculus ( cardoon )	Cynara_cardunculus.mpar.dat
+Daucus_carota	Daucus carota ( carrot )	Daucus_carota.mpar.dat
+Dianthus_caryophyllus	Dianthus caryophyllus ( clove pink, carnation )	Dianthus_caryophyllus.mpar.dat
+Dicot	Dicot plants, Arabidopsis ( generic )	Dicot.dat
+Erythranthe_guttata	Erythranthe guttata ( spotted monkey flower )	Erythranthe_guttata.mpar.dat
+Eucalyptis_grandis	Eucalyptis grandis ( rose gum )	Eucalyptis_grandis.mpar.dat
+Eutrema	Eutrema ( generic, Eutrema halophilum+parvulum+salsugineum )	Eutrema.mpar.dat
+Fragaria_vesca	Fragaria vesca ( wild strawberry )	Fragaria_vesca.mpar.dat
+Fraxinus_excelsior	Fraxinus excelsior ( European ash )	Fraxinus_excelsior.mpar.dat
+Genlisea_aurea	Genlisea aurea ( Genlisea minor, Genlisea ornata )	Genlisea_aurea.mpar.dat
+Glycine_max	Glycine max ( soybean )	Glycine_max.mpar.dat
+Gossypium	Gossypium ( generic, Gossypium arboreum+hirsutum )	Gossypium.mpar.dat
+Gossypium_raimondii	Gossypium raimondii ( diploid cotton )	Gossypium_raimondii.mpar.dat
+Sunflower	Helianthus ( Sonflower, generic )	Sunflower.mpar.dat
+Hevea	Hevea ( rubber tree, Hevea brasiliensis )	Hevea.dat
+Humulus_lupulus	Humulus lupulus ( european hop, common hop )	Humulus_lupulus.mpar.dat
+Sweet_potato	Ipomoea batatas ( sweet potato )	Sweet_potato.mpar.dat
+Ipomoea_nil	Ipomoea nil ( Japanese morning glory, qian niu )	Ipomoea_nil.mpar.dat
+Ipomoea_trifida	Ipomoea trifida ( wild sweet potato )	Ipomoea_trifida.mpar.dat
+Jatropha_curcas	Jatropha curcas ( Barbados nut, purging nut, physic nut, JCL )	Jatropha_curcas.mpar.dat
+Juglans_regia	Juglans regia ( common walnut, English walnut, Persian walnut )	Juglans_regia.mpar.dat
+Jute	Jute ( Corchorus capsularis )	Jute.dat
+Lactuca_sativa	Lactuca sativa ( 147 genes, cultivated lettuce, garden lettuce )	Lactuca_sativa.mpar.dat
+Leavenworthia_alabamica	Leavenworthia alabamica ( gladecresses )	Leavenworthia_alabamica.mpar.dat
+Linum_usitatissimum	Linum usitatissimum ( common flax, linseed )	Linum_usitatissimum.mpar.dat
+Lotus_japonicus	Lotus japonicus ( wild legume )	Lotus_japonicus.mpar.dat
+Lupinus_angustifolius	Lupinus angustifolius ( narrow-leaved blue lupine )	Lupinus_angustifolius.mpar.dat
+Malus_domestica	Malus domestica ( apple )	Malus_domestica.mpar.dat
+Manihot_esculenta	Manihot esculenta ( cassava, tapioca, yuca, manioc )	Manihot_esculenta.mpar.dat
+Medicago	Medicago ( generic )	Medicago.dat
+Medicago_truncatula	Medicago truncatula ( barrel medic, leguminous )	Medicago_truncatula.mpar.dat
+Mimulus_guttatus	Mimulus guttatus ( spotted monkey flower )	Mimulus_guttatus.mpar.dat
+Morus_notabilis	Morus notabilis ( mulberries )	Morus_notabilis.mpar.dat
+Nelumbo_nucifera	Nelumbo nucifera ( sacred lotus, padma, Indian lotus )	Nelumbo_nucifera.mpar.dat
+Nicotiana_2	Nicotiana ( generic )	Nicotiana_2.dat
+Nicotiana_1	Nicotiana ( generic, Nicotiana attenuata+sylvestris+tabacum+tomentosiformis )	Nicotiana_1.mpar.dat
+Ocimum_tenuiflorum	Ocimum tenuiflorum ( Ocimum tenuiflorum )	Ocimum_tenuiflorum.mpar.dat
+Phaseolus_vulgaris	Phaseolus vulgaris ( common bean, French bean , string bean, kidney bean )	Phaseolus_vulgaris.mpar.dat
+Populus_trichocarpa	Populus trichocarpa ( poplar, black cottonwood )	Populus_trichocarpa.mpar.dat
+Primula	Primula ( generic, Primula veris + vulgaris )	Primula.mpar.dat
+Prunus_persica	Prunus persica ( peach )	Prunus_persica.mpar.dat
+Punica_granatum	Punica granatum ( pomegranate, granado, zakuro, shi liu, grenadier )	Punica_granatum.mpar.dat
+Pyrus_bretschneideri	Pyrus bretschneideri ( Chinese white pear, bai li )	Pyrus_bretschneideri.mpar.dat
+Radish	Raphanus sativus ( radish )	Radish.mpar.dat
+Ricinus_communis	Ricinus communis ( castor bean )	Ricinus_communis.mpar.dat
+Sesamum_indicum	Sesamum indicum ( sesame, benne )	Sesamum_indicum.mpar.dat
+Silene_latifolia	Silene latifolia ( white campion )	Silene_latifolia.mpar.dat
+Silybum_marianum	Silybum marianum ( milk thistle, lady's thistle, holy thistle, variegated thistle, Scotch thistle )	Silybum_marianum.mpar.dat
+Sisymbrium_irio	Sisymbrium irio ( London rocket )	Sisymbrium_irio.mpar.dat
+Tomato_2	Solanum lycopersicum ( generic, tomato )	Tomato_2.dat
+Solanum_lycopersicum_1	Solanum lycopersicum ( tomato, Lycopersicon esculentum )	Solanum_lycopersicum_1.mpar.dat
+Solanum_tuberosum	Solanum tuberosum ( potato )	Solanum_tuberosum.mpar.dat
+Spinacia_oleracea	Spinacia oleracea ( spinach )	Spinacia_oleracea.mpar.dat
+Tarenaya_hassleriana	Tarenaya hassleriana ( spider flower )	Tarenaya_hassleriana.mpar.dat
+Theobroma_cacao	Theobroma cacao ( cocoa, chocolate )	Theobroma_cacao.mpar.dat
+Thlaspi_arvense	Thlaspi arvense ( field pennycress )	Thlaspi_arvense.mpar.dat
+Trifolium_pratense	Trifolium pratense ( rotklee, red clover )	Trifolium_pratense.mpar.dat
+Vaccinium_macrocarpon	Vaccinium macrocarpon ( large cranberry, American cranberry )	Vaccinium_macrocarpon.mpar.dat
+Vitis_vinifera	Vitis vinifera ( wine grape )	Vitis_vinifera.dat		
+Aegilops_tauschii	Aegilops tauschii ( Tausch's goatgrass )	Aegilops_tauschii.mpar.dat
+Brachypodium_distachyon	Brachypodium distachyon ( purple false brome )	Brachypodium_distachyon.mpar.dat
+Dendrobium_catenatum	Dendrobium catenatum ( Dendrobium officinale, orchid )	Dendrobium_catenatum.mpar.dat
+Dioscorea_alata	Dioscorea alata ( yam )	Dioscorea_alata.mpar.dat
+Elaeis_guineensis	Elaeis guineensis ( African oil palm )	Elaeis_guineensis.mpar.dat
+Ensete_ventricosum	Ensete ventricosum ( Ethiopian banana, Abyssinian banana, false banana, or ensete )	Ensete_ventricosum.mpar.dat
+Eragrostis_tef	Eragrostis tef ( tef )	Eragrostis_tef.mpar.dat
+Hordeum_vulgare	Hordeum vulgare ( barley )	Hordeum_vulgare.mpar.dat
+Leersia_perrieri	Leersia perrieri ( cutgrasses )	Leersia_perrieri.mpar.dat
+Monocot	Monocot plants ( generic, Corn, Rice, Wheat, Barley )	Monocot.dat
+Musa_acuminata	Musa acuminata ( dwarf banana )	Musa_acuminata.mpar.dat
+Oropetium_thomaeum	Oropetium thomaeum ( desiccation-tolerant grass )	Oropetium_thomaeum.mpar.dat
+Oryza_sativa_Indica_Group	Oryza sativa Indica Group ( long-grained rice )	Oryza_sativa_Indica_Group.mpar.dat
+Phalaenopsis_equestris	Phalaenopsis equestris ( orchid )	Phalaenopsis_equestris.mpar.dat
+Phoenix_dactylifera	Phoenix dactylifera ( date palm )	Phoenix_dactylifera.mpar.dat
+Setaria_italica	Setaria italica ( Foxtail millet )	Setaria_italica.mpar.dat
+Sorghum_bicolor	Sorghum bicolor (Sorghum)	Sorghum_bicolor.mpar.dat
+Triticum_aestivum	Triticum aestivum ( wheat )	Triticum_aestivum.mpar.dat
+Zea_mays	Zea mays ( sweetcorn )	Zea_mays.mpar.dat
+Aureococcus_anophagefferens	Aureococcus anophagefferens ( heterokont alga )	Aureococcus_anophagefferens.mpar.dat
+Chlorella	Chlorella ( green algae, generic, Chlorella variabilis+pyrenoidosa+vulgaris )	Chlorella.mpar.dat
+Coccomyxa	Coccomyxa ( green algae )	Coccomyxa.mpar.dat
+Diatom	Diatoms	Diatom.dat
+Klebsormidium_flaccidum	Klebsormidium flaccidum ( filamentous terrestrial alga )	Klebsormidium_flaccidum.mpar.dat
+Monoraphidium_neglectum	Monoraphidium neglectum	Monoraphidium_neglectum.mpar.dat
+Ostreococcus_lucimarinus	Ostreococcus lucimarinus ( green algae )	Ostreococcus_lucimarinus.mpar.dat
+Parachlorella_kessleri	Parachlorella kessleri ( Chlorella kessleri, unicellular green alga )	Parachlorella_kessleri.mpar.dat
+Phaeodactylum_tricornutum	Phaeodactylum tricornutum ( Diatoms )	Phaeodactylum_tricornutum.mpar.dat
+Physcomitrella_patens	Physcomitrella patens ( Bryophyte, mosses )	Physcomitrella_patens.mpar.dat
+Selaginella_moellendorffii	Selaginella moellendorffii ( Lycophyte, Club-mosses )	Selaginella_moellendorffii.mpar.dat
+Trebouxia_gelatinosa	Trebouxia gelatinosa ( green algae, the lichen photobiont )	Trebouxia_gelatinosa.mpar.dat	
+Acanthamoeba_castellanii	Acanthamoeba castellanii ( amoebae )	Acanthamoeba_castellanii.mpar.dat
+Babesia	Babesia ( generic, piroplasms )	Babesia.mpar.dat
+Chlamydomonas	Chlamydomonas ( Chlamydomonas generic)	Chlamydomonas.dat
+Dictyostelium_discoideum	Dictyostelium discoideum ( cellular slime molds )	Dictyostelium_discoideum.mpar.dat
+Entamoeba_histolytica	Entamoeba histolytica ( anaerobic parasitic protozoan )	Entamoeba_histolytica.mpar.dat
+Giardia_lamblia	Giardia lamblia ( diplomonads, Giardia lamblia )	Giardia_lamblia.mpar.dat
+Guillardia_theta	Guillardia theta ( cryptomonads )	Guillardia_theta.mpar.dat
+Leishmania_major	Leishmania major ( kinetoplastids )	Leishmania_major.mpar.dat
+Paulinella_chromatophora	Paulinella chromatophora ( cercozoans, freshwater amoeboids )	Paulinella_chromatophora.mpar.dat
+Plasmodium_falciparum	Plasmodium falciparum ( malaria parasite )	Plasmodium_falciparum.dat
+Toxoplasma_gondii	Toxoplasma gondii ( apicomplexans )	Toxoplasma_gondii.mpar.dat
+Trypanosoma_brucei	Trypanosoma brucei ( kinetoplastids )	Trypanosoma_brucei.mpar.dat
+Albugo_laibachii	Albugo laibachii ( plant pathogen )	Albugo_laibachii.mpar.dat
+Aphanomyces	Aphanomyces ( water moulds )	Aphanomyces.mpar.dat
+Hyaloperonospora_arabidopsidis	Hyaloperonospora arabidopsidis ( plant pathogen )	Hyaloperonospora_arabidopsidis.mpar.dat
+Phytophthora	Phytophthora ( plant pathogen )	Phytophthora.dat
+Pythium_ultimum	Pythium ultimum ( plant pathogen )	Pythium_ultimum.mpar.dat	
+Acremonium_chrysogenum	Acremonium chrysogenum ( Cephalosporium acremonium )	Acremonium_chrysogenum.mpar.dat
+Ajellomyces	Ajellomyces ( generic, Ajellomyces capsulatus+dermatitidis )	Ajellomyces.mpar.dat
+Alternaria	Alternaria brassicicola ( plant pathogen )	Alternaria.dat
+Amorphotheca_resinae	Amorphotheca resinae ( creosote fungus )	Amorphotheca_resinae.mpar.dat
+Arthrobotrys_oligospora	Arthrobotrys oligospora ( mitosporic predatory fungi )	Arthrobotrys_oligospora.mpar.dat
+Arthroderma	Arthroderma ( generic, causal agent of dermatophytosis )	Arthroderma.mpar.dat
+Ascocoryne_sarcoides	Ascocoryne sarcoides ( jelly drops, purple jellydisc )	Ascocoryne_sarcoides.mpar.dat
+Aspergillus	Aspergillus + Pezizomycotina ( generic, filamentous ascomycetes )	Aspergillus.dat
+Aspergillus_fischeri	Aspergillus fischeri ( Neosartorya fischeri )	Aspergillus_fischeri.mpar.dat
+Aspergillus_nidulans	Aspergillus nidulans ( filamentous fungi )	Aspergillus_nidulans.mpar.dat
+Aureobasidium	Aureobasidium ( generic, black, yeast-like fungus )	Aureobasidium.mpar.dat
+Baudoinia_compniacensis	Baudoinia compniacensis ( Angels' Share fungus )	Baudoinia_compniacensis.mpar.dat
+Beauveria	Beauveria ( generic, asexually-reproducing fungi )	Beauveria.mpar.dat
+Biatriospora_mackinnonii	Biatriospora mackinnonii ( ascomycetes )	Biatriospora_mackinnonii.mpar.dat
+Bipolaris	Bipolaris ( generic )	Bipolaris.mpar.dat
+Blastomyces	Blastomyces ( generic, causal agent of blastomycosis )	Blastomyces.mpar.dat
+Blumeria_graminis	Blumeria graminis ( grass mildew )	Blumeria_graminis.mpar.dat
+Botryosphaeria_obtusa	Botryosphaeria obtusa ( plant pathogen that causes Frogeye leaf spot, Black rot and cankers )	Botryosphaeria_obtusa.mpar.dat
+Botryotinia_fuckeliana	Botryotinia fuckeliana ( plant pathogen, Botrytis cinerea )	Botryotinia_fuckeliana.mpar.dat
+Botrytis	Botrytis ( generic, plant pathogen )	Botrytis.dat
+Brettanomyces_bruxellensis	Brettanomyces bruxellensis( yeast )	Brettanomyces_bruxellensis.mpar.dat
+Byssochlamys_spectabilis	Byssochlamys spectabilis( anamorph Paecilomyces variotii )	Byssochlamys_spectabilis.mpar.dat
+Calycina_herbarum	Calycina herbarum ( Hymenoscyphus herbarum )	Calycina_herbarum.mpar.dat
+Candida_albicans	Candida albicans ( diploid yeast, human pathogen )	Candida_albicans.mpar.dat
+Candida_glabrata	Candida glabrata ( haploid yeast, human pathogen )	Candida_glabrata.mpar.dat
+Capronia	Capronia( Capronia coronata+epimyces+semiimmersa )	Capronia.mpar.dat
+Ceratocystis_platani	Ceratocystis platani ( plant pathogen )	Ceratocystis_platani.mpar.dat
+Cercospora_canescens	Cercospora canescens ( causes olive leaf spot )	Cercospora_canescens.mpar.dat
+Chaetomium	Chaetomium ( Chaetomium_globosum+thermophilum )	Chaetomium.mpar.dat
+Chrysoporthe	Chrysoporthe ( generic, Chrysoporthe austroafricana+cubensis+deuterocubensis )	Chrysoporthe.mpar.dat
+Ciborinia_camelliae	Ciborinia camelliae ( causal agent of Camellia flower blight )	Ciborinia_camelliae.mpar.dat
+Cladophialophora	Cladophialophora ( Cladophialophora bantiana+carrionii+immunda+psammophila+yegresii )	Cladophialophora.mpar.dat
+Cladosporium_sphaerospermum	Cladosporium sphaerospermum ( mold )	Cladosporium_sphaerospermum.mpar.dat
+Claviceps_purpurea	Claviceps purpurea ( ergot fungus )	Claviceps_purpurea.mpar.dat
+Clavispora_lusitaniae	Clavispora lusitaniae ( yeast )	Clavispora_lusitaniae.mpar.dat
+Coccidioides_immitis	Coccidioides immitis ( pathogenic fungus )	Coccidioides_immitis.dat
+Cochliobolus	Cochliobolus ( generic, Cochliobolus carbonum+heterostrophus+ miyabeanus+ sativus+ victoriae )	Cochliobolus.mpar.dat
+Colletotrichum	Colletotrichum ( Colletotrichum fioriniae+gloeosporioides+graminicola+higginsianum+orbiculare+sublineola )	Colletotrichum.mpar.dat
+Coniosporium_apollinis	Coniosporium apollinis ( rock-inhabiting microcolonial fungi )	Coniosporium_apollinis.mpar.dat
+Cordyceps_militaris	Cordyceps militaris ( entomopathogenic fungi )	Cordyceps_militaris.mpar.dat
+Corynespora_cassiicola	Corynespora cassiicola ( plant pathogen )	Corynespora_cassiicola.mpar.dat
+Cryomyces_antarcticus	Cryomyces antarcticus ( ascomycetes )	Cryomyces_antarcticus.mpar.dat
+Curvularia	Curvularia ( generic, Curvularia lunata+ papendorfii )	Curvularia.mpar.dat
+Cyberlindnera	Cyberlindnera ( generic, Cyberlindnera fabianii+ jadinii )	Cyberlindnera.mpar.dat
+Dactylonectria_macrodidyma	Dactylonectria macrodidyma ( plant pathogen )	Dactylonectria_macrodidyma.mpar.dat
+Dekkera_bruxellensis	Dekkera bruxellensis ( Brettanomyces bruxellensis )	Dekkera_bruxellensis.mpar.dat
+Diaporthe_ampelina	Diaporthe ampelina ( Phomopsis viticola, Phomopsis ampelina, Fusicoccum viticolum )	Diaporthe_ampelina.mpar.dat
+Diplodia_seriata	Diplodia seriata ( cause of bot canker of grapevine )	Diplodia_seriata.mpar.dat
+Emmonsia	Emmonsia ( generic, Emmonsia crescens+parva )	Emmonsia.mpar.dat
+Epichloe_typhina	Epichloe typhina ( plant pathogen )	Epichloe_typhina.mpar.dat
+Eremothecium	Eremothecium ( generic, Eremothecium coryli+ cymbalariae+ gossypii )	Eremothecium.mpar.dat
+Erysiphe_necator	Erysiphe necator ( grape powdery mildew )	Erysiphe_necator.mpar.dat
+Escovopsis_weberi	Escovopsis weberi ( parasitic microfungus )	Escovopsis_weberi.mpar.dat
+Eutypa_lata	Eutypa lata ( causal agent of Eutypa dieback )	Eutypa_lata.mpar.dat
+Exophiala	Exophiala ( Exophiala_aquamarina+dermatitidis+mesophila+oligosperma+sideris+spinifera+xenobiotica )	Exophiala.mpar.dat
+Fonsecaea_pedrosoi	Fonsecaea pedrosoi ( major causative agent of chromoblastomycosis )	Fonsecaea_pedrosoi.mpar.dat
+Fusarium_1	Fusarium ( generic, Fusarium graminearum+ fujikuroi+ oxysporum+ solani+ verticillioides )	Fusarium_1.mpar.dat
+Fusarium_2	Fusarium graminearum ( generic, haploid homothallic ascomycete )	Fusarium_2.dat
+Gaeumannomyces_graminis	Gaeumannomyces graminis ( plant pathogen )	Gaeumannomyces_graminis.mpar.dat
+Galactomyces_geotrichum	Galactomyces geotrichum ( Oospora lactis, teleomorph: Geotrichum candidum )	Galactomyces_geotrichum.mpar.dat
+Geomyces_destructans	Geomyces destructans ( Pseudogymnoascus destructans, a psychrophilic fungus that causes white-nose syndrome (WNS) )	Geomyces_destructans.mpar.dat
+Gibberella	Gibberella ( generic, Gibberella circinata+fujikuroi )	Gibberella.mpar.dat
+Glarea_lozoyensis	Glarea lozoyensis ( ascomycetes )	Glarea_lozoyensis.mpar.dat
+Graphilbum_fragrans	Graphilbum fragrans ( Pesotum fragrans )	Graphilbum_fragrans.mpar.dat
+Grosmannia_clavigera	Grosmannia clavigera ( blue stain fungus )	Grosmannia_clavigera.mpar.dat
+Guignardia_citricarpa	Guignardia citricarpa ( Phyllosticta citricarpa, causes Citrus Black Spot )	Guignardia_citricarpa.mpar.dat
+Harpophora_oryzae	Harpophora oryzae ( Falciphora oryzae )	Harpophora_oryzae.mpar.dat
+Helminthosporium_solani	Helminthosporium solani ( infecting potato tubers )	Helminthosporium_solani.mpar.dat
+Hirsutella_minnesotensis	Hirsutella minnesotensis ( pathogen of the soybean cyst nematode )	Hirsutella_minnesotensis.mpar.dat
+Histoplasma_2	Histoplasma ( generic, dimorphic fungi )	Histoplasma_2.dat
+Histoplasma_capsulatum_1	Histoplasma capsulatum ( cause the histoplasmosis )	Histoplasma_capsulatum_1.mpar.dat
+Hortaea_werneckii	Hortaea werneckii ( 268 genes, halotolerant black yeast )	Hortaea_werneckii.mpar.dat
+Huntiella	Huntiella ( generic, Huntiella omanensis+ savannae )	Huntiella.mpar.dat
+Hymenoscyphus	Hymenoscyphus ( generic, Hymenoscyphus fraxineus+ fructigenus+ infarciens+ laetus+ repandus+ salicellus+ scutula+ varicosporoides )	Hymenoscyphus.mpar.dat
+Hypocrea	Hypocrea ( generic, Hypocrea jecorina+ lixii+ pseudokoningii+ virens )	Hypocrea.mpar.dat
+Hypocrella_siamensis	Hypocrella siamensis ( anamorph: Aschersonia badia )	Hypocrella_siamensis.mpar.dat
+Hysterium_pulicare	Hysterium pulicare ( occurs on living tree bark or dead wood )	Hysterium_pulicare.mpar.dat
+Isaria_farinosa	Isaria farinosa ( Paecilomyces farinosus )	Isaria_farinosa.mpar.dat
+Kazachstania	Kazachstania ( yeast, generic )	Kazachstania.mpar.dat
+Kluyveromyces_lactis	Kluyveromyces lactis ( yeast )	Kluyveromyces_lactis.mpar.dat
+Knoxdaviesia	Knoxdaviesia ( generic, Knoxdaviesia capensis+proteae )	Knoxdaviesia.mpar.dat
+Komagataella_pastoris	Komagataella pastoris ( methylotrophic yeast, Pichia pastoris )	Komagataella_pastoris.mpar.dat
+Lachancea	Lachancea ( generic )	Lachancea.mpar.dat
+Leptographium	Leptographium ( generic, Leptographium lundbergii+ procerum )	Leptographium.mpar.dat
+Leptosphaeria	Leptosphaeria ( generic, fungi )	Leptosphaeria.dat
+Leptosphaeria_maculans	Leptosphaeria maculans ( blackleg of rapeseed fungus )	Leptosphaeria_maculans.mpar.dat
+Macrophomina_phaseolina	Macrophomina phaseolina ( plant pathogen )	Macrophomina_phaseolina.mpar.dat
+Madurella_mycetomatis	Madurella mycetomatis ( Streptotrix mycetomatis )	Madurella_mycetomatis.mpar.dat
+Magnaporthe_1	Magnaporthe ( generic, fungi )	Magnaporthe_1.mpar.dat
+Magnaporthe_2	Magnaporthe ( generic, fungi, additional variant )	Magnaporthe_2.dat
+Marssonina_brunnea	Marssonina brunnea ( plant pathogen )	Marssonina_brunnea.mpar.dat
+Metacordyceps	Metacordyceps ( generic, Metacordyceps brittlebankisoides+ chlamydosporia+ taii )	Metacordyceps.mpar.dat
+Metarhizium	Metarhizium ( generic )	Metarhizium.mpar.dat
+Metschnikowia_fructicola	Metschnikowia fructicola ( ascosporic yeast, 137 sequences )	Metschnikowia_fructicola.mpar.dat
+Microsporum_gypseum	Microsporum gypseum ( soil-associated dermatophyte, Arthroderma gypseum )	Microsporum_gypseum.mpar.dat
+Millerozyma_farinosa	Millerozyma farinosa ( yeast )	Millerozyma_farinosa.mpar.dat
+Mycosphaerella	Mycosphaerella ( generic, Mycosphaerella arachidis+ dearnessii+ fijiensis+ graminicola+ laricina+ pini+ populicola+populorum )	Mycosphaerella.mpar.dat
+Nakaseomyces	Nakaseomyces ( generic, Nakaseomyces bacillisporus+ delphensis )	Nakaseomyces.mpar.dat
+Naumovozyma	Naumovozyma ( generic, Naumovozyma_castellii+dairenensis )	Naumovozyma.mpar.dat
+Neofusicoccum_parvum	Neofusicoccum parvum ( Fusicoccum parvum )	Neofusicoccum_parvum.mpar.dat
+Neurospora_crassa	Neurospora crassa ( red bread mold )	Neurospora_crassa.dat
+Ochroconis_constricta	Ochroconis constricta ( Dactylaria gallopava )	Ochroconis_constricta.mpar.dat
+Ogataea	Ogataea ( generic, Ogataea parapolymorpha+ polymorpha )	Ogataea.mpar.dat
+Oidiodendron_maius	Oidiodendron maius ( ascomycetes )	Oidiodendron_maius.mpar.dat
+Ophiocordyceps_sinensis	Ophiocordyceps sinensis ( Cordyceps sinensis )	Ophiocordyceps_sinensis.mpar.dat
+Ophiostoma_piceae	Ophiostoma piceae ( pine saprophyte )	Ophiostoma_piceae.mpar.dat
+Paracoccidioides_1	Paracoccidioides ( generic, Paracoccidioides_brasiliensis+lutzii )	Paracoccidioides_1.mpar.dat
+Paracoccidioides_2	Paracoccidioides ( generic, matrix with 2 isochores )	Paracoccidioides_2.dat
+Passalora_fulva	Passalora fulva ( Cladosporium fulvum, Fulvia fulva )	Passalora_fulva.mpar.dat
+Penicillium_chrysogenum	Penicillium chrysogenum ( fungus, Penicillium notatum )	Penicillium_chrysogenum.mpar.dat
+Periglandula_ipomoeae	Periglandula ipomoeae	Periglandula_ipomoeae.mpar.dat
+Pestalotiopsis_fici	Pestalotiopsis fici ( plant pathogen )	Pestalotiopsis_fici.mpar.dat
+Phaemoniella_chlamydospora	Phaemoniella chlamydospora ( Phaeoacremonium chlamydosporum )	Phaemoniella_chlamydospora.mpar.dat
+Phaeosphaeria_nodorum	Phaeosphaeria nodorum ( Leptosphaeria nodorum )	Phaeosphaeria_nodorum.mpar.dat
+Phialophora_europaea	Phialophora europaea ( Cyphellophora europaea )	Phialophora_europaea.mpar.dat
+Pichia_kudriavzevii	Pichia kudriavzevii ( Candida krusei, Issatchenkia orientalis, Candida acidothermophilum )	Pichia_kudriavzevii.mpar.dat
+Pleosporales_sp	Pleosporales ( generic )	Pleosporales_sp.mpar.dat
+Pneumocystis	Pneumocystis ( generic, Pneumocystis carinii+ jirovecii+ murina )	Pneumocystis.mpar.dat
+Poculum_sydowianum	Poculum sydowianum ( Rutstroemia sydowiana )	Poculum_sydowianum.mpar.dat
+Podospora_anserina	Podospora anserina	Podospora_anserina.mpar.dat
+Preussia_sp	Preussia ( generic )	Preussia_sp.mpar.dat
+Pseudallescheria_apiosperma	Pseudallescheria apiosperma ( Scedosporium apiospermum )	Pseudallescheria_apiosperma.mpar.dat
+Pseudocercospora_fijiensis	Pseudocercospora fijiensis ( black leaf streak, Mycosphaerella fijiensis , Cercospora fijiensis, Paracercospora fijiensis )	Pseudocercospora_fijiensis.mpar.dat
+Pseudogymnoascus	Pseudogymnoascus ( generic, Pseudogymnoascus destructans+pannorum )	Pseudogymnoascus.mpar.dat
+Pyrenochaeta_sp	Pyrenochaeta sp ( cause a eumycetoma )	Pyrenochaeta_sp.mpar.dat
+Pyrenophora	Pyrenophora ( generic, plant pathogen )	Pyrenophora.dat
+Pyronema_omphalodes	Pyronema omphalodes ( Pyronema confluens )	Pyronema_omphalodes.mpar.dat
+Ramularia_collo-cygni	Ramularia collo-cygni ( pathogen of barley )	Ramularia_collo-cygni.mpar.dat
+Rasamsonia_emersonii	Rasamsonia emersonii ( Talaromyces emersonii, Penicillium emersonii )	Rasamsonia_emersonii.mpar.dat
+Rhinocladiella_mackenziei	Rhinocladiella mackenziei ( Ramichloridium mackenziei, cause of cerebral phaeohyphomycosis )	Rhinocladiella_mackenziei.mpar.dat
+Rhytidhysteron_rufulum	Rhytidhysteron rufulum ( Rhytidhysterium rufulum, fungal plant pathogen infecting citruses )	Rhytidhysteron_rufulum.mpar.dat
+Rutstroemia_echinophila	Rutstroemia echinophila ( Sclerotinia echinophila )	Rutstroemia_echinophila.mpar.dat
+Saccharomyces_cerevisiae	Saccharomyces cerevisiae ( baker's yeast )	Saccharomyces_cerevisiae.mpar.dat
+Scedosporium_apiospermum	Scedosporium apiospermum ( Pseudallescheria apiosperma, causes of resistant life-threatening infections in immunocompromised patients )	Scedosporium_apiospermum.mpar.dat
+Scheffersomyces_stipitis	Scheffersomyces stipitis ( yeast, Pichia stipitis )	Scheffersomyces_stipitis.mpar.dat
+S_pombe	Schizosaccharomyces pombe ( fission yeast )	S_pombe.dat
+Sclerotinia_1	Sclerotinia ( generic, Sclerotinia borealis+sclerotiorum )	Sclerotinia_1.mpar.dat
+Sclerotinia_2	Sclerotinia sclerotiorum ( plant pathogen )	Sclerotinia_2.dat
+Septoria_passerinii	Septoria passerinii (Zymoseptoria passerinii, plant pathogen infecting barley )	Septoria_passerinii.mpar.dat
+Setosphaeria_turcica	Setosphaeria turcica ( northern corn leaf blight )	Setosphaeria_turcica.mpar.dat
+Shiraia_sp	Shiraia sp ( a parasitic fungus on twigs of several genera of bamboos )	Shiraia_sp.mpar.dat
+Sordaria_macrospora	Sordaria macrospora ( microscopic fungus )	Sordaria_macrospora.mpar.dat
+Spathaspora	Spathaspora ( generic, Spathaspora arborariae+ passalidarum )	Spathaspora.mpar.dat
+Sphaerulina_musiva	Sphaerulina musiva ( pathogen of poplar trees )	Sphaerulina_musiva.mpar.dat
+Sporothrix	Sporothrix ( generic, Sporothrix brasiliensis+schenckii )	Sporothrix.mpar.dat
+Stachybotrys	Stachybotrys ( generic, Stachybotrys chartarum+chlorohalonata )	Stachybotrys.mpar.dat
+Stagonospora_nodorum	Stagonospora nodorum ( pathogen of wheat )	Stagonospora_nodorum.dat
+Stagonosporopsis_tanaceti	Stagonosporopsis tanaceti ( cause of ray blight of pyrethrum )	Stagonosporopsis_tanaceti.mpar.dat
+Stemphylium_lycopersici	Stemphylium lycopersici ( pathogen of tomatoes, Capsicum and papayas )	Stemphylium_lycopersici.mpar.dat
+Talaromyces	Talaromyces ( generic, Talaromyces marneffei+stipitatus )	Talaromyces.mpar.dat
+Talaromyces_funiculosus	Talaromyces funiculosus ( Penicillium funiculosum )	Talaromyces_funiculosus.dat
+Taphrina	Taphrina ( generic, Taphrina deformans+ flavorubra+ populina+ wiesneri )	Taphrina.mpar.dat
+Tetrapisispora	Tetrapisispora ( generic, Tetrapisispora blattae+ phaffii )	Tetrapisispora.mpar.dat
+Thermomyces_lanuginosus	Thermomyces lanuginosus ( Humicola lanuginosa )	Thermomyces_lanuginosus.mpar.dat
+Thermothelomyces_thermophilus	Thermothelomyces thermophilus ( Myceliophthora thermophila, Sporotrichum thermophilum, Chrysosporium thermophilum )	Thermothelomyces_thermophilus.mpar.dat
+Thermothielavioides_terrestris	Thermothielavioides terrestris ( Thielavia terrestris, anamorph: Acremonium alabamense )	Thermothielavioides_terrestris.mpar.dat
+Thielaviopsis_punctulata	Thielaviopsis punctulata ( Chalaropsis punctulata )	Thielaviopsis_punctulata.mpar.dat
+Togninia_minima	Togninia minima ( Calosphaeria minima, Phaeoacremonium aleophilum )	Togninia_minima.mpar.dat
+Torrubiella_hemipterigena	Torrubiella hemipterigena ( Verticillium hemipterigenum )	Torrubiella_hemipterigena.mpar.dat
+Trichoderma	Trichoderma ( generic, Trichoderma atroviride+reesei+virens )	Trichoderma.mpar.dat
+Trichopyton	Trichopyton ( generic, Trichophyton equinum+interdigitale+rubrum+soudanense+tonsurans+verrucosum )	Trichopyton.mpar.dat
+Tuber_melanosporum	Tuber melanosporum ( Perigord truffle )	Tuber_melanosporum.mpar.dat
+Uncinocarpus_reesii	Uncinocarpus reesii ( non-pathogenic fungus )	Uncinocarpus_reesii.dat
+Ustilaginoidea_virens	Ustilaginoidea virens ( Villosiclava virens, Claviceps virens )	Ustilaginoidea_virens.mpar.dat
+Valsa_mali	Valsa mali ( causes Valsa canker of apple )	Valsa_mali.mpar.dat
+Venturia_pyrina	Venturia pyrina ( causes scab or black spot of pear )	Venturia_pyrina.mpar.dat
+Yarrowia_lipolytica	Yarrowia lipolytica ( yeast )	Yarrowia_lipolytica.mpar.dat
+Zygosaccharomyces_rouxii	Zygosaccharomyces rouxii ( osmoresistant yeast )	Zygosaccharomyces_rouxii.mpar.dat
+Agaricus	Agaricus ( generic, champignons )	Agaricus.mpar.dat
+Amanita_muscaria	Amanita muscaria ( fly agaric, fly amanita )	Amanita_muscaria.mpar.dat
+Auricularia_subglabra	Auricularia subglabra ( basidiomycetes )	Auricularia_subglabra.mpar.dat
+Botryobasidium_botryosum	Botryobasidium_botryosum ( botryosum )	Botryobasidium_botryosum.mpar.dat
+Coniophora_puteana	Coniophora puteana ( cellar fungus, which causes a rot in wood )	Coniophora_puteana.mpar.dat
+Coprinopsis_cinerea_1	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus )	Coprinopsis_cinerea_1.dat
+Coprinopsis_cinerea_2	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus )	Coprinopsis_cinerea_2.mpar.dat
+Coprinopsis_cinerea_2	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus, additional variant )	Coprinopsis_cinerea_2.dat
+Cronartium	Cronartium ( generic, Cronartium comandrae+ quercuum+ ribicola 206 genes only )	Cronartium.mpar.dat
+Cryptococcus_1	Cryptococcus ( generic, encapsulated yeast )	Cryptococcus_1.dat
+Cryptococcus_2	Cryptococcus ( generic, encapsulated yeast, additional variant )	Cryptococcus_2.dat
+Cryptococcus_gattii	Cryptococcus gattii ( encapsulated yeast )	Cryptococcus_gattii.mpar.dat
+Cryptococcus_neoformans	Cryptococcus neoformans ( encapsulated yeast )	Cryptococcus_neoformans.mpar.dat
+Cylindrobasidium_torrendii	Cylindrobasidium torrendii ( corticioid fungi )	Cylindrobasidium_torrendii.mpar.dat
+Fibroporia_radiculosa	Fibroporia radiculosa ( Antrodia radiculosa )	Fibroporia_radiculosa.mpar.dat
+Fistulina_hepatica	Fistulina hepatica ( beefsteak polypore or ox tongue )	Fistulina_hepatica.mpar.dat
+Fomitiporia_mediterranea	Fomitiporia mediterranea ( plant pathogen )	Fomitiporia_mediterranea.mpar.dat
+Fomitopsis_pinicola	Fomitopsis pinicola ( pine bolete, pinewood king bolete)	Fomitopsis_pinicola.mpar.dat
+Galerina_marginata	Galerina marginata ( poisonous fungus )	Galerina_marginata.mpar.dat
+Gelatoporia_subvermispora	Gelatoporia subvermispora ( Poria subvermispora )	Gelatoporia_subvermispora.mpar.dat
+Gelatoporia_subvermispora_B	Gelatoporia subvermispora B ( Ceriporiopsis subvermispora B )	Gelatoporia_subvermispora_B.mpar.dat
+Gloeophyllum_trabeum	Gloeophyllum trabeum ( plant fungal pathogen )	Gloeophyllum_trabeum.mpar.dat
+Gymnopus_luxurians	Gymnopus luxurians ( fungus )	Gymnopus_luxurians.mpar.dat
+Hebeloma_cylindrosporum	Hebeloma cylindrosporum ( mushroom-forming fungus )	Hebeloma_cylindrosporum.mpar.dat
+Heterobasidion_irregulare	Heterobasidion irregulare ( tree root rotting pathogenic fungus )	Heterobasidion_irregulare.mpar.dat
+Hydnomerulius_pinastri	Hydnomerulius pinastri ( spiny dry rot fungus )	Hydnomerulius_pinastri.mpar.dat
+Hypholoma_sublateritium	Hypholoma sublateritium ( brick cap )	Hypholoma_sublateritium.mpar.dat
+Jaapia_argillacea	Jaapia argillacea ( fungus )	Jaapia_argillacea.mpar.dat
+Kwoniella	Kwoniella ( generic, Kwoniella heveanensis+ mangroviensis )	Kwoniella.mpar.dat
+Laccaria	Laccaria ( generic )	Laccaria.mpar.dat
+Melampsora_larici-populina	Melampsora larici-populina ( poplar leaf rust fungus )	Melampsora_larici-populina.mpar.dat
+Microbotryum_violaceum	Microbotryum violaceum ( anther smut fungus, Ustilago violacea )	Microbotryum_violaceum.mpar.dat
+Mixia_osmundae	Mixia osmundae ( Taphrina osmundae )	Mixia_osmundae.mpar.dat
+Moniliophthora	Moniliophthora ( generic, Moniliophthora perniciosa+roreri )	Moniliophthora.mpar.dat
+Paxillus	Paxillus ( generic, Paxillus_involutus+rubicundulus )	Paxillus.mpar.dat
+Phanerochaete_carnosa	Phanerochaete carnosa ( plant pathogen infecting plane trees )	Phanerochaete_carnosa.mpar.dat
+White_rot	Phanerochaete chrysosporium ( New version USTILAGO+WREST )	White_rot.dat
+Phellinus_noxius	Phellinus noxius ( plant pathogen, Phellinidium noxium )	Phellinus_noxius.mpar.dat
+Phlebiopsis_gigantea	Phlebiopsis gigantea ( Thelephora gigantea, Peniophora gigantea )	Phlebiopsis_gigantea.mpar.dat
+Piloderma_croceum	Piloderma croceum ( Piloderma fallax )	Piloderma_croceum.mpar.dat
+Piriformospora_indica	Piriformospora indica ( Serendipita indica, Achlamydospora indica )	Piriformospora_indica.mpar.dat
+Pisolithus	Pisolithus ( generic, Pisolithus_microcarpus+tinctorius )	Pisolithus.mpar.dat
+Pleurotus_ostreatus	Pleurotus ostreatus ( oyster mushroom )	Pleurotus_ostreatus.mpar.dat
+Plicaturopsis_crispa	Plicaturopsis crispa	Plicaturopsis_crispa.mpar.dat
+Postia_placenta	Postia placenta ( Rhodonia placenta, brown rot fungus )	Postia_placenta.mpar.dat
+Pseudozyma	Pseudozyma ( generic, Pseudozyma antarctica+aphidis+brasiliensis+flocculosa+hubeiensis )	Pseudozyma.mpar.dat
+Puccinia	Puccinia ( rusts )	Puccinia.dat
+Punctularia_strigosozonata	Punctularia strigosozonata	Punctularia_strigosozonata.mpar.dat
+Rhizoctonia_solani	Rhizoctonia solani ( Rhizoctonia praticola, plant pathogen )	Rhizoctonia_solani.mpar.dat
+Rhodotorula_glutinis	Rhodotorula glutinis ( pink yeast )	Rhodotorula_glutinis.mpar.dat
+Sanghuangporus_baumii	Sanghuangporus baumii ( Phellinus baumii, Inonotus baumii )	Sanghuangporus_baumii.mpar.dat
+Schizophyllum_commune	Schizophyllum commune ( common in rotting wood, but can also cause disease in humans )	Schizophyllum_commune.mpar.dat
+Schizopora_paradoxa	Schizopora paradoxa ( Hyphodontia paradoxa )	Schizopora_paradoxa.mpar.dat
+Scleroderma_citrinum	Scleroderma citrinum ( common earthball, pigskin poison puffball )	Scleroderma_citrinum.mpar.dat
+Serendipita_vermifera	Serendipita vermifera ( Sebacina vermifera )	Serendipita_vermifera.mpar.dat
+Serpula_lacrymans	Serpula lacrymans ( dry rot fungus )	Serpula_lacrymans.mpar.dat
+Sphaerobolus_stellatus	Sphaerobolus stellatus ( cannonball fungi )	Sphaerobolus_stellatus.mpar.dat
+Sporidiobolus_salmonicolor	Sporidiobolus salmonicolor ( yeast-like fungus )	Sporidiobolus_salmonicolor.mpar.dat
+Stereum_hirsutum	Stereum hirsutum ( False Turkey Tail )	Stereum_hirsutum.mpar.dat
+Suillus_luteus	Suillus luteus ( slippery jack, sticky bun )	Suillus_luteus.mpar.dat
+Taiwanofungus_camphoratus	Taiwanofungus camphoratus ( stout camphor fungus )	Taiwanofungus_camphoratus.mpar.dat
+Thanatephorus_cucumeris	Thanatephorus cucumeris ( black scurf of potato )	Thanatephorus_cucumeris.mpar.dat
+Tilletiaria_anomala	Tilletiaria anomala ( the smut fungus )	Tilletiaria_anomala.mpar.dat
+Trametes_cinnabarina	Trametes cinnabarina ( Pycnoporus cinnabarinus, white rot saprobic fungus )	Trametes_cinnabarina.mpar.dat
+Tremella_mesenterica	Tremella mesenterica ( witches' butter )	Tremella_mesenterica.mpar.dat
+Trichosporon_asahii	Trichosporon asahii ( anamorphic fungus )	Trichosporon_asahii.mpar.dat
+Tulasnella_calospora	Tulasnella calospora ( Prototremella calospora, Gloeotulasnella calospora )	Tulasnella_calospora.mpar.dat
+Ustilago	Ustilago ( smuts )	Ustilago.dat
+Absidia_idahoensis	Absidia idahoensis ( pathogenic fungus )	Absidia_idahoensis.mpar.dat
+Allomyces_macrogynus	Allomyces macrogynus ( blastocladiomycetes )	Allomyces_macrogynus.mpar.dat
+Apophysomyces	Apophysomyces ( generic, Apophysomyces elegans+trapeziformis )	Apophysomyces.mpar.dat
+Batrachochytrium	Batrachochytrium ( amphibian chytrid fungus )	Batrachochytrium.dat
+Cokeromyces_recurvatus	Cokeromyces recurvatus ( pathogenic fungus )	Cokeromyces_recurvatus.mpar.dat
+Lichtheimia_corymbifera	Lichtheimia corymbifera ( Absidia corymbifera, pathogenic fungus )	Lichtheimia_corymbifera.mpar.dat
+Mucor	Mucor ( generic, Mucor ambiguus+circinelloides )	Mucor.mpar.dat
+Nematocida_parisii	Nematocida parisii ( microsporidians, generic, Nematocida_parisii+sp_1 )	Nematocida_parisii.mpar.dat
+Nosema	Nosema ( generic, Nosema_apis+bombycis+ceranae, microsporidians )	Nosema.mpar.dat
+Parasitella_parasitica	Parasitella parasitica ( Parasitella simplex )	Parasitella_parasitica.mpar.dat
+Podila_verticillata	Podila verticillata ( Mortierella verticillata, soil fungi )	Podila_verticillata.mpar.dat
+Rhizomucor	Rhizomucor ( generic, Rhizomucor miehei+ variabilis )	Rhizomucor.mpar.dat
+Rhizophagus_irregularis	Rhizophagus irregularis ( glomeromycetes, Glomus irregulare )	Rhizophagus_irregularis.mpar.dat
+Rhizophydiales_sp	Rhizophydiales sp ( 103 sequences, chytrids )	Rhizophydiales_sp.mpar.dat
+Rhizopus	Rhizopus arrhizus ( Rhizopus oryzae, opportunistic human pathogen )	Rhizopus.dat
+Rhodosporidium_toruloides	Rhodosporidium toruloides ( oleaginous yeast )	Rhodosporidium_toruloides.mpar.dat
+Saksenaea_oblongispora	Saksenaea oblongispora	Saksenaea_oblongispora.mpar.dat
+Spizellomyces_punctatus	Spizellomyces punctatus ( chytrids )	Spizellomyces_punctatus.mpar.dat
+Syncephalastrum	Syncephalastrum ( generic, Syncephalastrum monosporum+ racemosum )	Syncephalastrum.mpar.dat
+Thermomucor_indicae	Thermomucor indicae ( Thermomucor indicae-seudaticae, Brazilian thermophilic fungus )	Thermomucor_indicae.mpar.dat
+Umbelopsis_isabellina	Umbelopsis isabellina ( Mortierella isabellina, oleaginous fungus )	Umbelopsis_isabellina.mpar.dat

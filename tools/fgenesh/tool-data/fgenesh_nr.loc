@@ -1,0 +1,11 @@
+#This is a sample file that enables the diamind to find the protein databases
+#You will need to create these data files and then create
+#a diamond_database.loc file similar to this one (store it in this directory)
+#that points to the directories in which those files are stored.
+#The diamond_database_indices.loc file has this format (longer white space characters are TAB characters):
+#
+#
+#So, for example:
+#value	name	path
+nr_ce	Caenorhabditis elegans (2022-09-30)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_ce
+nr_cm	Gallus gallus (2022-12-21)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_cm

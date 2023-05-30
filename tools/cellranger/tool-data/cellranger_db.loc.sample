@@ -1,0 +1,11 @@
+#This is a sample file that enables the diamind to find the protein databases
+#You will need to create these data files and then create
+#a diamond_database.loc file similar to this one (store it in this directory)
+#that points to the directories in which those files are stored.
+#The diamond_database_indices.loc file has this format (longer white space characters are TAB characters):
+#
+#
+#So, for example:
+#value	name	path
+#refdata-gex-GRCh38-2020-A	GRch38 (2020-A)	/home/ubuntu/tools/galaxy/tools/cellranger/db/refdata-gex-GRCh38-2020-A
+#refdata-tinygex-2020	Tiny (2020)	/home/ubuntu/tools/galaxy/tools/cellranger/db/cellranger_tiny_ref
