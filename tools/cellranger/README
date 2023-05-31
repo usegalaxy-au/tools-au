@@ -1,0 +1,11 @@
+This is the Galaxy Wrapper of CellRanger. Only three pipelines are wrappered: count, mkref and mkgtf.
+
+[See more information](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/what-is-cell-ranger)
+
+Setup Cellranger via command line
+
+[See more information](https://support.10xgenomics.com/single-cell-gene-expression/software/pipelines/latest/installation)
+
+Build Notes for Reference Packages
+
+[See more information](https://support.10xgenomics.com/single-cell-gene-expression/software/release-notes/build)

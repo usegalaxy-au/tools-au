@@ -1,0 +1,200 @@
+<tool id="cellranger" name="Cell Ranger" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>process Chromium single cell data</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+
+	    #import re
+
+	    #set tool_type = $tool_cond.tool
+	    #if $tool_type == "count":
+	        mkdir output_directory &&
+	    	#set fastq_directory = 'fastq_directory'
+	    	mkdir $fastq_directory &&
+		#set collection_identifier =  re.sub('[^\s\w\-]', '_', str($tool_cond.input_collection.element_identifier))
+	    	#for $f in $tool_cond.input_collection:
+	        	#set identifier = re.sub('[^\s\w\-\\.]','_',str($f.element_identifier))
+	    		ln -fs '$f' '$fastq_directory/$identifier' &&
+	    	#end for
+	    #elif str($tool_cond.tool) == "mkgtf":
+	        #set attributeTag ="--attribute"
+	        #set attribute=str(" ".join(["%s%s" % (str("--attribute=gene_biotype:"), str(ft)) for ft in $tool_cond.attributes]))
+	    #end if 
+
+	    #if str($tool_cond.tool) == "count"
+	        #if str( $tool_cond.reference_source.reference_source_selector )  == "cached"
+            		cellranger count --id=output_directory
+                		--fastqs=$fastq_directory
+                  		--sample=$collection_identifier
+                  		--transcriptome=$tool_cond.reference_source.ref_file.fields.path
+                  		--localcores=\${GALAXY_SLOTS:-2}
+                  		--localmem=\${GALAXY_MEMORY_GB:-8} &&
+	    		2>&1
+	    	#elif str( $tool_cond.reference_source.reference_source_selector ) == "history"
+	    		tar -xzvf '${tool_cond.reference_source.own_ref_file}' &&
+                        cellranger count --id=output_directory
+                                --fastqs=$fastq_directory
+                                --sample=$collection_identifier
+                                --transcriptome=reference_directory
+                                --localcores=\${GALAXY_SLOTS:-2}
+                                --localmem=\${GALAXY_MEMORY_GB:-8} &&
+                        2>&1
+	    	#end if
+	    #elif str($tool_cond.tool) == "mkref"
+	    	cellranger mkref --genome=reference_directory
+	    			 --fasta=$genome_fasta
+	    		         --genes=$genome_gtf 
+	    			 --nthreads=\${GALAXY_SLOTS:-6}
+	    			 --memgb=\${GALAXY_MEMORY_GB:-8}
+	    && tar -zcf '$tar_ref_output' reference_directory
+	    &&
+            2>&1
+	    #elif str($tool_cond.tool) == "mkgtf"
+	    	cellranger mkgtf $raw_gtf $filtered_gtf $attribute
+	    #end if
+
+    ]]></command>
+    <inputs>
+	    <conditional name="tool_cond">
+		   <param name="tool" type="select" label="Select a CellRanger tool" help="CellRanger tool: count, mkref or mkgtf.">
+			   <option value="count" selected="True">count</option>
+			   <option value="mkref">mkref</option>
+			   <option value="mkgtf">mkgtf</option>
+		   </param>
+		   <when value="count">
+			 <param name="input_collection" type="data_collection" format="fastq.gz,fastqsanger.gz,fastq" collection_type="list" label="Input Collection" help="A list of paired-end FASTQ files in a collection."/>
+	                 <conditional name="reference_source">
+              		      <param name="reference_source_selector" type="select" label="Will you select a reference genome from your history or use a built-in index?">
+                        	  <option value="cached">Use a built-in genome index</option>
+                        	  <option value="history">Use a genome from history and build index</option>
+                	      </param>
+                	      <when value="cached">
+                                 <param name="ref_file" type="select" label="Using reference genome" help="Select genome from the list">
+                        	  <options from_data_table="cellranger_db">
+                                     <filter type="sort_by" column="2" />
+                                     <validator type="no_options" message="No reference genomes are available" />
+                        	  </options>
+                        	  <validator type="no_options" message="A built-in reference genome is not available for the build associated with the selected input file"/>
+                                 </param>
+                	      </when>
+                	      <when value="history">
+                         	<param name="own_ref_file" type="data" format="tgz" hierarchy="recurse" label="Use the following dataset as the reference sequence" help="You can upload a tarball formatted in CellRanger format as reference" />
+                	     </when>
+            		</conditional>
+		   </when>
+		   <when value="mkref">
+			   <param name="genome_fasta" type="data" format="fasta" label="Genome fasta file"/>
+			   <param name="genome_gtf" type="data" format="gtf" label="Filtered GTF file"/>
+		   </when>
+		   <when value="mkgtf">
+			  <param name="raw_gtf" type="data" format="gtf" label="Raw GTF File" help="Raw Generic Feature Format"/>
+			  <param name="attributes" type="select" label="feature attribute" multiple="true" help="Select zero or more attributes.">
+				  <expand macro="feature_type"/>
+			  </param>
+		   </when>
+	    </conditional>
+    </inputs>
+    <outputs>
+	    <data format="html" name="output_summary" label="Summary from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/web_summary.html" >
+		    <filter>tool_cond['tool'] == 'count'</filter>
+	    </data>
+	    <data format="binary" name="cloupe" label="Cloupe file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/cloupe.cloupe">
+	            <filter>tool_cond['tool'] == 'count'</filter>
+            </data>
+	    <collection name="output" type="list" label="CellRanger on ${on_string}: count">
+		  <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;h5)" directory="output_directory/outs" format="h5" visible="false" />
+		  <discover_datasets pattern="(?P&lt;designation&gt;.+)\.bam" directory="output_directory/outs" format="bam" visible="false" />
+		  <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;gz)" directory="output_directory/outs/filtered_feature_bc_matrix" format="tabular.gz" visible="false" />
+  		  <filter>tool_cond['tool'] == 'count'</filter>
+	    </collection>
+	    <data name="filtered_gtf" format="gtf" label="${tool.name} on ${on_string}: filtered gtf">
+                    <filter>tool_cond['tool'] == 'mkgtf'</filter>
+	    </data>
+	    <data name="tar_ref_output" format="tgz"  label="${tool.name} on ${on_string}: A tarball of the custom reference">
+		    <filter>tool_cond['tool'] == 'mkref'</filter>
+	    </data>
+    </outputs>
+
+    <tests>
+	 <test>
+              <!-- #1 test  -->
+        </test> 
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+
+Cell Ranger is a set of analysis pipelines that process Chromium single cell data to align reads, generate feature-barcode matrices, perform clustering and other secondary analysis, and more.
+
+**Galaxy wrapper only includes the following tools:**
+
+- count : aligns sequencing reads in FASTQ files to a reference transcriptome
+- mkref : build a custom reference
+- mkgtf : filter GTF files with the feature attributes (i.e gene_biotype:protein_coding)
+
+**CellRanger Count**
+
+**Input with built-in reference genome**
+
+1) The input of the CellRanger Count must be a list of paired-end FASTQ files in a collection format
+2) The name of collection must match the prefix of the paired-end FASTQ filename (i.e test_forward.fq, test_reverse.fq). Name the collection as "test".
+3) Select a reference genome from the drop-down menu
+
+**Input with custom reference genome**
+
+1) The input of the CellRanger Count must be a list of paired-end FASTQ files in a collection format
+2) The name of collection must match the prefix of the paired-end FASTQ filename (i.e test_forward.fq, test_reverse.fq). Name the collection as "test".
+3) Select the custom built reference genome from the history. The custom reference genome must be a tarball (tar.gz) containing fasta folder, genes folder, star folder and reference.json file. Note: The custom reference genome can be created using the mkref (see the mkref section below) or upload the custom reference genome tarball to the history and use it as the custom reference genome.
+
+
+**Output**
+
+1) A summary file in html format
+2) A cloupe file - is a CellRanger file format and can be visualized using CellRanger Software
+3) A collection containing filtered_feature_bc_matrix, molecule_info, raw_feature_bc_matrix, possorted_genome_bam, barcodes, features and matrix
+
+**CellRanger mkref**
+
+**Input**
+
+- A reference genome file in FASTA format
+- A reference genome annotation file in GTF format
+
+**Output**
+
+- A tarball (tar.gz) containing the fasta folder, genes folder, star folder and a reference.json file.
+  1) The fasta folder should contain two files, a genome fasta file and an indexed genome file in fai format.
+  2) The gene folder should contain one genes.gtf file.
+  3) The star folder should contain chrLength, chrName, chrNameLength, chrStart, exonGeTrinfo, exoninfo, geneInfo, genomeParameters, sjdbinfo, sjdbListfromGTP.out, sjdbList.out and transcriptinfo.
+
+**CellRanger mkgtf**
+
+**Input**
+
+- A reference genome GTF file that must have attribute field (i.e gene_biotype:protein_coding format)
+
+**Output**
+
+- A filtered reference genome GTF file
+
+.. class:: infomark
+
+**More Information**
+
+- `CellRanger`: https://support.10xgenomics.com/docs/citations
+
+**Citations for 10x Genomics Publications**
+
+]]></help>
+     <citations>
+	  <citation type="doi">DOI: 10.1101/gr.214874.116</citation>
+	  <citation type="doi">DOI: 10.1101/gr.234443.118</citation>
+          <citation type="doi">DOI: 10.1038/ncomms14049</citation>
+          <citation type="doi">DOI: 10.1038/s41587-019-0206-z</citation>
+    </citations>
+</tool>
