@@ -6,7 +6,7 @@
     </xrefs>
 
     <macros>
-        <token name="@TOOL_VERSION@">1.2.5</token>
+        <token name="@TOOL_VERSION@">1.2.4</token>
         <token name="@VERSION_SUFFIX@">0</token>
         <token name="@PORT@">8888</token>
     </macros>
