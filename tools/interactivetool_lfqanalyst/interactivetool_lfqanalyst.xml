@@ -6,7 +6,7 @@
     </xrefs>
 
     <macros>
-        <token name="@TOOL_VERSION@">1.2.4</token>
+        <token name="@TOOL_VERSION@">1.2.5</token>
         <token name="@VERSION_SUFFIX@">0</token>
         <token name="@PORT@">8888</token>
     </macros>
@@ -21,7 +21,9 @@
 
     <requirements>
         <!-- this container has port 8888 exposed -->
-        <container type="docker">haileyzhang/lfq-analyst:v@TOOL_VERSION@_galaxy</container>
+        <!-- <container type="docker">haileyzhang/lfq-analyst:v@TOOL_VERSION@_galaxy</container> -->
+        <!-- testing shiny-server-conf -->
+        <container type="docker">ghcr.io/tomharrop/container-lfq-analyst:v1.2.5_shinyserverconf</container>
     </requirements>
 
     <entry_points>
