@@ -8,7 +8,7 @@
     <macros>
         <token name="@TOOL_VERSION@">1.2.5</token>
         <token name="@VERSION_SUFFIX@">0</token>
-        <token name="@PORT@">3838</token>
+        <token name="@PORT@">8888</token>
     </macros>
 
     <edam_topics>
@@ -21,9 +21,7 @@
 
     <requirements>
         <!-- this container has port 8888 exposed -->
-        <!-- <container type="docker">haileyzhang/lfq-analyst:v@TOOL_VERSION@_galaxy</container> -->
-        <!-- may be cleaner to run in the pre-defined port 3838 -->
-        <container type="docker">ghcr.io/tomharrop/container-lfq-analyst:v1.2.5_shinyservicedown</container>
+        <container type="docker">haileyzhang/lfq-analyst:v@TOOL_VERSION@_galaxy</container>
     </requirements>
 
     <entry_points>
