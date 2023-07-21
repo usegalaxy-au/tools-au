@@ -31,8 +31,11 @@
                   		--sample=$collection_identifier
                   		--transcriptome=$tool_cond.reference_source.ref_file.fields.path
                   		--localcores=\${GALAXY_SLOTS:-2}
-                  		--localmem=\${GALAXY_MEMORY_GB:-8} &&
-	    		2>&1
+	    			--localmem=\${GALAXY_MEMORY_GB:-8} 
+	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/matrix.mtx.gz
+	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/features.tsv.gz
+	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/barcodes.tsv.gz
+	    		&& 2>&1
 	    	#elif str( $tool_cond.reference_source.reference_source_selector ) == "history"
 	    		tar -xzvf '${tool_cond.reference_source.own_ref_file}' &&
                         cellranger count --id=output_directory
@@ -40,8 +43,11 @@
                                 --sample=$collection_identifier
                                 --transcriptome=reference_directory
                                 --localcores=\${GALAXY_SLOTS:-2}
-                                --localmem=\${GALAXY_MEMORY_GB:-8} &&
-                        2>&1
+	    			--localmem=\${GALAXY_MEMORY_GB:-8}
+	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/matrix.mtx.gz
+	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/features.tsv.gz
+			&& gunzip output_directory/outs/filtered_feature_bc_matrix/barcodes.tsv.gz
+                        && 2>&1
 	    	#end if
 	    #elif str($tool_cond.tool) == "mkref"
 	    	cellranger mkref --genome=reference_directory
@@ -104,18 +110,18 @@
 	    <data format="binary" name="cloupe" label="Cloupe file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/cloupe.cloupe">
 	            <filter>tool_cond['tool'] == 'count'</filter>
 	    </data>
-	    <data format="mtx.gz" name="matrix" label="Matrix file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/filtered_feature_bc_matrix/matrix.mtx.gz">
+	    <data format="mtx" name="matrix" label="Matrix file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/filtered_feature_bc_matrix/matrix.mtx">
                     <filter>tool_cond['tool'] == 'count'</filter>
             </data>
-	    <data format="tabular.gz" name="feature" label="Feature file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/filtered_feature_bc_matrix/features.tsv.gz">
+	    <data format="tabular" name="feature" label="Feature file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/filtered_feature_bc_matrix/features.tsv">
                     <filter>tool_cond['tool'] == 'count'</filter>
             </data>
-            <data format="tabular.gz" name="barcode" label="Barcode file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/filtered_feature_bc_matrix/barcodes.tsv.gz">
+            <data format="tabular" name="barcode" label="Barcode file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/filtered_feature_bc_matrix/barcodes.tsv">
                     <filter>tool_cond['tool'] == 'count'</filter>
             </data>
 	    <collection name="output" type="list" label="CellRanger on ${on_string}: count">
 		  <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;h5)" directory="output_directory/outs" format="h5" visible="false" />
-		  <discover_datasets pattern="(?P&lt;designation&gt;.+)\.bam" directory="output_directory/outs" format="bam" visible="false" />
+		  <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;bam)" directory="output_directory/outs" format="bam" visible="false" />
   		  <filter>tool_cond['tool'] == 'count'</filter>
 	    </collection>
 
