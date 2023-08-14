@@ -15,7 +15,7 @@
       </stdio>
     </xml>
     <xml name="attribute_option" token_value="default">
-        <option value="@VALUE@">@VALUE@</option>
+        <option value="@VALUE@" selected="true">@VALUE@</option>
     </xml>
     <xml name="feature_type">
         <expand macro="attribute_option" value="protein_coding"/>
