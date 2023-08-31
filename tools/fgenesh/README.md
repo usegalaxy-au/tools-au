@@ -9,3 +9,5 @@ Requirements to run fgenesh on Galaxy.
 5) add the wrapper to local_tool_conf.xml (dev) or tool_conf.xml (production)
 6) create a customize tool_data_table_conf.xml in /mnt/galaxy/local_tools/db folder
 7) append the tool_data_table_conf.xml to tool_data_table_config_path in galaxy.xml
+
+Supported Species is based on the species offered in the gene matrix by Softberry
