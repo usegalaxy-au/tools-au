@@ -6,6 +6,7 @@ import sys
 from typing import List
 
 MULTIMER_MAX_SEQUENCE_COUNT = 10
+STRIP_SEQUENCE_CHARS = ['\n', '\r', '\t', ' ']
 
 
 class Fasta:
@@ -67,6 +68,9 @@ class FastaLoader:
                 fasta_count = len(self.fastas)
                 header = f'>sequence_{fasta_count}'
 
+            for char in STRIP_SEQUENCE_CHARS:
+                sequence = sequence.replace(char, '')
+
             # Create new Fasta
             self.fastas.append(Fasta(header, sequence))
 
@@ -109,7 +113,6 @@ class FastaValidator:
                     'Multimer mode requires multiple input sequence.'
                     f' Only {fasta_count} sequences were detected in'
                     ' the provided file.')
-                self.fasta_list = self.fasta_list
 
             elif fasta_count > MULTIMER_MAX_SEQUENCE_COUNT:
                 sys.stderr.write(
