@@ -9,3 +9,6 @@
 #value	name	path
 nr_ce	Caenorhabditis elegans (2022-09-30)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_ce
 nr_cm	Gallus gallus (2022-12-21)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_cm
+nr_plant	 Viridiplantae (2023-09-06)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_cm
+nr_metazon	Metazon (2023-09-06)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_cm
+nr_fungi	Fungi (2023-09-06)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/nr_cm
