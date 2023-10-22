@@ -1,0 +1,92 @@
+<tool id="interactive_tool_lfqanalyst" name="TMT Analyst" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01" license="MIT">
+    <description>Analyze TMT-labeled quantitative proteomics datasets</description>
+
+    <xrefs>
+        <!-- TMT-analyst oesn't appear to be in bio.tools -->
+        <!-- <xref type="bio.tools">LFQ-Analyst</xref> -->
+    </xrefs>
+
+    <macros>
+        <token name="@TOOL_VERSION@">0.9.1</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+        <token name="@PORT@">8000</token>
+    </macros>
+
+    <edam_topics>
+        <edam_topic>topic_0121</edam_topic>
+    </edam_topics>
+
+    <edam_operations>
+        <edam_operation>operation_3214</edam_operation>
+    </edam_operations>
+
+    <requirements>
+        <!-- this container has port 8888 exposed -->
+        <!-- <container type="docker">ghcr.io/tomharrop/container-lfq-analyst:v@TOOL_VERSION@_galaxy</container> -->
+        <container type="docker">haileyzhang/tmt-analyst:v@TOOL_VERSION@</container>
+
+    </requirements>
+
+    <entry_points>
+        <entry_point name="TMT-analyst" requires_domain="True">
+            <port>@PORT@</port>
+        </entry_point>
+    </entry_points>
+
+    <command detect_errors="exit_code"><![CDATA[
+
+cp '$run_tmtanalyst' '$outfile' &&
+cd /srv/shiny-server/tmt-analyst &&
+Rscript '$run_tmtanalyst'
+
+    ]]></command>
+
+    <configfiles>
+        <configfile name="run_tmtanalyst"><![CDATA[
+## wrapper to run LFQAnalyst from the shiny-server directory
+source('runApp.R')
+options(shiny.port=@PORT@)
+
+TMTAnalyst(protein_path="$protein_groups", exp_path="$design")
+
+        ]]></configfile>
+    </configfiles>
+
+    <inputs>
+        <param name="protein_groups" type="data" format="txt" label="ProteinGroups.txt" help="" />
+        <param name="design" type="data" format="txt" label="Experimental Design Matrix" help="" />
+    </inputs>
+
+    <outputs>
+        <data name="outfile" format="txt"
+          label="${tool.name} on ${on_string}: Rscript" />
+    </outputs>
+
+    <tests>
+        <!-- Hint: You can use [ctrl+alt+t] after defining the inputs/outputs to auto-scaffold some basic test cases. -->
+    </tests>
+
+    <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+TODO: Fill in help in reStructuredText format (https://docutils.sourceforge.io/docs/ref/rst/restructuredtext.html)
+Hint: If you want, you can preview your help section using this online editor: http://rst.ninjs.org/
+
+Usage
+.....
+
+
+**Input**
+
+
+**Output**
+
+
+    ]]></help>
+    <citations>
+        <citation type="doi">10.1021/acs.jproteome.9b00496</citation>
+    </citations>
+</tool>
