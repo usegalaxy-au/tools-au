@@ -43,8 +43,8 @@ if [[ "$(grep -E '^\w?galaxy_root' ~/.planemo.yml)" != "" ]]; then
     echo ""
     echo "Configuring Planemo..."
     echo "" >> ~/.planemo.yml
-    echo "galaxy_root: $PWD/galaxy-23.1.1"
-    echo "galaxy_root: $PWD/galaxy-23.1.1" >> ~/.planemo.yml
+    echo "galaxy_root: $PWD"
+    echo "galaxy_root: $PWD" >> ~/.planemo.yml
 else
     echo "galaxy_root already configured in ~/.planemo.yml. Please ensure this is correct:"
     echo "$(grep -E '^\w?galaxy_root' ~/.planemo.yml)"
