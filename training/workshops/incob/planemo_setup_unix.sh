@@ -2,6 +2,8 @@
 
 set -e
 
+PLANEMO_CONFIG_DIR=~/.planemo/
+
 if [[ "$1" = @("-h"|"--help") ]]; then
     echo "Usage: $0"
     echo "This script will download and build Galaxy release 23.1, and configure planemo to use it."
@@ -18,26 +20,21 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
     exit 1
 fi
 
-cd ~/.planemo/
+mkdir -p "${PLANEMO_CONFIG_DIR}"
+cd "${PLANEMO_CONFIG_DIR}"
 
-if [ ! -d v23.1.1.tar.gz ] && [ ! -d galaxy-23.1.1 ]; then
+if [ ! -f galaxy-23.1.1.tar.gz ] && [ ! -d galaxy-23.1.1 ]; then
     echo ""
-    echo "Downloading Galaxy release 23.1.1..."
+    echo "Downloading Galaxy v23.1.1..."
     echo ""
-    wget https://github.com/galaxyproject/galaxy/archive/refs/tags/v23.1.1.tar.gz
+    wget https://dev-site.gvl.org.au/media/galaxy-23.1.1.tar.gz
 fi
 
 if [ ! -d galaxy-23.1.1 ]; then
     echo "Extracting archive..."
-    tar -xzf v23.1.1.tar.gz
-    rm v23.1.1.tar.gz
+    tar -xzf galaxy-23.1.1.tar.gz
+    rm galaxy-23.1.1.tar.gz
 fi
-
-echo ""
-echo "Building Galaxy client..."
-cd galaxy-23.1.1
-make client
-echo ""
 
 if [[ "$(grep -E '^\w?galaxy_root' ~/.planemo.yml)" != "" ]]; then
     echo ""
@@ -46,7 +43,7 @@ if [[ "$(grep -E '^\w?galaxy_root' ~/.planemo.yml)" != "" ]]; then
     echo "galaxy_root: $PWD"
     echo "galaxy_root: $PWD" >> ~/.planemo.yml
 else
-    echo "galaxy_root already configured in ~/.planemo.yml. Please ensure this is correct:"
+    echo "galaxy_root already configured in ~/.planemo.yml. Please ensure the galaxy root is correct:"
     echo "$(grep -E '^\w?galaxy_root' ~/.planemo.yml)"
 fi
 
