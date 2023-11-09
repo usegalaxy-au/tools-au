@@ -13,22 +13,44 @@
 	    echo "BLAST2 = \$BLAST_PATH" >> configfile &&
 	    echo "NUM_THREADS = \${GALAXY_SLOTS:-4}"  >> configfile &&
 	    cat '$cfg' >> configfile &&
-	    cat configfile &&
+	    ### cat seqlit &&
 	    #if $inputs.input_type == 'individual':
 	    	#for $input in $inputs.individual_seq
 	    	   ln -fs '$input' $input.element_identifier &&
 	           echo `pwd`/$input.element_identifier >> seqlist &&
-	        #end for
+	    	#end for
+	    	#if $repeat_sequence.selector == 'individual_masked_seq':
+		   #for $seq in $repeat_sequence.masked_seq_individual 
+	    		ln -fs '$seq' $seq.element_identifier &&
+			echo `pwd`/$seq.element_identifier >> seqlistN && 
+	    	   #end for
+		#end if
 	    #elif $inputs.input_type == 'multiple':
 	    	#for $i,$input in enumerate($inputs.multiple_seq)
 	    	    ln -fs '$input' $input.element_identifier &&
-	    	    echo `pwd`/$input.element_identifier >> seqlist &&
-	        #end for
+	    	    echo `pwd`/$input.element_identifier >> seqlist && 
+	    	#end for
+                #if $repeat_sequence.selector == 'multiple_masked_seq':
+                   #for $e,$mseq in enumerate($repeat_sequence.masked_seq_multiple)
+                        ln -fs '$mseq' $mseq.element_identifier &&
+	    		echo `pwd`/$mseq.element_identifier >> seqlistN_temp && 
+			paste seqlistN_temp seqlist | sort | cut -f1 > seqlistN && #### sort the filename in the seqlistN file to maintain the same order as the filename in seqlist file
+	    	   #end for
+		#end if
 	    #end if
 
-	    ###cat seqlist
-	    run_pipe.pl configfile -l seqlist -d result &&
-	    run_fgenesh_2_gff3.pl result output_gff -sort -print_exons
+	    ### cat seqlist
+	    #if $repeat_sequence.selector == 'no_repeat_seq':
+	    	run_pipe.pl configfile -l seqlist -d result && 
+	    	run_fgenesh_2_gff3.pl result output_gff -sort -print_exons && 2>&1
+	    #elif $repeat_sequence.selector == 'individual_masked_seq':
+	    	run_pipe.pl configfile -l seqlist -m seqlistN -d result && 
+                run_fgenesh_2_gff3.pl result output_gff -sort -print_exons && 2>&1
+	    #elif $repeat_sequence.selector == 'multiple_masked_seq':
+                run_pipe.pl configfile -l seqlist -m seqlistN -d result &&
+                run_fgenesh_2_gff3.pl result output_gff -sort -print_exons && 2>&1
+	    #end if
+
 	    ]]></command>
     <configfiles>
 	    <configfile name="cfg"><![CDATA[
@@ -61,19 +83,32 @@ INTRONIC_GENES = ${intronic_genes}
              ]]></configfile>
     </configfiles>
     <inputs>
-		    <!--  <param name="sequence" type="data" format="fasta" label="Sequence" help="sequence"/> -->
 	    <conditional name="inputs">
                 <param name="input_type" type="select" label="Input type" help="Select single sequence or collection of sequence">
 			<option value="individual" selected="true">Individual sequence</option>
 			<option value="multiple">Multiple sequences</option>
 		</param>
 		<when value="individual">
-			<param name="individual_seq" format="fasta" type="data" label="Individual Sequence" help="Individual sequence" multiple="true"/>
+			<param name="individual_seq" format="fasta" type="data" label="Single Sequence" help="Single sequence" multiple="true"/>
 		</when>
 		<when value="multiple">
-			<param name="multiple_seq" format="fasta" type="data_collection" collection_type="list" label="collection"/>
+			<param name="multiple_seq" format="fasta" type="data_collection" collection_type="list" label="multiple sequence"/>
 		</when>
 	    </conditional>
+            <conditional name="repeat_sequence">
+		    	<param name="selector" type="select" label="Use repeat masking sequence" help="Enable this option if you want to use repeat masked sequences .">
+			<option value="no_repeat_seq" selected="true">No repeat sequence</option>
+                	<option value="individual_masked_seq">Individual masked sequence</option>
+                	<option value="multiple_masked_seq">Multiple masked sequences</option>
+            	</param>
+		<when value="individual_masked_seq">
+                      <param name="masked_seq_individual" format="fasta" type="data" label="repeat masked sequence" help="individual masked sequence" multiple="true"/>
+                </when>
+		<when value="multiple_masked_seq">
+		      <param name="masked_seq_multiple" format="fasta" type="data_collection" collection_type="list" label="repeat masked sequence" help="multiple repeat sequence"/>
+	      	</when>
+		<when value="no_repeat_seq"></when>
+            </conditional>
             <conditional name="matrix_type">
                   <param name="matrix_type_selector" type="select" label="Select matrix type" help="Select matrix for your species">
                          <option value="indexed" selected="true">Use a built-in index</option>
