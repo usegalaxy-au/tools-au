@@ -1,0 +1,93 @@
+<tool id="fgenesh_split" name="FGENESH split" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>fasta sequences</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    mkdir -p contigs &&
+	    #if $output_file_extension == "default":
+	    	split_multi_fasta.pl $input_fasta -name $filename_format -dir contigs/ 
+	    #else
+	    	split_multi_fasta.pl $input_fasta -name $filename_format -dir contigs/ -ext $output_file_extension
+	    #end if
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
+	    <param name="filename_format" type="select" label="Output filename format" help="Default: count">
+            	<option value="count" selected="True">sequential count</option>
+            	<option value="seq_id">Use Sequence Header from the input fasta file</option>
+	    </param>
+	    <param name="output_file_extension" type="select" label="Output file extension" help="Default: fasta">
+		<option value="default" selected="True">default</option>
+                <option value="fa" >fa</option>
+                <option value="seq">seq</option>
+            </param>
+    </inputs>
+    <outputs>
+	   <collection name="fasta_collection" type="list" label="${tool.name} on ${on_string} : split seqences">
+	      <discover_datasets pattern="(?P&lt;designation&gt;.+)" directory="contigs" format="fasta"/>
+		 <!--<discover_datasets pattern="(?P&lt;designation&gt;.*)\.fa" format="fasta" directory="outdir"/>-->
+           </collection>
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh is a genome annotation tool*
+
+**Input**
+	    
+- input file  -  Genome or de novo assembly file in FASTA format and repeat masking fasta file  
+
+**Command line Example:**
+
+- FGENESHPIPE/run_pipe.pl  human_prj.cfg  -l seq_1.list  -m seq_1N.list  -d results_1
+
+- human_prj.cfg - a configuration file containing path to database, path gene matrix and the settings of the third party softwares
+- seq_1.list - a list of chromosome / scaffolds (unmasked)
+- seq_1N.ist - a list of chromosome / scaffolds (masked)
+- results_1 - output folder
+
+
+**Parameters:**
+
+- matrix type - built-in index or select the index from the user history
+- species matrix - select the gene matrix that matches the species of your input genome if built-in index in the matrix type is selected
+- db type - built-in database or select the database from the user history
+- reference database - fgenesh comes with Mammal DB / Non Mammal DB if built-in database in the db type is selected
+- NR db type - built-in non-redundant database or select the non-redundant database from the user history
+- NR database - select the non-redundant database for your species
+- mRNAs - map known mRNA sequences to the genomic sequences (default: No). If Yes is selected, make sure .cdna, .pro and .dat files are available in the user history.
+- ESTs - map ESTs to the genomic sequences (default: No) if Yes is selected, make sure there is ESTs fasta file available in the user history
+- Predict GC - predict genes with GC donor splice sites or not (default:No)
+- USE_READS - use reads info to improve gene models (default:No)
+- Find homologs - find homologs for ab initio predicted genes (0 - no, 1 - yes)
+- USE_PROTEINS - Using known proteins for prediction (default: No)
+- INTRONIC_GENES - Predicting genes in long introns of other genes (default: No)
+
+**Output**
+
+- txt (resn3) - raw output produced by Fgenesh
+- gff3 - gff3 file format converted from the Fgenesh resn3 file
+
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>

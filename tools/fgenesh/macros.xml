@@ -6,8 +6,7 @@
     <token name="@DIGEST@">3e414082c1a12393ab10b1bc4e22de540397fef626840945824a76f6d62def6b</token>
     <xml name="requirements">
         <requirements>
-	      <container type="docker">wthang/genomeannotation:latest</container>
-	      <requirement type="package" version="@VERSION@">blast</requirement>
+	      <container type="docker">wthang/genomepannotation:v2</container>
         </requirements>
     </xml>
     <xml name="stdio">

@@ -1,0 +1,105 @@
+<tool id="fgenesh_to_genbank" name="FGENESH to Genbank" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>create genbank file</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    mkdir -p output_dir &&
+	    #for $resn3_file in $resn3_collection
+                 ln -s '$resn3_file' ${resn3_file.element_identifier} &&
+                 echo ${resn3_file.element_identifier} >> resn3.list &&
+            #end for
+	    
+	    sort resn3.list > resn3_sorted.list &&
+
+	    #for $seq_file in $sequence_collection
+                  ln -s '$seq_file' ${seq_file.element_identifier} &&
+                  echo ${seq_file.element_identifier} >> seq.list &&
+            #end for
+
+	    sort seq.list > seq_sorted.list &&
+
+	    ln -s $genbank_header header &&
+
+	    run_fgenesh_2_genbank.pl $polya $skip_empty
+	    -div:$div
+	    -org_code:$organism_code
+	    -method:$method 
+	    header
+	    resn3_sorted.list
+	    seq_sorted.list
+	    output_dir/
+	    2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="genbank_header" format="genbank" type="data"  label="Genbank header file"/>
+	    <param name="resn3_collection" format="txt" type="data_collection" collection_type="list" label="Input resn3 file" help="list of files with predictions in Fgenesh/Fgenesh++ format"/>
+	    <param name="sequence_collection" format="fasta" type="data_collection" collection_type="list" label="Input fasta file"  help="list of files with sequences in FASTA format"/>
+		    <!--<param argument="-tata" type="boolean" truevalue="-taxa" falsevalue="" checked="false" label="predict TATA boxes" help="annotate predicted TATA boxes" />-->
+	    <param argument="-polya" type="boolean" truevalue="-polya" falsevalue="" checked="false" label="predict PolyA signals" help="annotate predicted PolyA signals" />
+	    <param argument="-skip_empty" type="boolean" truevalue="-skip_empty" falsevalue="" checked="true" label="Discard empty prediction" help="do not append records for sequences with no predictions" />
+    	    <param name="div" type="text" value="PRI" label="GenBank division (PRI by default)"/>
+	    <param name="organism_code" type="text" value="GN" label="prefix for gene names" help="2-letter organism code used as prefix for gene names. (i.e HS - Homo sapiens)" />
+	    <param name="method" type="text" value="Fgenesh" label="program used for gene prediction" help="Fgenesh by default"/>
+    </inputs>
+    <outputs>
+            <collection name="output_genbank" type="list" label="${tool.name} on ${on_string}: genbank">
+                  <discover_datasets pattern="(?P&lt;name&gt;.*).gb$" format="genbank" directory="output_dir"/>
+            </collection>
+		    <!--<data name="log" format="txt" label="${tool.name} on ${on_string}: Report"/>-->
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh run_fgenesh_2_genbank.pl is a tool to convert Fgenesh annotation file (resn3) and sequence fasta file to genbank files*
+
+**Input**
+	    
+- resn3 file  -  a list of input files with Fgenesh/Fgenesh++ predictions  
+
+- sequence file - a list of fasta files with genomic FASTA sequences 
+
+**Command line Example:**
+
+- run_fgenesh_2_genbank.pl [options] <header_file> <res_files_list> <seq_files_list> <gb_files_dir>
+
+- header file - file with additional comments (use Genbank keywords)
+
+- res_files_list - a list of resn3 files (i.e a collection of resn3 files in the Galaxy history)
+
+- seq_files_list - a list of corresponding fasta files to the input resn3 files in res_files_list (i.e a collection of fasta files in the Galaxy history)
+
+- option
+
+- taxa  - annotate predicted TATA boxes (not implemented in this wrapper due to unexpected bug)  
+- polya - annotate predicted PolyA signals
+- div:<DIV> - GenBank division (PRI by default)
+- org_code:<NN> - 2-letter organism code used as prefix for gene names, for example: HS - Homo sapiens, PG - Punicum granatum (Pomegranate), EG - Elaeis guineensis, GN is used by default if no other code is provided
+- method:<program> - program used for gene prediction (Fgenesh, Fgenesh++); Fgenesh by default)
+- skip_empty - do not append records for sequences with no predictions
+
+**Output**
+
+- folder - contains a list of genbank files (aka a collection in the Galaxy history)
+
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
