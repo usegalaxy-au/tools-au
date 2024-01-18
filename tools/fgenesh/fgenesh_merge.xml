@@ -1,0 +1,87 @@
+<tool id="fgenesh_merge" name="FGENESH merge" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>gff3 or resn3 file</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+
+	    #if $input.selector == "gff"
+	    	mkdir -p input_gff_files &&
+	    	#for $gff_file in $input.input_gff_collection
+	    	    ln -s '$gff_file' input_gff_files/'${gff_file.element_identifier}.gff3' &&
+	    	#end for
+	    	merge_gff3.pl input_gff_files/ $output_gff
+	    #else if $input.selector == "resn3"
+	    	mkdir -p input_resn3_files &&
+		#for $resn3_file in $input.input_resn3_collection
+	    	     ln -s '$resn3_file' input_resn3_files/'${resn3_file.element_identifier}.resn3' &&
+		     echo input_resn3_files/'${resn3_file.element_identifier}.resn3' >> resn3.list &&
+                #end for
+	    	merge_res_files.pl -l resn3.list -dir input_resn3_files/ -o $output_resn3
+	    #end if
+
+	    ]]></command>
+    <inputs>
+	    <conditional name="input">
+		<param name ="selector" type="select" label="Input file type (resn3/gff3) for merging">
+			<option value="gff">gff</option>
+			<option value="resn3">resn3</option>
+		</param>
+	   	<when value="gff">
+            		<param name="input_gff_collection" format="gff3" type="data_collection" collection_type="list" label="collection"/>
+		</when>
+		<when value="resn3">
+			<param name="input_resn3_collection" format="txt" type="data_collection" collection_type="list" label="collection"/>
+		</when>
+	    </conditional>
+    </inputs>
+    <outputs>
+	    <data name="output_gff" format="gff3"  label="${tool.name} on ${on_string}: Merged GFF">
+		    <filter> input['selector'] == "gff" </filter>
+	    </data>
+            <data name="output_resn3" format="txt"  label="${tool.name} on ${on_string}: Merged RESN3">
+                    <filter> input['selector'] == "resn3" </filter>
+            </data>
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh merge_gff3.pl is a tool for merging multiple gff3 files into a single gff3 file*
+
+**Input**
+	    
+- input files  -  a collection of gff3 files from Fgenesh Genome Annotation  
+
+**Command line Example:**
+
+- merge_gff3.pl input_directory/ output.gff3
+
+- input_directory - a list of gff3 files in a directory or a collection in Galaxy Histiry
+	    
+- output.gff3 - merged gff3 file
+
+**Output**
+
+- gff3 - a single gff3 file
+
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
