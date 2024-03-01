@@ -1,8 +1,8 @@
 # Cactus
 
-This suite contains a wrapper for the [Cactus](github.com/comparativeGenomicsToolkit/cactus) whole-genome aligner and another wrapper for exporting the data it generates.
+The Cactus wrapper for Galaxy has been
+[moved](https://github.com/galaxyproject/tools-iuc/pull/5741) to
+[galaxyproject/tools-iuc](https://github.com/galaxyproject/tools-iuc/tree/main/tools/cactus)
+starting from Cactus version 2.7.1.
 
-## Requirements
-
-Cactus uses a lot of RAM. We have tested it on Galaxy using 24 GB of RAM for a
-progressive alignment of three chromosome-level, 150 megabase genomes.
+The Snakemake workflow under `extras/` was not included in the move.
