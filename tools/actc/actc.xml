@@ -1,0 +1,101 @@
+<tool id="actc" name="ACTC align" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" license="BSD-3-Clause"> 
+    <description>clr to ccs reads</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+
+
+	    ln -s '$subread_bam' input.subreads.bam && 
+	    pbindex input.subreads.bam &
+	    ln -s '$ccs_bam' input.ccs.bam &&
+	    pbindex input.ccs.bam &&
+
+	    actc 
+	    --chunk $chunk
+	    --trim-flanks-bp $trim_flanks_bp
+	    --min-ccs-length $min_ccs_length
+	    -j \${GALAXY_SLOTS:-2}
+	    input.subreads.bam
+	    input.ccs.bam
+	    output.bam 
+	    --log-level $log_level
+	    #if $log_file:
+	    --log-file $log_file &&
+	    2>&1 | tee '$output_log' &&
+	    #end if 
+	    && samtools sort 
+	    --threads \${GALAXY_SLOTS:-2}  
+	    -o output.sorted.bam output.bam &&
+	    cp output.sorted.bam '$output_bam' &&
+	    cp output.fasta '$output_fasta'
+    ]]></command>
+    <inputs>
+	   <param name="subread_bam" format="bam" type="data" label="Select subread bam" help="Subread bam file" />
+	   <param name="ccs_bam" format="bam" type="data" label="Select ccs bam" help="CCS bam file" />
+	   <param name="chunk" type="text" value="" label="Operate on a single chunk. Format i/N, where i in [1,N]" help="Examples: 3/24 or 9/9"/>
+	   <param name="trim_flanks_bp" type="integer" value="0" label="Trim N bp from each flank of the CCS read alignment"/>
+	   <param name="min_ccs_length" type="integer" value="10" label="Minimum CCS read length after --trim-flanks-bp"/>
+	   <param name="num_threads" type="integer" value="2" label="Number of threads to use" help="default: 2"/>
+           <param name="log_level" type="text" value="WARN" label="Set log level. Valid choices: (TRACE, DEBUG, INFO, WARN, FATAL)" />
+	   <param name="log_file" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Log to a file, instead of stderr."/>
+    </inputs>
+    <outputs>
+	    <data name="output_bam" format="bam" label="${tool.name} on ${on_string}: Aligned subreads to CCS BAM" />
+	    <data name="output_fasta" format="fasta" label="${tool.name} on ${on_string}: Aligned subreads to CCS fasta" />
+            <data name="output_log" format="txt" label="${tool.name} on ${on_string}: log file">
+                    <filter>log_file</filter>
+            </data>
+    </outputs>
+
+    <tests>
+	 <test>
+              <!-- #1 test - output without log file -->
+	      <param name="subread_bam" value="input.subreads.bam" ftype="bam"/>
+	      <param name="ccs_bam" value="input.ccs.bam" ftype="bam"/>
+	      <param name="chunk" value="2/2"/>
+	      <param name="trim_flanks_bp" value="0" />
+	      <param name="min_ccs_length" value="100" />
+	      <param name="num_threads" value="2"/>
+	      <param name="log_level" value="WARN"/>
+	      <param name="log_file" value="false"/>
+	      <output name="aligned_bam" file="output.sorted.bam" ftype="bam" lines_diff="7"/>
+	      <output name="aligned_fasta" file="output.fasta" ftype="fasta"/>
+        </test> 
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+
+ACTC is used to align continuous long reads (CLR) read to ciruclar consensus sequencing (CCS) read.
+
+**Input**
+	    
+- input.subreads.bam - Subreads BAM.
+- input.ccs.abm - CCS BAM.
+
+**Parameters**
+
+- chunk  - Operate on a single chunk. Format i/N, where i in [1,N]. Examples: 3/24 or 9/9
+- trim-flanks-bp  - Trim N bp from each flank of the CCS read alignment [0]
+- min-ccs-length - Minimum CCS read length after --trim-flanks-bp [100]
+- log-level - set log level. Valid choices: (TRACE, DEBUG, INFO, WARN, FATAL). [WARN]
+- log-file - Log to a file, instead of stderr.
+
+
+**Output**
+
+- OUT.bam
+
+**LICENSE:**
+Copyright (C) 2004-2023  Pacific Biosciences of California, Inc.
+This program comes with ABSOLUTELY NO WARRANTY; it is intended for
+Research Use Only and not for use in diagnostic procedures.
+
+
+]]></help>
+</tool>
