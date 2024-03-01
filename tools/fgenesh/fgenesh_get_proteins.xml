@@ -1,0 +1,96 @@
+<tool id="fgenesh_get_proteins" name="FGENESH get protein" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>sequences using rensn3 files</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    #import re
+	    
+	    #if $input.selector == "single"
+                ln -s '$input.resn3' '$input.resn3.element_identifier' &&
+                get_proteins.pl '$input.resn3.element_identifier' $output_prot_file -fix_id $input.fix_id_type 2>&1
+	    #else if $input.selector == "multiple"
+            	mkdir -p input_dir &&
+            	mkdir -p output_dir &&
+	    	#for $resn3_file in $input.resn3_collection:
+	          #set $filename = str($resn3_file.element_identifier)
+	          #if not $filename.endswith('.resn3')
+	    	      ln -s '$resn3_file' 'input_dir/${filename}.resn3' &&
+	    	  #else
+		      ln -s '$resn3_file' 'input_dir/${filename}' &&
+	    	  #end if
+	    	#end for
+	    	run_get_proteins.pl input_dir/ output_dir/  2>&1
+	    #end if
+
+	    ]]></command>
+    <inputs>
+	 <conditional name="input">
+	    <param name="selector" type="select" label="Input data type for extracting proten sequences. default: single">
+		 <option value="single">single</option>
+	         <option value="multiple" select="true">multiple</option>
+	    </param>
+	    <when value="single">
+		<param name="resn3" format="txt" type="data" multiple="false" label="Input resn3 file" help="single resn3 files with predictions in Fgenesh/Fgenesh++ format"/>
+                <param name="fix_id_type" type="select" label="fix header id in the output fasta file" help="Default: sequence name">
+                	<option value="seq_No" selected="True">Sequence No</option>
+                	<option value="seq_count">Sequence Count</option>
+                	<option value="seq_nmae">Sequence Name</option>
+            	</param>
+	   </when>
+	   <when value="multiple">
+		<param name="resn3_collection" format="txt" type="data_collection" collection_type="list" label="Input resn3 file" help="list of files with predictions in Fgenesh/Fgenesh++ format"/>
+	   </when>
+	 </conditional>
+    </inputs>
+    <outputs>
+	    <collection name="output_protein_sequences" type="list" label="${tool.name} on ${on_string}: protein sequences">
+		 <discover_datasets pattern="(?P&lt;name&gt;.*).fa$" format="fasta" directory="output_dir"/>
+		 <filter> input['selector'] == "multiple" </filter>
+	    </collection>
+	    <data name="output_prot_file" format="fasta" label="${tool.name} on ${on_string}: protein sequence">
+                    <filter> input['selector'] == "single" </filter>
+            </data>
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh get_proteins.pl is a tool to extract proteins sequences in the resn3 file with Fgenesh/Fgenesh++ predictions*
+
+**Input**
+	    
+- resn3 file  -  input file with Fgenesh/Fgenesh++ predictions  
+
+**Command line Example:**
+
+- get_proteins.pl <resn3_file> <prot_file> [-fix_id  seq_name | seq_No | seq_count]
+
+- fix_id 
+- 1) seq_name - use sequence names [example of ID: 'ENm002_gene_7'] 
+- 2) seq_No - (numbers are taken from 'Sequence: <No>' if such field is present, e.g., "Length of sequence: 1000000, Sequence: 2, File: encode_hg17_44N.fa") - [example of ID: 'seq_2_gene_7']
+- 3) seq_count - use numbers (count sequences starting from 1) [example of ID: 'seq_2_gene_7']
+	
+**Output**
+
+- fasta file - fasta files with protein sequences
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
