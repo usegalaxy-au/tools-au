@@ -37,7 +37,7 @@
                 <param name="fix_id_type" type="select" label="fix header id in the output fasta file" help="Default: sequence name">
                 	<option value="seq_No" selected="True">Sequence No</option>
                 	<option value="seq_count">Sequence Count</option>
-                	<option value="seq_nmae">Sequence Name</option>
+                	<option value="seq_name">Sequence Name</option>
             	</param>
 	   </when>
 	   <when value="multiple">
