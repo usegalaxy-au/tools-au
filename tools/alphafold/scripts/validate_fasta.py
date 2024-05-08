@@ -5,7 +5,7 @@ import re
 import sys
 from typing import List
 
-MULTIMER_MAX_SEQUENCE_COUNT = 10
+DEFAULT_MAX_SEQUENCE_COUNT = 10
 STRIP_SEQUENCE_CHARS = ['\n', '\r', '\t', ' ']
 
 
@@ -77,10 +77,12 @@ class FastaLoader:
 
 class FastaValidator:
     def __init__(
-            self,
-            min_length=None,
-            max_length=None,
-            multiple=False):
+        self,
+        min_length=None,
+        max_length=None,
+        multiple=False,
+        max_sequence_count=None,
+    ):
         self.multiple = multiple
         self.min_length = min_length
         self.max_length = max_length
@@ -90,6 +92,9 @@ class FastaValidator:
             'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
             'Y', 'Z', '-'
         }
+        self.max_sequence_count = (
+            max_sequence_count
+            or DEFAULT_MAX_SEQUENCE_COUNT)
 
     def validate(self, fasta_list: List[Fasta]):
         """Perform FASTA validation."""
@@ -114,14 +119,11 @@ class FastaValidator:
                     f' Only {fasta_count} sequences were detected in'
                     ' the provided file.')
 
-            elif fasta_count > MULTIMER_MAX_SEQUENCE_COUNT:
-                sys.stderr.write(
+            elif fasta_count > self.max_sequence_count:
+                raise ValueError(
                     f'WARNING: detected {fasta_count} sequences but the'
-                    f' maximum allowed is {MULTIMER_MAX_SEQUENCE_COUNT}'
-                    ' sequences. The last'
-                    f' {fasta_count - MULTIMER_MAX_SEQUENCE_COUNT} sequence(s)'
-                    ' have been discarded.\n')
-                self.fasta_list = self.fasta_list[:MULTIMER_MAX_SEQUENCE_COUNT]
+                    f' maximum allowed is {self.max_sequence_count}'
+                    ' sequences.')
         else:
             if fasta_count > 1:
                 sys.stderr.write(
@@ -200,6 +202,7 @@ def main():
             min_length=args.min_length,
             max_length=args.max_length,
             multiple=args.multimer,
+            max_sequence_count=args.max_sequence_count,
         )
         clean_fastas = fv.validate(fas.fastas)
 
@@ -242,6 +245,13 @@ def parse_args() -> argparse.Namespace:
         "--max_length",
         dest='max_length',
         help="Maximum length of input protein sequence (AA)",
+        default=None,
+        type=int,
+    )
+    parser.add_argument(
+        "--max-sequences",
+        dest='max_sequence_count',
+        help="Maximum number of input sequences",
         default=None,
         type=int,
     )
