@@ -6,7 +6,7 @@
         <container type="docker">nvcr.io/nvidia/k8s/container-toolkit:v@TOOL_VERSION@-ubuntu20.04</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-    nvidia-container-cli info 2&>1 | tee out.txt
+    nvidia-container-cli info
     ]]></command>
     <inputs>
     </inputs>
