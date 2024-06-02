@@ -7,7 +7,13 @@
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 ln -s '$fast5_file' ./read.fast5 &&
-dorado basecaller "/models/dna_r9.4.1_e8_hac@v3.3" read.fast5 > output.sam
+
+dorado basecaller
+"/models/dna_r9.4.1_e8_hac@v3.3"
+read.fast5 
+--gpu_runners_per_device 1
+--chunks_per_runner 1
+> output.sam
     ]]></command>
     <inputs>
         <param type="data" name="fast5_file" label="Raw fast5 file" format="fast5"/>
