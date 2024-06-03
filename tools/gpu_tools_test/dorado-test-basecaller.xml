@@ -8,9 +8,11 @@
     <command detect_errors="exit_code"><![CDATA[
 ln -s '$fast5_file' ./read.fast5 &&
 
+pod5 convert fast5 ./read.fast5 --output ./read.pod5 &&
+
 dorado basecaller
 "/models/dna_r9.4.1_e8_hac@v3.3"
-read.fast5 
+read.pod5 
 --chunksize 1000
 > output.sam
     ]]></command>
