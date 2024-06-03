@@ -9,21 +9,23 @@
 ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
+--emit-fastq
+--chunksize 1000
+--max-reads 10
 "/models/dna_r9.4.1_e8_hac@v3.3"
 reads.pod5 
---chunksize 1000
-> output.sam
+| tee output.fastq
     ]]></command>
     <inputs>
         <param type="data" name="pod5_file" label="Raw fast5 file" format="fast5"/>
     </inputs>
     <outputs>
-        <data format="sam" name="out_sam" label="Output from dorado list-models" from_work_dir="output.sam"/>
+        <data format="fastqsanger" name="out_fq" label="Output from dorado list-models" from_work_dir="output.fastq"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
             <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
-            <output name="out_sam" file="output.sam">
+            <output name="out_sam" file="output.fastq">
         </output>
         </test>
     </tests>
