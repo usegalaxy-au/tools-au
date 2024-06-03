@@ -6,25 +6,23 @@
         <container type="docker">nanoporetech/dorado:sha@CONTAINER_HASH@</container>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-ln -s '$fast5_file' ./read.fast5 &&
-
-pod5 convert fast5 ./read.fast5 --output ./read.pod5 &&
+ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
 "/models/dna_r9.4.1_e8_hac@v3.3"
-read.pod5 
+reads.pod5 
 --chunksize 1000
 > output.sam
     ]]></command>
     <inputs>
-        <param type="data" name="fast5_file" label="Raw fast5 file" format="fast5"/>
+        <param type="data" name="pod5_file" label="Raw fast5 file" format="fast5"/>
     </inputs>
     <outputs>
         <data format="sam" name="out_sam" label="Output from dorado list-models" from_work_dir="output.sam"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
-            <param name="fast5_file" value="fast5/20180130_MN24356_sequencing_run_69731_read_10005_ch_20_strand.fast5"/>
+            <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
             <output name="out_sam" file="output.sam">
         </output>
         </test>
