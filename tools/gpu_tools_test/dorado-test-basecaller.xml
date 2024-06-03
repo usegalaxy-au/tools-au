@@ -25,7 +25,7 @@ reads.pod5
     <tests>
         <test expect_num_outputs="1">
             <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
-            <output name="out_sam" file="output.fastq">
+            <output name="out_sam" file="output.sam">
         </output>
         </test>
     </tests>
