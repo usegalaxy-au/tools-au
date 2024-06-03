@@ -1,0 +1,46 @@
+<tool id="nvidia-container-cli-info" name="nvidia-container-cli info" version="@TOOL_VERSION@+galaxy0" python_template_version="3.5" profile="21.05">
+    <macros>
+        <token name="@TOOL_VERSION@">1.15.0</token>
+    </macros>
+    <requirements>
+        <container type="docker">nvcr.io/nvidia/k8s/container-toolkit:v@TOOL_VERSION@-ubuntu20.04</container>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+    nvidia-container-cli info 2>&1 | tee out.txt
+    ]]></command>
+    <inputs>
+    </inputs>
+    <outputs>
+        <data format="txt" name="out_txt" label="Output from nvidia-container-cli info" from_work_dir="out.txt" />
+    </outputs>
+    <tests>
+    <test expect_num_outputs="1">
+        <output name="out_txt">
+            <assert_contents>
+                <has_text text="NVRM version"/>
+                <has_text text="CUDA version"/>
+            </assert_contents>
+        </output>
+    </test>
+    
+    </tests>
+    <help><![CDATA[
+Just runs ``nvidia-container-cli info``. If you have planemo configured
+properly you will see output like this:
+
+.. code:: bash
+
+   NVRM version:   525.147.05
+   CUDA version:   12.0
+
+   Device Index:   0
+   Device Minor:   0
+   Model:          NVIDIA A100-PCIE-40GB
+   Brand:          Nvidia
+   GPU UUID:       GPU-3a29f0dc-490e-1e8d-abf3-a5cfa02adcde
+   Bus Location:   00000000:00:08.0
+   Architecture:   8.0
+
+
+    ]]></help>
+</tool>

@@ -1,0 +1,47 @@
+<tool id="dorado_test_basecaller" name="dorado test basecaller" version="@CONTAINER_HASH@+galaxy0" python_template_version="3.5" profile="21.05">
+    <macros>
+        <token name="@CONTAINER_HASH@">c2d8bc91ca2d043fed84d06cca92aaeb62bcc1cd</token>
+    </macros>
+    <requirements>
+        <container type="docker">nanoporetech/dorado:sha@CONTAINER_HASH@</container>
+    </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+ln -s '$pod5_file' ./reads.pod5 &&
+
+dorado basecaller
+--emit-sam
+--chunksize 1000
+--max-reads 10
+"/models/dna_r9.4.1_e8_fast@v3.4"
+reads.pod5 
+> output.sam
+    ]]></command>
+    <inputs>
+        <param type="data" name="pod5_file" label="Raw fast5 file" format="fast5"/>
+    </inputs>
+    <outputs>
+        <data format="sam" name="out_sam" label="Output from dorado list-models" from_work_dir="output.sam"/>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="1">
+            <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
+            <output name="out_sam">
+                <assert_contents>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
+                    <has_size value="132024" delta="10000" />
+                </assert_contents>
+        </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+Tests basecalling a small pod5 file using dorado.
+
+If it works you will get a SAM file with some reads in it.
+
+::
+
+   00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf    4   *   0   0   *   *   0   0   TGCTTCATTCGGTCCACGTATTGCTGGTTAAAATTTCTGAAAATATTATGATTATTAATCATATTCTGTGAATGAGATTTTAGCTATTATGTTGTTGAATATAATGTTGGCTATAATGTTGATTTGAATAATCATTTTAAACAATTTATAACAATATATTTTATTCTGACACTTTGAAATAAATTCATATCAAAACTTCTATAATAACTTCCGTGATATTATAAATTTTCAAAATATCTGTTCTTCTCTCTCGTAATTCCTTCTTTGCCGCATATTTATTGTTTCAATAAATTTAGAAATTAAATTAATTTCTTAATTTTTACTAATGCTGATTTAAAACATTCAACCATCTCTTTAATACGTAGCAGAACGTGAATAGTCTAATCTAATCTGACTATCAGTACAGATTACTGTGGATATTAATTGACATTTGCAGCAAAGGAAATGTTTAATTAGTATCAGACTCATTTTGATATTTTTAAATTATTGTGAAGGTAATATGTAAAAAAGGAAAAAATTCTTTTGTGTGATATAATCTAATGTAGTATTGATAAAAAAGTGAGATTTTTAAAGATTTTTATGTAATAAGAATTCTTGCAAAAAAAAGATAAACAATATTTTTATATTAATAAAATAAAATTATTAATTAATATATTTTATATATTATAATATATGCAATATATCATATATTTTTTTAAAATAAATTAGATTATTTTATATTTTTTTTAACAGAAAATGTAATAAAATGAAATATATATTTTTATTGTTTTTGTCTTTTAATTAATTTTATTAGATTTTAAAAATTTTTAATAAAAAATTTAGAAATTTTTCAAAAAATTGCTTTCCTATATATTGGTATATTATATAACTTTAAAAACATTTCTAAATAAAATATTTATATTTGATATTTTATTTTAGTTTTACTTGGTGTGTTTTTAGGTCTTAAAGGCTTCAGTATCATATGTATCAATATTATATGCAAATGTGTATACGAAAATCATTATATTCTAGAAATGAATATGTATGAATATGTATTGAAAGCAGCCGTAACT    %'**21,+,*&#$#(),,.'&++)**01;>955??7<())>=AD667888BACA<;<::;58577.&&$&(*)((1*26><667>::>77525,*+67F;87-*,+,-4-/0/536<999;0//7;8=<::=<333<820)(((===<;:?88:::9456;;9992,,.1.5783((8:7489;==,++(*(*,*)))&&$%2'('&&),)*)-16346,2<<98::@@@3=B?=<>:46:>>8<:97==5=333577702>@<AD?73248;667?2224<BBA;>B@55=A9;3935:7><>A?>>BDH@8G4333211,&%%-966689:7.--121056.%%%%%'(((),0.-514,+,-/1(5660/0/=,2226&75<9*6+)'""$').36*22;<:?@>>::60)+-36../.001221+)*730////10;&'90;98;5($$%(''';=/.1/03326A>53368;>=8(&&&'&%%$'&),**&3:@<230134:5/761;CCABBGA<BFA877;9<;:<<=B<323:22-+.6><>?ADAESS33++38779ASAS@AA<8AB>=;;>?9770'+(0,;887311;=BLSS=C:9<AA:889///<;:9;;;;=@@:<:55567:>=::;><FA@=>;</0/B=:7.-&'(24:;<43&'%)*/89<;<743./69=???<<4=ICE;=@@::9:9;:;C>>=:88<>=SCC>12/--4=ALA443322>@DI88BC@<;;6;<>BSK65678=;S;65479B>??B@><??EA4235697;=81-3/)&&&&&&'+)')+*+244.))05@DEC=B5DAA-,11000656,.54+,((()-.491219<<=>=46>>;?B=C732322.45;J:DAB==>?<>?+,+;=88100A==:@D@434::1-'('$#&%$$&',((()53=??@<<>=;=?<+++9;;9<:9767>@=>?;<<98.-*)*-.1-*)(&&$$$%,4.97***'%$&*1&0&-;<=118:;85:;==8;82379;;;?=74<41002-/,**)    qs:f:12.5814    du:f:2.5165 ns:i:10066  ts:i:130    mx:i:3  ch:i:300    st:Z:2020-08-14T01:23:39.733+00:00  rn:i:314    fn:Z:reads.pod5 sm:f:80.9692    sd:f:15.1339sv:Z:med_mad    dx:i:0  RG:Z:473bf0edfc2f8f756173de35db5da9b6f6db4959_dna_r9.4.1_e8_fast@v3.4
+   ...
+
+    ]]></help>
+</tool>
