@@ -14,7 +14,7 @@ dorado basecaller
 --max-reads 10
 "/models/dna_r9.4.1_e8_fast@v3.4"
 reads.pod5 
-| tee output.sam
+> output.sam
     ]]></command>
     <inputs>
         <param type="data" name="pod5_file" label="Raw fast5 file" format="fast5"/>
