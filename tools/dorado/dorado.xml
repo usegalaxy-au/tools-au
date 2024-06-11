@@ -1,4 +1,4 @@
-<tool id="dorado" name="dorado" version="@CONTAINER_HASH@+galaxy0" python_template_version="3.5" profile="21.05">
+<tool id="dorado" name="dorado" version="@VERSION@+galaxy0" python_template_version="3.5" profile="21.05">
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -10,19 +10,16 @@ ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
 --emit-sam
-## TODO: get a list of models from /models (bundled with the container)
-"/models/dna_r9.4.1_e8_fast@v3.4"
+'${model.fields.path}'
 reads.pod5 
 > output.sam
 
     ]]></command>
     <inputs>
         <param name="pod5_file" type="data" format="fast5" label="Raw fast5 file"/>
-        <!-- <param name="model" type="select">
-            <options from_data_table="dorado_models" />
-        </param> -->
-        <param name="index" type="select">
-            <options from_data_table="bowtie_indexes" />
+        <!-- TODO: the model needs to be linked to the tool version, e.g. to prevent trying to run a new model with a previous version of the tool. -->
+        <param name="model" type="select">
+            <options from_data_table="dorado_models"/>
         </param>
     </inputs>
     <outputs>
