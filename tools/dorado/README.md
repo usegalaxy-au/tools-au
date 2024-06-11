@@ -2,12 +2,13 @@
 ## Tool versions
 
 Dorado is distributed on
-[DockerHub](https://hub.docker.com/r/nanoporetech/dorado/tags) by nanoporetech,
-but not tagged with a version.
+[DockerHub](https://hub.docker.com/r/nanoporetech/dorado/tags) by nanoporetech.
+The containers are identified by sha256 hash, but not tagged with a version.
 
-That means the hash for the current version has to be hard-coded into the
-wrapper. Unfortunately you have to pull a >6 GB container and run `dorado
---version` just to check the tool version.
+We can still use the containers and display the dorado version by hard-coding
+both dorado version and container hash into the wrapper (see `macros.xml`).
+Unfortunately you have to pull a >6 GB container and run `dorado --version` just
+to check the tool version. This also prevents auto-updates of this wrapper.
 
 You can update the list of models at the same time (see
 below). **You must do this when you update the wrapper**.
@@ -15,22 +16,23 @@ below). **You must do this when you update the wrapper**.
 ## Basecalling models
 
 The models are bundled in the container at `/models` and made available by the
-`dorado_models.loc` file. To update the list, modify
-`tool-data/dorado_models.loc.sample`. Note that if ONT remove models from the
-container, doing this will also make them unavailable to Galaxy. Check the diff
-before you merge.
+`dorado_models.loc` file. 
 
 The columns are `value`, `tool_version`, `name` and  `path`.
 
-Here's a one-liner to **update** the loc file with the models that are bundled
-in the container
-`nanoporetech/dorado:shac2d8bc91ca2d043fed84d06cca92aaeb62bcc1cd`. Note that you
-would use the hash for the current dorado version (obtained above), and the
-dorado version is manually passed to `awk`.
+To update the list, modify `tool-data/dorado_models.loc.sample`.
+
+Because models can be added and removed, models are listed **per container** in
+the loc file.
+
+Here's some code to **append** the models from the container with hash
+`1c65eb070a9fc1d88710c4dc09b06541f96fdd28`  to the loc file.
 
 ```bash
-apptainer exec docker://nanoporetech/dorado:shac2d8bc91ca2d043fed84d06cca92aaeb62bcc1cd \
+export DORADO_HASH="1c65eb070a9fc1d88710c4dc09b06541f96fdd28"
+
+apptainer exec "docker://nanoporetech/dorado:sha${DORADO_HASH}" \
     ls /models | \
-    awk -v tv="0.7.1" '{print tv "_" $0 "\t" tv "\t" $0 "\t/models/" $0}' \
+    awk -v hash="${DORADO_HASH}" '{print hash "_" $0 "\t" hash "\t" $0 "\t/models/" $0}' \
     >> tool-data/dorado_models.loc.sample
 ```
