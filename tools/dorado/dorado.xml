@@ -1,11 +1,9 @@
 <tool id="dorado" name="dorado" version="@CONTAINER_HASH@+galaxy0" python_template_version="3.5" profile="21.05">
     <macros>
-        <!-- TODO: the containers aren't tagged with software versions -->
-        <token name="@CONTAINER_HASH@">c2d8bc91ca2d043fed84d06cca92aaeb62bcc1cd</token>
+        <import>macros.xml</import>
     </macros>
-    <requirements>
-        <container type="docker">nanoporetech/dorado:sha@CONTAINER_HASH@</container>
-    </requirements>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
 
 ln -s '$pod5_file' ./reads.pod5 &&
@@ -20,6 +18,12 @@ reads.pod5
     ]]></command>
     <inputs>
         <param name="pod5_file" type="data" format="fast5" label="Raw fast5 file"/>
+        <!-- <param name="model" type="select">
+            <options from_data_table="dorado_models" />
+        </param> -->
+        <param name="index" type="select">
+            <options from_data_table="bowtie_indexes" />
+        </param>
     </inputs>
     <outputs>
         <data format="sam" name="out_sam" label="Output from dorado list-models" from_work_dir="output.sam"/>
