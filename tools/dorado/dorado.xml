@@ -17,9 +17,11 @@ reads.pod5
     ]]></command>
     <inputs>
         <param name="pod5_file" type="data" format="fast5" label="Raw fast5 file"/>
-        <!-- TODO: the model needs to be linked to the tool version, e.g. to prevent trying to run a new model with a previous version of the tool. -->
         <param name="model" type="select">
-            <options from_data_table="dorado_models"/>
+            <options from_data_table="dorado_models">
+                <!-- only allow models that shipped with this tool_version -->
+                <filter type="static_value" column="1" value="@VERSION@" />
+            </options>
         </param>
     </inputs>
     <outputs>

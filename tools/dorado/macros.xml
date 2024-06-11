@@ -1,5 +1,5 @@
 <macros>
-    <!-- UPDATING: pull the latest container and check the version. Update both tokens. You can also update the model list. See README.md for more.  -->
+    <!-- UPDATING: pull the latest container and check the version. Update both tokens. You MUST also update the model list. See README.md for more.  -->
     <token name="@VERSION@">0.7.1</token>
     <token name="@CONTAINER_HASH@">1c65eb070a9fc1d88710c4dc09b06541f96fdd28</token>
     <xml name="requirements">
