@@ -30,6 +30,7 @@ reads.pod5
     <tests>
         <test expect_num_outputs="1">
             <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
+            <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
             <output name="out_sam">
                 <assert_contents>
                     <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
