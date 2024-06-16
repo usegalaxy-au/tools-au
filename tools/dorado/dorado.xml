@@ -20,7 +20,7 @@ reads.pod5
         <param name="model" type="select">
             <options from_data_table="dorado_models">
                 <!-- only allow models that shipped with this tool_version -->
-                <filter type="static_value" column="1" value="@VERSION@" />
+                <filter type="static_value" column="1" value="@CONTAINER_HASH@" />
             </options>
         </param>
     </inputs>
