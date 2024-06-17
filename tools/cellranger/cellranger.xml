@@ -8,6 +8,7 @@
     <command><![CDATA[
 
 	    #import re
+	    #import os
 
 	    #set tool_type = $tool_cond.tool
 	    #if $tool_type == "count":
@@ -21,7 +22,30 @@
 	    	#end for
 	    #elif str($tool_cond.tool) == "mkgtf":
 	        #set attributeTag ="--attribute"
-	        #set attribute=str(" ".join(["%s%s" % (str("--attribute=gene_biotype:"), str(ft)) for ft in $tool_cond.attributes]))
+	    	#set attribute=str(" ".join(["%s%s" % (str("--attribute=gene_biotype:"), str(ft)) for ft in $tool_cond.attributes]))
+	    #elif str($tool_cond.tool) == "multi":
+	   	mkdir output_directory &&
+	    	#set input_directory='input_data_directory'
+                touch tmp &&
+                #for $input in $tool_cond.inputs:
+                     #set sample_name_directory=$input.input_collection.element_identifier
+                     #set lib_type = $input.type
+	    	     #set sample_fastq_directory = '/'.join([str("/"),str($input_directory),str($sample_name_directory)])
+                     #if str($input.lanes.lane_source.lane_source_selector) == "user_define":
+                        #set num_lanes = "%s" % ("|".join($input.lanes.lane_source.lane))
+                        #set library_record=','.join([str($sample_name_directory),str($sample_fastq_directory),str($num_lanes),str($lib_type)])
+                        echo '$library_record' >> tmp &&
+                     #else:
+                        #set library_record=','.join([str($sample_name_directory),str($sample_fastq_directory),str(""),str($lib_type)])
+                        echo '$library_record' >> tmp &&
+                     #end if
+                     mkdir -p $input_directory/$sample_name_directory &&
+                     #set collection_identifier =  re.sub('[^\s\w\-]', '_', str($input.input_collection.element_identifier))
+                     #for $f in $input.input_collection:
+                        #set identifier = re.sub('[^\s\w\-\\.]','_',str($f.element_identifier))
+	    		ln -sf '$f' "\$(pwd)"/$input_directory/$sample_name_directory/$identifier &&
+                     #end for
+                #end for
 	    #end if 
 
 	    #if str($tool_cond.tool) == "count"
@@ -60,15 +84,69 @@
             2>&1
 	    #elif str($tool_cond.tool) == "mkgtf"
 	    	cellranger mkgtf $raw_gtf $filtered_gtf $attribute
+	    #elif str($tool_cond.tool) == "multi"
+	    	cp '$multi_config' 'config.txt' &&
+	    	cat tmp >> 'config.txt' &&
+		sed -i "s|input_data_directory|`pwd`/input_data_directory|g" config.txt &&
+                cellranger multi --id=output_directory
+                                 --csv=config.txt
+                                 --localcores=\${GALAXY_SLOTS:-2}
+                                 --localmem=\${GALAXY_MEMORY_GB:-8}
+                                --disable-ui
+                && gunzip -f output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/matrix.mtx.gz
+                && gunzip -f output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/features.tsv.gz
+	    	&& gunzip -f output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/barcodes.tsv.gz
+		&& rm tmp 
+                && 2>&1	   	
 	    #end if
 
     ]]></command>
+    <configfiles>
+	<configfile name="multi_config"><![CDATA[
+#import re
+#set $lib_type_multi = list()
+#for $input in $tool_cond.inputs:
+     #set lib_type = $input.type
+     #if str($lib_type) not in $lib_type_multi:
+	 $lib_type_multi.append('%s' %(str($input.type)))
+     #end if
+     #if str($lib_type) == "Gene Expression":
+	#set selected_gex_ref = $input.reference_source.ref_file.fields.path
+	#set has_bam = $tool_cond.GEX.no_bam
+     #elif str($lib_type) == "VDJ":
+	#set selected_vdj_ref = $input.reference_source.ref_file.fields.path
+     #else:
+	#set selected_gex_ref = $input.reference_source.ref_file.fields.path
+	#set has_bam = $tool_cond.GEX.no_bam
+	#set selected_vdj_ref = $input.reference_source.ref_file.fields.path
+     #end if
+#end for
+
+#if str("Gene Expression") in $lib_type_multi and str("VDJ") in $lib_type_multi:
+[gene-expression]
+reference, ${selected_gex_ref}
+no-bam,${has_bam}
+[vdj]
+reference, ${selected_vdj_ref}
+#elif str($lib_type) == "Gene Expression":
+[gene-expression]
+reference, ${selected_gex_ref}
+no-bam,${has_bam}
+#elif str($lib_type) == "VDJ" or "Gene Expression" not in $lib_type_multi:
+[vdj]
+reference, ${selected_vdj_ref}
+#end if
+[libraries]
+fastq_id,fastqs,lanes,feature_types,subsample_rate
+]]></configfile>
+    </configfiles>
     <inputs>
 	    <conditional name="tool_cond">
-		   <param name="tool" type="select" label="Select a CellRanger tool" help="CellRanger tool: count, mkref or mkgtf.">
+		   <param name="tool" type="select" label="Select a CellRanger tool" help="CellRanger tool: count, mkref, mkgtf, multi.">
 			   <option value="count" selected="True">count</option>
 			   <option value="mkref">mkref</option>
 			   <option value="mkgtf">mkgtf</option>
+		           <option value="multi">multi</option>
 		   </param>
 		   <when value="count">
 			 <param name="input_collection" type="data_collection" format="fastq.gz,fastqsanger.gz,fastq" collection_type="list" label="Input Collection" help="A list of paired-end FASTQ files in a collection."/>
@@ -101,6 +179,25 @@
 				  <expand macro="feature_type"/>
 			  </param>
 		   </when>
+		   <when value="multi">
+			 <repeat name="inputs" title="Input Collections" min="1">
+			      <param name="input_collection" type="data_collection" format="fastq.gz,fastqsanger.gz,fastq" collection_type="list" label="Input Collection"/>
+			      <param name="type" type="select" label="library type" multiple="false" help="Select library type.">
+				   <expand macro="library_type"/>
+			      </param>
+			      <section name="lanes">   
+				     <expand macro="number_of_lane"/>
+		       	      </section>
+			      <expand macro="db_reference"/>
+		      	</repeat>
+                         <section name="GEX" title="Gene Expresion Options">
+                               <expand macro="gene_expression_options"/>
+                               <expand macro="chemistry"/>
+                         </section>
+                         <section name="VDJ" title="VDJ options">
+                               <expand macro="vdj"/>
+                         </section>
+		   </when>
 	    </conditional>
     </inputs>
     <outputs>
@@ -131,6 +228,38 @@
 	    <data name="tar_ref_output" format="tgz"  label="${tool.name} on ${on_string}: A tarball of the custom reference">
 		    <filter>tool_cond['tool'] == 'mkref'</filter>
 	    </data>
+            <data format="html" name="output_summary" label="Summary from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/per_sample_outs/output_directory/web_summary.html" >
+                    <filter>tool_cond['tool'] == 'multi'</filter>
+            </data>
+	    <data format="binary" name="cloupe" label="Cloupe file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/per_sample_outs/output_directory/count/sample_cloupe.cloupe">
+                    <filter>tool_cond['tool'] == 'multi'</filter>
+            </data>
+            <data format="mtx" name="matrix" label="Matrix file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/matrix.mtx">
+                    <filter>tool_cond['tool'] == 'multi'</filter>
+            </data>
+            <data format="tabular" name="feature" label="Feature file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/features.tsv">
+                    <filter>tool_cond['tool'] == 'multi'</filter>
+            </data>
+            <data format="tabular" name="barcode" label="Barcode file from ${tool.name} on ${on_string}" from_work_dir="output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/barcodes.tsv">
+                    <filter>tool_cond['tool'] == 'multi'</filter>
+            </data>
+	    <data format="txt" name="multi_config_out" from_work_dir="config.txt" label="${tool.name} on ${on_string}: config">
+		    <filter>tool_cond['tool'] == 'multi'</filter>
+	    </data>
+	    <collection name="multi_output" type="list" label="${tool.name} on ${on_string}: multi">
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;h5)" directory="output_directory/outs/per_sample_outs/output_directory/count" format="h5" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;bam)" directory="output_directory/outs/per_sample_outs/output_directory/count" format="bam" visible="false" />
+                    <filter>tool_cond['tool'] == 'multi' and tool_cond['GEX']['no_bam']</filter>
+	    </collection>
+	    <collection name="vdj_output" type="list" label="${tool.name} on ${on_string}: multi vdj output">
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;vloupe)" directory="output_directory/outs/per_sample_outs/output_directory/vdj_b" format="binary" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;tsv)" directory="output_directory/outs/per_sample_outs/output_directory/vdj_b" format="tsv" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;csv)" directory="output_directory/outs/per_sample_outs/output_directory/vdj_b" format="csv" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fastq)" directory="output_directory/outs/per_sample_outs/output_directory/vdj_b" format="fastq" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fasta)" directory="output_directory/outs/per_sample_outs/output_directory/vdj_b" format="fasta" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;bam)" directory="output_directory/outs/per_sample_outs/output_directory/vdj_b" format="bam" visible="false" />
+                    <filter>tool_cond['tool'] == 'multi' and tool_cond['inputs']['type'] == "VDJ"</filter>
+	    </collection>
     </outputs>
 
     <tests>
@@ -151,6 +280,7 @@ Cell Ranger is a set of analysis pipelines that process Chromium single cell dat
 - count : aligns sequencing reads in FASTQ files to a reference transcriptome
 - mkref : build a custom reference
 - mkgtf : filter GTF files with the feature attributes (i.e gene_biotype:protein_coding)
+- multi : tool for analyzing 3' Cell Multiplexing data
 
 **CellRanger Count**
 
@@ -197,11 +327,27 @@ Cell Ranger is a set of analysis pipelines that process Chromium single cell dat
 
 - A filtered reference genome GTF file
 
+**CellRanger multi**
+
+**Input**
+
+1) Single Cell gene expression dataset in a collection named by the sample name. Example, if the gene expression sample name is sc5p_v2_hs_B_1k_5gex_S1_L001_I1_001.fastq.gz and the collection name should be formatted as sc5p_v2_hs_B_1k_5gex (the partial prefix of the gene expression sample name). 
+2) Single Cell VDJ dataset in a collection named by the sample name. Example, if the VDJ sample name is sc5p_v2_hs_B_1k_b_S1_L001_I1_001.fastq.gz and the collection name should be formatted as sc5p_v2_hs_B_1k_b ( the partial prefix of the VDJ sample name).
+3) both 1) and 2) 
+
+**Output**
+
+1) Gene expression - A summary file in html format, two h5 files, Cloupe,  barcode, feature and a matrix file.
+2) VDJ - Vloupe (Cellranger supported file format), clonotypes, airr_rearrangement, consensus_annotations, filtered_contig_annotations, filtered_contig, concat_ref and consensus. 
+3) Both output 1 and output 2 will be generated only if both gene expression and VDJ are used as an input. 
+
 .. class:: infomark
 
 **More Information**
 
 - `CellRanger`: https://support.10xgenomics.com/docs/citations
+
+- `Output` : see more https://www.10xgenomics.com/support/software/cell-ranger/latest/analysis/outputs/cr-5p-outputs-overview-vdj
 
 **Citations for 10x Genomics Publications**
 
