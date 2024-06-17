@@ -39,7 +39,7 @@ calls.bam
             <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
             <output name="out_bam">
                 <assert_contents>
-                    <has_size value="132024" delta="10000"/>
+                    <has_size value="60692" delta="6000"/>
                 </assert_contents>
             </output>
             <output name="out_tsv" file="test1.sequencing_summary.tsv" />
