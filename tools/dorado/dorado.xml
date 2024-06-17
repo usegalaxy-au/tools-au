@@ -37,11 +37,10 @@ calls.bam
         <test expect_num_outputs="2">
             <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
             <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
-            <output name="out_bam" file="test1.calls.bam">
-                <!-- <assert_contents> -->
-                    <!-- <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/> -->
-                    <!-- <has_size value="132024" delta="10000"/> -->
-                <!-- </assert_contents> -->
+            <output name="out_bam">
+                <assert_contents>
+                    <has_size value="132024" delta="10000"/>
+                </assert_contents>
             </output>
             <output name="out_bam" file="test1.sequencing_summary.tsv" />
         </test>
