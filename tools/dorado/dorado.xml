@@ -10,6 +10,7 @@ ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
 --trim '${trim}'
+--kit-name '${kit-name}'
 '${model.fields.path}'
 reads.pod5 
 > calls.bam
@@ -34,6 +35,9 @@ calls.bam
             <option value="primers"> Primers. Trim any detected adapters or primers, but if barcoding is enabled the barcode sequences will not be trimmed.</option>
             <option value="adapters"> Adapters. Trim any detected adapters, but primers will not be trimmed, and if barcoding is enabled then barcodes will not be trimmed either.</option>
             <option value="none"> None. Nothing will be trimmed.</option>
+        </param>
+        <param type="select" argument="--kit-name" optional="true" label="Enable barcoding with the selected kit name." help="Reads are classified into their barcode groups during basecalling. The classification will be reflected in the read group name as well as in the BC tag of the output record.">
+            <option value="EXP-NBD103">EXP-NBD103</option>
         </param>
     </inputs>
     <outputs>
