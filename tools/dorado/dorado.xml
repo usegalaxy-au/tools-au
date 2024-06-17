@@ -10,9 +10,8 @@ ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
 '${model.fields.path}'
-reads.pod5 | tee calls.bam
-
-&& ls -lhrt .
+reads.pod5 
+> calls.bam
 
     ]]></command>
     <inputs>
@@ -20,12 +19,12 @@ reads.pod5 | tee calls.bam
         <param name="model" type="select">
             <options from_data_table="dorado_models">
                 <!-- only allow models that shipped in this container -->
-                <filter type="static_value" column="1" value="@CONTAINER_HASH@" />
+                <filter type="static_value" column="1" value="@CONTAINER_HASH@"/>
             </options>
         </param>
     </inputs>
     <outputs>
-        <data format="bam" name="out_bam" label="Basecalled reads" from_work_dir="calls.bam"/>
+        <data format="unsorted.bam" name="out_bam" label="Basecalled reads" from_work_dir="calls.bam"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
