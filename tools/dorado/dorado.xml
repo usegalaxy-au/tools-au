@@ -12,6 +12,8 @@ dorado basecaller
 '${model.fields.path}'
 reads.pod5 | tee calls.bam
 
+&& ls -lhrt .
+
     ]]></command>
     <inputs>
         <param name="pod5_file" type="data" format="fast5" label="Raw fast5 file"/>
