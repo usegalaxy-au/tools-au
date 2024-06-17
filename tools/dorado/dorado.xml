@@ -23,7 +23,7 @@ reads.pod5 | tee calls.bam
         </param>
     </inputs>
     <outputs>
-        <data format="bam" name="out_bam" label="Basecalled reads" from_work_dir="output.bam"/>
+        <data format="bam" name="out_bam" label="Basecalled reads" from_work_dir="calls.bam"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
