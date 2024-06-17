@@ -42,7 +42,7 @@ calls.bam
                     <has_size value="132024" delta="10000"/>
                 </assert_contents>
             </output>
-            <output name="out_bam" file="test1.sequencing_summary.tsv" />
+            <output name="out_tsv" file="test1.sequencing_summary.tsv" />
         </test>
     </tests>
     <help><![CDATA[
