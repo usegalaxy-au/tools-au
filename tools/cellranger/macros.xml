@@ -17,6 +17,38 @@
     <xml name="attribute_option" token_value="default">
         <option value="@VALUE@" selected="true">@VALUE@</option>
     </xml>
+    <xml name="db_reference">
+	  <conditional name="reference_source">
+             <param name="reference_source_selector" type="select" label="Will you select a reference genome from your history or use a built-in index?">
+                 <option value="cached">Use a built-in genome index</option>
+                 <option value="history">Use a genome from history and build index</option>
+             </param>
+             <when value="cached">
+                   <param name="ref_file" type="select" label="Using reference genome" help="Select genome from the list">
+                      <options from_data_table="cellranger_db">
+                           <filter type="sort_by" column="2" />
+                           <validator type="no_options" message="No reference genomes are available" />
+                      </options>
+                           <validator type="no_options" message="A built-in reference genome is not available for the build associated with the selected input file"/>
+                    </param>
+              </when>
+              <when value="history">
+                    <param name="own_ref_file" type="data" format="tgz" hierarchy="recurse" label="Use the following dataset as the reference sequence" help="You can upload a tarball formatted in CellRanger format as reference" />
+              </when>
+         </conditional>
+    </xml>
+    <xml name="chemistry">
+       <param name="chemistry_list" type="select" label="Select chemistry">
+	 <option value="auto" selected="true">auto</option>
+         <option value="threeprime" >Single Cell 3'</option>
+	 <option value="fiveprime">Single Cell 5'</option>
+	 <option value="SC3Pv1">Single Cell 3' v1</option>
+	 <option value="SC3Pv2">Single Cell 3' v2</option>
+         <option value="SC5P-PE">SC5P-PE</option>
+         <option value="SC5P-R2">SC5P-R2 for R2-only</option>
+	 <option value="SC-FB">SC-FB for Single Cell AntiBody-only</option>
+       </param>
+    </xml>
     <xml name="feature_type">
         <expand macro="attribute_option" value="protein_coding"/>
         <expand macro="attribute_option" value="lncRNA"/>
@@ -34,5 +66,51 @@
 	<expand macro="attribute_option" value="TR_J_gene"/>
         <expand macro="attribute_option" value="TR_V_pseudogene"/>
         <expand macro="attribute_option" value="TR_J_pseudogene"/>
+    </xml>
+    <xml name="library_type">
+	<expand macro="attribute_option" value="Gene Expression"/>
+	<expand macro="attribute_option" value="VDJ"/>
+	<expand macro="attribute_option" value="VDJ-T"/>
+	<expand macro="attribute_option" value="VDJ-T-GD"/>
+	<expand macro="attribute_option" value="VDJ-B"/>
+	<expand macro="attribute_option" value="Antibody Capture"/>
+	<expand macro="attribute_option" value="Antigen Capture (BEAM)"/>
+	<expand macro="attribute_option" value="CRISP Guide Capture"/>
+    </xml>
+    <xml name="gene_expression_options">
+	<param name="no_target_umi_filter" type="boolean" truevalue="true" falsevalue="false" checked="False" label="No target umi filter"/>
+	<param name="r1_length" type="text" optional="True" label="R1 length" help=""/>
+	<param name="r2_length" type="text" optional="True" label="R2 length" help=""/>
+	<param name="expect_cells" type="text" optional="True" label="Expect cells" help=""/>
+	<param name="force_cells" type="text" optional="True" label="Force cells" help=""/>
+	<param name="include_introns" type="boolean" truevalue="true" falsevalue="false" checked="True" label="Include introns"/>
+	<param name="no_secondary" type="boolean" truevalue="true" falsevalue="false" checked="True" label="No Secondary"/>
+	<param name="no_bam" type="boolean" truevalue="true" falsevalue="false" checked="Talse" label="create bam file"/>
+	<param name="check_library_compatibility" type="boolean" truevalue="true" falsevalue="false" checked="True" label="Check library compatibility"/>
+    </xml>
+    <xml name="vdj">
+	<param name="inner_enrichment_primers" type="text" optional="True" label="Inner enrichment pimers"/>
+        <param name="r1_length" type="text" optional="True" label="R1 length"/>
+	<param name="r2_length" type="text" optional="True" label="R2 length"/>
+    </xml>
+    <xml name="number_of_lane">
+          <conditional name="lane_source">
+             <param name="lane_source_selector" type="select" label="Select number of lanes for your dataset?">
+                 <option value="default">Default: all lanes</option>
+                 <option value="user_define">User define</option>
+             </param>
+             <when value="default">
+             </when>
+             <when value="user_define">
+		  <param name="lane" type="select" multiple="true" label="Select a list of lanes">
+        	      <option value="1">Lane 1</option>
+         	      <option value="2">Lane 2</option>
+         	      <option value="3">Lane 3</option>
+         	      <option value="4">Lane 4</option>
+         	      <option value="5">Lane 5</option>
+                      <option value="6">Lane 6</option>
+	          </param>
+             </when>
+           </conditional>
     </xml>
 </macros>
