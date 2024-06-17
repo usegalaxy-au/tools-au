@@ -18,7 +18,7 @@ below). **You must do this when you update the wrapper**.
 The models are bundled in the container at `/models` and made available by the
 `dorado_models.loc` file. 
 
-The columns are `value`, `tool_version`, `name` and  `path`.
+The columns are `value`, `container_hash`, `name` and  `path`.
 
 To update the list, modify `tool-data/dorado_models.loc.sample`.
 

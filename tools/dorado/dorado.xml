@@ -11,7 +11,7 @@ ln -s '$pod5_file' ./reads.pod5 &&
 dorado basecaller
 '${model.fields.path}'
 reads.pod5 
-> calls.bam
+> tee calls.bam
 
     ]]></command>
     <inputs>
