@@ -7,7 +7,10 @@
     <command><![CDATA[
     
     ln -s '$fast5_in' ./input.fast5 &&
-    pod5 convert fast5 input.fast5 --output output.pod5
+    pod5 convert fast5
+    --threads \${GALAXY_SLOTS:-4}
+    --output output.pod5
+    input.fast5 
 
     ]]>
     </command>
