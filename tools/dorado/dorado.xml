@@ -7,7 +7,9 @@
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
 
-ln -s '$pod5_file' ./reads.pod5 &&
+ln -s '$pod5_file' ./reads.pod5
+
+&&
 
 dorado basecaller
 --trim '${trim}'
@@ -85,6 +87,7 @@ calls.bam
         <data format="tsv" name="out_tsv" label="Sequencing summary file" from_work_dir="summary.tsv"/>
     </outputs>
     <tests>
+        <!-- test 1 -->
         <test expect_num_outputs="2">
             <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
             <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
@@ -94,12 +97,14 @@ calls.bam
                     <has_size value="60692" delta="6000"/>
                 </assert_contents>
             </output>
-            <output name="out_tsv">
+            <output name="out_tsv" file="dorado.test1.out.tsv" ftype="tsv"/>
+            <!-- <output name="out_tsv">
                 <assert_contents>
                     <has_size value="1651" delta="200"/>
                 </assert_contents>
-            </output>
+            </output> -->
         </test>
+        <!-- test 2: trim parameter -->
         <test expect_num_outputs="2">
             <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
             <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
@@ -109,23 +114,25 @@ calls.bam
                     <has_size value="60692" delta="6000"/>
                 </assert_contents>
             </output>
-            <output name="out_tsv">
+            <output name="out_tsv" file="dorado.test2.out.tsv" ftype="tsv"/>
+            <!-- <output name="out_tsv">
                 <assert_contents>
                     <has_size value="1651" delta="200"/>
                 </assert_contents>
-            </output>
+            </output> -->
         </test>
+        <!-- test 3: barcode detection -->
         <test expect_num_outputs="2">
             <param name="pod5_file" value="SQK-RBK114_BC01_BC04_unclassified.pod5"/>
             <param name="model" value="dna_r10.4.1_e8.2_400bps_hac@v4.3.0"/>
             <param name="trim" value="all"/>
             <param name="kit_name" value="SQK-RBK114-96"/>
-            <output name="out_bam" file="test3.out.bam" ftype="unsorted.bam"/>
-            <!-- <assert_contents>
+            <output name="out_bam" file="test3.out.bam" ftype="unsorted.bam">
+                <assert_contents>
                     <has_size value="7259" delta="700"/>
                 </assert_contents>
-            </output> -->
-            <output name="out_tsv" file="test3.out.tsv" ftype="tsv"/>
+            </output>
+            <output name="out_tsv" file="dorado.test3.out.tsv" ftype="tsv"/>
         </test>
     </tests>
     <help><![CDATA[

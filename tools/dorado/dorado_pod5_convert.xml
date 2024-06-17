@@ -7,11 +7,14 @@
     <expand macro="requirements"/>
     <command><![CDATA[
     
-    ln -s '$fast5_in' ./input.fast5 &&
-    pod5 convert fast5
-    --threads \${GALAXY_SLOTS:-4}
-    --output output.pod5
-    input.fast5 
+ln -s '$fast5_in' ./input.fast5
+
+&&
+
+pod5 convert fast5
+--threads \${GALAXY_SLOTS:-4}
+--output output.pod5
+input.fast5 
 
     ]]>
     </command>
@@ -24,7 +27,7 @@
     <tests>
         <test expect_num_outputs="1">
             <param name="fast5_in" value="FAL00375_473bf0ed_0.ten_reads.0_0.fast5"/>
-            <output name="pod5_out" file="convert.test1.pod5"/>
+            <output name="pod5_out" file="dorado_pod5_convert.test1.out.pod5"/>
         </test>
     </tests>
     <help><![CDATA[
