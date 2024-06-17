@@ -10,7 +10,9 @@ ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
 --trim '${trim}'
---kit-name '${kit_name}'
+#if $kit_name
+    --kit-name '${kit_name}'
+#end if
 '${model.fields.path}'
 reads.pod5 
 > calls.bam
