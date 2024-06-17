@@ -114,12 +114,11 @@ calls.bam
                 </assert_contents>
             </output>
         </test>
-        <!-- TODO: need a test for barcoded data. -->
         <test expect_num_outputs="2">
-            <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
-            <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
-            <param name="trim" value="adapters"/>
-            <param name="kit_name" value="EXP-NBD103"/>
+            <param name="pod5_file" value="SQK-RBK114_BC01_BC04_unclassified.pod5"/>
+            <param name="model" value="dna_r10.4.1_e8.2_400bps_hac@v4.2.0"/>
+            <param name="trim" value="all"/>
+            <param name="kit_name" value="SQK-RBK114-96"/>
             <output name="out_bam">
                 <assert_contents>
                     <has_size value="60692" delta="6000"/>
