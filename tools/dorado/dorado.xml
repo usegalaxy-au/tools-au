@@ -9,23 +9,22 @@
 ln -s '$pod5_file' ./reads.pod5 &&
 
 dorado basecaller
---emit-sam
 '${model.fields.path}'
 reads.pod5 
-> output.sam
+> calls.bam
 
     ]]></command>
     <inputs>
         <param name="pod5_file" type="data" format="fast5" label="Raw fast5 file"/>
         <param name="model" type="select">
             <options from_data_table="dorado_models">
-                <!-- only allow models that shipped with this tool_version -->
+                <!-- only allow models that shipped in this container -->
                 <filter type="static_value" column="1" value="@CONTAINER_HASH@" />
             </options>
         </param>
     </inputs>
     <outputs>
-        <data format="sam" name="out_sam" label="Output from dorado list-models" from_work_dir="output.sam"/>
+        <data format="bam" name="out_bam" label="Basecalled reads" from_work_dir="output.bam"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
