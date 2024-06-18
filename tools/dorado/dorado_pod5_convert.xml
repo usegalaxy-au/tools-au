@@ -32,11 +32,11 @@ input_fast5
     <tests>
         <test expect_num_outputs="1">
             <param name="fast5_in" ftype="fast5.tar" value="FAL00375_473bf0ed_0.ten_reads.0_0.fast5.tar"/>
-            <output name="pod5_out" file="dorado_pod5_convert.test1.out.pod5" ftype="fast5"/>
+            <output name="pod5_out" file="dorado_pod5_convert.test1.out.binary" ftype="fast5"/>
         </test>
         <test expect_num_outputs="1">
             <param name="fast5_in" ftype="fast5.tar.gz" value="reads_in_directories.tar.gz"/>
-            <output name="pod5_out" file="dorado_pod5_convert.test2.out.pod5" ftype="fast5"/>
+            <output name="pod5_out" file="dorado_pod5_convert.test2.out.binary" ftype="fast5"/>
         </test>
     </tests>
     <help><![CDATA[
