@@ -228,6 +228,13 @@ $outputs.plots
                 label="relax_metrics.json"
                 help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
             />
+            <param
+                name="timings_json"
+                type="boolean"
+                checked="false"
+                label="timings.json"
+                help="A JSON-formatted text file with timings for each phase of the AlphaFold run."
+            />
         </section>
     </inputs>
 
@@ -241,6 +248,7 @@ $outputs.plots
         <expand macro="output_pae_csv" />
         <expand macro="output_plots" />
         <expand macro="output_relax_json" />
+        <expand macro="output_timings_json" />
     </outputs>
 
     <tests>
