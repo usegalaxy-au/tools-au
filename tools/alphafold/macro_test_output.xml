@@ -26,6 +26,14 @@
         </output>
     </xml>
 
+    <xml name="test_output_timings_json">
+        <output name="output_timings_json">
+            <assert_contents>
+                <has_size min="500" />
+            </assert_contents>
+        </output>
+    </xml>
+
     <xml name="test_output_pdb_models">
         <output name="model1">
             <assert_contents>

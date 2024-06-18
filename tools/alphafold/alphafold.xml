@@ -318,12 +318,14 @@ $outputs.plots
             <param name="outputs|pae_csv" value="true"/>
             <param name="outputs|model_pkls" value="true"/>
             <param name="outputs|relax_json" value="true"/>
+            <param name="outputs|timings_json" value="true"/>
             <expand macro="test_output_plots_3" />
             <expand macro="test_output_confidence_scores" />
             <expand macro="test_output_plddts" />
             <expand macro="test_output_pdb_models" />
             <expand macro="test_output_pickles" />
             <expand macro="test_output_relax_json" />
+            <expand macro="test_output_timings_json" />
             <expand macro="test_output_pae_csv" />
         </test>
     </tests>
