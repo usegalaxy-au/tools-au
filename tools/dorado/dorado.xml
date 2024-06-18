@@ -28,7 +28,7 @@ calls.bam
 
     ]]></command>
     <inputs>
-        <param name="pod5_file" type="data" format="fast5" label="Raw pod5 file" help="Only pod5 is supported. You can convert fast5 to pod5 with the fast5 to pod5 tool."/>
+        <param name="pod5_file" type="data" format="binary" label="Raw pod5 file" help="Only pod5 is supported. You can convert fast5 to pod5 with the fast5 to pod5 tool."/>
         <param name="model" type="select" label="Basecalling model. See the Help section for info on model names.">
             <options from_data_table="dorado_models">
                 <!-- only allow models that shipped in this container -->
