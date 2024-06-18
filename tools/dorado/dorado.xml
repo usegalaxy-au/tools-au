@@ -94,15 +94,14 @@ calls.bam
             <param name="trim" value="all"/>
             <output name="out_bam">
                 <assert_contents>
-                    <has_size value="60692" delta="6000"/>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
                 </assert_contents>
             </output>
-            <output name="out_tsv" file="dorado.test1.out.tsv" ftype="tsv"/>
-            <!-- <output name="out_tsv">
+            <output name="out_tsv" ftype="tsv">
                 <assert_contents>
-                    <has_size value="1651" delta="200"/>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
                 </assert_contents>
-            </output> -->
+            </output>
         </test>
         <!-- test 2: trim parameter -->
         <test expect_num_outputs="2">
@@ -111,15 +110,14 @@ calls.bam
             <param name="trim" value="adapters"/>
             <output name="out_bam">
                 <assert_contents>
-                    <has_size value="60692" delta="6000"/>
+                    <has_text text="0072b26f-f37c-4517-afa7-621543ac2187"/>
                 </assert_contents>
             </output>
-            <output name="out_tsv" file="dorado.test2.out.tsv" ftype="tsv"/>
-            <!-- <output name="out_tsv">
+            <output name="out_tsv" ftype="tsv">
                 <assert_contents>
-                    <has_size value="1651" delta="200"/>
+                    <has_text text="0072b26f-f37c-4517-afa7-621543ac2187"/>
                 </assert_contents>
-            </output> -->
+            </output>
         </test>
         <!-- test 3: barcode detection -->
         <test expect_num_outputs="2">
@@ -129,10 +127,15 @@ calls.bam
             <param name="kit_name" value="SQK-RBK114-96"/>
             <output name="out_bam" file="test3.out.bam" ftype="unsorted.bam">
                 <assert_contents>
-                    <has_size value="7259" delta="700"/>
+                    <has_text text="1103e241-dd7f-43bc-ae19-9a3c6326ad83"/>
                 </assert_contents>
             </output>
-            <output name="out_tsv" file="dorado.test3.out.tsv" ftype="tsv"/>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="1103e241-dd7f-43bc-ae19-9a3c6326ad83"/>
+                    <has_text text="SQK-RBK114-96_barcode04"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
     <help><![CDATA[
