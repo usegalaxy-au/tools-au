@@ -29,7 +29,7 @@ input_fast5
     <outputs>
         <!-- FIXME: add pod5 datatype to Galaxy and change here.
         https://github.com/galaxyproject/galaxy/pull/18419 -->
-        <data format="binary" name="pod5_out" label="Oxford Nanopore raw data in in pod5 format" from_work_dir="output.pod5"/>
+        <data format="binary" name="pod5_out" label="${on_string} converted to pod5 from fast5" from_work_dir="output.pod5"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
