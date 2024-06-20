@@ -97,7 +97,7 @@ RUN wget -q -P /app/alphafold/alphafold/common/ \
 RUN pip3 install --upgrade pip \
     && pip3 install -r /app/alphafold/requirements.txt \
     && pip3 install --upgrade jax==${JAX_VERSION} jaxlib==${JAXLIB_VERSION} -f \
-      https://storage.googleapis.com/jax-releases/jax_cuda_releases.html
+      https://storage.googleapis.com/jax-releases/jax_cuda_releases.html \
     && pip3 install --no-cache-dir matplotlib
 
 # Apply OpenMM patch.
