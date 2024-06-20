@@ -83,21 +83,33 @@
         --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/small_bfd/bfd-first_non_consensus_sequences.fasta
         #end if
 
-        #if $max_template_date:
-        --max_template_date=$max_template_date
+        #if $advanced.max_template_date:
+        --max_template_date=$advanced.max_template_date
         #else
         --max_template_date=\$TODAY
         #end if
 
-        --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
+        --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
 
         #if $model_preset == 'multimer':
         --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb_seqres/pdb_seqres.txt
         --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/uniprot/uniprot.fasta
-        --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
+        --num_multimer_predictions_per_model=$model_preset.num_multimer_predictions_per_model
         #else
         --pdb70_database_path \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb70/pdb70
         #end if
+
+        ## Galaxy-specific options --------------------------------------------
+        ## See https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy
+        #if $advanced.disable_amber_relax:
+        --disable_amber_relax
+        #end if
+
+        #if $advanced.limit_model_outputs:
+        --limit_model_outputs=$limit_model_outputs
+        #end if
+        ## End Galaxy-specific options ----------------------------------------
+
 #end if
 
 ## Generate additional outputs ------------------------------------------------
@@ -136,21 +148,6 @@ $outputs.plots
         </conditional>
 
         <param
-            name="max_template_date"
-            type="text"
-            label="Max template date (yyyy-mm-dd) (optional)"
-            help="The model will reference PDB structures deposited before this date only. Defaults to today's date."
-            optional="true"
-        >
-            <sanitizer>
-                <valid initial="string.digits">
-                    <add value="-" />
-                </valid>
-            </sanitizer>
-            <validator type="regex">[0-9]{4}-[0-9]{2}-[0-9]{2}</validator>
-        </param>
-
-        <param
           name="dbs"
           type="select"
           display="radio"
@@ -162,8 +159,9 @@ $outputs.plots
           <option value="full">Full database</option>
         </param>
 
+        <conditional name="model_preset">
         <param
-            name="model_preset"
+                name="selection"
             type="select"
             label="Model preset"
             help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction. The multimer model allows prediction of protein complexes."
@@ -176,6 +174,56 @@ $outputs.plots
                 multimer - model a protein complex (requires multi-sequence FASTA input)
             </option>
         </param>
+            <when value="monomer"></when>
+            <when value="monomer_ptm"></when>
+            <when value="multimer">
+                <param
+                    name="num_multimer_predictions_per_model"
+                    type="integer"
+                    value="1"
+                    label="Multimer predictions per model"
+                    help="How many predictions (each with a different random seed) will be generated per model. E.g. if this is 2 and there are 5 models then there will be 10 predictions per input (max 15)."
+                    min="1"
+                    max="15"
+                />
+            </when>
+        </conditional>
+
+        <section name="advanced" title="Advanced options" expanded="false">
+            <param
+                name="max_template_date"
+                type="text"
+                label="Max template date (yyyy-mm-dd) (optional)"
+                help="The model will reference PDB structures deposited before this date only. Defaults to today's date."
+                optional="true"
+            >
+                <sanitizer>
+                    <valid initial="string.digits">
+                        <add value="-" />
+                    </valid>
+                </sanitizer>
+                <validator type="regex">[0-9]{4}-[0-9]{2}-[0-9]{2}</validator>
+            </param>
+
+            <param
+                name="disable_amber_relax"
+                type="boolean"
+                label="Disable Amber relaxation"
+                value="false"
+                optional="true"
+                help="Amber relaxation can be disabled to speed up processing time. Amber relaxation is used to refine predicted structures by removing stereochemical violations, resulting in more accurate prediction of side-chain geometry. Disabling this option with large proteins may lead to artefacts in the predicted structure. Disabling amber relax will result in the unrelaxed models being collected as PDB outputs."
+            />
+
+            <param
+                name="limit_model_outputs"
+                type="integer"
+                label="Limit model outputs"
+                value="5"
+                help="Limit the number of models to output. The top N models will be output, where N is the value entered here (default 5)."
+                min="1"
+                max="5"
+            />
+        </section>
 
         <section name="outputs" title="Optional outputs" expanded="false">
             <param
