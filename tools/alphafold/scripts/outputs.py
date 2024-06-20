@@ -188,7 +188,7 @@ def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     """Write per-model confidence scores."""
     path = context.settings.workdir / OUTPUTS['model_confidence_scores']
     with open(path, 'w') as f:
-        for rank in range(1, 6):
+        for rank in range(1, len(context.model_pkl_paths) + 1):
             score = ranking.get_plddt_for_rank(rank)
             f.write(f'ranked_{rank - 1}\t{score:.2f}\n')
 
