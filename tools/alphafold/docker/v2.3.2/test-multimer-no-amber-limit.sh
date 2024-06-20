@@ -3,7 +3,7 @@
 set -e
 
 # Use this script for a CLI test of AF2 container.
-# Benchmarked at 2:47 hours
+# Benchmarked at 1:55 hours
 
 ALPHAFOLD_DB_DIR=/mnt/alphafold_db/alphafold_db
 WDIR=./working
@@ -42,6 +42,8 @@ sudo docker run --rm --gpus all -v $ALPHAFOLD_DB_DIR:/data -v $WDIR:/app/alphafo
         --num_multimer_predictions_per_model=1 \
 \
         --use_gpu_relax=True \
-        --max_template_date=$TODAY
+        --max_template_date=$TODAY \
+        --disable_amber_relax=True \
+        --output_models=1
 
 echo "Test run complete"

@@ -1,8 +1,7 @@
 #!/usr/bin/env bash
 
 # Use this script for a CLI test of AF2 container.
-
-# Benchmarked at 1:55 hours
+# Benchmarked at 2:22 hours??
 
 set -e
 
@@ -17,7 +16,7 @@ DGKILADKVSDKLEQTATLTGLDYGRFTRSMLLSQGQFAAFLNAKPSDRAELLEELTGTE
 IYGQISAMVYEQHKAARHALEKFEAQAAGIVLLTEAQQ
 " > $WDIR/monomer.fasta
 
-sudo docker run --rm -v $ALPHAFOLD_DB_DIR:/data -v $WDIR:/app/alphafold/working neoformit/alphafold:v2.3.2_dev \
+sudo docker run --rm --gpus all -v $ALPHAFOLD_DB_DIR:/data -v $WDIR:/app/alphafold/working neoformit/alphafold:v2.3.2_dev \
     python /app/alphafold/run_alphafold.py \
         --fasta_paths working/monomer.fasta \
         --output_dir working/output_monomer \
