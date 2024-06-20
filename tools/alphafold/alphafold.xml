@@ -383,7 +383,7 @@ $outputs.plots
 
     | AlphaFold v2: AI-guided 3D structural prediction of proteins
     |
-    | **NOTE: this tool packages AlphaFold v2.3.1.**
+    | **NOTE: this tool packages `a modified branch of AlphaFold v2.3.2 <https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy>`_. **
     |
     | This means that the neural network has been trained on PDBs with a release
     | date before 2021-09-30 (the training cutoff was 2018-04-30 until ``v2.3.0``).
@@ -391,11 +391,8 @@ $outputs.plots
     | Find out more in the technical and release notes:
     |
 
-    - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.1>`_
+    - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.2>`_
     - `Technical notes for v2.3 <https://github.com/deepmind/alphafold/blob/main/docs/technical_note_v2.3.0.md>`_
-
-    | If you want to use AlphaFold trained against an older cutoff date, switch to Galaxy version ``2.1.2`` (which was trained to data up to 2018-04-30).
-    |
 
     **What it does**
 
@@ -420,6 +417,7 @@ $outputs.plots
     | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
     | If you choose the ``multimer`` option, you can supply a FASTA file containing **multiple sequences** to be folded concurrently into a multimer.
     |
+    | For pairwise screening of target-candidate with multimer, you can submit a list of paired protein sequences in batch mode (i.e. two protein sequences in each FASTA file).
     |
 
     **Outputs**
@@ -438,7 +436,7 @@ $outputs.plots
 
     *PDB files*
 
-    | Five PDB (Protein Data Bank) files are be created, ordered by rank, as predicted by AlphaFold.
+    | PDB (Protein Data Bank) files (5 by default) are be created, ordered by rank, as predicted by AlphaFold. The tool produces 5 models by default, but this can be reduced with the "Limit model outputs" for a reduced run time.
     | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
     | **PLEASE NOTE** that all outputs have been renamed to their respective rank order, including model and model.pkl files.
     |
@@ -476,6 +474,12 @@ $outputs.plots
     *relax_metrics.json (optional)*
 
     | A JSON-formatted text file containing relax metrics (primarily remaining violations).
+    |
+    |
+
+    *timings.json (optional)*
+
+    | A JSON-formatted text file containing the timings for each phase of the prediction.
     |
     |
 
