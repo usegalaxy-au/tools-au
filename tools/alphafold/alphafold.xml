@@ -106,7 +106,7 @@
         #end if
 
         #if $advanced.limit_model_outputs:
-        --limit_model_outputs=$limit_model_outputs
+        --output_models=$limit_model_outputs
         #end if
         ## End Galaxy-specific options ----------------------------------------
 
