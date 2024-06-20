@@ -46,7 +46,7 @@
 && python3 '$__tool_directory__/scripts/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
-#if $model_preset == 'multimer':
+#if $model_preset.selection == 'multimer':
 --multimer
 --max-sequences \${ALPHAFOLD_MAX_SEQUENCES:-10}
 #end if
@@ -60,7 +60,7 @@
 ## Run AlphaFold  -------------------------------------------------------------
 #if os.environ.get('PLANEMO_TESTING'):
     ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
-    && echo "Creating dummy outputs for model_preset=$model_preset..."
+    && echo "Creating dummy outputs for model_preset=$model_preset.selection..."
     && bash '$__tool_directory__/scripts/mock_alphafold.sh' $model_preset
 #else:
     ## Run AlphaFold
@@ -68,7 +68,7 @@
         --fasta_paths alphafold.fasta
         --output_dir output
         --data_dir \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/
-        --model_preset=$model_preset
+        --model_preset=$model_preset.selection
 
         ## Set reference database paths
         --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/uniref90/uniref90.fasta
@@ -91,7 +91,7 @@
 
         --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
 
-        #if $model_preset == 'multimer':
+        #if $model_preset.selection == 'multimer':
         --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb_seqres/pdb_seqres.txt
         --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/uniprot/uniprot.fasta
         --num_multimer_predictions_per_model=$model_preset.num_multimer_predictions_per_model
@@ -118,7 +118,7 @@ $outputs.plddts
 $outputs.model_pkls
 $outputs.pae_csv
 $outputs.plots
-#if $model_preset == 'multimer':
+#if $model_preset.selection == 'multimer':
 --multimer
 #end if
 
@@ -306,7 +306,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="model_preset" value="monomer"/>
+            <param name="model_preset|selection" value="monomer"/>
             <expand macro="test_output_pdb_models" />
         </test>
 
@@ -316,7 +316,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="model_preset" value="monomer"/>
+            <param name="model_preset|selection" value="monomer"/>
             <param name="outputs|plots" value="true"/>
             <param name="outputs|confidence_scores" value="true"/>
             <param name="outputs|plddts" value="true"/>
@@ -337,7 +337,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="model_preset" value="monomer_ptm"/>
+            <param name="model_preset|selection" value="monomer_ptm"/>
             <param name="outputs|plots" value="true"/>
             <param name="outputs|confidence_scores" value="true"/>
             <param name="outputs|plddts" value="true"/>
@@ -359,7 +359,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="multimer.fasta"/>
             </conditional>
-            <param name="model_preset" value="multimer"/>
+            <param name="model_preset|selection" value="multimer"/>
             <param name="outputs|plots" value="true"/>
             <param name="outputs|confidence_scores" value="true"/>
             <param name="outputs|plddts" value="true"/>
@@ -383,7 +383,7 @@ $outputs.plots
 
     | AlphaFold v2: AI-guided 3D structural prediction of proteins
     |
-    | **NOTE: this tool packages `a modified branch of AlphaFold v2.3.2 <https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy>`_. **
+    | **NOTE: this tool packages** `a modified branch of AlphaFold v2.3.2. <https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy>`_
     |
     | This means that the neural network has been trained on PDBs with a release
     | date before 2021-09-30 (the training cutoff was 2018-04-30 until ``v2.3.0``).
@@ -391,7 +391,7 @@ $outputs.plots
     | Find out more in the technical and release notes:
     |
 
-    - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.2>`_
+    - `Release notes for v2.3.2 <https://github.com/deepmind/alphafold/releases/tag/v2.3.2>`_
     - `Technical notes for v2.3 <https://github.com/deepmind/alphafold/blob/main/docs/technical_note_v2.3.0.md>`_
 
     **What it does**
