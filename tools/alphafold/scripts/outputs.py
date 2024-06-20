@@ -42,6 +42,12 @@ PLDDT_KEY = {
     'multimer': 'iptm+ptm',
 }
 
+HTML_PATH = Path(__file__).parent / "alphafold.html"
+HTML_OUTPUT_FILENAME = 'alphafold.html'
+HTML_BUTTON_ATTR = 'class="btn" id="btn-ranked_{rank}"'
+HTML_BUTTON_ATTR_DISABLED = (
+    'class="btn disabled" id="btn-ranked_{rank}" disabled')
+
 
 class Settings:
     """Parse and store settings/config."""
@@ -300,6 +306,21 @@ def plddt_pae_plots(ranking: ResultRanking, context: ExecutionContext):
         plt.savefig(png_path)
 
 
+def template_html(context: ExecutionContext):
+    """Template HTML file.
+
+    Remove buttons that are redundant with limited model outputs.
+    """
+    with open(HTML_PATH) as f:
+        html = f.read()
+    for i in range(len(context.model_pkl_paths), 5):
+        btn_id = HTML_BUTTON_ATTR.format(rank=i)
+        btn_attr_disabled = HTML_BUTTON_ATTR_DISABLED.format(rank=i)
+        html = html.replace(btn_id, btn_attr_disabled)
+    with open(context.settings.output_dir / HTML_OUTPUT_FILENAME, 'w') as f:
+        f.write(html)
+
+
 def main():
     """Parse output files and generate additional output files."""
     settings = Settings()
@@ -307,6 +328,7 @@ def main():
     ranking = ResultRanking(context)
     write_confidence_scores(ranking, context)
     rekey_relax_metrics(ranking, context)
+    template_html(context)
 
     # Optional outputs
     if settings.output_model_pkls:
