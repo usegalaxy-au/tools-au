@@ -40,7 +40,9 @@ apptainer exec "docker://nanoporetech/dorado:sha${DORADO_HASH}" \
 The loc file doesn't have a header, so you can keep it sorted.
 
 ```bash
-sort -t$'\t' -k1,1V tool-data/dorado_models.loc.sample \
-    > tool-data/dorado_models.loc.sample
+cp tool-data/dorado_models.loc.sample \
+    tool-data/dorado_models.loc.sample.old &&
+sort -t$'\t' -k1,1V tool-data/dorado_models.loc.sample.old \
+    > tool-data/dorado_models.loc
 ```
 
