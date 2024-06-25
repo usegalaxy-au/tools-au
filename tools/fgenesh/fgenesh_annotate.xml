@@ -119,8 +119,8 @@ INTRONIC_GENES = ${intronic_genes}
     <inputs>
 	    <conditional name="inputs">
                 <param name="input_type" type="select" label="Input type" help="Select single sequence or collection of sequence">
-			<option value="single" selected="true">Single sequence</option>
-			<option value="multiple">Multiple sequences</option>
+			<option value="single" selected="true">assembled genome, in a single contig</option>
+			<option value="multiple">assembled genome, in multiple contigs</option>
 		</param>
 		<when value="single">
 			<param name="single_seq" format="fasta" type="data" label="Single sequence" help="Single sequence" multiple="true"/>
@@ -131,9 +131,9 @@ INTRONIC_GENES = ${intronic_genes}
 	    </conditional>
             <conditional name="repeat_sequence">
 		    	<param name="selector" type="select" label="Use repeat masking sequence" help="Enable this option if you want to use repeat masked sequences .">
-			<option value="no_repeat_seq" selected="true">No repeat sequence</option>
-                	<option value="single_masked_seq">Single masked sequence</option>
-                	<option value="multiple_masked_seq">Multiple masked sequences</option>
+			<option value="no_repeat_seq" selected="true">No repeat-masked genome</option>
+                	<option value="single_masked_seq">Repeat-masked genome in a single contig</option>
+                	<option value="multiple_masked_seq">Repeat-masked genome in multiple contigs</option>
             	</param>
 		<when value="single_masked_seq">
                       <param name="masked_seq_single" format="fasta" type="data" label="repeat masked sequence" help="Single masked sequence" multiple="true"/>
