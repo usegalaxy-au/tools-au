@@ -1,0 +1,186 @@
+<tool id="dorado" name="Dorado" version="@VERSION@+galaxy0" python_template_version="3.5" profile="21.05">
+    <description>basecaller for raw Oxford Nanopore data</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+
+ln -s '$pod5_file' ./reads.pod5
+
+&&
+
+dorado basecaller
+--trim '${trim}'
+#if $kit_name
+    --kit-name '${kit_name}'
+#end if
+'${model.fields.path}'
+reads.pod5 
+> calls.bam
+
+&& 
+
+dorado summary
+calls.bam 
+> summary.tsv
+
+    ]]></command>
+    <inputs>
+        <!-- FIXME: add pod5 datatype to Galaxy and change here.
+        https://github.com/galaxyproject/galaxy/pull/18419 -->
+        <param name="pod5_file" type="data" format="binary" label="Raw pod5 file" help="Only pod5 is supported. You can convert fast5 to pod5 with the fast5 to pod5 tool."/>
+        <param name="model" type="select" label="Basecalling model. See the Help section for info on model names.">
+            <options from_data_table="dorado_models">
+                <!-- only allow models that shipped in this container -->
+                <filter type="static_value" column="1" value="@CONTAINER_HASH@"/>
+            </options>
+        </param>
+        <param type="select" argument="--trim" label="DNA adapter and primer trimming" help="Detect and remove any adapter and/or primer sequences from the beginning and end of DNA reads. Note that if you intend to demultiplex the reads, trimming adapters and primers could interfere with correct demultiplexing.">
+            <option value="all" selected="true">Any. Trim any detected adapters or primers.</option>
+            <option value="primers"> Primers. Trim any detected adapters or primers, but if barcoding is enabled the barcode sequences will not be trimmed.</option>
+            <option value="adapters"> Adapters. Trim any detected adapters, but primers will not be trimmed, and if barcoding is enabled then barcodes will not be trimmed either.</option>
+            <option value="none"> None. Nothing will be trimmed.</option>
+        </param>
+        <param type="select" argument="--kit-name" optional="true" label="Enable barcoding with the selected kit name." help="Reads are classified into their barcode groups during basecalling. The classification will be reflected in the read group name as well as in the BC tag of the output record.">
+            <option value="EXP-NBD103">EXP-NBD103</option>
+            <option value="EXP-NBD104">EXP-NBD104</option>
+            <option value="EXP-NBD114">EXP-NBD114</option>
+            <option value="EXP-NBD196">EXP-NBD196</option>
+            <option value="EXP-PBC001">EXP-PBC001</option>
+            <option value="EXP-PBC096">EXP-PBC096</option>
+            <option value="SQK-16S024">SQK-16S024</option>
+            <option value="SQK-16S114-24">SQK-16S114-24</option>
+            <option value="SQK-LWB001">SQK-LWB001</option>
+            <option value="SQK-MLK111-96-XL">SQK-MLK111-96-XL</option>
+            <option value="SQK-MLK114-96-XL">SQK-MLK114-96-XL</option>
+            <option value="SQK-NBD111-24">SQK-NBD111-24</option>
+            <option value="SQK-NBD111-96">SQK-NBD111-96</option>
+            <option value="SQK-NBD114-24">SQK-NBD114-24</option>
+            <option value="SQK-NBD114-96">SQK-NBD114-96</option>
+            <option value="SQK-PBK004">SQK-PBK004</option>
+            <option value="SQK-PCB109">SQK-PCB109</option>
+            <option value="SQK-PCB110">SQK-PCB110</option>
+            <option value="SQK-PCB111-24">SQK-PCB111-24</option>
+            <option value="SQK-PCB114-24">SQK-PCB114-24</option>
+            <option value="SQK-RAB201">SQK-RAB201</option>
+            <option value="SQK-RAB204">SQK-RAB204</option>
+            <option value="SQK-RBK001">SQK-RBK001</option>
+            <option value="SQK-RBK004">SQK-RBK004</option>
+            <option value="SQK-RBK110-96">SQK-RBK110-96</option>
+            <option value="SQK-RBK111-24">SQK-RBK111-24</option>
+            <option value="SQK-RBK111-96">SQK-RBK111-96</option>
+            <option value="SQK-RBK114-24">SQK-RBK114-24</option>
+            <option value="SQK-RBK114-96">SQK-RBK114-96</option>
+            <option value="SQK-RLB001">SQK-RLB001</option>
+            <option value="SQK-RPB004">SQK-RPB004</option>
+            <option value="SQK-RPB114-24">SQK-RPB114-24</option>
+            <option value="TWIST-16-UDI">TWIST-16-UDI</option>
+            <option value="TWIST-96A-UDI">TWIST-96A-UDI</option>
+            <option value="VSK-PTC001">VSK-PTC001</option>
+            <option value="VSK-VMK001">VSK-VMK001</option>
+            <option value="VSK-VMK004">VSK-VMK004</option>
+            <option value="VSK-VPS001">VSK-VPS001</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data format="unsorted.bam" name="out_bam" label="Reads from ${on_string} basecalled by ${tool.name} with model ${model.fields.name}" from_work_dir="calls.bam"/>
+        <data format="tsv" name="out_tsv" label="${tool.name} sequencing summary for ${on_string}" from_work_dir="summary.tsv"/>
+    </outputs>
+    <tests>
+        <!-- test 1 -->
+        <test expect_num_outputs="2">
+            <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
+            <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
+            <param name="trim" value="all"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="10000" delta="1000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
+                </assert_contents>
+            </output>
+        </test>
+        <!-- test 2: trim parameter -->
+        <test expect_num_outputs="2">
+            <param name="pod5_file" value="FAL00375_473bf0ed_0.ten_reads.pod5"/>
+            <param name="model" value="dna_r9.4.1_e8_fast@v3.4"/>
+            <param name="trim" value="adapters"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="10000" delta="1000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="0072b26f-f37c-4517-afa7-621543ac2187"/>
+                </assert_contents>
+            </output>
+        </test>
+        <!-- test 3: barcode detection -->
+        <test expect_num_outputs="2">
+            <param name="pod5_file" value="SQK-RBK114_BC01_BC04_unclassified.pod5"/>
+            <param name="model" value="dna_r10.4.1_e8.2_400bps_hac@v4.3.0"/>
+            <param name="trim" value="all"/>
+            <param name="kit_name" value="SQK-RBK114-96"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="10000" delta="1000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_size size="1103e241-dd7f-43bc-ae19-9a3c6326ad83"/>
+                    <has_text text="SQK-RBK114-96_barcode04"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+Basecall raw Nanopore data using Oxford Nanopore’s open source
+`dorado <https://github.com/nanoporetech/dorado/>`__ basecaller.
+
+The input is pod5 format. If you have older data in fast5 format, you
+can convert them using the ``fast5 to pod5`` convert tool.
+
+Basecalling models
+------------------
+
+**TLDR: to decide which model to use, see Oxford Nanopore’s** `table of
+basecalling
+models <https://github.com/nanoporetech/dorado/?tab=readme-ov-file#decoding-dorado-model-names>`__.
+
+The names of Dorado models are structured with each segment
+corresponding to a different aspect of the model separated by
+underscores.
+
+For example, the model ``dna_r10.4.1_e8.2_400bps_hac@v4.3.0`` can be
+decoded as follows:
+
+Analyte Type (``dna``):
+   -  For DNA sequencing, it is represented as dna. If you are using a
+      Direct RNA Sequencing Kit, this will be rna002 or rna004,
+      depending on the kit.
+Pore Type (``r10.4.1``):
+   -  The type of flow cell used.
+Chemistry Type (``e8.2``):
+   -  The chemistry type, which corresponds to the kit used for
+      sequencing. For example, Kit 14 chemistry is denoted by e8.2 and
+      Kit 10 or Kit 9 are denoted by e8.
+Translocation Speed (``400bps``):
+   -  The speed of translocation selected at the run setup in MinKNOW
+Model Type (``hac``):
+   -  The size of the model, where larger models yield more accurate
+      basecalls but take more time. The three types of models are fast,
+      hac, and sup. The fast model is the quickest, sup is the most
+      accurate, and hac provides a balance between speed and accuracy.
+Model Version Number (``v4.3.0``):
+   -  The version of the model. Model updates are regularly released,
+      and higher version numbers typically signify greater accuracy.
+
+    ]]></help>
+</tool>
