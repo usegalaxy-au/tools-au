@@ -22,7 +22,7 @@
     <required_files>
         <include path="scripts/outputs.py" />
         <include path="scripts/validate_fasta.py" />
-        <include path="alphafold.html" />
+        <include path="scripts/alphafold.html" />
     </required_files>
     <command detect_errors="exit_code"><![CDATA[
 
@@ -124,7 +124,7 @@ $outputs.plots
 
 ## HTML output
 && mkdir -p '${ html.files_path }'
-&& cp '$__tool_directory__/alphafold.html' '${html}'
+&& cp output/alphafold/extra/alphafold.html '${html}'
 && cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
 ## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
