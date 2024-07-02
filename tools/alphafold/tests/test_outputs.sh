@@ -11,6 +11,7 @@ KGRN="\e[92m"
 KRED="\e[91m"
 
 EXPECT_OUTPUTS="
+test-data/monomer_output/extra/alphafold.html
 test-data/monomer_output/extra/plddts.tsv
 test-data/monomer_output/extra/model_confidence_scores.tsv
 test-data/monomer_output/extra/ranked_0.pkl
@@ -24,6 +25,7 @@ test-data/monomer_output/extra/ranked_2.png
 test-data/monomer_output/extra/ranked_3.png
 test-data/monomer_output/extra/ranked_4.png
 
+test-data/monomer_ptm_output/extra/alphafold.html
 test-data/monomer_ptm_output/extra/model_confidence_scores.tsv
 test-data/monomer_ptm_output/extra/pae_ranked_0.csv
 test-data/monomer_ptm_output/extra/pae_ranked_1.csv
@@ -41,6 +43,7 @@ test-data/monomer_ptm_output/extra/ranked_2.png
 test-data/monomer_ptm_output/extra/ranked_3.png
 test-data/monomer_ptm_output/extra/ranked_4.png
 
+test-data/multimer_output/extra/alphafold.html
 test-data/multimer_output/extra/plddts.tsv
 test-data/multimer_output/extra/model_confidence_scores.tsv
 test-data/multimer_output/extra/pae_ranked_0.csv
@@ -59,8 +62,13 @@ test-data/multimer_output/extra/ranked_2.png
 test-data/multimer_output/extra/ranked_3.png
 test-data/multimer_output/extra/ranked_4.png"
 
+if [[ `pip freeze | grep jax` = '' ]]; then
+  echo "JAX is required to open AF2 pkl files. Please see ./scripts/pip_install_jax.sh to install."
+  exit 1
+fi
+
 # Check PWD
-if [[ ! "$PWD" == *"/tests" ]]; then
+if [[ "$PWD" == *"/tests" ]]; then
   cd ..
 fi
 

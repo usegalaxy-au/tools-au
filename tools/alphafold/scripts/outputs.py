@@ -311,6 +311,7 @@ def template_html(context: ExecutionContext):
 
     Remove buttons that are redundant with limited model outputs.
     """
+    print("Templating HTML file...")
     with open(HTML_PATH) as f:
         html = f.read()
     for i in range(len(context.model_pkl_paths), 5):
