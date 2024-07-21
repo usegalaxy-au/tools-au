@@ -1,4 +1,4 @@
-<tool id="dorado" name="Dorado" version="@VERSION@+galaxy0" python_template_version="3.5" profile="21.05">
+<tool id="dorado" name="Dorado" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1.1">
     <description>basecaller for raw Oxford Nanopore data</description>
     <macros>
         <import>macros.xml</import>
@@ -28,9 +28,7 @@ calls.bam
 
     ]]></command>
     <inputs>
-        <!-- FIXME: add pod5 datatype to Galaxy and change here.
-        https://github.com/galaxyproject/galaxy/pull/18419 -->
-        <param name="pod5_file" type="data" format="binary" label="Raw pod5 file" help="Only pod5 is supported. You can convert fast5 to pod5 with the fast5 to pod5 tool."/>
+        <param name="pod5_file" type="data" format="pod5" label="Raw pod5 file" help="Only pod5 is supported. You can convert fast5 to pod5 with the fast5 to pod5 tool."/>
         <param name="model" type="select" label="Basecalling model. See the Help section for info on model names.">
             <options from_data_table="dorado_models">
                 <!-- only allow models that shipped in this container -->
@@ -134,7 +132,7 @@ calls.bam
             </output>
             <output name="out_tsv" ftype="tsv">
                 <assert_contents>
-                    <has_size size="1103e241-dd7f-43bc-ae19-9a3c6326ad83"/>
+                    <has_text text="1103e241-dd7f-43bc-ae19-9a3c6326ad83"/>
                     <has_text text="SQK-RBK114-96_barcode04"/>
                 </assert_contents>
             </output>

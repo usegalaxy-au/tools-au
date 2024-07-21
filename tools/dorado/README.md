@@ -25,8 +25,8 @@ To update the list, modify `tool-data/dorado_models.loc.sample`.
 Because models can be added and removed, models are listed **per container** in
 the loc file.
 
-Here's some code to **append** the models from the container with hash
-`1c65eb070a9fc1d88710c4dc09b06541f96fdd28`  to the loc file.
+Here's some code to update the loc file with models from the container with hash
+`1c65eb070a9fc1d88710c4dc09b06541f96fdd28`.
 
 ```bash
 export DORADO_HASH="1c65eb070a9fc1d88710c4dc09b06541f96fdd28"
@@ -34,7 +34,7 @@ export DORADO_HASH="1c65eb070a9fc1d88710c4dc09b06541f96fdd28"
 apptainer exec "docker://nanoporetech/dorado:sha${DORADO_HASH}" \
     ls /models | \
     awk -v hash="${DORADO_HASH}" '{print hash "_" $0 "\t" hash "\t" $0 "\t/models/" $0}' \
-    >> tool-data/dorado_models.loc.sample
+    > tool-data/dorado_models.loc.sample
 ```
 
 The loc file doesn't have a header, so you can keep it sorted.
