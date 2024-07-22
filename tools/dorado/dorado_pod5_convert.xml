@@ -1,4 +1,4 @@
-<tool id="dorado_pod5_convert" name="fast5 to pod5" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1.1">
+<tool id="dorado_pod5_convert" name="fast5 to pod5" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1">
     <description>converter for raw Oxford Nanopore data</description>
     <macros>
         <import>macros.xml</import>
