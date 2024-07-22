@@ -32,7 +32,7 @@ input_fast5
     <tests>
         <test expect_num_outputs="1">
             <param name="fast5_in" ftype="fast5.tar" value="FAL00375_473bf0ed_0.ten_reads.0_0.fast5.tar"/>
-            <output name="pod5_out" ftype="binary">
+            <output name="pod5_out" ftype="pod5">
                 <assert_contents>
                     <has_size value="519736" delta="50000"/>
                 </assert_contents>
