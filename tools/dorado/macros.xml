@@ -1,7 +1,7 @@
 <macros>
     <!-- UPDATING: pull the latest container and check the version. Update both tokens. You MUST also update the model list. See README.md for more.  -->
-    <token name="@VERSION@">0.7.1+80da5f5</token>
-    <token name="@CONTAINER_HASH@">1c65eb070a9fc1d88710c4dc09b06541f96fdd28</token>
+    <token name="@VERSION@">0.7.2+9ac85c6</token>
+    <token name="@CONTAINER_HASH@">58b978562389bd0f1842601fb83cdf1eb2920218</token>
     <xml name="requirements">
         <requirements>
             <container type="docker">nanoporetech/dorado:sha@CONTAINER_HASH@</container>

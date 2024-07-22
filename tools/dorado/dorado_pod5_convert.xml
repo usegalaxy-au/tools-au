@@ -1,4 +1,4 @@
-<tool id="dorado_pod5_convert" name="fast5 to pod5" version="@VERSION@+galaxy0" python_template_version="3.5" profile="21.05">
+<tool id="dorado_pod5_convert" name="fast5 to pod5" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1">
     <description>converter for raw Oxford Nanopore data</description>
     <macros>
         <import>macros.xml</import>
@@ -27,14 +27,12 @@ input_fast5
         <param name="fast5_in" type="data" format="fast5.tar" label="Oxford Nanopore raw data in fast5 format in a tar archive."/>
     </inputs>
     <outputs>
-        <!-- FIXME: add pod5 datatype to Galaxy and change here.
-        https://github.com/galaxyproject/galaxy/pull/18419 -->
-        <data format="binary" name="pod5_out" label="${on_string} converted to pod5 from fast5" from_work_dir="output.pod5"/>
+        <data format="pod5" name="pod5_out" label="${on_string} converted to pod5 from fast5" from_work_dir="output.pod5"/>
     </outputs>
     <tests>
         <test expect_num_outputs="1">
             <param name="fast5_in" ftype="fast5.tar" value="FAL00375_473bf0ed_0.ten_reads.0_0.fast5.tar"/>
-            <output name="pod5_out" ftype="binary">
+            <output name="pod5_out" ftype="pod5">
                 <assert_contents>
                     <has_size value="519736" delta="50000"/>
                 </assert_contents>
@@ -42,7 +40,7 @@ input_fast5
         </test>
         <test expect_num_outputs="1">
             <param name="fast5_in" ftype="fast5.tar.gz" value="reads_in_directories.tar.gz"/>
-            <output name="pod5_out" ftype="binary">
+            <output name="pod5_out" ftype="pod5">
                 <assert_contents>
                     <has_size value="950136" delta="90000"/>
                 </assert_contents>
