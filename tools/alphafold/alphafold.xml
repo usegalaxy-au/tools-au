@@ -219,7 +219,7 @@ $outputs.plots
                 type="integer"
                 label="Limit model outputs"
                 value="5"
-                help="Limit the number of models to output. The top N models will be output, where N is the value entered here (default 5)."
+                help="Limit the number of models to output. The top N models will be output, where N is the value entered here (default 5). Please note that the top-ranking model is not always the correct one, and it is recommended to inspect multiple models."
                 min="1"
                 max="5"
             />
