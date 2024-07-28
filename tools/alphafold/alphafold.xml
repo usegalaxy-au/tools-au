@@ -1,4 +1,4 @@
-<tool id="alphafold" name="Alphafold 2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
+<tool id="alphafold" name="Alphafold 2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="22.05">
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
       <token name="@TOOL_VERSION@">2.3.2</token>
@@ -180,11 +180,11 @@ $outputs.plots
                 <param
                     name="num_multimer_predictions_per_model"
                     type="integer"
-                    value="1"
+                    value="5"
                     label="Multimer predictions per model"
-                    help="How many predictions (each with a different random seed) will be generated per model. E.g. if this is 2 and there are 5 models then there will be 10 predictions per input (max 15)."
+                    help="How many predictions (each with a different random seed) will be generated per model. E.g. if this is 2 and there are 5 models then there will be 10 predictions per input. For a small drop in accuracy you may wish to run a single seed per model (default 5, max 10)."
                     min="1"
-                    max="15"
+                    max="10"
                 />
             </when>
         </conditional>
@@ -219,7 +219,7 @@ $outputs.plots
                 type="integer"
                 label="Limit model outputs"
                 value="5"
-                help="Limit the number of models to output. The top N models will be output, where N is the value entered here (default 5). Please note that the top-ranking model is not always the correct one, and it is recommended to inspect multiple models."
+                help="Limit the number of models to output. The top N models will be output, where N is the value entered here (default 5). Please note that the top-ranking model is not always the correct one, and it is usually recommended to inspect multiple models. Reducing the number of models will result in a slight reduction in run time."
                 min="1"
                 max="5"
             />
@@ -281,7 +281,7 @@ $outputs.plots
                 type="boolean"
                 checked="false"
                 label="timings.json"
-                help="A JSON-formatted text file with timings for each phase of the AlphaFold run."
+                help="A JSON file with timings reported for each phase of the AlphaFold run."
             />
         </section>
     </inputs>
