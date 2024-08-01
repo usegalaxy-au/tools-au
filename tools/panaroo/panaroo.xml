@@ -131,7 +131,17 @@
         </conditional>
     </inputs>
     <outputs>
-	<collection name="output" type="list" label="${tool.name} on ${on_string}: Pangenome output">
+        <collection name="output" type="list" label="${tool.name} on ${on_string}: Pangenome output">
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;clstr)" directory="outdir" format="txt" visible="false" />
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;txt)" directory="outdir" format="txt" visible="false" />
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;gml)" directory="outdir" format="txt" visible="false" />
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;Rtab)" directory="outdir" format="tabular" visible="false" />
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;csv)" directory="outdir" format="csv" visible="false" />
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fasta)" directory="outdir" format="fasta" visible="false" />
+             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fa)" directory="outdir" format="fasta" visible="false" />
+             <filter>advanced['adv_options_selector'] != 'set'</filter>
+       </collection>
+	<collection name="output_advance" type="list" label="${tool.name} on ${on_string}: Pangenome output (advance)">
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;clstr)" directory="outdir" format="txt" visible="false" />
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;txt)" directory="outdir" format="txt" visible="false" />
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;gml)" directory="outdir" format="txt" visible="false" />
@@ -139,7 +149,7 @@
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;csv)" directory="outdir" format="csv" visible="false" />
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fasta)" directory="outdir" format="fasta" visible="false" />
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fa)" directory="outdir" format="fasta" visible="false" />
-	     <filter>advanced['gene_alignment_option']['a'] == 'None' </filter>
+	     <filter>advanced['adv_options_selector'] == 'set' and advanced['gene_alignment_option']['a'] == 'None'</filter>
        </collection>
         <collection name="output_pangenome" type="list" label="${tool.name} on ${on_string}: Pangenome alignment output">
              <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;clstr)" directory="outdir" format="txt" visible="false" />
@@ -151,17 +161,33 @@
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fa)" directory="outdir" format="fasta" visible="false" />
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;aln)" directory="outdir" format="aln" visible="false" />
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;embl)" directory="outdir" format="embl" visible="false" />
-             <filter>advanced['gene_alignment_option']['a'] != 'None' </filter>
+             <filter>advanced['adv_options_selector'] == 'set' and advanced['gene_alignment_option']['a'] != 'None' </filter>
        </collection>
        <collection name="output_pangenome_fasta" type="list" label="${tool.name} on ${on_string}: Pangenom alignment fasta">
 	     <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fas)" directory="outdir/aligned_gene_sequences" format="fasta" visible="false" />  
-             <filter>advanced['gene_alignment_option']['a'] != 'None' </filter>
+             <filter>advanced['adv_options_selector'] == 'set' and advanced['gene_alignment_option']['a'] != 'None'</filter>
        </collection>
-
-	<data name="log" format="txt" label="${tool.name} on ${on_string}: log"/>
+       <data name="log" format="txt" label="${tool.name} on ${on_string}: log"/>
     </outputs>
     <tests>
-	<!-- run panaroo with default parameters (i.e panaroo -t 2 -i *.gff -o default \-\-clean-mode strict \-\-remove-invalid-genes) -->
+	  <!-- run panaroo with default parameters (i.e panaroo -t 2 -i *.gff -o default \-\-clean-mode strict \-\-remove-invalid-genes) -->
+         <test expect_num_outputs="2">
+            <param name="gen_code" value="11"/>
+            <param name="mode" value="strict"/>
+            <param name="adv_options_selector" value="do_not_set"/>
+            <param name="gff_input_collection">
+                <collection type="list">
+                    <element name="gff10.gff" value="10_small.gff"/>
+                    <element name="gff11.gff" value="11_small.gff"/>
+                </collection>
+            </param>
+            <output_collection name="output" count="13"/>
+            <output name="log">
+                 <assert_contents>
+                      <has_text text="pre-processing gff3 files..."/>
+                 </assert_contents>
+            </output>
+        </test>
 	 <test expect_num_outputs="2">
 	    <param name="gen_code" value="11"/>
 	    <param name="mode" value="strict"/>
@@ -173,7 +199,7 @@
 		    <element name="gff11.gff" value="11_small.gff"/>
 		</collection>
 	    </param>
-	    <output_collection name="output" count="13"/>
+	    <output_collection name="output_advance" count="13"/>
 	    <output name="log">
 		 <assert_contents>
 		      <has_text text="pre-processing gff3 files..."/>
@@ -206,7 +232,7 @@ Panaroo_ is A Bacterial Pangenome Analysis Pipeline.
 **INPUTS**
 Panaroo now supports multiple input formats. To use non-standard GFF3 files you must profile the input file as a list in a text file (one per line). Separate GFF and FASTA files can be provided per isolate by providing each file delimited by a space or a tab. Genbank file formats are also supported with extensions '.gbk', '.gb' or '.gbff'. These must compliant with Genbank/ENA/DDJB. This can be forced in Prokka by specifying the --compliance parameter.
 
-  - data file in gff format
+  - a list of gff format in a collection
 
 **OUTPUTS**
 
@@ -216,7 +242,7 @@ Panaroo now supports multiple input formats. To use non-standard GFF3 files you 
   - gene_data.csv
   - combined_protein_CDS.fasta
   - combined_DNA_CDS.fasta
-  - gene_presence_absence.Rtab
+  - gene_presence_absence_rtab.Rtab
   - gene_presence_absence_roary.csv
   - gene_presence_absence.csv
   - summary_statistics.txt
@@ -224,6 +250,26 @@ Panaroo now supports multiple input formats. To use non-standard GFF3 files you 
   - struct_presence_absence.Rtab
   - final_graph.gml
 
+**OUTPUTS with Advance parameters**
+
+  - combined_protein_cdhit_out.txt
+  - combined_protein_cdhit_out.txt.clstr
+  - pre_filt_graph.gml
+  - gene_data.csv
+  - combined_protein_CDS.fasta
+  - combined_DNA_CDS.fasta
+  - gene_presence_absence_rtab.Rtab
+  - gene_presence_absence_roary.csv
+  - gene_presence_absence.csv
+  - summary_statistics.txt
+  - pan_genome_reference.fa
+  - struct_presence_absence.Rtab
+  - final_graph.gml
+  - core_gene_alignment
+  - core_gene_alignment_filtered
+  - core_alignment_filtered_header
+  - core_alignment_header
+  - a collection of fasta files
 
 .. _Panaroo: https://gthlab.au/panaroo/#/gettingstarted/quickstart
 
