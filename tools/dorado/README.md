@@ -43,6 +43,6 @@ The loc file doesn't have a header, so you can keep it sorted.
 cp tool-data/dorado_models.loc.sample \
     tool-data/dorado_models.loc.sample.old &&
 sort -t$'\t' -k1,1V tool-data/dorado_models.loc.sample.old \
-    > tool-data/dorado_models.loc
+    > tool-data/dorado_models.loc.sample
 ```
 
