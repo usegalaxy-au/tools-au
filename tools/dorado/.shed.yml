@@ -13,7 +13,7 @@ long_description: >
   Dorado is a high-performance, easy-to-use, open source basecaller for Oxford Nanopore reads.
 name: dorado
 owner: galaxy-australia
-remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/main/tools/dorado
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/dorado
 suite:
   name: suite_dorado
   description: >
