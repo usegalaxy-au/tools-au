@@ -64,6 +64,5 @@
 	<xml name="gene_aligner">
 	    <option value="mafft" selected="True">mafft</option>
 	    <option value="prank">prank</option>
-	    <option value="clustal">clustal</option>
 	</xml>
 </macros>
