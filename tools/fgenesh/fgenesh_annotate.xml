@@ -231,7 +231,7 @@ INTRONIC_GENES = ${intronic_genes}
 			  <!--<filter>input['input_type'] == 'multiple'</filter>-->
 	    </collection>
             <collection name="annotated_gff3" type="list" label="${tool.name} on ${on_string}: GFF3">
-                  <discover_datasets pattern="(?P&lt;name&gt;.*).gff3$" format="gff" directory="output_gff"/>
+                  <discover_datasets pattern="(?P&lt;name&gt;.*).gff3$" format="gff3" directory="output_gff"/>
 	    </collection>
     </outputs>
 	
