@@ -4,14 +4,32 @@
     <requirements>
         <requirement type="package" version="3.0.0">filesendercli</requirement>
     </requirements>
-    <command><![CDATA[
-
+    <command detect_errors="exit_code"><![CDATA[
 #set $apiuser = $__user__.extra_preferences.get('aarnet_filesender_account|username', "").strip()
 #set $apikey = $__user__.extra_preferences.get('aarnet_filesender_account|apikey', "").strip()
+
+#if $apiuser == "":
+    echo "ERROR: Please enter your FileSender Username in your user preferences under the AARNet FileSender Account Info section" &&
+    exit 1;
+#end if
+
+#if $apikey == "":
+    echo "ERROR: Please enter your FileSender API Key in your user preferences under the AARNet FileSender Account Info section" &&
+    exit 1;
+#end if
+
+#if $to == "":
+    echo "WARNING: recipent email not set, setting to $__user_email__" &&
+    #set $to = $__user_email__
+#end if
 
 mkdir filestosend &&
 
 #for $file in $data
+    if [ -f "filestosend/${file.element_identifier}" ]; then
+        echo "ERROR: two datasets have the same name (${file.element_identifier})" &&
+        exit 1;
+    fi &&
     ln -s "$file" "filestosend/${file.element_identifier}" &&
 #end for
 
@@ -32,9 +50,5 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
 **Remarks**
         This tool leverages AARNet's FileSender (https://filesender.aarnet.edu.au)
         to send files out of Galaxy.
-
-        If selecting multiple datasets, make sure each dataset is named
-        differently; otherwise, only one copy of the selected datasets will be
-        sent.
     </help>
 </tool>
