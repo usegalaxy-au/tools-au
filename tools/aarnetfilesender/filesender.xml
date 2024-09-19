@@ -1,20 +1,16 @@
-<?xml version="1.0"?>
-
-<tool id="aarnet_filesender" name="AARNet FileSender" version="3.0.0" workflow_compatible="true">
-    <requirements>
-        <requirement type="package" version="3.0.0">filesendercli</requirement>
-    </requirements>
+<tool id="aarnet_filesender" name="AARNet FileSender" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>transfer files to AARnet's FileSender Service</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="version_command" />
     <command detect_errors="exit_code"><![CDATA[
 #set $apiuser = $__user__.extra_preferences.get('aarnet_filesender_account|username', "").strip()
 #set $apikey = $__user__.extra_preferences.get('aarnet_filesender_account|apikey', "").strip()
 
-#if $apiuser == "":
+#if $apiuser == "" or $apikey == "":
     echo "ERROR: Please enter your FileSender Username in your user preferences under the AARNet FileSender Account Info section" &&
-    exit 1;
-#end if
-
-#if $apikey == "":
-    echo "ERROR: Please enter your FileSender API Key in your user preferences under the AARNet FileSender Account Info section" &&
     exit 1;
 #end if
 
@@ -34,15 +30,27 @@ mkdir filestosend &&
 #end for
 
 filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/rest.php -f "galaxy-no-reply@usegalaxy.org.au" -r '$to' filestosend >$output 2>&1
-
     ]]></command>
     <inputs>
-        <param name="data" type="data" multiple="true" optional="false" label="Datasets to be sent:" />
+        <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:" />
         <param name="to" type="text" optional="false" label="Email address of recipent:"><sanitizer sanitize="False"/></param>
     </inputs>
     <outputs>
         <data name="output" type="data" format="txt" hidden="false"/>
     </outputs>
+    <tests>
+         <!-- TODO planemo failed due to both username and apikey are null-->
+        <test>
+          <param name="data" value="summary_statistics.txt"/>
+             <output name="output">
+                     <assert_contents>
+                         <has_text text="Uploading"/>
+                         <has_text text="log complete"/>
+                         <has_text text="Upload Complete"/>
+                     </assert_contents>
+             </output>
+          </test>
+    </tests>
     <help>
 **What it does**
         Send dataset(s) from Galaxy to anyone via AARNet's FileSender service.
