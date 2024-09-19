@@ -1,4 +1,4 @@
-Filesendercli wrapper
+FileSenderCLI  wrapper
 ======================
 
 Galaxy wrapper of the AARNET
