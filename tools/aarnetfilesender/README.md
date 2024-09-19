@@ -1,4 +1,4 @@
-ENA-upload-cli wrapper
+Filesendercli wrapper
 ======================
 
 Galaxy wrapper of the AARNET

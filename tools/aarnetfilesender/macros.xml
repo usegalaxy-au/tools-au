@@ -1,0 +1,13 @@
+<macros>
+    <token name="@TOOL_VERSION@">v3.0.0</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">22.05</token>
+    <xml name="requirements">
+         <requirements>
+             <requirement type="package" version="@TOOL_VERSION@">filesendercli</requirement>
+         </requirements>
+    </xml>
+    <xml name="version_command">
+        <version_command>filesender --help | grep 'File Sender CLI client.'</version_command>
+    </xml>
+</macros>
