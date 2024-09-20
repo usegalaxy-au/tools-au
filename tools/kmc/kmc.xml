@@ -1,16 +1,84 @@
 <tool id="kmc" name="KMC Counter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
     <description>K-mer counting and filtering of reads</description>
+    <macros>
+          <import>macros.xml</import>
+    </macros>
     <xrefs>
         <xref type='bio.tools'>kmc</xref>
     </xrefs> 
-    <macros>
-	  <import>macros.xml</import>
-    </macros>
     <expand macro="requirements" />
     <expand macro="stdio" />
     <expand macro="version_command" /> 
     <command><![CDATA[
-	    kmc
+          mkdir output &&
+	  #if $data_type.select == 'individual'
+	    #for $input_file in $data_type.individual_file
+	     #if $input_file.is_of_type("fastq","fastq.gz","fastqsanger.gz"):
+                #if $input_file.ext.endswith(".gz")
+                    #set $ext='.fastq.gz'
+                #else
+                    #set $ext='.fastq'
+                #end if
+                ln -s '$input_file' 'in$ext' &&
+            #elif $input_file.is_of_type("fasta","fasta.gz"):
+                #if $input_file.ext.endswith(".gz")
+                   #set $ext='.fasta.gz'
+                #else
+                   #set $ext='.fasta'
+                #end if
+                ln -s '$input_file' 'in$ext' &&
+            #elif $input_file.is_of_type("bam"):
+                ln -s '$input_file' in.bam &&
+            #elif $input_file.is_of_type("kmc_suf"):
+                #if $input_file.ext.endswith(".kmc_suf")
+                    #set $suf_ext='.kmc_suf'
+                #end if
+                #if $input_file.ext.endswith(".kmc_pre")
+                    #set $pre_ext='.kmc_pre'
+                #end if
+                ln -s '$input_file' 'in$suf_ext' &&
+                ln -s '$input_file' 'in$pre_ext' &&
+	    #end if
+	    #end for
+	  #else    
+	    	mkdir input_dir &&
+		#import re
+	    	#for $input_file in $data_type.collection_file
+		  #if $input_file.is_of_type("fastq","fastq.gz","fastqsanger.gz"):
+                     #if $input_file.ext.endswith(".gz")
+                        #set $ext='.fastq.gz'
+                     #else
+                        #set $ext='.fastq'
+                     #end if
+        	     #set $identifier = re.sub('[^\s\w\-\\.]', '_', str($input_file.element_identifier))
+	    	     ln -s '$input_file' 'input_dir/${identifier}' &&
+		  #elif $input_file.is_of_type("fasta","fasta.gz"):
+	    	     #if $input_file.ext.endswith(".gz")
+	    	     	#set $ext='.fasta.gz'
+	    	     #else
+	    		#set $ext='.fasta'
+	    	     #end if
+	    	     #set $identifier = re.sub('[^\s\w\-\\.]', '_', str($input_file.element_identifier))
+	    	     ln -s '$input_file' 'input_dir/${identifier}' &&
+	    	  #elif $input_file.is_of_type("bam"):
+	    	     #set $identifier = re.sub('[^\s\w\-\\.]', '_', str($input_file.element_identifier))
+	    	     ln -s '$input_file' 'input_dir/${identifier}' &&
+		  #elif $input_file.is_of_type("kmc_suf"):
+	    	     #if $input_file.ext.endswith(".kmc_suf")
+	    		#set $suf_ext='.kmc_suf'
+	    	     #end if
+	    	     #if $input_file.ext.endswith(".kmc_pre")
+	    		#set $pre_ext='.kmc_pre'
+	    	     #end if
+	    	     #set $identifier = re.sub('[^\s\w\-\\.]', '_', str($input_file.element_identifier))
+	    	     ln -s '$input_file' 'input_dir/${identifier}' &&
+	    	     ln -s '$input_file' 'input_dir/${identifier}' &&
+		  #end if
+	    	#end for
+	    	ls -ld input_dir/* | awk '{print $9}' >> files.list &&
+	   #end if
+
+	   kmc
 	    -t\${GALAXY_SLOTS:-4}
 	    #if $params.k:
 	    	-k'$params.k'		
@@ -21,24 +89,57 @@
 	    #if $params.j:
 	       -j'$statistic'
 	    #end if
-	    #if $params.exclude_length:
-	       -ci'$params.exclude_length'
+	    #if $params.p:
+	       -p'$params.p'
 	    #end if
-	    #if $params.max_counter_value:
-	       -cs'$params.max_counter_value'
+	    #if $params.ci:
+	       -ci'$params.ci'
 	    #end if
-            #if $input_file.is_of_type("fastq"):
-               -fq
-            #elif $input_file.is_of_type("fasta"):
-               -fm
+	    #if $params.cs:
+	       -cs'$params.cs'
+	    #end if
+	    #if $params.cx:
+	       -cx'$params.cx'
+	    #end if
+            #if $input_file.is_of_type("fastq","fastq.gz","fastqsanger.gz"):
+	    	-fq
+	    #elif $input_file.is_of_type("fasta","fasta.gz"):
+	    	#if $data_type.select == "individual":
+	    	    -fa
+	    	#else
+	    	    -fm
+	    	#end if
             #elif $input_file.is_of_type("bam"):
-               -fbam
+	    	-fbam 
             #elif $input_file.is_of_type("kmc_suf"):
-               -fkmc
+	    	-fkmc
+	    #end if
+
+	    #if $input_file.is_of_type('fastq.gz','fasta.gz','fastqsanger.gz'):
+                -f
             #end if
-	    $input_file
-	    db
-	    . 
+
+	    #if $data_type.select == 'individual'
+	    	#if $input_file.is_of_type("fastq","fastq.gz","fastqsanger.gz"):
+	    	    #if $input_file.ext.endswith(".gz")
+		    	in.fastq.gz
+	    	    #else
+		    	in.fastq
+	    	    #end if
+	    	#elif $input_file.is_of_type("fasta","fasta.gz"):
+	    	    #if $input_file.ext.endswith(".gz")
+		        in.fasta.gz
+	            #else
+	    	    	in.fasta
+		    #end if
+	    	#elif $input_file.is_of_type("bam"):
+	    	     in.bam
+	    	#end if
+	     #else
+	       @files.list
+	     #end if
+	     output/kmer_"$params.k"
+	     .  
 
 	    ]]></command>
     <inputs>
@@ -46,46 +147,74 @@
 	    <section name="params" title="parameter" expanded="false">
                     <param argument="-k" type="integer" value="25" label="k-mer length (k from 1 to 256; default: 25)" />
 		    <param argument="-m" type="integer" value="12" label="max amount of RAM in GB (from 1 to 1024); default: 12" />
-		    <param name="signature_length" arguments="-p" type="integer" value="9" label="signature length (5, 6, 7, 8, 9, 10, 11); default: 9"/>
-		    <param name="exclude_length" arguments="-ci" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
-		    <param name="max_counter_value" arguments="-cs" type="integer" value="255" label="maximal value of a counter (default: 255)"/>
-		    <param name="exclude_kmer_occurence" arguments="-cx" type="integer" value="1000000000" label="xclude k-mers occurring more of than [value] times (default: 1e9)"/>
+		    <param argument="-p" type="integer" value="9" label="signature length (5, 6, 7, 8, 9, 10, 11); default: 9"/>
+		    <param argument="-ci" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
+		    <param argument="-cs" type="integer" value="255" label="maximal value of a counter (default: 255)"/>
+		    <param argument="-cx" type="integer" value="1000000000" label="xclude k-mers occurring more of than [value] times (default: 1e9)"/>
 		    <param argument="-j" type="boolean" truevalue="-j" falsevalue="" checked="True" label="file name with execution summary in JSON format"/>
 	    </section>
     </inputs>
     <outputs>
-	    <data format="json" name="statistic" label="${tool.name} on ${on_string}">
-		   <filter>params['j']</filter>
-	    </data>
+	  <data format="json" name="statistic" label="${tool.name} on ${on_string}">
+		 <filter>params['j']</filter>
+	  </data>
 	  <collection name="kmc_db" type="list" label="${tool.name} on ${on_string}: kmc db">
-	          <data format="binary" name="db.kmc_suf" label="${tool.name} on ${on_string}" from_work_dir="db.kmc_suf" />
-                  <data format="binary" name="db.kmc_pre" label="${tool.name} on ${on_string}" from_work_dir="db.kmc_pre" />
+		<discover_datasets pattern="(?P&lt;designation&gt;.+)" directory="output" format="binary" />
 	  </collection>
     </outputs>
-	
     <tests>
-	 <test>
-            <!-- #1 test fastq with common parameters -->
-	    <param name="input_file" value="F3D0_R1.fastq" ftype="fastq"/>
+	 <!-- output file is too large for testing; comment out to test on local machine with update_test_data option -->   
+	 <!--  <test expect_num_outputs="2"> -->
+            <!-- #1 test individual fastq with common parameters -->
+	 <!--   <param name="individual_file" value="filtered_1.fastq" ftype="fastq"/>
             <param name="k" value="25" />
             <param name="m" value="12" />
 	    <param name="p" value="9" />
 	    <param name="ci" value="2" />
-            <param name="cs" value="255" />
-	    <output name="db.kmc_suf" file="db.kmc_suf" ftype="binary" />
-	    <output name="db.kmc_pre" file="db.kmc_pre" ftype="binary" />
-        </test>
-        <test>
-            <!-- #2 test fasta with common parameters -->
-            <param name="input_file" value="contigs.fa" ftype="fasta"/> 
+	    <param name="cs" value="255" />
+	    <output_collection name="kmc_db" type="list">
+	    	<element name="kmer_25.kmc_pre" file="kmer_25.kmc_pre" ftype="binary" />
+	    	<element name="kmer_25.kmc_suf" file="kmer_25.kmc_suf" ftype="binary" />
+	    </output_collection>
+	    <output name="statistic" file="statistic_25.json" ftype="json"/>
+    	</test> -->
+        <test expect_num_outputs="2">
+            <!-- #2 test individual fasta with common parameters -->
+            <param name="individual_file" value="test.fasta.gz" ftype="fasta.gz"/> 
             <param name="k" value="27" />
             <param name="m" value="24" />
             <param name="ci" value="2" />
             <param name="cs" value="255" />
-            <param name="fm" value="-fm" />
-            <output name="contig_kmer27.kmc_suf" file="contig_kmer27.kmc_suf" ftype="binary" />
-            <output name="contig_kmer27.kmc_pre" file="contig_kmer27.kmc_pre" ftype="binary" />
-        </test>
+	    <output_collection name="kmc_db" type="list">
+            	<element name="kmer_27.kmc_suf" file="kmer_27.kmc_suf" ftype="binary" />
+		<element name="kmer_27.kmc_pre" file="kmer_27.kmc_pre" ftype="binary" />
+	    </output_collection>
+	    <output name="statistic" file="statistic_27.json" ftype="json"/>
+    	</test>
+	<!-- output file is too large for testing; comment out to test on local machine -->
+        <!-- <test expect_num_outputs="2"> -->
+            <!-- #3 test collection fastq with common parameters -->
+        <!--    <param name="k" value="29" />
+            <param name="m" value="12" />
+            <param name="p" value="9" />
+            <param name="ci" value="2" />
+            <param name="cs" value="255" />
+            <conditional name="data_type">
+              <param name="select" value="collection"/>
+                <param name="collection_file">
+                 <collection type="list">
+                     <element name="filtered_1.fastq" value="filtered_1.fastq" ftype="fastq"/>
+                     <element name="filtered_2.fastq" value="filtered_2.fastq" ftype="fastq"/>
+                 </collection>
+                </param>
+            </conditional>
+            <output_collection name="kmc_db">
+                <element name="kmer_29.kmc_suf" file="kmer_29.kmc_suf" ftype="binary" />
+                <element name="kmer_29.kmc_pre" file="kmer_29.kmc_pre" ftype="binary" />
+            </output_collection>
+            <output name="statistic" file="statistic_collection.json" ftype="json"/>
+    	</test>
+	-->
    </tests>
     <help><![CDATA[
 	    

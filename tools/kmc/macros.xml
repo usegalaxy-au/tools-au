@@ -18,7 +18,18 @@
       ]]></version_command>
   </xml>
   <xml name="macro_input">
-       <param name="input_file" type="data" format="fasta,fastq,fasta.gz,fastqsanger,fastq.gz,bam" label="Sequence file"/>
+     <conditional name="data_type">
+            <param name="select" type="select" label="File input type for KMC">
+		<option value="individual">In individual datasets</option>    
+		<option value="collection">In collection</option>
+	    </param>
+            <when value="individual">
+		<param name="individual_file" type="data" format="fasta,fastq,fasta.gz,fastqsanger,fastqsanger.gz,fastq.gz,bam" multiple="true" label="FASTQ/A file"/>
+            </when>
+            <when value="collection">
+		<param name="collection_file" type="data_collection" collection_type="list" format="fasta,fastq,fasta.gz,fastqsanger,fastqsanger.gz,fastq.gz,bam" label="A list of FASTQ/A files"/>
+            </when>
+      </conditional>
   </xml>
   <xml name="general_option">
        <param argument="exclude_length" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
