@@ -1,4 +1,4 @@
-<tool id="kmc" name="KMC Counter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+<tool id="kmc" name="KMC Counter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>K-mer counting and filtering of reads</description>
     <macros>
           <import>macros.xml</import>
