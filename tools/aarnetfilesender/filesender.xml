@@ -1,5 +1,5 @@
 <tool id="aarnet_filesender" name="AARNet FileSender" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
-    <description>transfer files to AARnet's FileSender Service</description>
+    <description>transfer files to AARNet's FileSender Service</description>
     <macros>
         <import>macros.xml</import>
     </macros>
