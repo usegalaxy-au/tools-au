@@ -1,0 +1,122 @@
+<macros>
+    <token name="@TOOL_VERSION@">3.2.1</token>
+    <token name="@VERSION_SUFFIX@">1</token>
+    <token name="@PROFILE@">22.05</token>
+    <xml name="requirements">
+	   <requirements>
+		<requirement type="package" version="@TOOL_VERSION@">kmc</requirement>
+           </requirements>
+   </xml>
+   <xml name="stdio">
+     <stdio>
+        <exit_code range=":-1"  level="fatal" description="Error: Cannot open file" />
+        <exit_code range="1:"  level="fatal" description="Error" />
+     </stdio>
+   </xml>
+  <xml name="version_command">
+      <version_command><![CDATA[
+	      kmc --version 2>&1 | head -1       
+      ]]></version_command>
+  </xml>
+  <xml name="macro_input">
+     <conditional name="data_type">
+            <param name="select" type="select" label="File input type for KMC">
+		<option value="individual">In individual datasets</option>    
+		<option value="collection">In collection</option>
+	    </param>
+            <when value="individual">
+		<param name="individual_file" type="data" format="fasta,fastq,fasta.gz,fastqsanger,fastqsanger.gz,fastq.gz,bam" multiple="true" label="FASTQ/A file"/>
+            </when>
+            <when value="collection">
+		<param name="collection_file" type="data_collection" collection_type="list" format="fasta,fastq,fasta.gz,fastqsanger,fastqsanger.gz,fastq.gz,bam" label="A list of FASTQ/A files"/>
+            </when>
+      </conditional>
+  </xml>
+  <xml name="general_option">
+       <param argument="exclude_length" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
+       <param argument="exclude_kmer_occurence" type="integer" value="1000000000" label="exclude k-mers occurring more of than [value] times (default: 1e9)"/>	
+  </xml>
+  <xml name="transform_option">
+	<section name="input_opt" title="Input options" expanded="true">
+		<expand macro="input_option"/>
+	</section>
+	<section name="output_opt" title="Output options" expanded="true">
+		<expand macro="none_counter_calculation_option"/>
+	</section>
+  </xml>
+  <xml name="histogram_option">
+	<section name="input_opt" title="Input options" expanded="true">
+                <expand macro="input_option"/>
+        </section>
+	<section name="output_opt" title="Output options" expanded="true">
+               <param name="min_kmer_value" argument="-ci" type="integer" value="2" optional="true" label="minimum value of counter to be stored in the output file"/>
+	       <param name="max_kmer_value" argument="-cx" type="integer" value="255" optional="true" label="maximum value of counter to be stored in the output file"/>
+        </section>
+  </xml>
+  <xml name="set_count_option">
+        <section name="input_opt" title="Input options" expanded="true">
+		<expand macro="input_option"/>
+		<param argument="kmer_counts_value" type="integer" value="10" label="set all k-mer counts to specific value"/>	
+        </section>
+  </xml>
+  <xml name="misc">
+       <param name="misc_output" argument="-o" type="select" label="output in KMC or KFF format (default: kmc)">
+	    <option value="kmc" selected="true">KMC</option>
+	    <option value="kff">KFF</option>
+       </param>	
+  </xml>
+  <xml name="dump_option">
+       <section name="input_opt" title="Input options" expanded="true">
+                <expand macro="input_option"/>
+       </section>
+       <section name="output_opt" title="Output options" expanded="true">
+       		<param name="sort_output" argument="-s" type="boolean" truevalue="true" checked="false" label="sorted output"/>
+       </section>
+  </xml>
+  <xml name="input_option">
+      <param name="min_kmer_occurrence" argument="-ci" type="integer" value="3" optional="true" label="exclude k-mers occurring less than x times"/>
+      <param name="max_kmer_occurrence" argument="-cx" type="integer" value="30" optional="true" label="exclude k-mers occurring more of than x times"/>
+  </xml>
+  <xml name="input_option_two">
+      <param name="min_kmer_occurrence_two" argument="-ci" type="integer" value="3" label="exclude k-mers occurring less than x times"/>
+      <param name="max_kmer_occurrence_two" argument="-cx" type="integer" value="30" label="exclude k-mers occurring more of than x times"/>
+  </xml>
+  <xml name="simple_operation">
+       <param name="select_operation" type="select" label="Simple Operation" help="redefine counter calculation mode for equal k-mers">
+	    <option value="intersect" selected="true">intersect</option>
+	    <option value="union">union</option>
+            <option value="kmers_subtract">kmers_subtract</option>
+            <option value="reverse_kmers_subtract">reverse_kmers_subtract</option>
+            <option value="counters_subtract">counters_subtract</option>
+            <option value="reverse_counters_subtract">reverse_counters_subtract</option>
+       </param>
+  </xml>
+  <xml name="counter_calculation_option">
+       <param name="min_kmer_occurrence" argument="-ci" type="integer" optional="true" label="exclude k-mers occurring less than x times"/>
+       <param name="max_kmer_occurrence" argument="-cx" type="integer" optional="true" label="exclude k-mers occurring more of than x times"/>
+       <param name="max_counter_value" argument="-cs" type="integer" optional="true" label="maximal value of a counter"/>
+       <param argument="-oc" name="oc" type="select" optional="true" label="Counter Calculation" help="redefine counter calculation mode for equal k-mers">
+            <option value="min">min - get lower value of a k-mer counter</option>
+            <option value="max">max - get upper value of a k-mer counter</option>
+            <option value="sum">sum - get sum of counters from both databases</option>
+            <option value="diff">diff - get difference between counters </option>
+	    <option value="left">left - get counter from first datatabase (KMC db one)</option>
+	    <option value="right">right - get counter from second database (KMC db two)</option>
+       </param>
+  </xml>
+  <xml name="none_counter_calculation_option">
+       <param name="min_kmer_occurrence" argument="-ci" type="integer" optional="true" label="exclude k-mers occurring less than x times"/>
+       <param name="max_kmer_occurrence" argument="-cx" type="integer" optional="true" label="exclude k-mers occurring more of than x times"/>
+       <param name="max_counter_value" argument="-cs" type="integer" optional="true" label="maximal value of a counter"/>
+  </xml>
+  <xml name="transform_operation">
+       <param name="transform_operation" type="select" optional="true" label="Transform Operation" help="transforms single KMC database to one or more KMC database(s) or text file(s)">
+            <option value="sort" >sort - converts database produced by KMC2.x to KMC1.x database format (which contains k-mers in sorted order)</option>
+            <option value="reduce">reduce - exclude too rare and too frequent k-mers</option>
+            <option value="compact">compact - remove counters of k-mers</option>
+            <option value="histogram">histogram - produce histogram of k-mers occurrences</option>
+	    <option value="dump">dump - produce text dump of kmc database</option>
+	    <option value="set_counts">set counts - set all k-mer counts to specific value</option>
+       </param>
+  </xml>
+</macros>
