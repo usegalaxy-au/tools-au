@@ -40,12 +40,7 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
     </outputs>
     <tests>
         <test expect_exit_code="1" expect_failure="true">
-          <param name="data" value="summary_statistics.txt"/>
-          <output name="output">
-             <assert_contents>
-                <has_text text="ERROR"/>
-             </assert_contents>
-           </output>
+            <param name="data" value="summary_statistics.txt"/>
         </test>
     </tests>
     <help>
