@@ -33,7 +33,7 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
     ]]></command>
     <inputs>
         <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:" />
-        <param name="to" type="text" optional="false" label="Email address of recipent:"><sanitizer sanitize="False"/></param>
+        <param name="to" type="text" optional="true" label="Email address of recipent:"><sanitizer sanitize="False"/></param>
     </inputs>
     <outputs>
         <data name="output" type="data" format="txt" hidden="false"/>
