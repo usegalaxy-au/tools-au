@@ -83,9 +83,7 @@
 	    #if $params.k:
 	    	-k'$params.k'		
 	    #end if
-	    #if $params.m:
-	        -m'$params.m'
-	    #end if
+	    -m\${GALAXY_MEMORY_GB:-4}
 	    #if $params.j:
 	       -j'$statistic'
 	    #end if
@@ -146,7 +144,6 @@
 	    <expand macro="macro_input" />
 	    <section name="params" title="parameter" expanded="false">
                     <param argument="-k" type="integer" value="25" label="k-mer length (k from 1 to 256; default: 25)" />
-		    <param argument="-m" type="integer" value="12" label="max amount of RAM in GB (from 1 to 1024); default: 12" />
 		    <param argument="-p" type="integer" value="9" label="signature length (5, 6, 7, 8, 9, 10, 11); default: 9"/>
 		    <param argument="-ci" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
 		    <param argument="-cs" type="integer" value="255" label="maximal value of a counter (default: 255)"/>
