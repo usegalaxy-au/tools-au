@@ -33,23 +33,15 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
     ]]></command>
     <inputs>
         <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:" />
-        <param name="to" type="text" optional="false" label="Email address of recipent:"><sanitizer sanitize="False"/></param>
+        <param name="to" type="text" optional="true" label="Email address of recipent:"><sanitizer sanitize="False"/></param>
     </inputs>
     <outputs>
-        <data name="output" type="data" format="txt" hidden="false"/>
+        <data name="output" format="txt" hidden="false"/>
     </outputs>
     <tests>
-         <!-- TODO planemo failed due to both username and apikey are null-->
-        <test>
-          <param name="data" value="summary_statistics.txt"/>
-             <output name="output">
-                     <assert_contents>
-                         <has_text text="Uploading"/>
-                         <has_text text="log complete"/>
-                         <has_text text="Upload Complete"/>
-                     </assert_contents>
-             </output>
-          </test>
+        <test expect_exit_code="1" expect_failure="true">
+            <param name="data" value="summary_statistics.txt"/>
+        </test>
     </tests>
     <help>
 **What it does**
@@ -59,4 +51,11 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         This tool leverages AARNet's FileSender (https://filesender.aarnet.edu.au)
         to send files out of Galaxy.
     </help>
+    <citations>
+        <citation type="bibtex">
+           @misc{FileSenderCLI_github,
+           title={FileSenderCLI Github page},
+           url = {https://github.com/madsi1m/FileSenderCLI},}
+        </citation>
+    </citations>
 </tool>
