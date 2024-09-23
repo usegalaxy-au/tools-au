@@ -1,0 +1,11 @@
+name: aarnet_filesender
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/aarnetfilesender
+categories:
+  - Data Export
+type: unrestricted
+description: Transfer files to AARNet's FileSender Service
+include:
+  - filesender.xml
+  - macros.xml
+  - test-data
