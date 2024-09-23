@@ -79,7 +79,7 @@ raw_paf <- read_paf(paf_file)
 paf_dt <- data.table(raw_paf)
 
 # calculate spacing
-padding <- get_padding(paf_dt)
+padding <- get_padding(paf_dt[tp == "P" & nmatch >= min_nmatch])
 
 # order the reference contigs
 paf_dt[, tname := factor(tname, levels = gtools::mixedsort(unique(tname)))]
