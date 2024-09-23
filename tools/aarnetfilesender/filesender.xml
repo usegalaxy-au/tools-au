@@ -39,17 +39,14 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         <data name="output" format="txt" hidden="false"/>
     </outputs>
     <tests>
-         <!-- TODO planemo failed due to both username and apikey are null-->
-        <test>
+        <test expect_exit_code="1" expect_failure="true">
           <param name="data" value="summary_statistics.txt"/>
-             <output name="output">
-                     <assert_contents>
-                         <has_text text="Uploading"/>
-                         <has_text text="log complete"/>
-                         <has_text text="Upload Complete"/>
-                     </assert_contents>
-             </output>
-          </test>
+          <output name="output">
+             <assert_contents>
+                <has_text text="ERROR"/>
+             </assert_contents>
+           </output>
+        </test>
     </tests>
     <help>
 **What it does**
