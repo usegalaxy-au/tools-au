@@ -59,4 +59,5 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         This tool leverages AARNet's FileSender (https://filesender.aarnet.edu.au)
         to send files out of Galaxy.
     </help>
+    <citations />
 </tool>
