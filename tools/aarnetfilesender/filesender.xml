@@ -54,9 +54,11 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         <test>
             <param name="data" value="summary_statistics.txt"/>
             <param name="test" value="true"/>
-            <assert_contents>
-                <has_text text="usage:"/>
-            </assert_contents>
+            <output name="output" value="output.txt" format="txt">
+                <assert_contents>
+                    <has_text text="usage:"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
     <help>
