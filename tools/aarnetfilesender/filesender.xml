@@ -7,7 +7,7 @@
     <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
 #if $test != "":
-    filesender -h  &&
+    filesender -h &&
     exit 0;
 #end if
 
