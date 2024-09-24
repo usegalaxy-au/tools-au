@@ -150,12 +150,17 @@ paf_dt[,
 ]
 
 # generate polygons. P is for primary alignments only
-polygon_y_bump <-  0.1 # account for contig thickness
+polygon_y_bump <- 0.017 # account for contig thickness
 paf_polygons <- paf_dt[
   tp == "P" & nmatch >= min_nmatch,
   .(
     x = c(adj_tstart, adj_qstart, adj_qend, adj_tend),
-    y = c(t_y, q_y, q_y, t_y),
+    y = c(
+      t_y + polygon_y_bump,
+      q_y - polygon_y_bump,
+      q_y - polygon_y_bump,
+      t_y + polygon_y_bump
+    ),
     id = paste0("polygon", .GRP)
   ),
   by = .(qname, qstart, qend, tname, tstart, tend)
