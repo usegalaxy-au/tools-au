@@ -7,7 +7,7 @@
     <expand macro="version_command" />
     <command detect_errors="exit_code"><![CDATA[
 #if $test != "":
-    filesender -h 2>&1 &&
+    filesender -h >$output 2>&1 &&
     exit 0;
 #end if
 
@@ -54,7 +54,7 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         <test>
             <param name="data" value="summary_statistics.txt"/>
             <param name="test" value="true"/>
-            <output name="output" value="output.txt" format="txt">
+            <output name="output">
                 <assert_contents>
                     <has_text text="usage:"/>
                 </assert_contents>
