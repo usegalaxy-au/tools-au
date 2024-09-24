@@ -32,14 +32,39 @@ get_padding <- function(paf) {
   qlen_sum <- unique(paf, by = "qname")[, sum(qlen)]
   qgaps_total <- paf[, length(unique(qname))]
 
-  total_padding <- tlen_sum - qlen_sum
+  # the minumum gap is going to be one tenth of the x-axis space
+  if (tlen_sum > qlen_sum) {
+    min_gap <- (tlen_sum * gap_size) / tgaps_total
+    full_tlen <- tlen_sum + (tgaps_total * min_gap)
 
-  return(
-    c(
-      "t_padding" = ifelse(total_padding > 0, 0, total_padding / tgaps_total),
-      "q_padding" = ifelse(total_padding > 0, total_padding / qgaps_total, 0)
+    total_qpadding <- full_tlen - qlen_sum
+    return(
+      c(
+        "t_padding" = min_gap,
+        "q_padding" = total_qpadding / qgaps_total
+      )
     )
-  )
+  } else if (tlen_sum < qlen_sum) {
+    min_gap <- (qlen_sum * gap_size) / qgaps_total
+    full_qlen <- qlen_sum + (qgaps_total * min_gap)
+
+    total_tpadding <- full_qlen - tlen_sum
+
+    return(
+      c(
+        "t_padding" = total_tpadding / tgaps_total,
+        "q_padding" = min_gap
+      )
+    )
+  } else {
+    min_gap <- (tlen_sum * gap_size) / tgaps_total
+    return(
+      c(
+        "t_padding" = min_gap,
+        "q_padding" = min_gap
+      )
+    )
+  }
 }
 
 # offsets for the adjusted coordinates
@@ -59,6 +84,7 @@ lookup_qstart <- function(x) {
 
 agp_file <- "data/galaxy_out.agp"
 paf_file <- "data/galaxy_out.paf"
+plot_file <- "plot.pdf"
 
 # PAF column spec
 sort_columns <- c("tname", "tstart", "tend", "qname", "qstart", "qend")
@@ -67,6 +93,8 @@ sort_columns <- c("tname", "tstart", "tend", "qname", "qstart", "qend")
 t_y <- 1
 q_y <- 2
 min_nmatch <- 20e3
+gap_size <- 0.1 # percentage of the x-axis taken up by space between contigs
+palette_space <- 4 # space between query contig colour and first ref colour
 
 
 ########
@@ -135,14 +163,21 @@ paf_polygons <- paf_dt[
 # set up plot
 total_height <- (q_y - t_y) * 1.618
 y_axis_space <- (total_height - (q_y - t_y)) / 2
-# all_contig_names <- c(unique(subset_query_order), tpaf[, unique(tname)])
+middle_x <- tpaf[1, shift_tstart] + tpaf[.N, pad_tend] / 2
+
 all_contig_names <- c(tpaf[, unique(tname)])
-all_colours <- viridisLite::viridis(length(all_contig_names) + 1)
-names(all_colours) <- c("query", all_contig_names)
+all_colours <- viridisLite::viridis(
+  length(all_contig_names) + palette_space + 1
+)
+names(all_colours) <- c(
+  "query",
+  rep("blank", palette_space),
+  all_contig_names
+)
 
 # Plot the ideogram with ribbons connecting the two sets of contigs
-ggplot() +
-  theme_void() +
+gp <- ggplot() +
+  theme_void(base_family = "Lato", base_size = 12) +
   scale_fill_manual(
     values = all_colours, guide = "none"
   ) +
@@ -181,3 +216,30 @@ ggplot() +
     t_y - y_axis_space,
     q_y + y_axis_space
   )
+
+
+
+gp + annotate(
+  geom = "text",
+  label = "Query contigs",
+  x = middle_x,
+  y = q_y + (y_axis_space / 2),
+  hjust = 0.5,
+  vjust = 0.5
+) +
+  annotate(
+    geom = "text",
+    label = "Reference contigs",
+    x = middle_x,
+    y = t_y - (y_axis_space / 2),
+    hjust = 0.5,
+    vjust = 0.5
+  )
+
+ggsave(plot_file,
+  gp,
+  width = 10,
+  height = 7.5,
+  units = "in",
+  device = cairo_pdf
+)
