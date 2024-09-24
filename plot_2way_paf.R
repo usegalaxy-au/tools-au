@@ -3,6 +3,7 @@
 library(pafr)
 library(data.table)
 library(ggplot2)
+library(viridisLite)
 
 #############
 # FUNCTIONS #
