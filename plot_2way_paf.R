@@ -150,6 +150,7 @@ paf_dt[,
 ]
 
 # generate polygons. P is for primary alignments only
+polygon_y_bump <-  0.1 # account for contig thickness
 paf_polygons <- paf_dt[
   tp == "P" & nmatch >= min_nmatch,
   .(
@@ -164,6 +165,8 @@ paf_polygons <- paf_dt[
 total_height <- (q_y - t_y) * 1.618
 y_axis_space <- (total_height - (q_y - t_y)) / 2
 middle_x <- tpaf[1, shift_tstart] + tpaf[.N, pad_tend] / 2
+
+
 
 all_contig_names <- c(tpaf[, unique(tname)])
 all_colours <- viridisLite::viridis(
@@ -215,23 +218,20 @@ gp <- ggplot() +
   ylim(
     t_y - y_axis_space,
     q_y + y_axis_space
-  )
-
-
-
-gp + annotate(
-  geom = "text",
-  label = "Query contigs",
-  x = middle_x,
-  y = q_y + (y_axis_space / 2),
-  hjust = 0.5,
-  vjust = 0.5
-) +
+  ) +
+  annotate(
+    geom = "text",
+    label = "Query contigs",
+    x = middle_x,
+    y = q_y + (y_axis_space / 3),
+    hjust = 0.5,
+    vjust = 0.5
+  ) +
   annotate(
     geom = "text",
     label = "Reference contigs",
     x = middle_x,
-    y = t_y - (y_axis_space / 2),
+    y = t_y - (y_axis_space / 3),
     hjust = 0.5,
     vjust = 0.5
   )
