@@ -175,7 +175,7 @@ middle_x <- tpaf[1, shift_tstart] + tpaf[.N, pad_tend] / 2
 
 
 all_contig_names <- c(tpaf[, unique(tname)])
-all_colours <- viridisLite::viridis(
+all_colours <- viridis(
   length(all_contig_names) + palette_space + 1
 )
 names(all_colours) <- c(
