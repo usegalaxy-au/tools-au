@@ -1,0 +1,16 @@
+<tool id="plot_ragtag_paf" name="Plot RagTag PAF" version="0.0.1">
+    <description>Plot RagTag PAF</description>
+    <requirements>
+        <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
+    </requirements>
+    <inputs>
+        <param format="paf" name="input_paf" label="PAF output from RagTag" type="data"/>
+        <param format="agp" name="input_agp" label="AGP output from RagTag" type="data"/>
+    </inputs>
+    <outputs>
+        <data name="plot" format="pdf" label="Plot"/>
+    </outputs>
+    <help>
+        Plot RagTag PAF
+    </help>
+</tool>
