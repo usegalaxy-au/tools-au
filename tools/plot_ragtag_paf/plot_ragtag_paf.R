@@ -1,10 +1,10 @@
 #!/usr/bin/env Rscript
 
 options(
-    show.error.messages = F,
+    show.error.messages = FALSE,
     error = function() {
         cat(geterrmessage(), file = stderr())
-        q("no", 1, F)
+        q("no", 1, FALSE)
     }
 )
 
