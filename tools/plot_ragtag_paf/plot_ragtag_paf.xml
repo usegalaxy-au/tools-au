@@ -48,6 +48,22 @@ t_y: '${plot_params.t_y}'
         </test>
     </tests>
     <help>
-.. image:: ./static/images/ragtag.png
+        Accepts the PAF and AGP produced by the RagTag Scaffold and draws a plot
+        showing the alignment of the query contigs to the reference contigs.
+        
+        .. figure:: $PATH_TO_IMAGES/ragtag.png
+           :alt: RagTag plot
+        
     </help>
+    <citations>
+        <citation type="bibtex">
+            @misc{plot_ragtag_paf,
+                title = {plot_ragtag_paf},
+                author = {Harrop, Tom},
+                year = {2024},
+                organization = {Galaxy Australia},
+                url = {https://github.com/usegalaxy-au/tools-au},
+                }
+        </citation>
+    </citations>
 </tool>
