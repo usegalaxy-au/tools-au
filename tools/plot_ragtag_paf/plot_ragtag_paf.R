@@ -1,9 +1,20 @@
 #!/usr/bin/env Rscript
 
-library(pafr)
+options(
+  show.error.messages = F,
+  error = function() {
+    cat(geterrmessage(), file = stderr())
+    q("no", 1, F)
+  }
+)
+
 library(data.table)
 library(ggplot2)
+library(pafr)
 library(viridisLite)
+library(yaml)
+
+args <- commandArgs(trailingOnly = TRUE)
 
 #############
 # FUNCTIONS #
@@ -83,20 +94,13 @@ lookup_qstart <- function(x) {
 # GLOBALS #
 ###########
 
-agp_file <- "data/galaxy_out.agp"
-paf_file <- "data/galaxy_out.paf"
-plot_file <- "plot.pdf"
-
 # PAF column spec
 sort_columns <- c("tname", "tstart", "tend", "qname", "qstart", "qend")
 
-# plot paramaters
-t_y <- 1
-q_y <- 2
-min_nmatch <- 20e3
-gap_size <- 0.1 # percentage of the x-axis taken up by space between contigs
-palette_space <- 4 # space between query contig colour and first ref colour
-
+config_file <- args[1]
+config <- yaml.load_file(config_file)
+typed_config <- lapply(config, type.convert, as.is = TRUE)
+list2env(typed_config, envir = .GlobalEnv)
 
 ########
 # MAIN #
@@ -244,8 +248,10 @@ gp <- ggplot() +
 
 ggsave(plot_file,
   gp,
-  width = 10,
-  height = 7.5,
-  units = "in",
+  width = plot_width,
+  height = plot_height,
+  units = "mm",
   device = cairo_pdf
 )
+
+sessionInfo()

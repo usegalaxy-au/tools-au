@@ -1,22 +1,53 @@
-<tool id="plot_ragtag_paf" name="Plot RagTag PAF" version="0.0.1">
-    <description>Plot RagTag PAF</description>
+<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.1">
+    <description>to compare query contigs to the reference</description>
     <requirements>
         <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
     </requirements>
+    <command detect_errors="exit_code"><![CDATA[
+Rscript 
+'${__tool_directory__}/plot_ragtag_paf.R'
+'${plot_config}'
+            ]]></command>
+    <configfiles>
+        <configfile name="plot_config">
+agp_file: '${input_agp}'
+paf_file: '${input_paf}'
+plot_file: 'ragtag.pdf'
+fontsize: '${plot_params.fontsize}'
+gap_size: '${plot_params.gap_size}'
+min_nmatch: '${min_nmatch}'
+palette_space: '${plot_params.palette_space}'
+plot_height: '${plot_params.plot_height}'
+plot_width: '${plot_params.plot_width}'
+q_y: '${plot_params.q_y}'
+t_y: '${plot_params.t_y}'
+        </configfile>
+    </configfiles>
     <inputs>
         <param format="paf" name="input_paf" label="PAF output from RagTag" type="data"/>
         <param format="agp" name="input_agp" label="AGP output from RagTag" type="data"/>
-        <param type="integer" name="min_length" label="Minimum alignment length to include in plot" value="20000"/>
+        <param type="integer" name="min_nmatch" label="Minimum alignment length to include in plot" value="20000"/>
         <section name="plot_params" title="Plot parameters">
-            <param type="integer" name="plot_width" label="Plot width in mm" value="10"/>
-            <param type="integer" name="plot_height" label="Plot height in mm" value="10"/>
-            <param type="integer" name="fontsize" label="Fontsize in pt" value="12"/>
+            <param type="integer" name="plot_width" label="Plot width (mm)" value="254"/>
+            <param type="integer" name="plot_height" label="Plot height (mm)" value="191"/>
+            <param type="integer" name="fontsize" label="Fontsize (pt)" value="12"/>
+            <param type="integer" name="palette_space" label="Number of unused colours in the colour palette between the query contig colour and the colour of the first reference contig." help="Try a higher value if the query contigs look too similar to the reference contigs." value="4"/>
+            <param type="float" min="0" max="1" name="gap_size" label="Total length of gaps between contigs relative to the total assembly length." help="Try a higher value if the contigs look too close together." value="0.1"/>
+            <param type="integer" name="t_y" label="Position of reference contigs on the y-axis" value="1"/>
+            <param type="integer" name="q_y" label="Position of query contigs on the y-axis" value="2"/>
         </section>
     </inputs>
     <outputs>
-        <data name="plot" format="pdf" label="Plot"/>
+        <data name="plot" format="pdf" label="${tool.name} on ${on_string}" from_work_dir="ragtag.pdf"/>
     </outputs>
+    <tests>
+        <test expect_num_outputs="1">
+            <param name="input_paf" value="ragtag.paf"/>
+            <param name="input_agp" value="ragtag.agp"/>
+            <output name="plot" ftype="pdf" file="ragtag.pdf"/>
+        </test>
+    </tests>
     <help>
-        Plot RagTag PAF
+.. image:: ./static/images/ragtag.png
     </help>
 </tool>
