@@ -6,6 +6,12 @@
     <inputs>
         <param format="paf" name="input_paf" label="PAF output from RagTag" type="data"/>
         <param format="agp" name="input_agp" label="AGP output from RagTag" type="data"/>
+        <param type="integer" name="min_length" label="Minimum alignment length to include in plot" value="20000"/>
+        <section name="plot_params" title="Plot parameters">
+            <param type="integer" name="plot_width" label="Plot width in mm" value="10"/>
+            <param type="integer" name="plot_height" label="Plot height in mm" value="10"/>
+            <param type="integer" name="fontsize" label="Fontsize in pt" value="12"/>
+        </section>
     </inputs>
     <outputs>
         <data name="plot" format="pdf" label="Plot"/>
