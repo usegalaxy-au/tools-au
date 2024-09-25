@@ -42,8 +42,8 @@ t_y: '${plot_params.t_y}'
     </outputs>
     <tests>
         <test expect_num_outputs="1">
-            <param name="input_paf" value="ragtag.paf"/>
-            <param name="input_agp" value="ragtag.agp"/>
+            <param name="input_paf" ftype="paf.gz" value="ragtag.paf.gz"/>
+            <param name="input_agp" ftype="agp" value="ragtag.agp"/>
             <output name="plot" ftype="pdf" file="ragtag.pdf"/>
         </test>
     </tests>
