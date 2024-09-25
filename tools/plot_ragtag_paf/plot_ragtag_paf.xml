@@ -1,7 +1,12 @@
 <tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.1">
     <description>to compare query contigs to the reference</description>
     <requirements>
-        <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
+        <requirement type="package" version="0.0.2">r-pafr</requirement>
+        <requirement type="package" version="0.4.2">r-viridislite</requirement>
+        <requirement type="package" version="1.15.4">r-data.table</requirement>
+        <requirement type="package" version="2.3.10">r-yaml</requirement>
+        <requirement type="package" version="3.5.1">r-ggplot2</requirement>
+        <requirement type="package" version="3.9.5">r-gtools</requirement>
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 Rscript 
@@ -44,7 +49,11 @@ t_y: '${plot_params.t_y}'
         <test expect_num_outputs="1">
             <param name="input_paf" ftype="paf.gz" value="ragtag.paf.gz"/>
             <param name="input_agp" ftype="agp" value="ragtag.agp"/>
-            <output name="plot" ftype="pdf" file="ragtag.pdf"/>
+            <output name="plot">
+                <assert_contents>
+                    <has_size size="8758" delta="1000" />
+                </assert_contents>
+            </output>
         </test>
     </tests>
     <help>
