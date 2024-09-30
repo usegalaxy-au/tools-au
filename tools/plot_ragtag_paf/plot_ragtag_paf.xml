@@ -1,4 +1,4 @@
-<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.1">
+<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.2" profile="24.1" license="MIT">
     <description>to compare query contigs to the reference</description>
     <requirements>
         <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
