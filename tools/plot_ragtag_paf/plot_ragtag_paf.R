@@ -254,4 +254,7 @@ ggsave(plot_file,
     device = cairo_pdf
 )
 
+# Print session info to stderr
+sink(stderr())
 sessionInfo()
+sink()

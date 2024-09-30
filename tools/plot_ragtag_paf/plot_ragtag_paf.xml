@@ -12,23 +12,36 @@
         <!-- <requirement type="package" version="3.9.5">r-gtools</requirement> -->
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-Rscript 
-'${__tool_directory__}/plot_ragtag_paf.R'
-'${plot_config}'
-            ]]></command>
+
+    ## Suppress R warnings about container
+    mv /etc/R/Rprofile.site /etc/R/Rprofile.site.old &&
+    echo "options(bspm.sudo = TRUE)" > /etc/R/Rprofile.site &&
+    cat /etc/R/Rprofile.site.old >> /etc/R/Rprofile.site &&
+
+    ## Print the plot config to stderr
+    sed -e 's/^[ \t]*//' -e '/^$/d' '${plot_config}' > config.yaml &&
+    echo "PLOT CONFIG:"  >&2 &&
+    cat config.yaml >&2 &&
+
+    ## Draw the plot
+    echo "\nRunning plot_ragtag_paf.R\n"  >&2 &&
+    Rscript 
+    '${__tool_directory__}/plot_ragtag_paf.R'
+    config.yaml
+    ]]></command>
     <configfiles>
         <configfile name="plot_config">
-agp_file: '${input_agp}'
-paf_file: '${input_paf}'
-plot_file: 'ragtag.pdf'
-fontsize: '${plot_params.fontsize}'
-gap_size: '${plot_params.gap_size}'
-min_nmatch: '${min_nmatch}'
-palette_space: '${plot_params.palette_space}'
-plot_height: '${plot_params.plot_height}'
-plot_width: '${plot_params.plot_width}'
-q_y: '${plot_params.q_y}'
-t_y: '${plot_params.t_y}'
+            agp_file: '${input_agp}'
+            paf_file: '${input_paf}'
+            plot_file: 'ragtag.pdf'
+            fontsize: '${plot_params.fontsize}'
+            gap_size: '${plot_params.gap_size}'
+            min_nmatch: '${min_nmatch}'
+            palette_space: '${plot_params.palette_space}'
+            plot_height: '${plot_params.plot_height}'
+            plot_width: '${plot_params.plot_width}'
+            q_y: '${plot_params.q_y}'
+            t_y: '${plot_params.t_y}'
         </configfile>
     </configfiles>
     <inputs>
@@ -54,7 +67,7 @@ t_y: '${plot_params.t_y}'
             <param name="input_agp" ftype="agp" value="ragtag.agp"/>
             <output name="plot">
                 <assert_contents>
-                    <has_size size="8758" delta="1000" />
+                    <has_size size="8758" delta="1000"/>
                 </assert_contents>
             </output>
         </test>
