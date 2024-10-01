@@ -152,7 +152,7 @@
 	    </section>
     </inputs>
     <outputs>
-	  <data format="json" name="statistic" label="${tool.name} on ${on_string}">
+	  <data name="statistic" format="json" label="${tool.name} on ${on_string}">
 		 <filter>params['j']</filter>
 	  </data>
 	  <collection name="kmc_db" type="list" label="${tool.name} on ${on_string}: kmc db">
@@ -160,12 +160,29 @@
 	  </collection>
     </outputs>
     <tests>
+        <test expect_num_outputs="2">
+            <!-- #1 test individual fasta file -->
+            <param name="individual_file" value="test.fasta.gz" ftype="fasta.gz"/>
+            <param name="k" value="27" />
+            <param name="ci" value="2" />
+            <param name="cs" value="255" />
+            <output_collection name="kmc_db" type="list">
+                <element name="kmer_27.kmc_pre" file="kmer_27.kmc_pre" ftype="binary" />
+                <element name="kmer_27.kmc_suf" file="kmer_27.kmc_suf" ftype="binary" />
+            </output_collection>
+            <output name="statistic" ftype="json">
+                    <assert_contents>
+                        <has_text text="1st_stage"/>
+                        <has_text text="2nd_stage"/>
+                        <has_text text="Stats"/>
+                    </assert_contents>
+            </output>
+        </test>
 	 <!-- output file is too large for testing; comment out to test on local machine with update_test_data option -->   
 	 <!--  <test expect_num_outputs="2"> -->
-            <!-- #1 test individual fastq with common parameters -->
+            <!-- #2 test individual fastq file -->
 	 <!--   <param name="individual_file" value="filtered_1.fastq" ftype="fastq"/>
             <param name="k" value="25" />
-            <param name="m" value="12" />
 	    <param name="p" value="9" />
 	    <param name="ci" value="2" />
 	    <param name="cs" value="255" />
@@ -173,21 +190,14 @@
 	    	<element name="kmer_25.kmc_pre" file="kmer_25.kmc_pre" ftype="binary" />
 	    	<element name="kmer_25.kmc_suf" file="kmer_25.kmc_suf" ftype="binary" />
 	    </output_collection>
-	    <output name="statistic" file="statistic_25.json" ftype="json"/>
+	     <output name="statistic" ftype="json">
+		 <assert_contents>
+                      <has_text text="1st_stage"/>
+                      <has_text text="2nd_stage"/>
+                      <has_text text="Stats"/>
+		 </assert_contents>				 
+	    </output>
     	</test> -->
-        <test expect_num_outputs="2">
-            <!-- #2 test individual fasta with common parameters -->
-            <param name="individual_file" value="test.fasta.gz" ftype="fasta.gz"/> 
-            <param name="k" value="27" />
-            <param name="m" value="24" />
-            <param name="ci" value="2" />
-            <param name="cs" value="255" />
-	    <output_collection name="kmc_db" type="list">
-            	<element name="kmer_27.kmc_suf" file="kmer_27.kmc_suf" ftype="binary" />
-		<element name="kmer_27.kmc_pre" file="kmer_27.kmc_pre" ftype="binary" />
-	    </output_collection>
-	    <output name="statistic" file="statistic_27.json" ftype="json"/>
-    	</test>
 	<!-- output file is too large for testing; comment out to test on local machine -->
         <!-- <test expect_num_outputs="2"> -->
             <!-- #3 test collection fastq with common parameters -->
@@ -209,7 +219,13 @@
                 <element name="kmer_29.kmc_suf" file="kmer_29.kmc_suf" ftype="binary" />
                 <element name="kmer_29.kmc_pre" file="kmer_29.kmc_pre" ftype="binary" />
             </output_collection>
-            <output name="statistic" file="statistic_collection.json" ftype="json"/>
+	    <output name="statistic" ftype="json">
+                    <assert_contents>
+                        <has_text text="1st_stage"/>
+                        <has_text text="2nd_stage"/>
+                        <has_text text="Stats"/>
+                    </assert_contents>
+            </output>
     	</test>
 	-->
    </tests>
