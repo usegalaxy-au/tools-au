@@ -14,17 +14,19 @@
     <command detect_errors="exit_code"><![CDATA[
 
     ## Suppress R warnings about container
-    sed -i 
-    '/options(bspm.version.check=FALSE)/i options(bspm.sudo = TRUE)' 
-    /etc/R/Rprofile.site &&
+    if [ -f /etc/R/Rprofile.site ]; then
+        sed -i 
+        '/options(bspm.version.check=FALSE)/i options(bspm.sudo = TRUE)' 
+        /etc/R/Rprofile.site ;
+    fi ;
 
     ## Print the plot config to stderr
     sed -e 's/^[ \t]*//' -e '/^$/d' '${plot_config}' > config.yaml &&
-    echo "PLOT CONFIG:"  >&2 &&
+    echo "PLOT CONFIG:" >&2 &&
     cat config.yaml >&2 &&
 
     ## Draw the plot
-    echo "\nRunning plot_ragtag_paf.R\n"  >&2 &&
+    printf '\n%s\n' "Running plot_ragtag_paf.R"  >&2 &&
     Rscript 
     '${__tool_directory__}/plot_ragtag_paf.R'
     config.yaml
