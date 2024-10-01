@@ -1,15 +1,15 @@
 <tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.2" profile="24.1" license="MIT">
     <description>to compare query contigs to the reference</description>
     <requirements>
-        <!-- <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container> -->
+        <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
         <!-- The following requirements work but the fonts aren't configured
         correctly -->
-        <requirement type="package" version="0.0.2">r-pafr</requirement>
-        <requirement type="package" version="0.4.2">r-viridislite</requirement>
-        <requirement type="package" version="1.15.4">r-data.table</requirement>
-        <requirement type="package" version="2.3.10">r-yaml</requirement>
-        <requirement type="package" version="3.5.1">r-ggplot2</requirement>
-        <requirement type="package" version="3.9.5">r-gtools</requirement>
+        <!-- <requirement type="package" version="0.0.2">r-pafr</requirement> -->
+        <!-- <requirement type="package" version="0.4.2">r-viridislite</requirement> -->
+        <!-- <requirement type="package" version="1.15.4">r-data.table</requirement> -->
+        <!-- <requirement type="package" version="2.3.10">r-yaml</requirement> -->
+        <!-- <requirement type="package" version="3.5.1">r-ggplot2</requirement> -->
+        <!-- <requirement type="package" version="3.9.5">r-gtools</requirement> -->
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
 
