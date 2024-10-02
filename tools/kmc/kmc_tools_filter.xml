@@ -1,4 +1,4 @@
-<tool id="kmc_filter" name="KMC filter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+<tool id="kmc_filter" name="KMC filter" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>filtering KMC's database</description>
     <xrefs>
         <xref type='bio.tools'>kmc</xref>
@@ -72,11 +72,11 @@
 	     <!-- #1 test with common parameters -->
             <param name="input_collection">
                 <collection type="list">
-                    <element name="db.kmc_suf" value="db.kmc_suf" dbkey="89"/>
-                    <element name="db.kmc_pre" value="db.kmc_pre" dbkey="89"/>
+                    <element name="db.kmc_pre" value="filtered_kmers1.kmc_pre" dbkey="89"/>
+                    <element name="db.kmc_suf" value="filtered_kmers1.kmc_suf" dbkey="89"/>
                 </collection>
             </param>
-	    <param name="input_read_file" value="F3D0_R1.fastq" ftype="fastq"/>
+	    <param name="input_read_file" value="Illumina.1.fastq" ftype="fastq"/>
             <param name="min_kmer_occurrence" value="3" />
             <param name="exclude_length" value="2" />
             <param name="exclude_kmer_occurence" value="10" />
@@ -86,11 +86,11 @@
              <!-- #2 test with common parameters -->
             <param name="input_collection">
                 <collection type="list">
-                    <element name="db.kmc_suf" value="db.kmc_suf" dbkey="89"/>
-                    <element name="db.kmc_pre" value="db.kmc_pre" dbkey="89"/>
+                    <element name="db.kmc_pre" value="filtered_kmers2.kmc_pre" dbkey="89"/>
+		    <element name="db.kmc_suf" value="filtered_kmers2.kmc_suf" dbkey="89"/>
                 </collection>
             </param>
-            <param name="input_read_file" value="F3D0_R1.fastq" ftype="fastq"/>
+            <param name="input_read_file" value="Illumina.2.fastq" ftype="fastq"/>
             <param name="exclude_length" value="10" />
             <param name="exclude_kmer_occurence" value="100" />
             <output name="filtered_2.fastq" file="filtered_2.fastq" ftype="fastq" />
