@@ -162,7 +162,7 @@
     <tests>
         <test expect_num_outputs="2">
             <!-- #1 test individual fasta file -->
-            <param name="individual_file" value="test.fasta.gz" ftype="fasta.gz"/>
+            <param name="individual_file" value="test.fasta" ftype="fasta"/>
             <param name="k" value="27" />
             <param name="ci" value="2" />
             <param name="cs" value="255" />

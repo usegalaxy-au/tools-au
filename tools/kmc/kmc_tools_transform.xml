@@ -1,4 +1,4 @@
-<tool id="kmc_transform" name="KMC transform" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+<tool id="kmc_transform" name="KMC transform" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>single KMC's database</description>
     <xrefs>
         <xref type='bio.tools'>kmc</xref>
@@ -136,8 +136,8 @@
              <!-- #1 test perform sort operation on KMC DB -->
             <param name="input_collection">
                 <collection type="list">
-                    <element name="db.kmc_suf" value="db.kmc_suf"/>
-                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                    <element name="db.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="db.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
 	    </param>
             <conditional name="ops">
@@ -160,8 +160,8 @@
              <!-- #2 test Generate Histogram Table -->
             <param name="input_collection">
                 <collection type="list">
-                    <element name="db.kmc_suf" value="db.kmc_suf"/>
-                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                    <element name="db.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="db.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
             </param>
             <conditional name="ops">
@@ -183,8 +183,8 @@
              <!-- #3 test Generate dump Table -->
             <param name="input_collection">
                 <collection type="list">
-                    <element name="db.kmc_suf" value="db.kmc_suf"/>
-                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                    <element name="db.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="db.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
             </param>
             <conditional name="ops">
@@ -206,8 +206,8 @@
              <!-- #4 test perform reduce operation -->
             <param name="input_collection">
                 <collection type="list">
-                    <element name="db.kmc_suf" value="db.kmc_suf"/>
-                    <element name="db.kmc_pre" value="db.kmc_pre"/>
+                    <element name="db.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="db.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
 	    </param>
 	    <repeat name="operations">
@@ -237,13 +237,13 @@
                     <param name="max_kmer_occurrence" value="40"/>
                  </section>
 	    </repeat>
-            <output_collection name="kmc_db" type="list">
-                <element name="reduce_1_db.kmc_suf" file="reduce_1_db.kmc_suf"/>
-		<element name="reduce_1_db.kmc_pre" file="reduce_1_db.kmc_pre"/>
-	        <element name="sort_2_db.kmc_suf" file="sort_2_db.kmc_suf"/>
-                <element name="sort_2_db.kmc_pre" file="sort_2_db.kmc_pre"/>
+	    <output_collection name="kmc_db" type="list">
+		<element name="compact_3_db.kmc_pre" file="compact_3_db.kmc_pre"/>
 		<element name="compact_3_db.kmc_suf" file="compact_3_db.kmc_suf"/>
-                <element name="compact_3_db.kmc_pre" file="compact_3_db.kmc_pre"/>
+                <element name="reduce_1_db.kmc_pre" file="reduce_1_db.kmc_pre"/>
+		<element name="reduce_1_db.kmc_suf" file="reduce_1_db.kmc_suf"/>
+	        <element name="sort_2_db.kmc_pre" file="sort_2_db.kmc_pre"/>
+                <element name="sort_2_db.kmc_suf" file="sort_2_db.kmc_suf"/>
             </output_collection>
         </test>
       </tests>

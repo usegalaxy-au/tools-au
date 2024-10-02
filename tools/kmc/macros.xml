@@ -95,7 +95,7 @@
        <param name="min_kmer_occurrence" argument="-ci" type="integer" optional="true" label="exclude k-mers occurring less than x times"/>
        <param name="max_kmer_occurrence" argument="-cx" type="integer" optional="true" label="exclude k-mers occurring more of than x times"/>
        <param name="max_counter_value" argument="-cs" type="integer" optional="true" label="maximal value of a counter"/>
-       <param argument="-oc" name="oc" type="select" optional="true" label="Counter Calculation" help="redefine counter calculation mode for equal k-mers">
+       <param argument="-oc" type="select" optional="true" label="Counter Calculation" help="redefine counter calculation mode for equal k-mers">
             <option value="min">min - get lower value of a k-mer counter</option>
             <option value="max">max - get upper value of a k-mer counter</option>
             <option value="sum">sum - get sum of counters from both databases</option>

@@ -1,11 +1,11 @@
-<tool id="kmc_simple" name="KMC simple" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" >
+<tool id="kmc_simple" name="KMC simple" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
     <description>simple operations for two input kmer sets</description>
-    <xrefs>
-        <xref type='bio.tools'>kmc</xref>
-    </xrefs>
     <macros>
 	  <import>macros.xml</import>
     </macros>
+    <xrefs>
+        <xref type='bio.tools'>kmc</xref>
+    </xrefs>
     <expand macro="requirements" />
     <expand macro="stdio" />
     <expand macro="version_command" /> 
@@ -222,14 +222,14 @@
 	    <!-- #1 test with default parameters -->
             <param name="input_collection_one">
                 <collection type="list">
-		    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
-		    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+		    <element name="kmers_one.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+		    <element name="kmers_one.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
 	    </param>
             <param name="input_collection_two">
                 <collection type="list">
-		    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
-		    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+		    <element name="kmers_two.kmc_pre" value="filtered_kmers2.kmc_pre"/>
+		    <element name="kmers_two.kmc_suf" value="filtered_kmers2.kmc_suf"/>
                 </collection>
 	    </param>
 	    <conditional name="input_options_cond">
@@ -240,22 +240,22 @@
 		   <param name="oc" value="max"/>
 	    </section>
             <output_collection name="kmc_db" type="list">
-                <element name="intersect_max_db.kmc_suf" file="intersect_max_db.kmc_suf"/>
                 <element name="intersect_max_db.kmc_pre" file="intersect_max_db.kmc_pre"/>
+                <element name="intersect_max_db.kmc_suf" file="intersect_max_db.kmc_suf"/>
             </output_collection>
          </test>
          <test>
             <!-- #2 test with input parameters for KMC DB one only -->
             <param name="input_collection_one">
                 <collection type="list">
-                    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
-                    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                    <element name="kmers_one.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="kmers_one.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
             </param>
             <param name="input_collection_two">
                 <collection type="list">
-                    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
-                    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                    <element name="kmers_two.kmc_pre" value="filtered_kmers2.kmc_pre"/>
+                    <element name="kmers_two.kmc_suf" value="filtered_kmers2.kmc_suf"/>
                 </collection>
             </param>
             <conditional name="input_options_cond">
@@ -270,22 +270,22 @@
                    <param name="oc" value="min"/>
             </section>
             <output_collection name="kmc_db" type="list">
-                <element name="intersect_min_db.kmc_suf" file="intersect_min_db.kmc_suf"/>
                 <element name="intersect_min_db.kmc_pre" file="intersect_min_db.kmc_pre"/>
+                <element name="intersect_min_db.kmc_suf" file="intersect_min_db.kmc_suf"/>
             </output_collection>
          </test>
          <test>
             <!-- #3 test with input parameters for KMC DB two only -->
             <param name="input_collection_one">
                 <collection type="list">
-                    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
-                    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                    <element name="kmers_one.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="kmers_one.kmc_suf" value="filtered_kmers1.kmc_suf"/>
                 </collection>
             </param>
             <param name="input_collection_two">
                 <collection type="list">
-                    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
-                    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                    <element name="kmers_two.kmc_pre" value="filtered_kmers2.kmc_pre"/>
+                    <element name="kmers_two.kmc_suf" value="filtered_kmers2.kmc_pre"/>
                 </collection>
             </param>
             <conditional name="input_options_cond">
@@ -295,24 +295,27 @@
             <section name="kmc_db_two_param">
                    <param name="min_kmer_occurrence" value="3"/>
                    <param name="max_kmer_occurrence" value="30"/>
+	    </section>
+            <section name="add_output_params">
+                   <param name="oc" value="sum"/>
             </section>
             <output_collection name="kmc_db" type="list">
-                <element name="union_db.kmc_suf" file="union_db.kmc_suf"/>
-                <element name="union_db.kmc_pre" file="union_db.kmc_pre"/>
+                <element name="union_sum_db.kmc_pre" file="union_sum_db.kmc_pre"/>
+                <element name="union_sum_db.kmc_suf" file="union_sum_db.kmc_suf"/>
             </output_collection>
          </test>
          <test>
             <!-- #4 test with input parameters for both KMC DB -->
             <param name="input_collection_one">
                 <collection type="list">
-                    <element name="kmers_one.kmc_suf" value="kmers_one.kmc_suf"/>
-                    <element name="kmers_one.kmc_pre" value="kmers_one.kmc_pre"/>
+                    <element name="kmers_one.kmc_pre" value="filtered_kmers1.kmc_pre"/>
+                    <element name="kmers_one.kmc_suf" value="filtered_kmers1.kmc_pre"/>
                 </collection>
             </param>
             <param name="input_collection_two">
                 <collection type="list">
-                    <element name="kmers_two.kmc_suf" value="kmers_two.kmc_suf"/>
-                    <element name="kmers_two.kmc_pre" value="kmers_two.kmc_pre"/>
+                    <element name="kmers_two.kmc_pre" value="filtered_kmers2.kmc_pre"/>
+                    <element name="kmers_two.kmc_suf" value="filtered_kmers2.kmc_suf"/>
                 </collection>
             </param>
             <conditional name="input_options_cond">
@@ -320,19 +323,19 @@
             </conditional>
             <param name="select_operation" value="counters_subtract" />
             <section name="both_db_one_param">
-                   <param name="min_kmer_occurrence" value="2"/>
-                   <param name="max_kmer_occurrence" value="20"/>
+                   <param name="min_kmer_occurrence" value="1"/>
+                   <param name="max_kmer_occurrence" value="10"/>
 	    </section>
             <section name="both_db_two_param">
-                   <param name="min_kmer_occurrence" value="3"/>
-                   <param name="max_kmer_occurrence" value="30"/>
+                   <param name="min_kmer_occurrence" value="2"/>
+                   <param name="max_kmer_occurrence" value="20"/>
 	    </section>
             <section name="add_output_params">
                    <param name="oc" value="sum"/>
             </section>
             <output_collection name="kmc_db" type="list">
-                <element name="counters_subtract_sum_db.kmc_suf" file="counters_subtract_sum_db.kmc_suf"/>
                 <element name="counters_subtract_sum_db.kmc_pre" file="counters_subtract_sum_db.kmc_pre"/>
+                <element name="counters_subtract_sum_db.kmc_suf" file="counters_subtract_sum_db.kmc_suf"/>
             </output_collection>
          </test>
     </tests>
