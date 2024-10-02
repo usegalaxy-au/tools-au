@@ -1,10 +1,13 @@
 name: kmc
 owner: galaxy-australia
 remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/kmc
+homepage_url: https://github.com/refresh-bio/KMC
 categories:
   - Sequence Analysis
 type: unrestricted
 description: KMC is a disk-based program for counting k-mers from (possibly gzipped) FASTQ/FASTA files.
+long_description: |
+  KMC is a disk-based program for counting k-mers from (possibly gzipped) FASTQ/FASTA files. KMC is one of many projects developed by REFRESH Bioinformatics Group.
 include:
   - kmc.xml
   - kmc_tools_simple.xml
