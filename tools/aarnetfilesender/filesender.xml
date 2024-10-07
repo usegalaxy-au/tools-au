@@ -3,14 +3,19 @@
     <macros>
         <import>macros.xml</import>
     </macros>
-    <expand macro="requirements" />
-    <expand macro="version_command" />
+    <expand macro="requirements"/>
+    <expand macro="version_command"/>
     <command detect_errors="exit_code"><![CDATA[
+#if $test != "":
+    filesender -h &&
+    exit 0;
+#end if
+
 #set $apiuser = $__user__.extra_preferences.get('aarnet_filesender_account|username', "").strip()
 #set $apikey = $__user__.extra_preferences.get('aarnet_filesender_account|apikey', "").strip()
 
 #if $apiuser == "" or $apikey == "":
-    echo "ERROR: Please enter your FileSender Username in your user preferences under the AARNet FileSender Account Info section" &&
+    echo "ERROR: Please enter your FileSender Username in your user preferences under the AARNet FileSender Account Info section" >&2 &&
     exit 1;
 #end if
 
@@ -32,8 +37,11 @@ mkdir filestosend &&
 filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/rest.php -f "galaxy-no-reply@usegalaxy.org.au" -r '$to' filestosend >$output 2>&1
     ]]></command>
     <inputs>
-        <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:" />
-        <param name="to" type="text" optional="true" label="Email address of recipent:"><sanitizer sanitize="False"/></param>
+        <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:"/>
+        <param name="to" type="text" optional="true" label="Email address of recipent:">
+            <sanitizer sanitize="False"/>
+        </param>
+        <param name="test" type="hidden" value=""/>
     </inputs>
     <outputs>
         <data name="output" format="txt" hidden="false"/>
@@ -41,6 +49,16 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
     <tests>
         <test expect_exit_code="1" expect_failure="true">
             <param name="data" value="summary_statistics.txt"/>
+            <assert_stderr>
+                <has_text text="ERROR: Please enter your FileSender Username in your user preferences under the AARNet FileSender Account Info section"/>
+            </assert_stderr>
+        </test>
+        <test>
+            <param name="data" value="summary_statistics.txt"/>
+            <param name="test" value="true"/>
+            <assert_stdout>
+                <has_text text="File Sender CLI client"/>
+            </assert_stdout>
         </test>
     </tests>
     <help>
