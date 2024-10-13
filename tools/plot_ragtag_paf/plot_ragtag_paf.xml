@@ -42,12 +42,14 @@
             palette_space: '${plot_params.palette_space}'
             plot_height: '${plot_params.plot_height}'
             plot_width: '${plot_params.plot_width}'
+            upside_down: '${upside_down}'
         </configfile>
     </configfiles>
     <inputs>
         <param format="paf" name="input_paf" label="PAF output from RagTag" type="data"/>
         <param format="agp" name="input_agp" label="AGP output from RagTag" type="data"/>
         <param type="integer" name="min_nmatch" label="Minimum alignment length to include in plot" value="20000"/>
+        <param type="boolean" name="upside_down" label="Plot the reference contigs on top" value="false" truevalue="TRUE" falsevalue="FALSE"/>
         <section name="plot_params" title="Plot parameters">
             <param type="integer" name="plot_width" label="Plot width (mm)" value="254"/>
             <param type="integer" name="plot_height" label="Plot height (mm)" value="191"/>
@@ -66,6 +68,16 @@
             <output name="plot">
                 <assert_contents>
                     <has_size size="8758" delta="1000"/>
+                </assert_contents>
+            </output>
+        </test>
+        <test expect_num_outputs="1">
+            <param name="input_paf" ftype="paf.gz" value="ragtag.paf.gz"/>
+            <param name="input_agp" ftype="agp" value="ragtag.agp"/>
+            <param name="upside_down" value="true"/>
+            <output name="plot">
+                <assert_contents>
+                    <has_size size="8756" delta="1000"/>
                 </assert_contents>
             </output>
         </test>

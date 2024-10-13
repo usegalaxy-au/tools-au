@@ -1,11 +1,11 @@
 #!/usr/bin/env Rscript
 
 options(
-    show.error.messages = FALSE,
-    error = function() {
-        cat(geterrmessage(), file = stderr())
-        q("no", 1, FALSE)
-    }
+  show.error.messages = FALSE,
+  error = function() {
+    cat(geterrmessage(), file = stderr())
+    q("no", 1, FALSE)
+  }
 )
 
 library(data.table)
@@ -23,70 +23,70 @@ args <- commandArgs(trailingOnly = TRUE)
 
 # Adjust the PAF coordinates to the continuous x-axis
 adjust_coords <- function(qname, qstart, qend, tname, tstart, tend) {
-    my_qstart <- lookup_qstart(qname)
-    my_tstart <- lookup_tstart(tname)
-    return(
-        data.table(
-            adj_qstart = qstart + my_qstart,
-            adj_qend = qend + my_qstart,
-            adj_tstart = tstart + my_tstart,
-            adj_tend = tend + my_tstart
-        )
+  my_qstart <- lookup_qstart(qname)
+  my_tstart <- lookup_tstart(tname)
+  return(
+    data.table(
+      adj_qstart = qstart + my_qstart,
+      adj_qend = qend + my_qstart,
+      adj_tstart = tstart + my_tstart,
+      adj_tend = tend + my_tstart
     )
+  )
 }
 
 # calculate spacing between contigs so the ref and query take up the same x-axis
 # space
 get_padding <- function(paf) {
-    tlen_sum <- unique(paf, by = "tname")[, sum(tlen)]
-    tgaps_total <- paf[, length(unique(tname))]
+  tlen_sum <- unique(paf, by = "tname")[, sum(tlen)]
+  tgaps_total <- paf[, length(unique(tname))]
 
-    qlen_sum <- unique(paf, by = "qname")[, sum(qlen)]
-    qgaps_total <- paf[, length(unique(qname))]
+  qlen_sum <- unique(paf, by = "qname")[, sum(qlen)]
+  qgaps_total <- paf[, length(unique(qname))]
 
-    # the minumum gap is going to be one tenth of the x-axis space
-    if (tlen_sum > qlen_sum) {
-        min_gap <- (tlen_sum * gap_size) / tgaps_total
-        full_tlen <- tlen_sum + (tgaps_total * min_gap)
+  # the minumum gap is going to be one tenth of the x-axis space
+  if (tlen_sum > qlen_sum) {
+    min_gap <- (tlen_sum * gap_size) / tgaps_total
+    full_tlen <- tlen_sum + (tgaps_total * min_gap)
 
-        total_qpadding <- full_tlen - qlen_sum
-        return(
-            c(
-                "t_padding" = min_gap,
-                "q_padding" = total_qpadding / qgaps_total
-            )
-        )
-    } else if (tlen_sum < qlen_sum) {
-        min_gap <- (qlen_sum * gap_size) / qgaps_total
-        full_qlen <- qlen_sum + (qgaps_total * min_gap)
+    total_qpadding <- full_tlen - qlen_sum
+    return(
+      c(
+        "t_padding" = min_gap,
+        "q_padding" = total_qpadding / qgaps_total
+      )
+    )
+  } else if (tlen_sum < qlen_sum) {
+    min_gap <- (qlen_sum * gap_size) / qgaps_total
+    full_qlen <- qlen_sum + (qgaps_total * min_gap)
 
-        total_tpadding <- full_qlen - tlen_sum
+    total_tpadding <- full_qlen - tlen_sum
 
-        return(
-            c(
-                "t_padding" = total_tpadding / tgaps_total,
-                "q_padding" = min_gap
-            )
-        )
-    } else {
-        min_gap <- (tlen_sum * gap_size) / tgaps_total
-        return(
-            c(
-                "t_padding" = min_gap,
-                "q_padding" = min_gap
-            )
-        )
-    }
+    return(
+      c(
+        "t_padding" = total_tpadding / tgaps_total,
+        "q_padding" = min_gap
+      )
+    )
+  } else {
+    min_gap <- (tlen_sum * gap_size) / tgaps_total
+    return(
+      c(
+        "t_padding" = min_gap,
+        "q_padding" = min_gap
+      )
+    )
+  }
 }
 
 # offsets for the adjusted coordinates
 lookup_tstart <- function(x) {
-    return(unique(tstarts[tname == x, shift_tstart]))
+  return(unique(tstarts[tname == x, shift_tstart]))
 }
 
 
 lookup_qstart <- function(x) {
-    return(unique(qstarts[qname == x, shift_qstart]))
+  return(unique(qstarts[qname == x, shift_qstart]))
 }
 
 
@@ -112,10 +112,10 @@ message("Reading the plot config")
 config <- yaml.load_file(config_file)
 typed_config <- lapply(config, type.convert, as.is = TRUE)
 invisible(
-    list2env(
-        typed_config,
-        envir = .GlobalEnv
-    )
+  list2env(
+    typed_config,
+    envir = .GlobalEnv
+  )
 )
 
 
@@ -162,31 +162,31 @@ qstarts <- unique(qpaf[, .(qname, shift_qstart)])
 
 # adjust the alignment coordinates
 paf_dt[,
-    c(
-        "adj_qstart",
-        "adj_qend",
-        "adj_tstart",
-        "adj_tend"
-    ) := adjust_coords(qname, qstart, qend, tname, tstart, tend),
-    by = .(qname, qstart, qend, tname, tstart, tend)
+  c(
+    "adj_qstart",
+    "adj_qend",
+    "adj_tstart",
+    "adj_tend"
+  ) := adjust_coords(qname, qstart, qend, tname, tstart, tend),
+  by = .(qname, qstart, qend, tname, tstart, tend)
 ]
 
 # generate polygons. P is for primary alignments only
 message("Generating polygons for alignments")
 polygon_y_bump <- 0.017 # account for contig thickness
 paf_polygons <- paf_dt[
-    tp == "P" & nmatch >= min_nmatch,
-    .(
-        x = c(adj_tstart, adj_qstart, adj_qend, adj_tend),
-        y = c(
-            t_y + polygon_y_bump,
-            q_y - polygon_y_bump,
-            q_y - polygon_y_bump,
-            t_y + polygon_y_bump
-        ),
-        id = paste0("polygon", .GRP)
+  tp == "P" & nmatch >= min_nmatch,
+  .(
+    x = c(adj_tstart, adj_qstart, adj_qend, adj_tend),
+    y = c(
+      t_y + polygon_y_bump,
+      q_y - polygon_y_bump,
+      q_y - polygon_y_bump,
+      t_y + polygon_y_bump
     ),
-    by = .(qname, qstart, qend, tname, tstart, tend)
+    id = paste0("polygon", .GRP)
+  ),
+  by = .(qname, qstart, qend, tname, tstart, tend)
 ]
 
 # set up plot
@@ -196,80 +196,96 @@ middle_x <- tpaf[1, shift_tstart] + tpaf[.N, pad_tend] / 2
 
 all_contig_names <- c(tpaf[, unique(tname)])
 all_colours <- viridis(
-    length(all_contig_names) + palette_space + 1
+  length(all_contig_names) + palette_space + 1
 )
 names(all_colours) <- c(
-    "query",
-    rep("blank", palette_space),
-    all_contig_names
+  "query",
+  rep("blank", palette_space),
+  all_contig_names
 )
 
-# Plot the ideogram with ribbons connecting the two sets of contigs
+# Plot the ideogram with ribbons connecting the two sets of contigs. To
+# accomodate upside plots we have to draw the polygons first then add the
+# contigs later
 message("Plotting")
 gp <- ggplot() +
-    theme_void(base_family = "Lato", base_size = 12) +
-    scale_fill_manual(
-        values = all_colours, guide = "none"
-    ) +
-    scale_colour_manual(
-        values = all_colours, guide = "none"
-    ) +
-    geom_polygon(
-        data = paf_polygons,
-        aes(
-            x = x, y = y, group = id, fill = tname
-        ), alpha = 0.5
-    ) +
-    geom_segment(
-        data = tpaf,
-        aes(
-            x = shift_tstart,
-            xend = pad_tend,
-            colour = tname
-        ),
-        y = t_y,
-        linewidth = 5,
-        lineend = "butt"
-    ) +
-    geom_segment(
-        data = qpaf,
-        aes(
-            x = shift_qstart,
-            xend = pad_qend
-        ),
-        colour = all_colours[["query"]],
-        y = q_y,
-        linewidth = 5,
-        lineend = "butt"
-    ) +
-    ylim(
-        t_y - y_axis_space,
-        q_y + y_axis_space
-    ) +
-    annotate(
-        geom = "text",
-        label = "Query contigs",
-        x = middle_x,
-        y = q_y + (y_axis_space / 3),
-        hjust = 0.5,
-        vjust = 0.5
-    ) +
-    annotate(
-        geom = "text",
-        label = "Reference contigs",
-        x = middle_x,
-        y = t_y - (y_axis_space / 3),
-        hjust = 0.5,
-        vjust = 0.5
+  theme_void(base_family = "Lato", base_size = 12) +
+  scale_fill_manual(
+    values = all_colours, guide = "none"
+  ) +
+  scale_colour_manual(
+    values = all_colours, guide = "none"
+  ) +
+  geom_polygon(
+    data = paf_polygons,
+    aes(
+      x = x, y = y, group = id, fill = tname
+    ), alpha = 0.5
+  ) +
+  geom_segment(
+    data = tpaf,
+    aes(
+      x = shift_tstart,
+      y = t_y,
+      xend = pad_tend,
+      colour = tname
+    ),
+    linewidth = 5,
+    lineend = "butt"
+  ) +
+  geom_segment(
+    data = qpaf,
+    aes(
+      x = shift_qstart,
+      y = q_y,
+      xend = pad_qend
+    ),
+    colour = all_colours[["query"]],
+    linewidth = 5,
+    lineend = "butt"
+  ) +
+  annotate(
+    geom = "text",
+    label = "Query contigs",
+    x = middle_x,
+    y = q_y + (y_axis_space / 3),
+    hjust = 0.5,
+    vjust = 0.5
+  ) +
+  annotate(
+    geom = "text",
+    label = "Reference contigs",
+    x = middle_x,
+    y = t_y - (y_axis_space / 3),
+    hjust = 0.5,
+    vjust = 0.5
+  )
+
+# Reverse the scales and the limits to plot reference on top
+if (upside_down == TRUE) {
+  gp <- gp + scale_y_continuous(
+    limits = c(
+      q_y + y_axis_space,
+      t_y - y_axis_space
+    ),
+    transform = "reverse"
+  )
+} else {
+  gp <- gp + scale_y_continuous(
+    limits = c(
+      t_y - y_axis_space,
+      q_y + y_axis_space
     )
+  )
+}
 
 message("Writing the plot to file")
 ggsave(plot_file,
-    gp,
-    width = plot_width,
-    height = plot_height,
-    units = "mm",
-    device = cairo_pdf
+  gp,
+  width = plot_width,
+  height = plot_height,
+  units = "mm",
+  device = cairo_pdf
 )
 
 # Print session info to stderr
