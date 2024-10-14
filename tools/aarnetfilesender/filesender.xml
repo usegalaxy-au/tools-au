@@ -34,7 +34,7 @@ mkdir filestosend &&
     ln -s "$file" "filestosend/${file.element_identifier}" &&
 #end for
 
-filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/rest.php -f '$__user_email__' -r '$to' -s 'Data sent from Galaxy Australia' filestosend >$output 2>&1
+filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/rest.php -f '$__user_email__' -r '$to' -s 'Data sent from Galaxy' filestosend >$output 2>&1
     ]]></command>
     <inputs>
         <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:"/>
