@@ -2,4 +2,3 @@
 tools/alphafold/output
 venv
 tool_test_output.*
-.Rproj.user
