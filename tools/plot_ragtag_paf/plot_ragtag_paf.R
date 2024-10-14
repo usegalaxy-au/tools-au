@@ -98,20 +98,35 @@ lookup_qstart <- function(x) {
 sort_columns <- c("tname", "tstart", "tend", "qname", "qstart", "qend")
 
 config_file <- args[1]
-config <- yaml.load_file(config_file)
-typed_config <- lapply(config, type.convert, as.is = TRUE)
-list2env(typed_config, envir = .GlobalEnv)
+
+# fixed plotting paramaters
+t_y <- 1
+q_y <- 2
 
 ########
 # MAIN #
 ########
 
+# process the config
+message("Reading the plot config")
+config <- yaml.load_file(config_file)
+typed_config <- lapply(config, type.convert, as.is = TRUE)
+invisible(
+    list2env(
+        typed_config,
+        envir = .GlobalEnv
+    )
+)
+
+
 # read the data
+message("Reading the plot data")
 agp <- fread(agp_file, fill = TRUE, skip = 2)[!V5 %in% c("N", "U")]
 raw_paf <- read_paf(paf_file)
 paf_dt <- data.table(raw_paf)
 
 # calculate spacing
+message("Calculating spacing between contigs")
 padding <- get_padding(paf_dt[tp == "P" & nmatch >= min_nmatch])
 
 # order the reference contigs
@@ -119,6 +134,7 @@ paf_dt[, tname := factor(tname, levels = gtools::mixedsort(unique(tname)))]
 setkeyv(paf_dt, cols = sort_columns)
 
 # generate continuous  reference coordinates
+message("Generating coordinates for contigs")
 tpaf <- unique(paf_dt, by = "tname")
 tpaf[, pad_tstart := shift(cumsum(tlen + padding[["t_padding"]]), 1, 0)]
 tpaf[, shift_tstart := pad_tstart + (padding[["t_padding"]] / 2)]
@@ -140,6 +156,7 @@ qpaf[, shift_qstart := pad_qstart + (padding[["q_padding"]] / 2)]
 qpaf[, pad_qend := shift_qstart + qlen]
 
 # generate offsets for the alignment records
+message("Generating coordinates for alignments")
 tstarts <- unique(tpaf[, .(tname, shift_tstart)])
 qstarts <- unique(qpaf[, .(qname, shift_qstart)])
 
@@ -155,6 +172,7 @@ paf_dt[,
 ]
 
 # generate polygons. P is for primary alignments only
+message("Generating polygons for alignments")
 polygon_y_bump <- 0.017 # account for contig thickness
 paf_polygons <- paf_dt[
     tp == "P" & nmatch >= min_nmatch,
@@ -176,8 +194,6 @@ total_height <- (q_y - t_y) * 1.618
 y_axis_space <- (total_height - (q_y - t_y)) / 2
 middle_x <- tpaf[1, shift_tstart] + tpaf[.N, pad_tend] / 2
 
-
-
 all_contig_names <- c(tpaf[, unique(tname)])
 all_colours <- viridis(
     length(all_contig_names) + palette_space + 1
@@ -188,9 +204,12 @@ names(all_colours) <- c(
     all_contig_names
 )
 
-# Plot the ideogram with ribbons connecting the two sets of contigs
+# Plot the ideogram with ribbons connecting the two sets of contigs. To
+# accomodate upside plots we have to draw the polygons first then add the
+# contigs later
+message("Plotting")
 gp <- ggplot() +
-    theme_void(base_family = "Lato", base_size = 12) +
+    theme_void(base_family = "Lato", base_size = fontsize) +
     scale_fill_manual(
         values = all_colours, guide = "none"
     ) +
@@ -207,10 +226,10 @@ gp <- ggplot() +
         data = tpaf,
         aes(
             x = shift_tstart,
+            y = t_y,
             xend = pad_tend,
             colour = tname
         ),
-        y = t_y,
         linewidth = 5,
         lineend = "butt"
     ) +
@@ -218,22 +237,21 @@ gp <- ggplot() +
         data = qpaf,
         aes(
             x = shift_qstart,
+            y = q_y,
             xend = pad_qend
         ),
         colour = all_colours[["query"]],
-        y = q_y,
         linewidth = 5,
         lineend = "butt"
-    ) +
-    ylim(
-        t_y - y_axis_space,
-        q_y + y_axis_space
     ) +
     annotate(
         geom = "text",
         label = "Query contigs",
         x = middle_x,
-        y = q_y + (y_axis_space / 3),
+        y = ifelse(label_query_contigs == TRUE,
+            q_y + (y_axis_space * 2 / 3),
+            q_y + (y_axis_space / 3)
+        ),
         hjust = 0.5,
         vjust = 0.5
     ) +
@@ -241,11 +259,61 @@ gp <- ggplot() +
         geom = "text",
         label = "Reference contigs",
         x = middle_x,
-        y = t_y - (y_axis_space / 3),
+        y = ifelse(label_ref_contigs == TRUE,
+            t_y - (y_axis_space * 2 / 3),
+            t_y - (y_axis_space / 3)
+        ),
         hjust = 0.5,
         vjust = 0.5
     )
 
+# Reverse the scales and the limits to plot reference on top
+if (upside_down == TRUE) {
+    gp <- gp + scale_y_continuous(
+        limits = c(
+            q_y + y_axis_space,
+            t_y - y_axis_space
+        ),
+        transform = "reverse"
+    )
+} else {
+    gp <- gp + scale_y_continuous(
+        limits = c(
+            t_y - y_axis_space,
+            q_y + y_axis_space
+        )
+    )
+}
+
+# reference contig names
+if (label_ref_contigs == TRUE) {
+    gp <- gp + geom_text(
+        data = tpaf,
+        aes(
+            x = (shift_tstart + pad_tend) / 2,
+            y = t_y - (2.5 * polygon_y_bump),
+            label = tname
+        ),
+        angle = 30,
+        hjust = ifelse(upside_down == TRUE, 0, 1)
+    )
+}
+
+# query contig names
+if (label_query_contigs == TRUE) {
+    gp <- gp + geom_text(
+        data = qpaf,
+        aes(
+            x = (shift_qstart + pad_qend) / 2,
+            y = q_y + (2.5 * polygon_y_bump),
+            label = qname
+        ),
+        angle = 30,
+        hjust = ifelse(upside_down == TRUE, 1, 0),
+    )
+}
+
+message("Writing the plot to file")
 ggsave(plot_file,
     gp,
     width = plot_width,
@@ -254,4 +322,8 @@ ggsave(plot_file,
     device = cairo_pdf
 )
 
+# Print session info to stderr
+message("\nsessionInfo():\n")
+sink(stderr())
 sessionInfo()
+sink()

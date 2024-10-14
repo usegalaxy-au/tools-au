@@ -1,4 +1,4 @@
-<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.1">
+<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.2" profile="24.1" license="MIT">
     <description>to compare query contigs to the reference</description>
     <requirements>
         <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
@@ -12,37 +12,54 @@
         <!-- <requirement type="package" version="3.9.5">r-gtools</requirement> -->
     </requirements>
     <command detect_errors="exit_code"><![CDATA[
-Rscript 
-'${__tool_directory__}/plot_ragtag_paf.R'
-'${plot_config}'
-            ]]></command>
+
+    ## Suppress R warnings about container
+    if [ -f /etc/R/Rprofile.site ]; then
+        sed -i 
+        '/options(bspm.version.check=FALSE)/i options(bspm.sudo = TRUE)' 
+        /etc/R/Rprofile.site ;
+    fi ;
+
+    ## Print the plot config to stderr
+    sed -e 's/^[ \t]*//' -e '/^$/d' '${plot_config}' > config.yaml &&
+    echo "PLOT CONFIG:" >&2 &&
+    cat config.yaml >&2 &&
+
+    ## Draw the plot
+    printf '\n%s\n' "Running plot_ragtag_paf.R"  >&2 &&
+    Rscript 
+    '${__tool_directory__}/plot_ragtag_paf.R'
+    config.yaml
+    ]]></command>
     <configfiles>
         <configfile name="plot_config">
-agp_file: '${input_agp}'
-paf_file: '${input_paf}'
-plot_file: 'ragtag.pdf'
-fontsize: '${plot_params.fontsize}'
-gap_size: '${plot_params.gap_size}'
-min_nmatch: '${min_nmatch}'
-palette_space: '${plot_params.palette_space}'
-plot_height: '${plot_params.plot_height}'
-plot_width: '${plot_params.plot_width}'
-q_y: '${plot_params.q_y}'
-t_y: '${plot_params.t_y}'
+            agp_file: '${input_agp}'
+            paf_file: '${input_paf}'
+            plot_file: 'ragtag.pdf'
+            fontsize: '${plot_params.fontsize}'
+            gap_size: '${plot_params.gap_size}'
+            min_nmatch: '${min_nmatch}'
+            palette_space: '${plot_params.palette_space}'
+            plot_height: '${plot_params.plot_height}'
+            plot_width: '${plot_params.plot_width}'
+            label_ref_contigs: '${plot_params.label_ref_contigs}'
+            label_query_contigs: '${plot_params.label_query_contigs}'
+            upside_down: '${upside_down}'
         </configfile>
     </configfiles>
     <inputs>
         <param format="paf" name="input_paf" label="PAF output from RagTag" type="data"/>
         <param format="agp" name="input_agp" label="AGP output from RagTag" type="data"/>
         <param type="integer" name="min_nmatch" label="Minimum alignment length to include in plot" value="20000"/>
+        <param type="boolean" name="upside_down" label="Plot the reference contigs on top" value="false" truevalue="TRUE" falsevalue="FALSE"/>
         <section name="plot_params" title="Plot parameters">
             <param type="integer" name="plot_width" label="Plot width (mm)" value="254"/>
             <param type="integer" name="plot_height" label="Plot height (mm)" value="191"/>
             <param type="integer" name="fontsize" label="Fontsize (pt)" value="12"/>
+            <param type="boolean" name="label_ref_contigs" label="Print the names of the reference contigs" value="false" truevalue="TRUE" falsevalue="FALSE"/>
+            <param type="boolean" name="label_query_contigs" label="Print the names of the query contigs" value="false" truevalue="TRUE" falsevalue="FALSE"/>
             <param type="integer" name="palette_space" label="Number of unused colours in the colour palette between the query contig colour and the colour of the first reference contig." help="Try a higher value if the query contigs look too similar to the reference contigs." value="4"/>
             <param type="float" min="0" max="1" name="gap_size" label="Total length of gaps between contigs relative to the total assembly length." help="Try a higher value if the contigs look too close together." value="0.1"/>
-            <param type="integer" name="t_y" label="Position of reference contigs on the y-axis" value="1"/>
-            <param type="integer" name="q_y" label="Position of query contigs on the y-axis" value="2"/>
         </section>
     </inputs>
     <outputs>
@@ -54,7 +71,29 @@ t_y: '${plot_params.t_y}'
             <param name="input_agp" ftype="agp" value="ragtag.agp"/>
             <output name="plot">
                 <assert_contents>
-                    <has_size size="8758" delta="1000" />
+                    <has_size size="8758" delta="1000"/>
+                </assert_contents>
+            </output>
+        </test>
+        <test expect_num_outputs="1">
+            <param name="input_paf" ftype="paf.gz" value="ragtag.paf.gz"/>
+            <param name="input_agp" ftype="agp" value="ragtag.agp"/>
+            <param name="upside_down" value="true"/>
+            <output name="plot">
+                <assert_contents>
+                    <has_size size="8756" delta="1000"/>
+                </assert_contents>
+            </output>
+        </test>
+        <test expect_num_outputs="1">
+            <param name="input_paf" ftype="paf.gz" value="ragtag.paf.gz"/>
+            <param name="input_agp" ftype="agp" value="ragtag.agp"/>
+            <param name="upside_down" value="true"/>
+            <param name="label_query_contigs" value="true"/>
+            <param name="label_ref_contigs" value="true"/>
+            <output name="plot">
+                <assert_contents>
+                    <has_size size="11159" delta="1000"/>
                 </assert_contents>
             </output>
         </test>
