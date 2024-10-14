@@ -209,7 +209,7 @@ names(all_colours) <- c(
 # contigs later
 message("Plotting")
 gp <- ggplot() +
-    theme_void(base_family = "Lato", base_size = 12) +
+    theme_void(base_family = "Lato", base_size = fontsize) +
     scale_fill_manual(
         values = all_colours, guide = "none"
     ) +
@@ -248,7 +248,10 @@ gp <- ggplot() +
         geom = "text",
         label = "Query contigs",
         x = middle_x,
-        y = q_y + (y_axis_space / 3),
+        y = ifelse(label_query_contigs == TRUE,
+            q_y + (y_axis_space * 2 / 3),
+            q_y + (y_axis_space / 3)
+        ),
         hjust = 0.5,
         vjust = 0.5
     ) +
@@ -256,7 +259,10 @@ gp <- ggplot() +
         geom = "text",
         label = "Reference contigs",
         x = middle_x,
-        y = t_y - (y_axis_space / 3),
+        y = ifelse(label_ref_contigs == TRUE,
+            t_y - (y_axis_space * 2 / 3),
+            t_y - (y_axis_space / 3)
+        ),
         hjust = 0.5,
         vjust = 0.5
     )
@@ -276,6 +282,34 @@ if (upside_down == TRUE) {
             t_y - y_axis_space,
             q_y + y_axis_space
         )
+    )
+}
+
+# reference contig names
+if (label_ref_contigs == TRUE) {
+    gp <- gp + geom_text(
+        data = tpaf,
+        aes(
+            x = (shift_tstart + pad_tend) / 2,
+            y = t_y - (2.5 * polygon_y_bump),
+            label = tname
+        ),
+        angle = 30,
+        hjust = ifelse(upside_down == TRUE, 0, 1)
+    )
+}
+
+# query contig names
+if (label_query_contigs == TRUE) {
+    gp <- gp + geom_text(
+        data = qpaf,
+        aes(
+            x = (shift_qstart + pad_qend) / 2,
+            y = q_y + (2.5 * polygon_y_bump),
+            label = qname
+        ),
+        angle = 30,
+        hjust = ifelse(upside_down == TRUE, 1, 0),
     )
 }
 

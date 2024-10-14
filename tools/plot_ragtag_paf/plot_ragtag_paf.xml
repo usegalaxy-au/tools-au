@@ -42,6 +42,8 @@
             palette_space: '${plot_params.palette_space}'
             plot_height: '${plot_params.plot_height}'
             plot_width: '${plot_params.plot_width}'
+            label_ref_contigs: '${plot_params.label_ref_contigs}'
+            label_query_contigs: '${plot_params.label_query_contigs}'
             upside_down: '${upside_down}'
         </configfile>
     </configfiles>
@@ -54,6 +56,8 @@
             <param type="integer" name="plot_width" label="Plot width (mm)" value="254"/>
             <param type="integer" name="plot_height" label="Plot height (mm)" value="191"/>
             <param type="integer" name="fontsize" label="Fontsize (pt)" value="12"/>
+            <param type="boolean" name="label_ref_contigs" label="Print the names of the reference contigs" value="false" truevalue="TRUE" falsevalue="FALSE"/>
+            <param type="boolean" name="label_query_contigs" label="Print the names of the query contigs" value="false" truevalue="TRUE" falsevalue="FALSE"/>
             <param type="integer" name="palette_space" label="Number of unused colours in the colour palette between the query contig colour and the colour of the first reference contig." help="Try a higher value if the query contigs look too similar to the reference contigs." value="4"/>
             <param type="float" min="0" max="1" name="gap_size" label="Total length of gaps between contigs relative to the total assembly length." help="Try a higher value if the contigs look too close together." value="0.1"/>
         </section>
@@ -78,6 +82,18 @@
             <output name="plot">
                 <assert_contents>
                     <has_size size="8756" delta="1000"/>
+                </assert_contents>
+            </output>
+        </test>
+        <test expect_num_outputs="1">
+            <param name="input_paf" ftype="paf.gz" value="ragtag.paf.gz"/>
+            <param name="input_agp" ftype="agp" value="ragtag.agp"/>
+            <param name="upside_down" value="true"/>
+            <param name="label_query_contigs" value="true"/>
+            <param name="label_ref_contigs" value="true"/>
+            <output name="plot">
+                <assert_contents>
+                    <has_size size="11159" delta="1000"/>
                 </assert_contents>
             </output>
         </test>
