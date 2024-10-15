@@ -1,4 +1,4 @@
-<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.2" profile="24.1" license="MIT">
+<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.3" profile="24.1" license="MIT">
     <description>to compare query contigs to the reference</description>
     <requirements>
         <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
@@ -15,9 +15,10 @@
 
     ## Suppress R warnings about container
     if [ -f /etc/R/Rprofile.site ]; then
-        sed -i 
+        sed -e 
         '/options(bspm.version.check=FALSE)/i options(bspm.sudo = TRUE)' 
-        /etc/R/Rprofile.site ;
+        /etc/R/Rprofile.site 
+        > .Rprofile ;
     fi ;
 
     ## Print the plot config to stderr
@@ -27,7 +28,7 @@
 
     ## Draw the plot
     printf '\n%s\n' "Running plot_ragtag_paf.R"  >&2 &&
-    Rscript 
+    Rscript --no-site-file
     '${__tool_directory__}/plot_ragtag_paf.R'
     config.yaml
     ]]></command>
