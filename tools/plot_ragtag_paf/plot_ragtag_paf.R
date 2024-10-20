@@ -253,7 +253,9 @@ gp <- ggplot() +
             q_y + (y_axis_space / 3)
         ),
         hjust = 0.5,
-        vjust = 0.5
+        vjust = 0.5,
+        size = fontsize,
+        size.unit = "pt"
     ) +
     annotate(
         geom = "text",
@@ -264,7 +266,9 @@ gp <- ggplot() +
             t_y - (y_axis_space / 3)
         ),
         hjust = 0.5,
-        vjust = 0.5
+        vjust = 0.5,
+        size = fontsize,
+        size.unit = "pt"
     )
 
 # Reverse the scales and the limits to plot reference on top
@@ -285,6 +289,8 @@ if (upside_down == TRUE) {
     )
 }
 
+
+
 # reference contig names
 if (label_ref_contigs == TRUE) {
     gp <- gp + geom_text(
@@ -295,7 +301,9 @@ if (label_ref_contigs == TRUE) {
             label = tname
         ),
         angle = 30,
-        hjust = ifelse(upside_down == TRUE, 0, 1)
+        hjust = ifelse(upside_down == TRUE, 0, 1),
+        size = 2 * fontsize / 3,
+        size.unit = "pt"
     )
 }
 
@@ -310,6 +318,8 @@ if (label_query_contigs == TRUE) {
         ),
         angle = 30,
         hjust = ifelse(upside_down == TRUE, 1, 0),
+        size = 2 * fontsize / 3,
+        size.unit = "pt"
     )
 }
 

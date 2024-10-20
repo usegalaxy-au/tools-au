@@ -103,9 +103,6 @@
         Accepts the PAF and AGP produced by the RagTag Scaffold and draws a plot
         showing the alignment of the query contigs to the reference contigs.
         
-        ----
-
-
         .. figure:: https://raw.githubusercontent.com/usegalaxy-au/tools-au/refs/heads/master/tools/plot_ragtag_paf/static/images/ragtag.png
            :alt: RagTag plot
            :width: 600px
