@@ -1,4 +1,4 @@
-<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.3" profile="24.1" license="MIT">
+<tool id="plot_ragtag_paf" name="Plot RagTag output" version="0.0.4" profile="24.1" license="MIT">
     <description>to compare query contigs to the reference</description>
     <requirements>
         <container type="docker">ghcr.io/tomharrop/r-containers:r2u_24.04_cv1</container>
@@ -103,8 +103,14 @@
         Accepts the PAF and AGP produced by the RagTag Scaffold and draws a plot
         showing the alignment of the query contigs to the reference contigs.
         
-        .. figure:: $PATH_TO_IMAGES/ragtag.png
+        ----
+
+
+        .. figure:: https://raw.githubusercontent.com/usegalaxy-au/tools-au/refs/heads/master/tools/plot_ragtag_paf/static/images/ragtag.png
            :alt: RagTag plot
+           :width: 600px
+           :height: 400px
+           :align: center
         
     </help>
     <citations>
