@@ -76,8 +76,8 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         **How to connect your Galaxy account to FileSender**
         
         To send files from Galaxy you will need to connect your Galaxy account
-        to FileSender. This is done by entering you FileSender API key into your
-        Galaxy user profile.
+        to FileSender. This is done by entering your FileSender API key into your
+        Galaxy user preferences.
         
         1. Copy your API key from the “API Secret” section on the FileSender “My
            Profile” page. See the `AARNet Knowledge Base`_ for more information.
