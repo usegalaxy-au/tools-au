@@ -79,7 +79,7 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         to FileSender. This is done by entering your FileSender API key into your
         Galaxy user preferences.
         
-        1. Copy your API key from the “API Secret” section on the FileSender “My
+        1. Log in to FileSender, and copy your API key from the “API Secret” section on the FileSender “My
            Profile” page. See the `AARNet Knowledge Base`_ for more information.
         2. In Galaxy, add your API key to the “AARNet FileSender API Key” field
            in User &gt; Preferences &gt; Manage Information. Your AARNet FileSender
