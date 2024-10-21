@@ -37,7 +37,7 @@ mkdir filestosend &&
 filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/rest.php -f '$__user_email__' -r '$to' -s 'Data sent from Galaxy' filestosend >$output 2>&1
     ]]></command>
     <inputs>
-        <param name="data" type="data" format="txt,data" multiple="true" optional="false" label="Datasets to be sent:"/>
+        <param name="data" type="data" format="data" multiple="true" optional="false" label="Datasets to be sent:"/>
         <param name="to" type="text" optional="true" label="Email address of recipent:">
             <sanitizer sanitize="False"/>
         </param>
@@ -62,12 +62,32 @@ filesender -p -u '$apiuser' -a '$apikey' -b https://filesender.aarnet.edu.au/res
         </test>
     </tests>
     <help>
-**What it does**
-        Send dataset(s) from Galaxy to anyone via AARNet's FileSender service.
+        **What it does**
 
-**Remarks**
-        This tool leverages AARNet's FileSender (https://filesender.aarnet.edu.au)
-        to send files out of Galaxy.
+        Uses `AARNet’s FileSender service`_ to send dataset(s) from Galaxy. The
+        recipient will receive an email with a link to download the files.
+        
+        **Who can use it**
+        
+        AARNet FileSender is available to all institutions affiliated with the
+        `Australian Access Federation (AAF)`_. You can use your institution
+        login details to access and use FileSender.
+        
+        **How to connect your Galaxy account to FileSender**
+        
+        To send files from Galaxy you will need to connect your Galaxy account
+        to FileSender. This is done by entering you FileSender API key into your
+        Galaxy user profile.
+        
+        1. Copy your API key from the “API Secret” section on the FileSender “My
+           Profile” page. See the `AARNet Knowledge Base`_ for more information.
+        2. In Galaxy, add your API key to the “AARNet FileSender API Key” field
+           in User &gt; Preferences &gt; Manage Information. Your AARNet FileSender
+           Username is the email address you used to log in to FileSender.
+        
+        .. _AARNet’s FileSender service: https://filesender.aarnet.edu.au
+        .. _Australian Access Federation (AAF): https://aaf.edu.au/subscribers/
+        .. _AARNet Knowledge Base: https://support.aarnet.edu.au/hc/en-us/articles/235972948-FileSender-API
     </help>
     <citations>
         <citation type="bibtex">
