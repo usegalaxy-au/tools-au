@@ -181,4 +181,5 @@ Model Version Number (``v4.3.0``):
       and higher version numbers typically signify greater accuracy.
 
     ]]></help>
+    <expand macro="citation"/>
 </tool>

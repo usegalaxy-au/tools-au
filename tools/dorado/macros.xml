@@ -12,4 +12,16 @@
             <xref type="bio.tools">dorado</xref>
         </xrefs>
     </xml>
+    <xml name="citation">
+        <citations>
+            <citation type="bibtex">
+                @misc{dorado,
+                    title = {Dorado},
+                    author = {{Oxford Nanopore}},
+                    year = {2024},
+                    url = {https://github.com/nanoporetech/dorado/},
+                    }
+            </citation>
+        </citations>
+    </xml>
 </macros>
