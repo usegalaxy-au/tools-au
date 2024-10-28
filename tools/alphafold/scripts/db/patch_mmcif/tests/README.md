@@ -7,7 +7,7 @@ reference databases, the following error has been seen in AlphaFold2:
 FileNotFoundError: [Errno 2] No such file or directory: '/alphafold_dbs/pdb_mmcif/mmcif_files/XXXX.cif'
 ```
 
-The `patch_mmcif.py` script cross-references your AlphaFold2 databases and attempts to patch missing .cif files from the RCSB database.
+`patch_mmcif.py` is a standalone script that cross-references your AlphaFold2 databases and attempts to patch missing .cif files from the RCSB database.
 
 ```
 $ python patch_mmcif.py -h
@@ -22,6 +22,18 @@ positional arguments:
 options:
   -h, --help  show this help message and exit
   --log       Write patched PDB IDs to log files in $PWD
+```
+
+Patch a specific *.cif file in your databases:
+
+```sh
+python patch_mmcif.py /my/alphafold/database --id ab12
+```
+
+Inspect your databases and attempt to patch all *.cif files:
+
+```sh
+python patch_mmcif.py /my/alphafold/database
 ```
 
 Run unit tests for patch_mmcif.py:
