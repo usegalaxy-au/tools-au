@@ -41,6 +41,8 @@ def print_cli(*args, **kwargs):
 
 def patch_mmcif_file(pdb_id: str, db_path: Path, log: bool = False):
     """Patch a single .cif file in the AlphaFold database."""
+    if log:
+        LOG_DIR.mkdir(exist_ok=True)
     db_mmcif_files_dir = db_path / "pdb_mmcif/mmcif_files"
     id_upper = pdb_id.upper()
     id_lower = pdb_id.lower()
@@ -64,7 +66,7 @@ def patch_mmcif_file(pdb_id: str, db_path: Path, log: bool = False):
     print_cli(f"Written {destination_path}")
 
 
-def patch_all(db_path: Path, log: bool = False):
+def patch_all(db_path: Path, log: bool = False, prompt: bool = False):
     """Calculate and patch all missing MMCIF files in the databases."""
     def write_ids_to_file(ids, filename):
         if log:
@@ -72,15 +74,19 @@ def patch_all(db_path: Path, log: bool = False):
             with open(LOG_DIR / filename, 'w') as f:
                 f.write('\n'.join(ids))
 
+    if log:
+        LOG_DIR.mkdir(exist_ok=True)
     db_mmcif_files_dir = db_path / "pdb_mmcif/mmcif_files"
     pdb70_file = db_path / "pdb70/pdb70_clu.tsv"
     print_cli(f"Reading required MMCIF IDs from {pdb70_file}...")
+    mmcif_list = []
     with open(pdb70_file) as f:
-        required_mmcif_ids = {
-            x.split()[0].split('_')[0].lower()  # from line "XXXX_B  YYYY_B"
-            for x in f.readlines()
-            if x.split()
-        }
+        for line in f.readlines():
+            x, y = line.split()  # from line "XXXX_B  YYYY_B"
+            x = x.split('_')[0].lower()
+            y = y.split('_')[0].lower()
+            mmcif_list += [x, y]
+    required_mmcif_ids = set(mmcif_list)
     print_cli(f"Found {len(required_mmcif_ids)} required MMCIF files.")
     write_ids_to_file(required_mmcif_ids, 'required_ids.txt')
 
@@ -96,6 +102,16 @@ def patch_all(db_path: Path, log: bool = False):
     print_cli(f'Found {len(missing_mmcif_ids)} missing MMCIF files.')
     write_ids_to_file(missing_mmcif_ids, 'missing_ids.txt')
 
+    if not len(missing_mmcif_ids):
+        print_cli("No missing MMCIF files found. Exiting...")
+        return
+
+    if prompt:
+        reply = input("\nPatch missing files? [Y/n]\n> ")
+        if reply.lower() != 'y':
+            print_cli("Aborted.")
+            return
+
     print_cli("Patching missing MMCIF files...")
     for mmcif_id in missing_mmcif_ids:
         patch_mmcif_file(mmcif_id, db_path, log=log)
@@ -105,15 +121,10 @@ def patch_all(db_path: Path, log: bool = False):
 def main():
     args = parse_args()
     if args.id is None:
-        print_cli("Attempting to patch all missing MMCIF files.")
-        reply = input("Continue? [Y/n]\n> ")
-        if reply.lower() != 'y':
-            print_cli("Aborted.")
-            return
-        LOG_DIR.mkdir(exist_ok=True)
-        patch_all(args.db_path, log=args.log)
+        print_cli("Attempting to patch all missing MMCIF files in"
+                  f" {args.db_path}...")
+        patch_all(args.db_path, log=args.log, prompt=True)
     else:
-        LOG_DIR.mkdir(exist_ok=True)
         print_cli(f"Attempting to patch MMCIF file {args.id}...")
         patch_mmcif_file(args.id, args.db_path, log=args.log)
 

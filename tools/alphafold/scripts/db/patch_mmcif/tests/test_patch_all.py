@@ -15,6 +15,7 @@ EXISTING_CIF_FILE = MOCK_MMCIF_DIR / '3tc3.cif'
 EXPECT_PATCHED = [
     '4ri6',
     '4ri7',
+    '4gle',
 ]
 
 
