@@ -16,11 +16,12 @@ several output paths are determined dynamically.
 
 import argparse
 import json
+import numpy as np
 import os
 import pickle as pk
 import shutil
 from pathlib import Path
-from typing import List
+from typing import Dict, List
 
 from matplotlib import pyplot as plt
 
@@ -33,13 +34,7 @@ OUTPUTS = {
     'model_confidence_scores': OUTPUT_DIR + '/model_confidence_scores.tsv',
     'plddts': OUTPUT_DIR + '/plddts.tsv',
     'relax': OUTPUT_DIR + '/relax_metrics_ranked.json',
-}
-
-# Keys for accessing confidence data from JSON/pkl files
-# They change depending on whether the run was monomer or multimer
-PLDDT_KEY = {
-    'monomer': 'plddts',
-    'multimer': 'iptm+ptm',
+    'msa': OUTPUT_DIR + '/msa_coverage.png',
 }
 
 HTML_PATH = Path(__file__).parent / "alphafold.html"
@@ -47,6 +42,20 @@ HTML_OUTPUT_FILENAME = 'alphafold.html'
 HTML_BUTTON_ATTR = 'class="btn" id="btn-ranked_{rank}"'
 HTML_BUTTON_ATTR_DISABLED = (
     'class="btn disabled" id="btn-ranked_{rank}" disabled')
+
+
+class PLDDT_KEY:
+    """Dict keys for accessing confidence data from JSON/pkl files."
+    Changes depending on which model PRESET was used.
+    """
+    monomer = 'plddts'
+    multimer = 'iptm+ptm'
+
+
+class PRESETS:
+    monomer = 'monomer'
+    monomer_ptm = 'monomer_ptm'
+    multimer = 'multimer'
 
 
 class Settings:
@@ -80,17 +89,22 @@ class Settings:
         parser.add_argument(
             "--pkl",
             help="rename model pkl outputs with rank order",
-            action="store_true"
+            action="store_true",
         )
         parser.add_argument(
             "--pae",
             help="extract PAE from pkl files to CSV format",
-            action="store_true"
+            action="store_true",
         )
         parser.add_argument(
             "--plot",
             help="Plot pLDDT and PAE for each model",
-            action="store_true"
+            action="store_true",
+        )
+        parser.add_argument(
+            "--plot-msa",
+            help="Plot multiple-sequence alignment coverage as a heatmap",
+            action="store_true",
         )
         args = parser.parse_args()
         self.workdir = Path(args.workdir.rstrip('/'))
@@ -98,9 +112,19 @@ class Settings:
         self.output_model_pkls = args.pkl
         self.output_model_plots = args.plot
         self.output_pae = args.pae
-        self.is_multimer = args.multimer
+        self.plot_msa = args.plot_msa
+        self.is_multimer = self._check_is_multimer()
         self.output_dir = self.workdir / OUTPUT_DIR
         os.makedirs(self.output_dir, exist_ok=True)
+
+    def _check_is_multimer(self) -> bool:
+        """Check if the run was multimer or monomer."""
+        with open(self.workdir / 'relax_metrics.json') as f:
+            if '_multimer_' in f.read():
+                return PRESETS.multimer
+            if '_ptm_' in f.read():
+                return PRESETS.monomer_ptm
+        return PRESETS.monomer
 
 
 class ExecutionContext:
@@ -108,9 +132,9 @@ class ExecutionContext:
     def __init__(self, settings: Settings):
         self.settings = settings
         if settings.is_multimer:
-            self.plddt_key = PLDDT_KEY['multimer']
+            self.plddt_key = PLDDT_KEY.multimer
         else:
-            self.plddt_key = PLDDT_KEY['monomer']
+            self.plddt_key = PLDDT_KEY.monomer
 
     def get_model_key(self, ix: int) -> str:
         """Return json key for model index.
@@ -304,6 +328,40 @@ def plddt_pae_plots(ranking: ResultRanking, context: ExecutionContext):
             plt.ylabel('Aligned residue')
 
         plt.savefig(png_path)
+        plt.close()
+
+
+def plot_msa(wdir: Path, dpi: int = 150):
+    """Plot MSA as a heatmap."""
+    with open(wdir / 'features.pkl', 'rb') as f:
+        features = pk.load(f)
+
+    msa = features.get('msa')
+    if msa is None:
+        print("Could not plot MSA coverage - 'msa' key not found in"
+              " features.pkl")
+        return
+    seqid = (np.array(msa[0] == msa).mean(-1))
+    seqid_sort = seqid.argsort()
+    non_gaps = (msa != 21).astype(float)
+    non_gaps[non_gaps == 0] = np.nan
+    final = non_gaps[seqid_sort] * seqid[seqid_sort, None]
+
+    plt.figure(figsize=(6, 4))
+    # plt.subplot(111)
+    plt.title("Sequence coverage")
+    plt.imshow(final,
+               interpolation='nearest', aspect='auto',
+               cmap="rainbow_r", vmin=0, vmax=1, origin='lower')
+    plt.plot((msa != 21).sum(0), color='black')
+    plt.xlim(-0.5, msa.shape[1] - 0.5)
+    plt.ylim(-0.5, msa.shape[0] - 0.5)
+    plt.colorbar(label="Sequence identity to query", )
+    plt.xlabel("Positions")
+    plt.ylabel("Sequences")
+    plt.tight_layout()
+    plt.savefig(wdir / OUTPUTS['msa'], dpi=dpi)
+    plt.close()
 
 
 def template_html(context: ExecutionContext):
@@ -341,6 +399,8 @@ def main():
         extract_pae_to_csv(ranking, context)
     if settings.output_residue_scores:
         write_per_residue_scores(ranking, context)
+    if settings.plot_msa:
+        plot_msa(context.settings.workdir)
 
 
 if __name__ == '__main__':

@@ -118,6 +118,7 @@ $outputs.plddts
 $outputs.model_pkls
 $outputs.pae_csv
 $outputs.plots
+$outputs.plot_msa
 #if $model_preset.selection == 'multimer':
 --multimer
 #end if
@@ -135,7 +136,7 @@ $outputs.plots
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
-            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. If multiple-sequence FASTA file provided, multimer mode must be selected.">
+            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. We recommend submitting sequences with a maximum length of 3000AA, because run time scales exponentially with sequence length. If multiple-sequence FASTA file provided, multimer mode must be selected.">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
@@ -236,6 +237,15 @@ $outputs.plots
                 help="A two-panel plot showing pLDDT against residue position (left) and PAE (paired-alignment error) as a heatmap image with residue numbers running along vertical and horizontal axes and color at each pixel indicating PAE value for the corresponding pair of residues. (right). PAE heatmap is only produced with monomer_ptm and multimer model presets."
             />
             <param
+                name="plot_msa"
+                type="boolean"
+                checked="false"
+                truevalue="--plot-msa"
+                falsevalue=""
+                label="MSA sequence coverage plot"
+                help="A heatmap showing sequence coverage across the multiple sequence alignment (MSA). This plot can help you understand if regions of low confidence are due to poor sequence coverage."
+            />
+            <param
                 name="confidence_scores"
                 type="boolean"
                 checked="false"
@@ -291,6 +301,7 @@ $outputs.plots
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
         <!-- Optional outputs -->
         <expand macro="output_plddts" />
+        <expand macro="output_msa_plot" />
         <expand macro="output_confidence_scores" />
         <expand macro="output_pickles" />
         <expand macro="output_pae_csv" />
@@ -461,6 +472,17 @@ $outputs.plots
     | a) pLDDT score plotted against residue position
     | b) a heatmap of predicted-alignment error (PAE) with residue position running along vertical and horizontal axes and color at each pixel indicating PAE value for the corresponding pair of residues.
     | Panel b) is only produced for ``monomer_ptm`` and ``multimer`` model presets.
+    |
+    |
+
+    *MSA sequence coverage plot (optional)*
+
+    | A heatmap in PNG format showing:
+    | a) Per-position sequence identity to query as a heatmap
+    | b) Per-position sequence coverage as a line plot
+    |
+    | This plot can help you understand if regions of low confidence are due to poor sequence coverage, rather than
+    | limitations of the model or intrinsically unstable regions.
     |
     |
 

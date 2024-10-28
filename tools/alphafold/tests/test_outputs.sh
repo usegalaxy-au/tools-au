@@ -24,6 +24,7 @@ test-data/monomer_output/extra/ranked_1.png
 test-data/monomer_output/extra/ranked_2.png
 test-data/monomer_output/extra/ranked_3.png
 test-data/monomer_output/extra/ranked_4.png
+test-data/monomer_output/extra/msa_coverage.png
 
 test-data/monomer_ptm_output/extra/alphafold.html
 test-data/monomer_ptm_output/extra/model_confidence_scores.tsv
@@ -42,6 +43,7 @@ test-data/monomer_ptm_output/extra/ranked_1.png
 test-data/monomer_ptm_output/extra/ranked_2.png
 test-data/monomer_ptm_output/extra/ranked_3.png
 test-data/monomer_ptm_output/extra/ranked_4.png
+test-data/monomer_ptm_output/extra/msa_coverage.png
 
 test-data/multimer_output/extra/alphafold.html
 test-data/multimer_output/extra/plddts.tsv
@@ -60,7 +62,8 @@ test-data/multimer_output/extra/ranked_0.png
 test-data/multimer_output/extra/ranked_1.png
 test-data/multimer_output/extra/ranked_2.png
 test-data/multimer_output/extra/ranked_3.png
-test-data/multimer_output/extra/ranked_4.png"
+test-data/multimer_output/extra/ranked_4.png
+test-data/multimer_output/extra/msa_coverage.png"
 
 if [[ `pip freeze | grep jax` = '' ]]; then
   echo "JAX is required to open AF2 pkl files. Please see ./scripts/pip_install_jax.sh to install."
@@ -73,22 +76,24 @@ if [[ "$PWD" == *"/tests" ]]; then
 fi
 
 printf "${KYEL}TEST monomer output${KNRM}\n"
-python scripts/outputs.py test-data/monomer_output -p --pkl --plot
+python scripts/outputs.py test-data/monomer_output --pr-scores --pkl --plot --plot-msa
 
 echo ""
 printf "${KYEL}TEST monomer_ptm output${KNRM}\n"
-python scripts/outputs.py test-data/monomer_ptm_output -p --pkl --plot --pae
+python scripts/outputs.py test-data/monomer_ptm_output --pr-scores --pkl --plot --pae --plot-msa
 
 echo ""
 printf "${KYEL}TEST multimer output${KNRM}\n"
-python scripts/outputs.py test-data/multimer_output -p -m --pkl --plot --pae
+python scripts/outputs.py test-data/multimer_output --pr-scores --multimer --pkl --plot --pae --plot-msa
 
-echo ""
-printf "${KYEL}TEST monomer_ptm outputs individually...${KNRM}\n"
-python scripts/outputs.py test-data/monomer_ptm_output -p
-python scripts/outputs.py test-data/monomer_ptm_output --pkl
-python scripts/outputs.py test-data/monomer_ptm_output --plot
-python scripts/outputs.py test-data/monomer_ptm_output --pae
+# echo ""
+# MODEL_PRESET="monomer_ptm"
+# printf "${KYEL}TEST $MODEL_PRESET outputs individually...${KNRM}\n"
+# python scripts/outputs.py test-data/${MODEL_PRESET}_output -p
+# python scripts/outputs.py test-data/${MODEL_PRESET}_output --pkl
+# python scripts/outputs.py test-data/${MODEL_PRESET}_output --plot
+# python scripts/outputs.py test-data/${MODEL_PRESET}_output --pae
+# python scripts/outputs.py test-data/${MODEL_PRESET}_output --plot-msa
 
 for path in $EXPECT_OUTPUTS; do
   if [ ! -f $path ]; then
@@ -108,7 +113,8 @@ else
     test-data/*_output/extra/plddts.tsv
     test-data/*_output/extra/relax_metrics_ranked.json
     test-data/*_output/extra/ranked_*.pkl
-    test-data/*_output/extra/ranked_*.png\n"
+    test-data/*_output/extra/ranked_*.png
+    (and others)\n"
 fi
 
 printf "\nPASS\n\n${KNRM}"
