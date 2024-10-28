@@ -1,6 +1,7 @@
 <macros>
     <token name="@TOOL_VERSION@">3.2.1</token>
-    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@VERSION_SUFFIX@">1</token>
+    <token name="@PROFILE@">22.05</token>
     <xml name="requirements">
 	   <requirements>
 		<requirement type="package" version="@TOOL_VERSION@">kmc</requirement>
@@ -18,7 +19,18 @@
       ]]></version_command>
   </xml>
   <xml name="macro_input">
-       <param name="input_file" type="data" format="fasta,fastq,fasta.gz,fastqsanger,fastq.gz,bam" label="Sequence file"/>
+     <conditional name="data_type">
+            <param name="select" type="select" label="File input type for KMC">
+		<option value="individual">In individual datasets</option>    
+		<option value="collection">In collection</option>
+	    </param>
+            <when value="individual">
+		<param name="individual_file" type="data" format="fasta,fastq,fasta.gz,fastqsanger,fastqsanger.gz,fastq.gz,bam" multiple="true" label="FASTQ/A file"/>
+            </when>
+            <when value="collection">
+		<param name="collection_file" type="data_collection" collection_type="list" format="fasta,fastq,fasta.gz,fastqsanger,fastqsanger.gz,fastq.gz,bam" label="A list of FASTQ/A files"/>
+            </when>
+      </conditional>
   </xml>
   <xml name="general_option">
        <param argument="exclude_length" type="integer" value="2" label="exclude k-mers occurring less than [value] times (default: 2)"/>
@@ -83,7 +95,7 @@
        <param name="min_kmer_occurrence" argument="-ci" type="integer" optional="true" label="exclude k-mers occurring less than x times"/>
        <param name="max_kmer_occurrence" argument="-cx" type="integer" optional="true" label="exclude k-mers occurring more of than x times"/>
        <param name="max_counter_value" argument="-cs" type="integer" optional="true" label="maximal value of a counter"/>
-       <param argument="-oc" name="oc" type="select" optional="true" label="Counter Calculation" help="redefine counter calculation mode for equal k-mers">
+       <param argument="-oc" type="select" optional="true" label="Counter Calculation" help="redefine counter calculation mode for equal k-mers">
             <option value="min">min - get lower value of a k-mer counter</option>
             <option value="max">max - get upper value of a k-mer counter</option>
             <option value="sum">sum - get sum of counters from both databases</option>

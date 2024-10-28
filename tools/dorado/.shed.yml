@@ -1,0 +1,23 @@
+---
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "{{ tool_name }} from the dorado suite"
+categories:
+  - Sequence Analysis
+description: Dorado is a high-performance, easy-to-use, open source basecaller for Oxford Nanopore reads.
+exclude:
+  - tool_test_output.html
+  - tool_test_output.json
+homepage_url: https://github.com/nanoporetech/dorado
+long_description: >
+  Dorado is a high-performance, easy-to-use, open source basecaller for Oxford Nanopore reads.
+name: dorado
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/dorado
+suite:
+  name: suite_dorado
+  description: >
+    Dorado is a high-performance, easy-to-use, open source basecaller for Oxford Nanopore reads.
+  long_description: >
+    Dorado is a high-performance, easy-to-use, open source basecaller for Oxford Nanopore reads.
+type: unrestricted

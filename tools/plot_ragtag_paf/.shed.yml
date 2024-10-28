@@ -1,0 +1,12 @@
+categories:
+  - Assembly
+  - Visualization
+description: Plot RagTag output to compare query contigs against the reference
+exclude:
+  - tool_test_output.html
+  - tool_test_output.json
+homepage_url: http://github.com/usegalaxy-au/tools-au
+long_description: Plot RagTag output to compare query contigs against the reference
+name: plot_ragtag_paf
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au
