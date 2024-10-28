@@ -1,0 +1,17 @@
+<macros>
+    <token name="@TOOL_VERSION@">v0.9.1</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">22.05</token>
+    <xml name="requirements">
+         <requirements>
+             <requirement type="package" version="@TOOL_VERSION@">xnatutils</requirement>
+         </requirements>
+    </xml>
+    <xml name="datatype">
+         <param name="datatype_choice" type="select" label="select a datatype for the project id">
+		<option value="subject">subject</option>
+		<option value="session">session</option>
+		<option value="scan">scan</option>
+	 </param>
+    </xml>
+</macros>

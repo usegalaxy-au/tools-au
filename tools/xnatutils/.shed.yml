@@ -1,0 +1,10 @@
+name: xnatutils
+owner: galaxy-australia
+categories:
+- Imaging
+description: Xnat-utils is a collection of scripts for conveniently up/downloading and listing data on/from XNAT
+homepage_url: https://ardc.edu.au/project/australian-imaging-service-ais/
+long_description: |
+  Xnat-utils is a collection of scripts for conveniently up/downloading and listing data on/from XNAT at Australian Imaging Service (AIS)
+remote_repository_url: https://github.com/Australian-Imaging-Service/xnatutils
+type: unrestricted
