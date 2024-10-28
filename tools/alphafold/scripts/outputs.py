@@ -72,19 +72,13 @@ class Settings:
         parser.add_argument(
             "workdir",
             help="alphafold output directory",
-            type=str
+            type=str,
         )
         parser.add_argument(
-            "-p",
-            "--plddts",
+            "-s",
+            "--confidence-scores",
             help="output per-residue confidence scores (pLDDTs)",
-            action="store_true"
-        )
-        parser.add_argument(
-            "-m",
-            "--multimer",
-            help="parse output from AlphaFold multimer",
-            action="store_true"
+            action="store_true",
         )
         parser.add_argument(
             "--pkl",
@@ -108,7 +102,7 @@ class Settings:
         )
         args = parser.parse_args()
         self.workdir = Path(args.workdir.rstrip('/'))
-        self.output_residue_scores = args.plddts
+        self.output_residue_scores = args.confidence_scores
         self.output_model_pkls = args.pkl
         self.output_model_plots = args.plot
         self.output_pae = args.pae
@@ -216,11 +210,30 @@ class ResultRanking:
 
 def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     """Write per-model confidence scores."""
-    path = context.settings.workdir / OUTPUTS['model_confidence_scores']
-    with open(path, 'w') as f:
-        for rank in range(1, len(context.model_pkl_paths) + 1):
-            score = ranking.get_plddt_for_rank(rank)
-            f.write(f'ranked_{rank - 1}\t{score:.2f}\n')
+    outfile = context.settings.workdir / OUTPUTS['model_confidence_scores']
+    scores: Dict[str, list] = {}
+    header = ['model', context.plddt_key]
+
+    for i, path in enumerate(context.model_pkl_paths):
+        rank = int(path.name.split('model_')[-1][0])
+        scores_ls = [ranking.get_plddt_for_rank(rank)]
+        with open(path, 'rb') as f:
+            data = pk.load(f)
+        if 'ptm' in data:
+            scores_ls.append(data['ptm'])
+            if i == 0:
+                header += ['ptm']
+        if 'iptm' in data:
+            scores_ls.append(data['iptm'])
+            if i == 0:
+                header += ['iptm']
+        scores[rank] = scores_ls
+
+    with open(outfile, 'w') as f:
+        f.write('\t'.join(header) + '\n')
+        for rank, score_ls in scores.items():
+            row = [f"ranked_{rank - 1}"] + [str(x) for x in score_ls]
+            f.write('\t'.join(row) + '\n')
 
 
 def write_per_residue_scores(
