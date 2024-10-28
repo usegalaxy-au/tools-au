@@ -76,16 +76,18 @@ if [[ "$PWD" == *"/tests" ]]; then
 fi
 
 printf "${KYEL}TEST monomer output${KNRM}\n"
-python scripts/outputs.py test-data/monomer_output --pr-scores --pkl --plot --plot-msa
+python scripts/outputs.py test-data/monomer_output --confidence-scores --pkl --plot --plot-msa
 
 echo ""
 printf "${KYEL}TEST monomer_ptm output${KNRM}\n"
-python scripts/outputs.py test-data/monomer_ptm_output --pr-scores --pkl --plot --pae --plot-msa
+python scripts/outputs.py test-data/monomer_ptm_output --confidence-scores --pkl --plot --pae --plot-msa
 
 echo ""
 printf "${KYEL}TEST multimer output${KNRM}\n"
-python scripts/outputs.py test-data/multimer_output --pr-scores --multimer --pkl --plot --pae --plot-msa
+python scripts/outputs.py test-data/multimer_output --confidence-scores --pkl --plot --pae --plot-msa
 
+
+# For testing generation of individual outputs:
 # echo ""
 # MODEL_PRESET="monomer_ptm"
 # printf "${KYEL}TEST $MODEL_PRESET outputs individually...${KNRM}\n"

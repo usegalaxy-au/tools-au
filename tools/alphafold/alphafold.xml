@@ -119,9 +119,6 @@ $outputs.model_pkls
 $outputs.pae_csv
 $outputs.plots
 $outputs.plot_msa
-#if $model_preset.selection == 'multimer':
---multimer
-#end if
 
 ## HTML output
 && mkdir -p '${ html.files_path }'

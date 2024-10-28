@@ -107,11 +107,11 @@ class Settings:
         self.output_model_plots = args.plot
         self.output_pae = args.pae
         self.plot_msa = args.plot_msa
-        self.is_multimer = self._check_is_multimer()
+        self.model_preset = self._sniff_model_preset()
         self.output_dir = self.workdir / OUTPUT_DIR
         os.makedirs(self.output_dir, exist_ok=True)
 
-    def _check_is_multimer(self) -> bool:
+    def _sniff_model_preset(self) -> bool:
         """Check if the run was multimer or monomer."""
         with open(self.workdir / 'relax_metrics.json') as f:
             if '_multimer_' in f.read():
@@ -125,7 +125,7 @@ class ExecutionContext:
     """Collect file paths etc."""
     def __init__(self, settings: Settings):
         self.settings = settings
-        if settings.is_multimer:
+        if settings.model_preset == PRESETS.multimer:
             self.plddt_key = PLDDT_KEY.multimer
         else:
             self.plddt_key = PLDDT_KEY.monomer
