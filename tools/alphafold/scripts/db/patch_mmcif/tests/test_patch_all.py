@@ -7,7 +7,7 @@ except ImportError:
     print("Please run this script from the patch_mmcif.py directory.")
     exit(1)
 
-MOCK_DB_PATH = Path('tests/mock-alphafold-db')
+MOCK_DB_PATH = Path('tests/mock_alphafold_db')
 MOCK_MMCIF_DIR = MOCK_DB_PATH / 'pdb_mmcif/mmcif_files'
 MMCIF_TEMP_DIR = Path('mmcif_patches')
 EXISTING_CIF_FILE = MOCK_MMCIF_DIR / '3tc3.cif'
