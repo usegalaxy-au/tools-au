@@ -25,7 +25,13 @@ When you `planemo test` the wrapper should use the mock AlphaFold run, which cop
 
 ## Generating additional outputs
 
-The `./scripts/outputs.py` script is used to generate additional outputs from an AF2 run. This script is complex because it must handle all different output variations (monomer, multimer, N models, etc.). The test script `tests/test_outputs.sh` runs a basic end-to-end test with the sample outputs available in `test-data`. Each of these directories is a complete output directory for an AF2 run, for each of the three model presets:
+To run the outputs.py file you will need to install some dependencies (a virtual environment is highly recommended):
+
+```sh
+pip install -r scripts/requirements.txt
+```
+
+The `./scripts/outputs.py` script is used to generate additional outputs from an AF2 run. This script is complex because it must handle all different output variations (monomer, multimer, N models, etc.). The test script `tests/test_outputs.sh` runs a basic end-to-end test with the sample outputs available in `test-data/`. Each of these directories is a complete output directory for an AF2 run, for each of the three model presets:
 
 ```
 test-data
