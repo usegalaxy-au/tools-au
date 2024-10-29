@@ -11,10 +11,10 @@ FileNotFoundError: [Errno 2] No such file or directory: '/alphafold_dbs/pdb_mmci
 
 ## Usage
 
-- Copy this script to your server
+- Copy the script to your server
 - Ensure that `python >= 3.8` is available
 - `pip install requests`
-- Run patch_mmcif.py from any directory
+- Run `patch_mmcif.py` from any directory
 
 You must specify the path to your databases when you run the script.
 
@@ -22,7 +22,9 @@ You must specify the path to your databases when you run the script.
 $ python patch_mmcif.py --help
 usage: patch_mmcif.py [-h] [-i ID] [--write-db] [--log] db_path
 
-Patch missing MMCIF files in your AlphaFold DB. This script will sniff your databases for missing .cif files and download them from the RCSB PDB. If the --write-db flag is set, the files will be copied directly to the AlphaFold database mmcif_files directory.
+Patch missing MMCIF files in your AlphaFold DB. This script will sniff your databases for
+missing .cif files and download them from the RCSB PDB. If the --write-db flag is set,
+the files will be copied directly to the AlphaFold database mmcif_files directory.
 
 Example usage:
 
