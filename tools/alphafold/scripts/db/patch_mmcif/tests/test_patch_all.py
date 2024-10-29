@@ -30,12 +30,13 @@ class TestPatchAll(unittest.TestCase):
         return super().tearDown()
 
     def test_patch_one(self):
-        patch_mmcif.patch_mmcif_file(EXPECT_PATCHED[0], MOCK_DB_PATH)
+        patch_mmcif.patch_mmcif_file(
+            EXPECT_PATCHED[0], MOCK_DB_PATH, write_db=True)
         path = MOCK_MMCIF_DIR / f'{EXPECT_PATCHED[0]}.cif'
         self.assertTrue(path.exists())
 
     def test_patch_all(self):
-        patch_mmcif.patch_all(MOCK_DB_PATH)
+        patch_mmcif.patch_all(MOCK_DB_PATH, write_db=True)
         for pdb_id in EXPECT_PATCHED:
             path = MOCK_MMCIF_DIR / f'{pdb_id}.cif'
             self.assertTrue(path.exists())
