@@ -69,6 +69,7 @@ The script enumerates unique PDB identifiers in the database file `pdb70/pdb70_c
 4RI6_A  4RI6_B
 4RI6_A  4RI7_A
 4RI7_A  4RI7_B
+(~ 500,000 lines)
 ```
 
 The identifiers here are what is expected to be in the `mmcif_files` directory at runtime.
