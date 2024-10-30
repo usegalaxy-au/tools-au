@@ -113,12 +113,13 @@ class Settings:
 
     def _sniff_model_preset(self) -> bool:
         """Check if the run was multimer or monomer."""
-        with open(self.workdir / 'relax_metrics.json') as f:
-            if '_multimer_' in f.read():
-                return PRESETS.multimer
-            if '_ptm_' in f.read():
-                return PRESETS.monomer_ptm
-        return PRESETS.monomer
+        for path in self.workdir.glob('*.pkl'):
+            if 'feature' not in path.name:
+                if '_multimer_' in path.name:
+                    return PRESETS.multimer
+                if '_ptm_' in path.name:
+                    return PRESETS.monomer_ptm
+                return PRESETS.monomer
 
 
 class ExecutionContext:
