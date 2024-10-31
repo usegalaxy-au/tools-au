@@ -1,9 +1,17 @@
 <macros>
     <xml name="output_pdb_models">
-        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: PDB ranked 4"/>
-        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: PDB ranked 3"/>
-        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: PDB ranked 2"/>
-        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: PDB ranked 1"/>
+        <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: PDB ranked 4">
+            <filter>advanced['limit_model_outputs'] > 4</filter>
+        </data>
+        <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: PDB ranked 3">
+            <filter>advanced['limit_model_outputs'] > 3</filter>
+        </data>
+        <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: PDB ranked 2">
+            <filter>advanced['limit_model_outputs'] > 2</filter>
+        </data>
+        <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: PDB ranked 1">
+            <filter>advanced['limit_model_outputs'] > 1</filter>
+        </data>
         <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: PDB ranked 0"/>
     </xml>
 
@@ -16,6 +24,7 @@
         >
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
+            <filter>advanced['limit_model_outputs'] > 4</filter>
         </data>
         <data
             name="pae_ranked_3"
@@ -25,6 +34,7 @@
         >
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
+            <filter>advanced['limit_model_outputs'] > 3</filter>
         </data>
         <data
             name="pae_ranked_2"
@@ -34,6 +44,7 @@
         >
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
+            <filter>advanced['limit_model_outputs'] > 2</filter>
         </data>
         <data
             name="pae_ranked_1"
@@ -43,6 +54,7 @@
         >
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
+            <filter>advanced['limit_model_outputs'] > 1</filter>
         </data>
         <data
             name="pae_ranked_0"
@@ -63,6 +75,7 @@
             label="${tool.name} on ${on_string}: ranked_4.pkl"
         >
             <filter>outputs['model_pkls']</filter>
+            <filter>advanced['limit_model_outputs'] > 4</filter>
         </data>
         <data
             name="output_ranked_3_pkl"
@@ -71,6 +84,7 @@
             label="${tool.name} on ${on_string}: ranked_3.pkl"
         >
             <filter>outputs['model_pkls']</filter>
+            <filter>advanced['limit_model_outputs'] > 3</filter>
         </data>
         <data
             name="output_ranked_2_pkl"
@@ -79,6 +93,7 @@
             label="${tool.name} on ${on_string}: ranked_2.pkl"
         >
             <filter>outputs['model_pkls']</filter>
+            <filter>advanced['limit_model_outputs'] > 2</filter>
         </data>
         <data
             name="output_ranked_1_pkl"
@@ -87,6 +102,7 @@
             label="${tool.name} on ${on_string}: ranked_1.pkl"
         >
             <filter>outputs['model_pkls']</filter>
+            <filter>advanced['limit_model_outputs'] > 1</filter>
         </data>
         <data
             name="output_ranked_0_pkl"
@@ -106,6 +122,7 @@
             label="${tool.name} on ${on_string}: pLDDT/PAE plot ranked 4"
         >
             <filter>outputs['plots']</filter>
+            <filter>advanced['limit_model_outputs'] > 4</filter>
         </data>
         <data
             name="plot_ranked_3"
@@ -114,6 +131,7 @@
             label="${tool.name} on ${on_string}: pLDDT/PAE plot ranked 3"
         >
             <filter>outputs['plots']</filter>
+            <filter>advanced['limit_model_outputs'] > 3</filter>
         </data>
         <data
             name="plot_ranked_2"
@@ -122,6 +140,7 @@
             label="${tool.name} on ${on_string}: pLDDT/PAE plot ranked 2"
         >
             <filter>outputs['plots']</filter>
+            <filter>advanced['limit_model_outputs'] > 2</filter>
         </data>
         <data
             name="plot_ranked_1"
@@ -130,6 +149,7 @@
             label="${tool.name} on ${on_string}: pLDDT/PAE plot ranked 1"
         >
             <filter>outputs['plots']</filter>
+            <filter>advanced['limit_model_outputs'] > 1</filter>
         </data>
         <data
             name="plot_ranked_0"
@@ -152,6 +172,17 @@
         </data>
     </xml>
 
+    <xml name="output_msa_plot">
+        <data
+            name="output_msa_plot"
+            format="png"
+            from_work_dir="output/alphafold/extra/msa_coverage.png"
+            label="${tool.name} on ${on_string}: MSA plot"
+        >
+            <filter>outputs['plot_msa']</filter>
+        </data>
+    </xml>
+
     <xml name="output_plddts">
         <data
             name="output_plddts"
@@ -171,6 +202,17 @@
             label="${tool.name} on ${on_string}: relax_metrics_ranked.json"
         >
             <filter>outputs['relax_json']</filter>
+        </data>
+    </xml>
+
+    <xml name="output_timings_json">
+        <data
+            name="output_timings_json"
+            format="json"
+            from_work_dir="output/alphafold/timings.json"
+            label="${tool.name} on ${on_string}: timings.json"
+        >
+            <filter>outputs['timings_json']</filter>
         </data>
     </xml>
 </macros>

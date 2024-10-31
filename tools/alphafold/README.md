@@ -23,9 +23,24 @@ export PLANEMO_TEST=1
 When you `planemo test` the wrapper should use the mock AlphaFold run, which copies AlphaFold outputs from `test-data/*mer*_output/` directories.
 
 
-## Updating `outputs.py`
+## Generating additional outputs
 
-This script is a bit complex so it has it's own test script. This will test generation of outputs for the three model presets `monomer`, `monomer_ptm` and `multimer`:
+To run the outputs.py file you will need to install some dependencies (a virtual environment is highly recommended):
+
+```sh
+pip install -r scripts/requirements.txt
+```
+
+The `./scripts/outputs.py` script is used to generate additional outputs from an AF2 run. This script is complex because it must handle all different output variations (monomer, multimer, N models, etc.). The test script `tests/test_outputs.sh` runs a basic end-to-end test with the sample outputs available in `test-data/`. Each of these directories is a complete output directory for an AF2 run, for each of the three model presets:
+
+```
+test-data
+├── monomer_output/
+├── monomer_ptm_output/
+└── multimer_output/
+```
+
+`tests/test_outputs.sh` generates output files for each of these output directories and asserts that all expected outputs have been created:
 
 ```bash
 # From the alphafold root dir
@@ -33,4 +48,28 @@ tests/test_outputs.sh
 
 # Keep the test outputs to manually check them
 tests/test_outputs.sh --keep
+```
+
+You can also run `./scripts/outputs.py` as a standalone script against any AF2 output directory to replicate the Galaxy tool's addition outputs:
+
+```
+ubuntu:/dev/tools-au/tools/alphafold$ python scripts/outputs.py -h
+usage: outputs.py [-h] [-s] [--pkl] [--pae] [--plot] [--plot-msa] workdir
+
+positional arguments:
+  workdir               alphafold output directory
+
+options:
+  -h, --help            show this help message and exit
+  -s, --confidence-scores
+                        output per-residue confidence scores (pLDDTs)
+  --pkl                 rename model pkl outputs with rank order
+  --pae                 extract PAE from pkl files to CSV format
+  --plot                Plot pLDDT and PAE for each model
+  --plot-msa            Plot multiple-sequence alignment coverage as a heatmap
+```
+
+```sh
+# Additional outputs will be written to /my/alphafold/output/dir/extra/
+python scripts/outputs.py /my/alphafold/output/dir/ --pr-scores --pae --pkl --plot --plot-msa
 ```

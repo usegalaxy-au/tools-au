@@ -2,3 +2,6 @@
 tools/alphafold/output
 venv
 tool_test_output.*
+
+*.pcy
+__pycache__/

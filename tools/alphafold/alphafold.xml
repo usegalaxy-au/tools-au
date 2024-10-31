@@ -1,9 +1,9 @@
-<tool id="alphafold" name="Alphafold 2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="20.01">
+<tool id="alphafold" name="Alphafold 2" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="22.05">
     <description> - AI-guided 3D structural prediction of proteins</description>
     <macros>
-      <token name="@TOOL_VERSION@">2.3.1</token>
+      <token name="@TOOL_VERSION@">2.3.2</token>
       <token name="@TOOL_MINOR_VERSION@">2.3</token>
-      <token name="@VERSION_SUFFIX@">5</token>
+      <token name="@VERSION_SUFFIX@">2</token>
       <import>macro_output.xml</import>
       <import>macro_test_output.xml</import>
     </macros>
@@ -17,12 +17,12 @@
       <xref type="bio.tools">alphafold_2</xref>
     </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:v2.3.1_2</container>
+        <container type="docker">neoformit/alphafold:v2.3.2_0</container>
     </requirements>
     <required_files>
         <include path="scripts/outputs.py" />
         <include path="scripts/validate_fasta.py" />
-        <include path="alphafold.html" />
+        <include path="scripts/alphafold.html" />
     </required_files>
     <command detect_errors="exit_code"><![CDATA[
 
@@ -46,7 +46,7 @@
 && python3 '$__tool_directory__/scripts/validate_fasta.py' input.fasta
 --min_length \${ALPHAFOLD_AA_LENGTH_MIN:-0}
 --max_length \${ALPHAFOLD_AA_LENGTH_MAX:-0}
-#if $model_preset == 'multimer':
+#if $model_preset.selection == 'multimer':
 --multimer
 --max-sequences \${ALPHAFOLD_MAX_SEQUENCES:-10}
 #end if
@@ -60,7 +60,7 @@
 ## Run AlphaFold  -------------------------------------------------------------
 #if os.environ.get('PLANEMO_TESTING'):
     ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
-    && echo "Creating dummy outputs for model_preset=$model_preset..."
+    && echo "Creating dummy outputs for model_preset=$model_preset.selection..."
     && bash '$__tool_directory__/scripts/mock_alphafold.sh' $model_preset
 #else:
     ## Run AlphaFold
@@ -68,7 +68,7 @@
         --fasta_paths alphafold.fasta
         --output_dir output
         --data_dir \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/
-        --model_preset=$model_preset
+        --model_preset=$model_preset.selection
 
         ## Set reference database paths
         --uniref90_database_path   \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/uniref90/uniref90.fasta
@@ -83,21 +83,33 @@
         --small_bfd_database_path  \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/small_bfd/bfd-first_non_consensus_sequences.fasta
         #end if
 
-        #if $max_template_date:
-        --max_template_date=$max_template_date
+        #if $advanced.max_template_date:
+        --max_template_date=$advanced.max_template_date
         #else
         --max_template_date=\$TODAY
         #end if
 
-        --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}  ## introduced in v2.1.2
+        --use_gpu_relax=\${ALPHAFOLD_USE_GPU:-True}
 
-        #if $model_preset == 'multimer':
+        #if $model_preset.selection == 'multimer':
         --pdb_seqres_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb_seqres/pdb_seqres.txt
         --uniprot_database_path=\${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/uniprot/uniprot.fasta
-        --num_multimer_predictions_per_model=1  ## introduced in v2.2.0
+        --num_multimer_predictions_per_model=$model_preset.num_multimer_predictions_per_model
         #else
         --pdb70_database_path \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb70/pdb70
         #end if
+
+        ## Galaxy-specific options --------------------------------------------
+        ## See https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy
+        #if $advanced.disable_amber_relax:
+        --disable_amber_relax
+        #end if
+
+        #if $advanced.limit_model_outputs:
+        --output_models=$limit_model_outputs
+        #end if
+        ## End Galaxy-specific options ----------------------------------------
+
 #end if
 
 ## Generate additional outputs ------------------------------------------------
@@ -106,13 +118,11 @@ $outputs.plddts
 $outputs.model_pkls
 $outputs.pae_csv
 $outputs.plots
-#if $model_preset == 'multimer':
---multimer
-#end if
+$outputs.plot_msa
 
 ## HTML output
 && mkdir -p '${ html.files_path }'
-&& cp '$__tool_directory__/alphafold.html' '${html}'
+&& cp output/alphafold/extra/alphafold.html '${html}'
 && cp output/alphafold/ranked_*.pdb '${html.files_path}'
 
 ## This is a (hacky) fix for a bug that has appeared in multiple Pulsar servers.
@@ -123,7 +133,7 @@ $outputs.plots
     ]]></command>
     <inputs>
         <conditional name="fasta_or_text">
-            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. If multiple-sequence FASTA file provided, multimer mode must be selected.">
+            <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. We recommend submitting sequences with a maximum length of 3000AA, because run time scales exponentially with sequence length. If multiple-sequence FASTA file provided, multimer mode must be selected.">
                 <option value="history">Use fasta from history</option>
                 <option value="textbox">Paste sequence into textbox</option>
             </param>
@@ -134,21 +144,6 @@ $outputs.plots
                 <param name="fasta_text" type="text" area="true" value="" label="Paste sequence" help="Paste single protein sequence into the textbox. If you wish to fold multiple proteins, submit individual jobs for each protein. If you wish to run AlphaFold multimer, please supply multiple sequences in FASTA format." />
             </when>
         </conditional>
-
-        <param
-            name="max_template_date"
-            type="text"
-            label="Max template date (yyyy-mm-dd) (optional)"
-            help="The model will reference PDB structures deposited before this date only. Defaults to today's date."
-            optional="true"
-        >
-            <sanitizer>
-                <valid initial="string.digits">
-                    <add value="-" />
-                </valid>
-            </sanitizer>
-            <validator type="regex">[0-9]{4}-[0-9]{2}-[0-9]{2}</validator>
-        </param>
 
         <param
           name="dbs"
@@ -162,8 +157,9 @@ $outputs.plots
           <option value="full">Full database</option>
         </param>
 
+        <conditional name="model_preset">
         <param
-            name="model_preset"
+                name="selection"
             type="select"
             label="Model preset"
             help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction. The multimer model allows prediction of protein complexes."
@@ -176,6 +172,56 @@ $outputs.plots
                 multimer - model a protein complex (requires multi-sequence FASTA input)
             </option>
         </param>
+            <when value="monomer"></when>
+            <when value="monomer_ptm"></when>
+            <when value="multimer">
+                <param
+                    name="num_multimer_predictions_per_model"
+                    type="integer"
+                    value="5"
+                    label="Multimer predictions per model"
+                    help="How many predictions (each with a different random seed) will be generated per model. E.g. if this is 2 and there are 5 models then there will be 10 predictions per input. For a small drop in accuracy you may wish to run a single seed per model (default 5, max 10)."
+                    min="1"
+                    max="10"
+                />
+            </when>
+        </conditional>
+
+        <section name="advanced" title="Advanced options" expanded="false">
+            <param
+                name="max_template_date"
+                type="text"
+                label="Max template date (yyyy-mm-dd) (optional)"
+                help="The model will reference PDB structures deposited before this date only. Defaults to today's date."
+                optional="true"
+            >
+                <sanitizer>
+                    <valid initial="string.digits">
+                        <add value="-" />
+                    </valid>
+                </sanitizer>
+                <validator type="regex">[0-9]{4}-[0-9]{2}-[0-9]{2}</validator>
+            </param>
+
+            <param
+                name="disable_amber_relax"
+                type="boolean"
+                label="Disable Amber relaxation"
+                value="false"
+                optional="true"
+                help="Amber relaxation can be disabled to speed up processing time. Amber relaxation is used to refine predicted structures by removing stereochemical violations, resulting in more accurate prediction of side-chain geometry. Disabling this option with large proteins may lead to artefacts in the predicted structure. Disabling amber relax will result in the unrelaxed models being collected as PDB outputs."
+            />
+
+            <param
+                name="limit_model_outputs"
+                type="integer"
+                label="Limit model outputs"
+                value="5"
+                help="Limit the number of models to output. The top N models will be output, where N is the value entered here (default 5). Please note that the top-ranking model is not always the correct one, and it is usually recommended to inspect multiple models. Reducing the number of models will result in a slight reduction in run time."
+                min="1"
+                max="5"
+            />
+        </section>
 
         <section name="outputs" title="Optional outputs" expanded="false">
             <param
@@ -188,18 +234,27 @@ $outputs.plots
                 help="A two-panel plot showing pLDDT against residue position (left) and PAE (paired-alignment error) as a heatmap image with residue numbers running along vertical and horizontal axes and color at each pixel indicating PAE value for the corresponding pair of residues. (right). PAE heatmap is only produced with monomer_ptm and multimer model presets."
             />
             <param
+                name="plot_msa"
+                type="boolean"
+                checked="false"
+                truevalue="--plot-msa"
+                falsevalue=""
+                label="MSA sequence coverage plot"
+                help="A heatmap showing sequence coverage across the multiple sequence alignment (MSA). This plot can help you understand if regions of low confidence are due to poor sequence coverage."
+            />
+            <param
                 name="confidence_scores"
                 type="boolean"
                 checked="false"
                 label="Per-model confidence scores"
-                help="A tabular file showing average confidence score for each model (predicted template modelling (PTM) score; interface PTM is incorporated into this score for multimer predictions)."
+                help="A tabular file showing average confidence score for each model. The monomer preset is scored in plddt, the monomer_ptm preset is scored in predicted template modelling (PTM) and the multimer preset is scored in PTM+IPTM (interface PTM)."
             />
             <param
                 name="plddts"
                 type="boolean"
                 checked="false"
                 label="Per-residue confidence scores"
-                truevalue="--plddts"
+                truevalue="--confidence-scores"
                 falsevalue=""
                 help="Alphafold produces a pLDDT score between 0-100 for each residue in the folded models. High scores represent high confidence in placement for the residue, while low scoring residues have lower confidence. This output is a tabular file with five rows (one for each output PDB model), with each column providing a pLDDT score for a single residue."
             />
@@ -228,6 +283,13 @@ $outputs.plots
                 label="relax_metrics.json"
                 help="A JSON-formatted text file containing relax metrics (mostly remaining violations)."
             />
+            <param
+                name="timings_json"
+                type="boolean"
+                checked="false"
+                label="timings.json"
+                help="A JSON file with timings reported for each phase of the AlphaFold run."
+            />
         </section>
     </inputs>
 
@@ -236,11 +298,13 @@ $outputs.plots
         <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
         <!-- Optional outputs -->
         <expand macro="output_plddts" />
+        <expand macro="output_msa_plot" />
         <expand macro="output_confidence_scores" />
         <expand macro="output_pickles" />
         <expand macro="output_pae_csv" />
         <expand macro="output_plots" />
         <expand macro="output_relax_json" />
+        <expand macro="output_timings_json" />
     </outputs>
 
     <tests>
@@ -250,7 +314,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="model_preset" value="monomer"/>
+            <param name="model_preset|selection" value="monomer"/>
             <expand macro="test_output_pdb_models" />
         </test>
 
@@ -260,7 +324,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="model_preset" value="monomer"/>
+            <param name="model_preset|selection" value="monomer"/>
             <param name="outputs|plots" value="true"/>
             <param name="outputs|confidence_scores" value="true"/>
             <param name="outputs|plddts" value="true"/>
@@ -281,7 +345,7 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="test1.fasta"/>
             </conditional>
-            <param name="model_preset" value="monomer_ptm"/>
+            <param name="model_preset|selection" value="monomer_ptm"/>
             <param name="outputs|plots" value="true"/>
             <param name="outputs|confidence_scores" value="true"/>
             <param name="outputs|plddts" value="true"/>
@@ -303,19 +367,21 @@ $outputs.plots
                 <param name="input_mode" value="history"/>
                 <param name="fasta_file" value="multimer.fasta"/>
             </conditional>
-            <param name="model_preset" value="multimer"/>
+            <param name="model_preset|selection" value="multimer"/>
             <param name="outputs|plots" value="true"/>
             <param name="outputs|confidence_scores" value="true"/>
             <param name="outputs|plddts" value="true"/>
             <param name="outputs|pae_csv" value="true"/>
             <param name="outputs|model_pkls" value="true"/>
             <param name="outputs|relax_json" value="true"/>
+            <param name="outputs|timings_json" value="true"/>
             <expand macro="test_output_plots_3" />
             <expand macro="test_output_confidence_scores" />
             <expand macro="test_output_plddts" />
             <expand macro="test_output_pdb_models" />
             <expand macro="test_output_pickles" />
             <expand macro="test_output_relax_json" />
+            <expand macro="test_output_timings_json" />
             <expand macro="test_output_pae_csv" />
         </test>
     </tests>
@@ -325,7 +391,7 @@ $outputs.plots
 
     | AlphaFold v2: AI-guided 3D structural prediction of proteins
     |
-    | **NOTE: this tool packages AlphaFold v2.3.1.**
+    | **NOTE: this tool packages** `a modified branch of AlphaFold v2.3.2. <https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy>`_
     |
     | This means that the neural network has been trained on PDBs with a release
     | date before 2021-09-30 (the training cutoff was 2018-04-30 until ``v2.3.0``).
@@ -333,11 +399,8 @@ $outputs.plots
     | Find out more in the technical and release notes:
     |
 
-    - `Release notes for v2.3.1 <https://github.com/deepmind/alphafold/releases/tag/v2.3.1>`_
+    - `Release notes for v2.3.2 <https://github.com/deepmind/alphafold/releases/tag/v2.3.2>`_
     - `Technical notes for v2.3 <https://github.com/deepmind/alphafold/blob/main/docs/technical_note_v2.3.0.md>`_
-
-    | If you want to use AlphaFold trained against an older cutoff date, switch to Galaxy version ``2.1.2`` (which was trained to data up to 2018-04-30).
-    |
 
     **What it does**
 
@@ -362,6 +425,7 @@ $outputs.plots
     | You can choose to input either a file from your Galaxy history or paste a sequence into a text box.
     | If you choose the ``multimer`` option, you can supply a FASTA file containing **multiple sequences** to be folded concurrently into a multimer.
     |
+    | For pairwise screening of target-candidate with multimer, you can submit a list of paired protein sequences in batch mode (i.e. two protein sequences in each FASTA file).
     |
 
     **Outputs**
@@ -380,7 +444,7 @@ $outputs.plots
 
     *PDB files*
 
-    | Five PDB (Protein Data Bank) files are be created, ordered by rank, as predicted by AlphaFold.
+    | PDB (Protein Data Bank) files (5 by default) are be created, ordered by rank, as predicted by AlphaFold. The tool produces 5 models by default, but this can be reduced with the "Limit model outputs" for a reduced run time.
     | These files describe the molecular structures and can be used for downstream analysis. e.g. *in silico* molecular docking.
     | **PLEASE NOTE** that all outputs have been renamed to their respective rank order, including model and model.pkl files.
     |
@@ -408,6 +472,17 @@ $outputs.plots
     |
     |
 
+    *MSA sequence coverage plot (optional)*
+
+    | A heatmap in PNG format showing:
+    | a) Per-position sequence identity to query as a heatmap
+    | b) Per-position sequence coverage as a line plot
+    |
+    | This plot can help you understand if regions of low confidence are due to poor sequence coverage, rather than
+    | limitations of the model or intrinsically unstable regions.
+    |
+    |
+
     *Model predicted-alignment error matrix (pae_ranked_n.csv)*
 
     | Per-model predicted-alignment error (PAE) matrix - only available with the ``monomer_ptm`` and ``multimer`` model presets.
@@ -418,6 +493,12 @@ $outputs.plots
     *relax_metrics.json (optional)*
 
     | A JSON-formatted text file containing relax metrics (primarily remaining violations).
+    |
+    |
+
+    *timings.json (optional)*
+
+    | A JSON-formatted text file containing the timings for each phase of the prediction.
     |
     |
 

@@ -1,5 +1,4 @@
-# This Dockerfile was adapted for running on Azure CycleCloud by Felipe Ayora
-# (bizdata.co.nz)
+# Adapted from https://github.com/google-deepmind/alphafold/blob/main/docker/Dockerfile
 
 # Copyright 2021 DeepMind Technologies Limited
 #
@@ -15,50 +14,38 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-# Look for latest version that matches NVIDIA drivers on the Azure GPU machines:
-#   https://hub.docker.com/r/nvidia/cuda/tags?page=1&name=cudnn8-runtime-ubuntu18
+# To build:
+#     VERSION=2.3.2
+#     wget -O /path/to/alphafold.tar.gz "https://github.com/google-deepmind/alphafold/archive/refs/tags/v${VERSION}.tar.gz"
+#     tar -xzf /path/to/alphafold.tar.gz -C /path/to/alphafold --strip-components=1
+#     ln -s /path/to/alphafold
+#     docker build -t "<repo/name:v${VERSION}_${BUILD}>" -f Dockerfile alphafold
 
-# Build image:
-# 1. Run:
-#       git clone https://github.com/deepmind/alphafold/releases/tag/vx.x.x
-#       cd ./alphafold
-# 2. Run:
-#       sudo docker build -t <repo/tag:version> -f ./path/to/this/Dockerfile .
+ARG CUDA=11.1.1
+FROM nvidia/cuda:${CUDA}-cudnn8-runtime-ubuntu18.04
 
-ARG CUDA=12.2.2
-FROM nvidia/cuda:${CUDA}-cudnn8-runtime-ubuntu22.04
+# FROM directive resets ARGS, so we specify again (the value is retained if previously set).
+ARG CUDA
 
-# Remove entrypoint messaging to stdout
-RUN rm /opt/nvidia/entrypoint.d/*
-
-# FROM directive resets ARGS, so we specify again
-
-ARG CUDA_MAJOR=12
-ARG CUDACMDTOOLS=12.2
-ARG JAX=???
-ARG JAXLIBCUDA=cuda12.cudnn88
-
-# Vist https://storage.googleapis.com/jax-releases to find the correct one:
-# ~ This is as far as I got... no jaxlib compatible with CUDA12 and jax==0.3.25
-ARG JAXLIBURL="https://storage.googleapis.com/jax-releases/ ... "
-ARG JAXLIB_TMP_PATH="/tmp/jaxlib/ ... "
+ARG JAX_VERSION=0.3.25
+ARG JAXLIB_VERSION=${JAX_VERSION}+cuda11.cudnn805
 
 # Use bash to support string substitution.
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get update \
-  && DEBIAN_FRONTEND=noninteractive apt-get install -y  --no-install-recommends \
-      build-essential \
-      cmake \
-      cuda-command-line-tools-${CUDACMDTOOLS/./-} \
-      git \
-      hmmer \
-      kalign \
-      tzdata \
-      wget \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get autoremove -y \
-    && apt-get clean
+RUN apt-get update && \
+  DEBIAN_FRONTEND=noninteractive apt-get install --no-install-recommends -y \
+    build-essential \
+    cmake \
+    cuda-command-line-tools-$(cut -f1,2 -d- <<< ${CUDA//./-}) \
+    git \
+    hmmer \
+    kalign \
+    tzdata \
+    wget \
+  && rm -rf /var/lib/apt/lists/* \
+  && apt-get autoremove -y \
+  && apt-get clean
 
 # Compile HHsuite from source.
 RUN git clone --branch v3.3.0 https://github.com/soedinglab/hh-suite.git /tmp/hh-suite \
@@ -72,35 +59,46 @@ RUN git clone --branch v3.3.0 https://github.com/soedinglab/hh-suite.git /tmp/hh
 
 # Install Miniconda package manager.
 RUN wget -q -P /tmp \
-  https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
+    https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh \
     && bash /tmp/Miniconda3-latest-Linux-x86_64.sh -b -p /opt/conda \
     && rm /tmp/Miniconda3-latest-Linux-x86_64.sh
 
 # Install conda packages.
 ENV PATH="/opt/conda/bin:$PATH"
-RUN conda install -qy conda==4.13.0 \
+ENV LD_LIBRARY_PATH="/opt/conda/lib:$LD_LIBRARY_PATH"
+
+RUN conda install -qy conda==4.13.0 python=3.8 \
     && conda install -y -c conda-forge \
       openmm=7.5.1 \
       cudatoolkit==${CUDA_VERSION} \
       pdbfixer \
       pip \
-      python=3.8 \
     && conda clean --all --force-pkgs-dirs --yes
+
+# For next release:
+# RUN conda install -qy conda==24.5.0 pip python=3.11 \
+#     && conda install -y -c nvidia                   \
+#       cuda=12.2.2                                   \
+#       cuda-tools=12.2.2                             \
+#       cuda-toolkit=12.2.2                           \
+#       cuda-version=12.2                             \
+#       cuda-command-line-tools=12.2.2                \
+#       cuda-compiler=12.2.2                          \
+#       cuda-runtime=12.2.2
+# RUN conda install -y -c conda-forge openmm=8.0.0 pdbfixer \
+#     && conda clean --all --force-pkgs-dirs --yes
 
 COPY . /app/alphafold
 
 RUN wget -q -P /app/alphafold/alphafold/common/ \
-  https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
+    https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt
 
 # Install pip packages.
-RUN mkdir -p /tmp/jaxlib
-RUN wget -O ${JAXLIB_TMP_PATH} ${JAXLIBURL}
 RUN pip3 install --upgrade pip \
-    && pip3 install -r /app/alphafold/requirements.txt --no-cache-dir \
-    && pip3 install --no-cache-dir \
-      --upgrade jax==${JAX} jaxlib==${JAX}+${JAXLIBCUDA} -f $(dirname $JAXLIB_TMP_PATH) \
+    && pip3 install -r /app/alphafold/requirements.txt \
+    && pip3 install --upgrade jax==${JAX_VERSION} jaxlib==${JAXLIB_VERSION} -f \
+      https://storage.googleapis.com/jax-releases/jax_cuda_releases.html \
     && pip3 install --no-cache-dir matplotlib
-RUN rm -rf $(dirname $JAXLIB_TMP_PATH)
 
 # Apply OpenMM patch.
 WORKDIR /opt/conda/lib/python3.8/site-packages
@@ -109,16 +107,13 @@ RUN patch -p0 < /app/alphafold/docker/openmm.patch
 # Add SETUID bit to the ldconfig binary so that non-root users can run it.
 RUN chmod u+s /sbin/ldconfig.real
 
-# ENTRYPOINT does not support easily running multiple commands, so instead we
-# write a shell script to wrap them up.
 # We need to run `ldconfig` first to ensure GPUs are visible, due to some quirk
 # with Debian. See https://github.com/NVIDIA/nvidia-docker/issues/1399 for
 # details.
+# ENTRYPOINT does not support easily running multiple commands, so instead we
+# write a shell script to wrap them up.
 WORKDIR /app/alphafold
 RUN echo $'#!/bin/bash\n\
 ldconfig\n\
 python /app/alphafold/run_alphafold.py "$@"' > /app/run_alphafold.sh \
   && chmod +x /app/run_alphafold.sh
-
-# Removed entry point to facilitate running via Galaxy bash scripts
-#ENTRYPOINT ["/app/run_alphafold.sh"]
