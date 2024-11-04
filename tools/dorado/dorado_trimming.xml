@@ -1,5 +1,5 @@
 <tool id="dorado_trimming" name="Dorado adapter and primer trimming" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1">
-    <description>for removing adapter and/or primer sequences from the beginning and end of Nanopore DNA reads</description>
+    <description>for Oxford Nanopore (ONT) DNA reads</description>
     <macros>
         <import>macros.xml</import>
     </macros>
@@ -12,6 +12,7 @@ ln -s '$reads' ./reads
 &&
 
 dorado trim
+--verbose
 --threads "\${GALAXY_SLOTS}"
 #if $no_trim_primers
     --no-trim-primers
@@ -42,32 +43,60 @@ trimmed.bam
     <tests>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
-            <output name="out_bam" ftype="unsorted.bam">
-                <assert_contents>
-                    <has_size size="10000" delta="1000"/>
-                </assert_contents>
-            </output>
-            <output name="out_tsv" ftype="tsv">
-                <assert_contents>
-                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
-                </assert_contents>
-            </output>
+            <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test1.bam"/>
+            <output name="out_tsv" ftype="tsv" file="dorado_trimming_test1.tsv"/>
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
             <param name="no_trim_primers" value="True"/>
-            <output name="out_bam" ftype="unsorted.bam" file="test2.bam"/>
-            <output name="out_tsv" ftype="tsv" file="test2.tsv"/>
+            <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test2.bam"/>
+            <output name="out_tsv" ftype="tsv" file="dorado_trimming_test2.tsv"/>
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="lsk109_single_read.fastqsanger.gz" ftype="fastqsanger.gz"/>
             <param name="primer_sequences" value="custom_primers.fasta.gz" ftype="fasta.gz"/>
-            <output name="out_bam" ftype="unsorted.bam" file="test3.bam"/>
-            <output name="out_tsv" ftype="tsv" file="test3.tsv"/>
+            <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test3.bam"/>
+            <output name="out_tsv" ftype="tsv" file="dorado_trimming_test3.tsv"/>
         </test>
     </tests>
     <help><![CDATA[
-TODO: help text
+Detect and remove any adapter and/or primer sequences from the beginning
+and end of DNA reads using Oxford Nanopore’s open source
+`Dorado <https://github.com/nanoporetech/dorado/>`__ basecaller.
+
+This tool scans existing, basecalled datasets for adapter and/or primer
+sequences at either end, and trims any such found sequences.
+
+**If you have raw (un-basecalled) data, you can trim them during
+basecalling with the Dorado tool on Galaxy**.
+
+Note that if you intend to demultiplex the reads later, trimming
+adapters and primers may result in some portions of the flanking regions
+of the barcodes being removed, which could interfere with correct
+demultiplexing.
+
+The **Don't trim primers** option can be used to prevent the trimming of
+primer sequences. In this case only adapter sequences will be trimmed.
+
+The output of will always be unaligned records, regardless of whether
+the input is aligned/sorted or not.
+
+Custom primer trimming
+----------------------
+
+The software automatically searches for primer sequences used in Oxford
+Nanopore kits. However, you can specify an alternative set of primer
+sequences to search by adding a FASTA file of primer sequences in the
+**Custom primer sequences** option. The record names of the sequences do
+not matter. Note that if you use this option the normal primer sequences
+built-in to the dorado software will not be searched for.
+
+RNA adapter trimming
+--------------------
+
+Adapters for RNA002 and RNA004 kits are automatically trimmed during
+basecalling. However, unlike in DNA, the RNA adapter cannot be trimmed
+post-basecalling.
             ]]></help>
     <expand macro="citation"/>
 </tool>
