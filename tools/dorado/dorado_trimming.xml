@@ -1,0 +1,57 @@
+<tool id="dorado_trimming" name="Dorado adapter and primer trimming" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1">
+    <description>for removing adapter and/or primer sequences from the beginning and end of Nanopore DNA reads</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+
+ln -s '$reads' ./reads
+
+&&
+
+dorado trim
+#if $no_trim_primers
+    --no-trim-primers
+#end if
+reads
+> trimmed.bam
+
+&& 
+
+dorado summary
+trimmed.bam
+> summary.tsv
+
+
+        ]]></command>
+    <inputs>
+        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Existing, basecalled DNA dataset" help="Note: this tool does not support trimming adaptors from RNA reads. These need to be removed during basecalling."/>
+        <param argument="--no-trim-primers" type="boolean" label="Don't trim primers" help="This option can be used to prevent the trimming of primer sequences. In this case only adapter sequences will be trimmed."/>
+        <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. The record names of the sequences do not matter. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
+    </inputs>
+    <outputs>
+        <data format="unsorted.bam" name="out_bam" label="Reads from ${on_string} trimmed by the ${tool.name} tool" from_work_dir="trimmed.bam"/>
+        <data format="tsv" name="out_tsv" label="${tool.name} sequencing summary for ${on_string}" from_work_dir="summary.tsv"/>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="2">
+            <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="10000" delta="1000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+TODO: help text
+            ]]></help>
+    <expand macro="citation"/>
+</tool>
