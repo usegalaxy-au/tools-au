@@ -52,20 +52,44 @@ trimmed.bam
     <tests>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
-            <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test1.bam"/>
-            <output name="out_tsv" ftype="tsv" file="dorado_trimming_test1.tsv"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="60725" delta="6000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="002f231b-5d37-437f-a027-a2e8b872e73b"/>
+                </assert_contents>
+            </output>
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
             <param name="no_trim_primers" value="dont_trim"/>
-            <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test2.bam"/>
-            <output name="out_tsv" ftype="tsv" file="dorado_trimming_test2.tsv"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="60628" delta="6000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
+                </assert_contents>
+            </output>
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="lsk109_single_read.fastqsanger.gz" ftype="fastqsanger.gz"/>
             <param name="primer_sequences" value="custom_primers.fasta.gz" ftype="fasta.gz"/>
-            <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test3.bam"/>
-            <output name="out_tsv" ftype="tsv" file="dorado_trimming_test3.tsv"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="798" delta="100"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="2f707b6e-0060-4f33-9c92-a1230d26cb21"/>
+                </assert_contents>
+            </output>
         </test>
     </tests>
     <help><![CDATA[
