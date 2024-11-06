@@ -14,11 +14,12 @@ ln -s '$reads' ./reads
 dorado trim
 --verbose
 --threads "\${GALAXY_SLOTS}"
-#if $no_trim_primers
+#if $trim_primers.no_trim_primers == 'dont_trim'
     --no-trim-primers
-#end if
-#if $primer_sequences
-    --primer-sequences '$primer_sequences'
+#else
+    #if $trim_primers.primer_sequences
+        --primer-sequences '${trim_primers.primer_sequences}'
+    #end if
 #end if
 reads
 > trimmed.bam
@@ -33,8 +34,16 @@ trimmed.bam
         ]]></command>
     <inputs>
         <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Existing, basecalled DNA dataset" help="Note: this tool does not support trimming adaptors from RNA reads. These need to be removed during basecalling."/>
-        <param argument="--no-trim-primers" type="boolean" label="Don't trim primers" help="This option can be used to prevent the trimming of primer sequences. In this case only adapter sequences will be trimmed."/>
-        <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. The record names of the sequences do not matter. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
+        <conditional name="trim_primers">
+            <param argument="--no-trim-primers" type="select" label="Enable primer trimming" help="Selecting 'No' prevents the trimming of primer sequences. In this case only adapter sequences will be trimmed.">
+                <option value="trim" selected="true">Yes</option>
+                <option value="dont_trim">No</option>
+            </param>
+            <when value="trim">
+                <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. The record names of the sequences do not matter. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
+            </when>
+            <when value="dont_trim"/>
+        </conditional>
     </inputs>
     <outputs>
         <data format="unsorted.bam" name="out_bam" label="Reads from ${on_string} trimmed by the ${tool.name} tool" from_work_dir="trimmed.bam"/>
@@ -48,7 +57,7 @@ trimmed.bam
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
-            <param name="no_trim_primers" value="True"/>
+            <param name="no_trim_primers" value="dont_trim"/>
             <output name="out_bam" ftype="unsorted.bam" file="dorado_trimming_test2.bam"/>
             <output name="out_tsv" ftype="tsv" file="dorado_trimming_test2.tsv"/>
         </test>
@@ -75,8 +84,9 @@ adapters and primers may result in some portions of the flanking regions
 of the barcodes being removed, which could interfere with correct
 demultiplexing.
 
-The **Don't trim primers** option can be used to prevent the trimming of
-primer sequences. In this case only adapter sequences will be trimmed.
+The **Enable primer trimming** option can be set to 'No' to prevent the
+trimming of primer sequences. If you select 'No', only adapter sequences will
+be trimmed.
 
 The output of will always be unaligned records, regardless of whether
 the input is aligned/sorted or not.
