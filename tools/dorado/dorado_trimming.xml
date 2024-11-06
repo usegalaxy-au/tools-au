@@ -1,4 +1,4 @@
-<tool id="dorado_trimming" name="Dorado adapter and primer trimming" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1">
+<tool id="dorado_trimming" name="Dorado adapter and primer trimming" version="@VERSION@+galaxy1" python_template_version="3.5" profile="24.1">
     <description>for Oxford Nanopore (ONT) DNA reads</description>
     <macros>
         <import>macros.xml</import>
