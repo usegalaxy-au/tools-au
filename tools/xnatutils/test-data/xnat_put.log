@@ -1,0 +1,1 @@
+Invalid status for response from XNATSession for url http://10.1.1.32:8080/data/archive/projects/OPENNEURO_T1W/subjects/Xnat4Tests_S00001/experiments/Xnat4Tests_E00001/scans/t1w/resources/NIFTI_GZ (status 404, accepted status: [200, 201])

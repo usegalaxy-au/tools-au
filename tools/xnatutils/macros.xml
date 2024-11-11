@@ -14,4 +14,50 @@
 		<option value="scan">scan</option>
 	 </param>
     </xml>
+    <xml name="xnat_get_option">
+         <section name="scan_option" title="Scan filter option" expanded="false">
+                  <param name="with_scans" type="text" label="Include scan identifier(s)" help="Only download from sessions containing the specified scans"/>
+                  <param name="without_scans" type="text" label="Exclude scan identifier(s)" help="Only download from sessions that don't contain the specified scans"/>
+         </section>
+         <section name="convert_type" title="File conversion option" expanded="false">
+                  <param name="to_type" type="select" multiple="false" label="convert to this type">
+                         <option value="nifti">nifti</option>
+                         <option value="nifti_gz">nifti.gz</option>
+                         <option value="matrix">matrix</option>
+                         <option value="matrix_gz">matrix.gz</option>
+                  </param>
+         </section>
+         <section name="converter_option" title="File converter option" expanded="false">
+                  <param name="converter" type="select" multiple="false" label="Select a conversion tool" help="If not provided both converters are available, dcm2niix will be used for DICOM->NIFTI conversion and mrconvert for other conversions">
+                         <option value="dcm2niix">dcm2niix</option>
+                         <option value="mrconvert">mrconvert</option>
+                  </param>
+         </section>
+         <section name="opt" title="Optional options" expanded="false">
+                  <param name="before_date" type="text" label="Only select sessions before this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+                  <param name="after_date" type="text" label="Only select sessions after this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+                  <param name="project_id" type="text" label="Enter project identifier" help="The identifier of the project to list the session from"/>
+                  <param name="subject_id" type="text" label="Enter subject identifier" help="The identifier of the subject to list the session from. Requires '--project' to be also provided"/>
+                  <param name="resource_name" type="text" label="The name of the resource to download" help="Not required if there is only one valid resource for each given dataset (e.g DICOM), which is typically the case"/>
+		  <param argument="--dont_match_scan_id" type="boolean" truevalue="--dont_match_scan_id" falsevalue="" label="To disable matching on scan ID if the scan type is None"/>
+
+                  <param argument="--strip_name" type="boolean" truevalue="--strip_name" falsevalue="" label="Strip the defaul name" help="Whether to strip the default name of each dicom file to have just a number. Ex. 0001.dcm. It will work just on DICOM files, not NIFTI"/>
+          </section>
+          <param name="method" type="select" multiple="false" label="Select output file type">
+                 <option value="zip">compressed - zip</option>
+                 <option value="per_file">per file</option>
+          </param>
+    </xml>
+    <xml name="xnat_put_option">
+	 <section name="dataset_option" title="Dataset option" expanded="false">
+	       <param argument="--create_session" type="boolean" truevalue="--create_session"  falsevalue="" label="Create session" help="requied session on XNAT to upload the dataset to" />
+               <param argument="--overwrite" type="boolean" truevalue="--overwrite" falsevalue="" label="Overwrite existing dataset" help="Allow overwrite of existing dataset. Overwrite option must be provided if the scan already exists"/>
+	       <param name="resource_name" type="text" label="Resource name" help="The name of resource (data format) to upload the dataset to. If not provided the format will be determined from the file extension (i.e in most cases it won't be necessary to specify (--resource_name)"/>
+	 </section>
+         <section name="id_option" title="Identifier option" expanded="false">
+               <param name="project_id" type="text" optional="true" label="Enter project ID" help="Provide the project ID if session doesn't exist"/>
+               <param name="subject_id" type="text" optional="true" label="Enter subject ID" help="Provide the subject ID if session doesn't exist"/>
+               <param name="scan_id" type="text" optional="true" label="Enter scan ID" help="Provide the scan ID (defaults to the scan type"/>
+         </section> 
+    </xml>
 </macros>
