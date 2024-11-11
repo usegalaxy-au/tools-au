@@ -15,44 +15,116 @@ export XNAT_PASS=$xnat_pass &&
 
       #if $operation.ops_list == "list":
 	#if $operation.project_option.project == "default":
-	    xnat-ls --server $xnat_url >> '$log' 2>&1
+	    xnat-ls --server $xnat_url >> '$list_log' 2>&1
 	#else
-	    #if $operation.project_option.datatype_selector != 'session':
-	        xnat-ls --server $xnat_url 
-	                --project $operation.project_option.project_id 
-	                -d $operation.project_option.datatype_choice >> '$log' 2>&1
+	    #if $operation.project_option.project_id !='':
+	    	xnat-ls --server $xnat_url
+	    		--project $operation.project_option.project_id
+	    		#if $operation.project_option.subject_id !='':
+			   --subject $operation.project_option.subject_id
+	    		#end if
+	    		--datatype $operation.project_option.datatype_choice
+	    		#if $operation.project_option.return_attr:
+			    #if $operation.project_option.datatype_choice == 'scan':
+	    		        --return_attr type
+	    		    #elif $operation.project_option.datatype_choice == 'subject' or $operation.project_option.datatype_choice == 'session':
+	    		        --return_attr id
+			    #end if
+	    		#end if
+			#if $operation.project_option.datatype_choice == 'session' and $operation.project_option.datatype_selector.include_scan !='':
+	    		    --with_scans $operation.project_option.datatype_selector.include_scan
+	    		#end if
+	    		#if $operation.project_option.datatype_choice == 'session' and $operation.project_option.datatype_selector.exclude_scan !='':
+			    --without_scans $operation.project_option.datatype_selector.exclude_scan
+	    		#end if
+	    		#if  $operation.project_option.before_date !='':
+			    --before  $operation.project_option.before_date
+			#end if
+	    		#if  $operation.project_option.after_date !='':
+			    --after $operation.project_option.after_date
+	    		#end if
+			>> '$list_log' 2>&1
 	    #else
-	    	#if $operation.project_option.datatype_selector.include_scan =='' and $operation.project_option.datatype_selector.exclude_scan =='':
-	             xnat-ls --server $xnat_url 
-	                     --project $operation.project_option.project_id 
-	                     -d $operation.project_option.datatype_choice >> '$log' 2>&1
-	    	#elif $operation.project_option.datatype_selector.include_scan !='' and $operation.project_option.datatype_selector.exclude_scan =='':
-	    	    xnat-ls --server $xnat_url 
-	                    --project $operation.project_option.project_id 
-	                    -d $operation.project_option.datatype_choice 
-	                    --with_scans $operation.project_option.datatype_selector.include_scan  >> '$log' 2>&1
-	    	#elif $operation.project_option.datatype_selector.include_scan =='' and $operation.project_option.datatype_selector.exclude_scan !='':
-	            xnat-ls --server $xnat_url 
-	                    --project $operation.project_option.project_id 
-	                    -d $operation.project_option.datatype_choice 
-	    		    --without_scans $operation.project_option.datatype_selector.exclude_scan >> '$log' 2>&1
-		#else
-	            xnat-ls --server $xnat_url 
-	                    --project $operation.project_option.project_id 
-	                    -d $operation.project_option.datatype_choice 
-	    		    --with_scans $operation.project_option.datatype_selector.include_scan  
-	                    --without_scans $operation.project_option.datatype_selector.exclude_scan >> '$log' 2>&1
-	    	#end if
+	    	echo "Project ID is missing" >> '$list_log' 2>&1
 	    #end if
 	#end if
       #elif $operation.ops_list == "get":
-	    mkdir -p output &&
-	    xnat-get --server $xnat_url
-		     --scans $operation.scans    	     
+	    #if $operation.input_option.input_type == 'use_xml':
+	    	xnat-get --server $xnat_url $operation.input_option.xml_file  >> '$get_log'  2>&1
+	    #else
+	    	  #if $operation.input_option.session !='':
+		      echo '$operation.input_option.session' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.scans !='':
+		      echo '$operation.input_option.scans' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.scan_option.with_scans !='':
+		      echo '$operation.input_option.scan_option.with_scans' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.convert_type.to_type !='':
+		     echo '$operation.input_option.convert_type.to_type'  >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.converter_option.converter !='':
+		     echo '$operation.input_option.converter_option.converter' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.before_date !='':
+		     echo '$operation.input_option.opt.before_date' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.after_date !='':
+		     echo '$operation.input_option.opt.after_date' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.project_id !='':
+		     echo '$operation.input_option.opt.project_id' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.subject_id !='':
+		     echo '$operation.input_option.opt.subject_id' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.resource_name !='':
+		     echo '$operation.input_option.opt.subject_id' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.dont_match_scan_id:
+	    	     echo '$operation.input_option.opt.dont_match_scan_id' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.opt.strip_name :
+	    	     echo '$operation.input_option.opt.strip_name' >> '$get_log' &&
+	    	  #end if
+	    	  #if $operation.input_option.method !=''
+		     echo '$operation.input_option.method' >> '$get_log'  2>&1
+	          #end if
+	    #end if
       #elif $operation.ops_list == "put":
-           echo "TODO - put" >> '$log'
+	    #import re
+	    #if $operation.upload_file.ext.endswith(".gz")
+	    	#set file_identifier=re.sub('[^\s\w\-]', '_', str($operation.upload_file.element_identifier)) + '.gz'
+		ln -s '$operation.upload_file' '${file_identifier}' &&
+	    #else
+	        #set file_identifier=re.sub('[^\s\w\-]', '_', str($operation.upload_file.element_identifier))
+		ln -s '$operation.upload_file' '${file_identifier}' &&
+	    #end if
+
+	    xnat-put --server $xnat_url
+	    	     $operation.session_name
+	    	     $operation.scan_name
+		     '${file_identifier}'
+	    	     --method $operation.method
+	    	     $operation.dataset_option.overwrite
+		     $operation.dataset_option.create_session
+	    	     #if $operation.dataset_option.resource_name !='':
+	    		 --resource_name $operation.dataset_option.resource_name
+	    	     #end if
+		     #if $operation.id_option.project_id !='':
+	    		 --project_id
+	             #end if
+	    	     #if $operation.id_option.subject_id !='':
+	    		 --subject_id
+	             #end if
+	    	     #if $operation.id_option.scan_id != '':
+	    		 --scan_id
+	             #end if
+                     >> '$put_log' 2>&1
       #elif $operation.ops_list == "rename":
-	    xnat-rename --server $xnat_url $operation.old_session_name $operation.new_session_name >> '$log' 2>&1
+	    xnat-rename --server $xnat_url 
+	                $operation.old_session_name $operation.new_session_name >> '$rename_log' 2>&1
       #end if
 
 ]]></command>
@@ -66,73 +138,54 @@ export XNAT_PASS=$xnat_pass &&
 	   </param>
 	   <when value="list">
 		<conditional name="project_option">
-		     <param name="project" type="select" label="list project id" >
-		       <option value="default" selected="true">list project id only</option>
-		       <option value="user_defined">user define</option>
+		     <param name="project" type="select" label="list ID" help="list project id only if it's not defined by user">
+		       <option value="default" selected="true">List project id only</option>
+		       <option value="user_defined">User defined</option>
 		     </param>
 		     <when value="default"></when>
 		     <when value="user_defined">
 			   <param name="project_id" type="text" optional="false" label="Enter project ID" help="Object subject, session or scan for the project id entered by user"/> 
-			   <param name="before" type="text" label="Only select sessions before this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
-			   <param name="after" type="text" label="Only select sessions after this dat" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+			   <param name="subject_id" type="text" label="Enter subject ID" help="The ID of the subject to list the sessions from. Requires that project_id is also supplied"/>
+			   <param name="before_date" type="text" label="Only select sessions before this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+			   <param name="after_date" type="text" label="Only select sessions after this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+			   <param argument="--return_attr" type="boolean" truevalue="true" falsevalue="" checked="false" label="Get attribute" help="return id for project and type for scan"/>
 			   <conditional name="datatype_selector">
 				<expand macro="datatype"/>
+				<when value="subject">
+
+				</when>
 				<when value="session">
-				      <param name="include_scan" type="text" optional="true" label="Enter scan identifier(s)" help="Include these scan id to be listed"/>
-				      <param name="exclude_scan" type="text" optional="true" label="Enter scan identifier(s)" help="Exclude these scan id to be listed"/>
+				      <param name="include_scan" type="text" label="Enter scan identifier(s)" help="Include these scan ids to be listed"/>
+				      <param name="exclude_scan" type="text" label="Enter scan identifier(s)" help="Exclude these scan ids to be listed"/>
+			        </when>
+				<when value="scan">
 				</when>
 			   </conditional>
 		     </when>
 		</conditional>
 	   </when>
 	   <when value="get">
-		   <parm name="scans" type="text" label="Name of the scans to include in the download" help="If not provided all scans from the session are downloaded. Multiple scans can be specified"/>
-		   <param name="resource_name" type="text" label="The name of the resource to download" help="Not required if there is only one valid resource for each given dataset (e.g DICOM), which is typically the case"/>
-		   <conditional name="scan_ops">
-		   <param name="scan_option" type="select" label="Select scan option">
-			<option value="include_scan">include scan identifier(s)</option>
-			<option value="exclude_scan">exclude scan identifier(s)</option>
-			<option value="in_ex_scan">include and exclude scan identifier(s)</option>
-		   </param>
-			<when value="include_scan">
-				<param name="with_scans" type="text" optional="false" label="Include scan identifier(s)" help="Only download from sessions containing the specified scans"/>
-		        </when>
-			<when value="exclude_scan">
-				<param name="without_scans" type="text" optional="false" label="Exclude scan identifier(s)" help="Only download from sessions that don't contain the specified scans"/>
-			</when>
-			<when value="in_ex_scan">
-		   		<param name="with_scans" type="text" optional="false" label="Include scan identifier(s)" help="Only download from sessions containing the specified scans"/>
-		   		<param name="without_scans" type="text" label="Exclude scan identifier(s)" help="Only download from sessions that don't contain the specified scans"/>
-			</when>
-		   </conditional>
-		   <param name="to_type" type="select" multiple="false" label="convert to this type">
-		          <option value="nifti">nifti</option>
-		          <option value="nifti_gz">nifti.gz</option>
-			  <option value="matrix">matrix</option>
-			  <option value="matrix_gz">matrix.gz</option>
-		   </param>
-		   <param name="converter" type="select" multiple="false" label="Select a conversion tool" help="If not provided both converters are available, dcm2niix will be used for DICOM->NIFTI conversion and mrconvert for other conversions">
-			  <option value="dcm2niix">dcm2niix</option>
-			  <option value="mrconvert">mrconvert</option>
-		  </param>
-		  <param name="before" type="text" label="Only select sessions before this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
-                  <param name="after" type="text" label="Only select sessions after this dat" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
-		  <param name="project_id" type="text" label="Enter project identifier" help="The identifier of the project to list the session from"/>
-		  <param name="subject_id" type="text" label="Enter subject identifier" help="The identifier of the subject to list the session from. Requires '--project' to be also provided"/>
-		  <param name="dont_match_scan_id" type="boolean" label="To disable matching on scan ID if the scan type is None"/>
-		  <param name="strip_name" type="boolean" label="Strip the defaul name" help="Whether to strip the default name of each dicom file to have just a number. Ex. 0001.dcm. It will work just on DICOM files, not NIFTI"/>
-		  <param name="method" type="select" multiple="false" label="Select output file type">
-			  <option value="zip">compressed - zip</option>
-			  <option value="per_file">per file</option>
-		  </param>
-	    </when>
+		<conditional name="input_option">
+                    <param name="input_type" type="select" label="Selet an input type" >
+                       <option value="use_xml" >xml file</option>
+                       <option value="user_defined">user define</option>
+	            </param>
+		    <when value="use_xml">
+			 <param name="xml_file" type="data" format="xml" label="xml file"/>
+			 <expand macro="xnat_get_option"/>
+		    </when>
+		    <when value="user_defined">
+		        <param name="session" type="text" optional="false" label="Name of session" help="Use name (i,e MRH017_001_MR01) or regular expression (i.eMRH017_001_MR01) to download"/>   
+			<param name="scans" type="text" label="Name of the scan" help="If not provided all scans from the session are downloaded. Multiple scans can be specified"/>
+			<expand macro="xnat_get_option"/>
+	  	   </when>
+	       </conditional>
+	   </when>   
 	    <when value="put">
-		   <param name="create_session" type="text" label="Session name" help="Create the required session on XNAT to upload the dataset to. i.e test.nii.gz"/>
-		   <param name="resource_name" type="text" label="Resource name" help="The name of resource (data format) to upload the dataset to. If not provided the format will be determined from the file extension (i.e in most cases it won't be necessary to specify"/>
-		   <param argument="--overwrite" type="boolean"truevalue="--overwrite" falsevalue="" checked="false" label="Overwrite existing dataset" help="Allow overwrite of existing dataset. Overwrite option must be provided if the scan already exists"/>
-		   <param name="project_id" type="text" optional="true" label="Enter project ID" help="Provide the project ID if session doesn't exist"/>
-		   <param name="subject_id" type="text" optional="true" label="Enter subject ID" help="Provide the subject ID if session doesn't exist"/>
-		   <param name="scan_id" type="text" optional="true" label="Enter scan ID" help="Provide the scan ID (defaults to the scan type"/>
+		   <param name="upload_file" type="data" format="nii1,nii1.gz" optional="false" label="Select files to upload" help="upload filename format i.e e4.60005.nii.gz - will be converted to filename format project_subject_visit (i.e e4_60005_nii_gz)  have exactly two underscores" />
+		   <param name="session_name" type="text" optional="false" label="Enter a session name" help="required to enable create-session; project_subject_visit convention, i.e. have exactly 2 underscores"/>
+		   <param name="scan_name" type="text" optional="false" label="Enter a scan name" help="Name for the dataset on XNAT; --overwrite must be provided if the scan already exists"/>
+		   <expand macro="xnat_put_option"/>
 		   <param name="method" type="select" multiple="false" label="Select output file type">
 			  <option value="tgz_file" selected="true">tgz file</option> 
 			  <option value="per_file">per file</option>
@@ -148,27 +201,129 @@ export XNAT_PASS=$xnat_pass &&
 	</conditional>
     </inputs>
     <outputs>
-        <data name="log" format="txt" label="${tool.name} on ${on_string} : log"/>
+	   <data name="list_log" format="txt" label="${tool.name} list">
+		 <filter>operation['ops_list'] == 'list'</filter>
+	   </data>
+           <data name="get_log" format="txt" label="${tool.name} get">
+                 <filter>operation['ops_list'] == 'get'</filter>
+           </data>
+           <data name="put_log" format="txt" label="${tool.name} on ${on_string}: put">
+                 <filter>operation['ops_list'] == 'put'</filter>
+           </data>
+           <data name="rename_log" format="txt" label="${tool.name} rename">
+                 <filter>operation['ops_list'] == 'rename'</filter>
+           </data>
     </outputs>
     <tests>
-         <!-- TODO planemo failed due to both username and apikey are null-->
-        <test>
-          <param name="data" value="summary_statistics.txt"/>
-             <output name="output">
-                     <assert_contents>
-                         <has_text text="Uploading"/>
-                         <has_text text="log complete"/>
-                         <has_text text="Upload Complete"/>
-                     </assert_contents>
-             </output>
-          </test>
+         <!-- Test 1 xnat-ls with project option -->
+	<test expect_num_outputs="1">
+            <conditional name="operation">
+                <param name="ops_list" value="list" />
+            </conditional>
+            <output name="list_log" ftype="xnt_ls_project.log">
+                <assert_contents>
+		    <has_text text="subject01"/>
+                </assert_contents>
+            </output>
+    	</test>
+         <!-- Test 2 xnat-ls with project option datatype scan  -->
+        <test expect_num_outputs="1">
+            <conditional name="operation">
+		 <param name="ops_list" value="list" />
+		 <conditional name="datatype_selector">
+		     <param name="datatype_choice" value="scan"/>
+		 </conditional>
+            </conditional>
+            <output name="list_log" ftype="xnat_ls_project_scan.log">
+                <assert_contents>
+                    <has_text text="t1w"/>
+                </assert_contents>
+            </output>
+        </test>
+         <!-- Test 3 xnat-ls with project option datatype session -->
+        <test expect_num_outputs="1">
+            <conditional name="operation">
+		<param name="ops_list" value="list" />
+		<conditional name="datatype_selector">
+		     <param name="datatype_choice" value="session"/>
+		</conditional>
+            </conditional>
+            <output name="list_log" ftype="xnt_ls_project_session.log">
+                <assert_contents>
+                    <has_text text="subject01_MR01"/>
+                </assert_contents>
+            </output>
+    	</test>
+         <!-- Test 4 xnat-get with project option datatype session -->
+        <test expect_num_outputs="1">
+            <conditional name="operation">
+                <param name="ops_list" value="get" />
+                <param name="datatype_choice" value="t1w"/>
+            </conditional>
+            <output name="get_log" ftype="xnt_get.log">
+                <assert_contents>
+                    <has_text text="subject01_MR01"/>
+                </assert_contents>
+            </output>
+    	</test>
+	<!-- Test 5 xnat-put xnat-put subject01_MT01 t1w test-data/e4.60005.nii.gz method per_file overwrite -->
+        <test expect_num_outputs="1">
+            <conditional name="operation">
+                <param name="ops_list" value="put" />
+		<param name="upload_file" value="e4.60005.nii.gz"/>
+		<param name="session_name" value="subject01_MR01"/>
+		<param name="scan_name" value="t1w"/>
+		<param name="method" value="per_file"/>
+		<param name="overwrite" value="true"/>
+            </conditional>
+            <output name="put_log" ftype="xnt_get.log">
+                <assert_contents>
+                    <has_text text="subject01_MR01"/>
+                </assert_contents>
+            </output>
+        </test>
+         <!-- Test 6 xnat-rename to rename session -->
+        <test expect_num_outputs="1">
+            <conditional name="operation">
+                <param name="ops_list" value="rename" />
+            </conditional>
+            <output name="rename_log" ftype="xnt_rename.log">
+                <assert_contents>
+                    <has_text text="subject01_MR01"/>
+                </assert_contents>
+            </output>
+        </test>
     </tests>
     <help>
 **What it does**
-        Xnat-utils is a collection of scripts for conveniently up/downloading and listing data on/from XNAT
+        Xnat-utils is a collection of scripts for conveniently up/downloading and listing data on/from XNAT server.
+
+**Usage**
+	Four commands are wrapped for Galaxy operation.
+
+- ``xnat-ls``: list projects/subjects/sessions/scans
+- ``xnat-get``: download scans and resources
+- ``xnat-put``: upload scans and resources (requires write privileges to project)
+- ``xnat-rename``: renames an XNAT session
+
+
+**How to connect to XNAT server**
+
+To interact with XNAT server from Galaxy you need to set up your XNAT login credential in Galaxy user preference.
+
+1. Obtain your username and password from XNAT
+
+2. In Galaxy, add XNAT server url, username and password  to "XNAT Server and Account" field in User > Preferences > Manage Information. Your XNAT login credential can be different from your Galaxy login credential.
+
 
 **Remarks**
-        This tool leverages Xnatutils (https://github.com/Australian-Imaging-Service/xnatutils)
-        to query and retrieve files on Australia Image Service Server.
+        Xnatutils_ is used to query and retrieve files on Australia Image Service (AIS_) Server.
+
+.. _AIS: https://ardc.edu.au/project/australian-imaging-service-ais/
+.. _Xnatutils: https://github.com/Australian-Imaging-Service/xnatutils
+
     </help>
+    <citations>
+        <citation type="doi">10.47486/PL102</citation>
+    </citations>
 </tool>
