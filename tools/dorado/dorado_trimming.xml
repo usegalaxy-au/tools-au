@@ -1,0 +1,134 @@
+<tool id="dorado_trimming" name="Dorado adapter and primer trimming" version="@VERSION@+galaxy1" python_template_version="3.5" profile="24.1">
+    <description>for Oxford Nanopore (ONT) DNA reads</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+
+ln -s '$reads' ./reads
+
+&&
+
+dorado trim
+--verbose
+--threads "\${GALAXY_SLOTS}"
+#if $trim_primers.no_trim_primers == 'dont_trim'
+    --no-trim-primers
+#else if $trim_primers.primer_sequences
+    --primer-sequences '${trim_primers.primer_sequences}'
+#end if
+reads
+> trimmed.bam
+
+&& 
+
+dorado summary
+trimmed.bam
+> summary.tsv
+
+
+        ]]></command>
+    <inputs>
+        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Existing, basecalled DNA dataset" help="Note: this tool does not support trimming adaptors from RNA reads. These need to be removed during basecalling."/>
+        <conditional name="trim_primers">
+            <param argument="--no-trim-primers" type="select" label="Enable primer trimming" help="Selecting 'No' prevents the trimming of primer sequences. In this case only adapter sequences will be trimmed.">
+                <option value="trim" selected="true">Yes</option>
+                <option value="dont_trim">No</option>
+            </param>
+            <when value="trim">
+                <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. The record names of the sequences do not matter. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
+            </when>
+            <when value="dont_trim"/>
+        </conditional>
+    </inputs>
+    <outputs>
+        <data format="unsorted.bam" name="out_bam" label="Reads from ${on_string} trimmed by the ${tool.name} tool" from_work_dir="trimmed.bam"/>
+        <data format="tsv" name="out_tsv" label="${tool.name} sequencing summary for ${on_string}" from_work_dir="summary.tsv"/>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="2">
+            <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="60725" delta="6000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="002f231b-5d37-437f-a027-a2e8b872e73b"/>
+                </assert_contents>
+            </output>
+        </test>
+        <test expect_num_outputs="2">
+            <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
+            <param name="no_trim_primers" value="dont_trim"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="60628" delta="6000"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="00777c4b-cbd6-4a79-8647-bbe5f5f3f3bf"/>
+                </assert_contents>
+            </output>
+        </test>
+        <test expect_num_outputs="2">
+            <param name="reads" value="lsk109_single_read.fastqsanger.gz" ftype="fastqsanger.gz"/>
+            <param name="primer_sequences" value="custom_primers.fasta.gz" ftype="fasta.gz"/>
+            <output name="out_bam" ftype="unsorted.bam">
+                <assert_contents>
+                    <has_size size="798" delta="100"/>
+                </assert_contents>
+            </output>
+            <output name="out_tsv" ftype="tsv">
+                <assert_contents>
+                    <has_text text="2f707b6e-0060-4f33-9c92-a1230d26cb21"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+Detect and remove any adapter and/or primer sequences from the beginning
+and end of DNA reads using Oxford Nanopore’s open source
+`Dorado <https://github.com/nanoporetech/dorado/>`__ basecaller.
+
+This tool scans existing, basecalled datasets for adapter and/or primer
+sequences at either end, and trims any such found sequences.
+
+**If you have raw (un-basecalled) data, you can trim them during
+basecalling with the Dorado tool on Galaxy**.
+
+Note that if you intend to demultiplex the reads later, trimming
+adapters and primers may result in some portions of the flanking regions
+of the barcodes being removed, which could interfere with correct
+demultiplexing.
+
+The **Enable primer trimming** option can be set to 'No' to prevent the
+trimming of primer sequences. If you select 'No', only adapter sequences will
+be trimmed.
+
+The output of will always be unaligned records, regardless of whether
+the input is aligned/sorted or not.
+
+Custom primer trimming
+----------------------
+
+The software automatically searches for primer sequences used in Oxford
+Nanopore kits. However, you can specify an alternative set of primer
+sequences to search by adding a FASTA file of primer sequences in the
+**Custom primer sequences** option. The record names of the sequences do
+not matter. Note that if you use this option the normal primer sequences
+built-in to the dorado software will not be searched for.
+
+RNA adapter trimming
+--------------------
+
+Adapters for RNA002 and RNA004 kits are automatically trimmed during
+basecalling. However, unlike in DNA, the RNA adapter cannot be trimmed
+post-basecalling.
+            ]]></help>
+    <expand macro="citation"/>
+</tool>
