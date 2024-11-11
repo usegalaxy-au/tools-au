@@ -16,10 +16,8 @@ dorado trim
 --threads "\${GALAXY_SLOTS}"
 #if $trim_primers.no_trim_primers == 'dont_trim'
     --no-trim-primers
-#else
-    #if $trim_primers.primer_sequences
-        --primer-sequences '${trim_primers.primer_sequences}'
-    #end if
+#else if $trim_primers.primer_sequences
+    --primer-sequences '${trim_primers.primer_sequences}'
 #end if
 reads
 > trimmed.bam
