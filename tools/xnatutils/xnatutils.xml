@@ -1,0 +1,174 @@
+<tool id="xnatutils" name="Xnatutils" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>Australia Images Service</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <command detect_errors="exit_code"><![CDATA[
+#set $xnat_url = $__user__.extra_preferences.get('xnat_account|xnat_url', "").strip()
+#set $xnat_user = $__user__.extra_preferences.get('xnat_account|xnat_user', "").strip()
+#set $xnat_pass = $__user__.extra_preferences.get('xnat_account|password', "").strip()
+
+export XNAT_URL=$xnat_url &&
+export XNAT_USER=$xnat_user &&
+export XNAT_PASS=$xnat_pass &&
+
+      #if $operation.ops_list == "list":
+	#if $operation.project_option.project == "default":
+	    xnat-ls --server $xnat_url >> '$log' 2>&1
+	#else
+	    #if $operation.project_option.datatype_selector != 'session':
+	        xnat-ls --server $xnat_url 
+	                --project $operation.project_option.project_id 
+	                -d $operation.project_option.datatype_choice >> '$log' 2>&1
+	    #else
+	    	#if $operation.project_option.datatype_selector.include_scan =='' and $operation.project_option.datatype_selector.exclude_scan =='':
+	             xnat-ls --server $xnat_url 
+	                     --project $operation.project_option.project_id 
+	                     -d $operation.project_option.datatype_choice >> '$log' 2>&1
+	    	#elif $operation.project_option.datatype_selector.include_scan !='' and $operation.project_option.datatype_selector.exclude_scan =='':
+	    	    xnat-ls --server $xnat_url 
+	                    --project $operation.project_option.project_id 
+	                    -d $operation.project_option.datatype_choice 
+	                    --with_scans $operation.project_option.datatype_selector.include_scan  >> '$log' 2>&1
+	    	#elif $operation.project_option.datatype_selector.include_scan =='' and $operation.project_option.datatype_selector.exclude_scan !='':
+	            xnat-ls --server $xnat_url 
+	                    --project $operation.project_option.project_id 
+	                    -d $operation.project_option.datatype_choice 
+	    		    --without_scans $operation.project_option.datatype_selector.exclude_scan >> '$log' 2>&1
+		#else
+	            xnat-ls --server $xnat_url 
+	                    --project $operation.project_option.project_id 
+	                    -d $operation.project_option.datatype_choice 
+	    		    --with_scans $operation.project_option.datatype_selector.include_scan  
+	                    --without_scans $operation.project_option.datatype_selector.exclude_scan >> '$log' 2>&1
+	    	#end if
+	    #end if
+	#end if
+      #elif $operation.ops_list == "get":
+	    mkdir -p output &&
+	    xnat-get --server $xnat_url
+		     --scans $operation.scans    	     
+      #elif $operation.ops_list == "put":
+           echo "TODO - put" >> '$log'
+      #elif $operation.ops_list == "rename":
+	    xnat-rename --server $xnat_url $operation.old_session_name $operation.new_session_name >> '$log' 2>&1
+      #end if
+
+]]></command>
+    <inputs>
+	<conditional name="operation">
+	   <param name="ops_list" type="select" label="Xnat operation">
+		<option value="list">list</option>
+		<option value="get">get</option>
+		<option value="put">put</option>
+		<option value="rename">rename</option>
+	   </param>
+	   <when value="list">
+		<conditional name="project_option">
+		     <param name="project" type="select" label="list project id" >
+		       <option value="default" selected="true">list project id only</option>
+		       <option value="user_defined">user define</option>
+		     </param>
+		     <when value="default"></when>
+		     <when value="user_defined">
+			   <param name="project_id" type="text" optional="false" label="Enter project ID" help="Object subject, session or scan for the project id entered by user"/> 
+			   <param name="before" type="text" label="Only select sessions before this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+			   <param name="after" type="text" label="Only select sessions after this dat" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+			   <conditional name="datatype_selector">
+				<expand macro="datatype"/>
+				<when value="session">
+				      <param name="include_scan" type="text" optional="true" label="Enter scan identifier(s)" help="Include these scan id to be listed"/>
+				      <param name="exclude_scan" type="text" optional="true" label="Enter scan identifier(s)" help="Exclude these scan id to be listed"/>
+				</when>
+			   </conditional>
+		     </when>
+		</conditional>
+	   </when>
+	   <when value="get">
+		   <parm name="scans" type="text" label="Name of the scans to include in the download" help="If not provided all scans from the session are downloaded. Multiple scans can be specified"/>
+		   <param name="resource_name" type="text" label="The name of the resource to download" help="Not required if there is only one valid resource for each given dataset (e.g DICOM), which is typically the case"/>
+		   <conditional name="scan_ops">
+		   <param name="scan_option" type="select" label="Select scan option">
+			<option value="include_scan">include scan identifier(s)</option>
+			<option value="exclude_scan">exclude scan identifier(s)</option>
+			<option value="in_ex_scan">include and exclude scan identifier(s)</option>
+		   </param>
+			<when value="include_scan">
+				<param name="with_scans" type="text" optional="false" label="Include scan identifier(s)" help="Only download from sessions containing the specified scans"/>
+		        </when>
+			<when value="exclude_scan">
+				<param name="without_scans" type="text" optional="false" label="Exclude scan identifier(s)" help="Only download from sessions that don't contain the specified scans"/>
+			</when>
+			<when value="in_ex_scan">
+		   		<param name="with_scans" type="text" optional="false" label="Include scan identifier(s)" help="Only download from sessions containing the specified scans"/>
+		   		<param name="without_scans" type="text" label="Exclude scan identifier(s)" help="Only download from sessions that don't contain the specified scans"/>
+			</when>
+		   </conditional>
+		   <param name="to_type" type="select" multiple="false" label="convert to this type">
+		          <option value="nifti">nifti</option>
+		          <option value="nifti_gz">nifti.gz</option>
+			  <option value="matrix">matrix</option>
+			  <option value="matrix_gz">matrix.gz</option>
+		   </param>
+		   <param name="converter" type="select" multiple="false" label="Select a conversion tool" help="If not provided both converters are available, dcm2niix will be used for DICOM->NIFTI conversion and mrconvert for other conversions">
+			  <option value="dcm2niix">dcm2niix</option>
+			  <option value="mrconvert">mrconvert</option>
+		  </param>
+		  <param name="before" type="text" label="Only select sessions before this date" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+                  <param name="after" type="text" label="Only select sessions after this dat" help="ISO8601 format date or date/time, like YYYY-MM-DD" />
+		  <param name="project_id" type="text" label="Enter project identifier" help="The identifier of the project to list the session from"/>
+		  <param name="subject_id" type="text" label="Enter subject identifier" help="The identifier of the subject to list the session from. Requires '--project' to be also provided"/>
+		  <param name="dont_match_scan_id" type="boolean" label="To disable matching on scan ID if the scan type is None"/>
+		  <param name="strip_name" type="boolean" label="Strip the defaul name" help="Whether to strip the default name of each dicom file to have just a number. Ex. 0001.dcm. It will work just on DICOM files, not NIFTI"/>
+		  <param name="method" type="select" multiple="false" label="Select output file type">
+			  <option value="zip">compressed - zip</option>
+			  <option value="per_file">per file</option>
+		  </param>
+	    </when>
+	    <when value="put">
+		   <param name="create_session" type="text" label="Session name" help="Create the required session on XNAT to upload the dataset to. i.e test.nii.gz"/>
+		   <param name="resource_name" type="text" label="Resource name" help="The name of resource (data format) to upload the dataset to. If not provided the format will be determined from the file extension (i.e in most cases it won't be necessary to specify"/>
+		   <param argument="--overwrite" type="boolean"truevalue="--overwrite" falsevalue="" checked="false" label="Overwrite existing dataset" help="Allow overwrite of existing dataset. Overwrite option must be provided if the scan already exists"/>
+		   <param name="project_id" type="text" optional="true" label="Enter project ID" help="Provide the project ID if session doesn't exist"/>
+		   <param name="subject_id" type="text" optional="true" label="Enter subject ID" help="Provide the subject ID if session doesn't exist"/>
+		   <param name="scan_id" type="text" optional="true" label="Enter scan ID" help="Provide the scan ID (defaults to the scan type"/>
+		   <param name="method" type="select" multiple="false" label="Select output file type">
+			  <option value="tgz_file" selected="true">tgz file</option> 
+			  <option value="per_file">per file</option>
+			  <option value="tar_memory">tar memory</option>
+			  <option value="tgz_memory">tgz memory</option>
+			  <option value="tar_file">tar file</option>
+                  </param>
+	    </when>
+	    <when value="rename">
+		 <param name="old_session_name" type="text" optional="false" label="Name of the session to rename" help="i.e subject01_MR01" />
+		 <param name="new_session_name" type="text" optional="false" label="The new name of the session" help="rename to subject01_MT01"/>
+	    </when>
+	</conditional>
+    </inputs>
+    <outputs>
+        <data name="log" format="txt" label="${tool.name} on ${on_string} : log"/>
+    </outputs>
+    <tests>
+         <!-- TODO planemo failed due to both username and apikey are null-->
+        <test>
+          <param name="data" value="summary_statistics.txt"/>
+             <output name="output">
+                     <assert_contents>
+                         <has_text text="Uploading"/>
+                         <has_text text="log complete"/>
+                         <has_text text="Upload Complete"/>
+                     </assert_contents>
+             </output>
+          </test>
+    </tests>
+    <help>
+**What it does**
+        Xnat-utils is a collection of scripts for conveniently up/downloading and listing data on/from XNAT
+
+**Remarks**
+        This tool leverages Xnatutils (https://github.com/Australian-Imaging-Service/xnatutils)
+        to query and retrieve files on Australia Image Service Server.
+    </help>
+</tool>
