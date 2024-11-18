@@ -81,7 +81,11 @@
 - txt (resn3) - raw output produced by Fgenesh
 - gff3 - gff3 file format converted from the Fgenesh resn3 file
 
- 
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+
+
 .. class:: infomark
 
 **Contributor**
