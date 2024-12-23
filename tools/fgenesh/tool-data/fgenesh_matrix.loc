@@ -6,9 +6,9 @@
 #
 #So, for example:
 #value	name	path
-celegans	celegans_matrix (2022-09-30)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/C_elegans_nGASP
-CheloniaMydas	Chelonia_mydas_matrix (2022-09-30)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/Chelonia_mydas.mpar.dat
-chicken	chicken_matrix (2022-12-21)	/home/ubuntu/tools/galaxy/tools/fgenesh/db/Chicken.dat
+celegans	celegans_matrix (2022-09-30)	C_elegans_nGASP
+CheloniaMydas	Chelonia_mydas_matrix (2022-09-30)	Chelonia_mydas.mpar.dat
+chicken	chicken_matrix (2022-12-21)	Chicken.dat
 Acinonyx_jubatus	Acinonyx jubatus ( Cheetah )	Acinonyx_jubatus.mpar.dat
 Ailuropoda_melanoleuca	Ailuropoda melanoleuca ( Giant panda )	Ailuropoda_melanoleuca.mpar.dat
 Aotus_nancymaae	Aotus nancymaae ( Ma's night monkey, Aotus nancymai )	Aotus_nancymaae.mpar.dat
