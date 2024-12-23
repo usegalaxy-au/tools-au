@@ -135,8 +135,8 @@ Chelonia_mydas	Chelonia mydas ( Green sea turtle )	Chelonia_mydas.mpar.dat
 Chrysemys_picta	Chrysemys picta ( Painted turtle )	Chrysemys_picta.mpar.dat
 Xenopodinae	Xenopus ( generic, frog )	Xenopodinae.dat		
 Branchiostoma_floridae	Branchiostoma floridae ( lancelet )	Branchiostoma_floridae.mpar.dat
-Strongylocentrotus_purpuratus	Strongylocentrotus purpuratus ( sea urchin )	Strongylocentrotus_purpuratus.mpar.dat
-Strongylocentrotus_purpuratus	Strongylocentrotus purpuratus ( sea urchin, additional variant )	Strongylocentrotus_purpuratus.dat	
+Strongylocentrotus_purpuratus	Strongylocentrotus purpuratus ( sea urchin )	Strongylocentrotus_purpuratus.dat
+Strongylocentrotus_purpuratus_additional_variant	Strongylocentrotus purpuratus ( sea urchin, additional variant )	Strongylocentrotus_purpuratus.mpar.dat	
 Acromyrmex_echinatior	Acromyrmex echinatior ( Panamanian leaf-cutter ant )	Acromyrmex_echinatior.mpar.dat
 Acyrthosiphon_pisum	Acyrthosiphon pisum ( pea aphid )	Acyrthosiphon_pisum.mpar.dat
 Aedes_aegypti	Aedes aegypti ( yellow fever mosquito )	Aedes_aegypti.mpar.dat
@@ -478,8 +478,8 @@ Auricularia_subglabra	Auricularia subglabra ( basidiomycetes )	Auricularia_subgl
 Botryobasidium_botryosum	Botryobasidium_botryosum ( botryosum )	Botryobasidium_botryosum.mpar.dat
 Coniophora_puteana	Coniophora puteana ( cellar fungus, which causes a rot in wood )	Coniophora_puteana.mpar.dat
 Coprinopsis_cinerea_1	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus )	Coprinopsis_cinerea_1.dat
-Coprinopsis_cinerea_2	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus )	Coprinopsis_cinerea_2.mpar.dat
-Coprinopsis_cinerea_2	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus, additional variant )	Coprinopsis_cinerea_2.dat
+Coprinopsis_cinerea_2	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus )	Coprinopsis_cinerea_2.dat
+Coprinopsis_cinerea_2_additional_variant	Coprinopsis cinerea ( Coprinus cinereus, Coprinus macrorhizus, additional variant )	Coprinopsis_cinerea_2.mpar.dat
 Cronartium	Cronartium ( generic, Cronartium comandrae+ quercuum+ ribicola 206 genes only )	Cronartium.mpar.dat
 Cryptococcus_1	Cryptococcus ( generic, encapsulated yeast )	Cryptococcus_1.dat
 Cryptococcus_2	Cryptococcus ( generic, encapsulated yeast, additional variant )	Cryptococcus_2.dat
