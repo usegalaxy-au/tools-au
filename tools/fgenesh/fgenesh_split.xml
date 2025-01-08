@@ -7,11 +7,8 @@
     <expand macro="stdio" />
     <command><![CDATA[
 	    mkdir -p contigs &&
-	    #if $output_file_extension == "default":
-	    	split_multi_fasta.pl $input_fasta -name $filename_format -dir contigs/ 
-	    #else
-	    	split_multi_fasta.pl $input_fasta -name $filename_format -dir contigs/ -ext $output_file_extension
-	    #end if
+	  
+	    split_multi_fasta.pl $input_fasta -name $filename_format -dir contigs/ -ext $output_file_extension
 
 	    ]]></command>
     <inputs>
@@ -20,16 +17,16 @@
             	<option value="count" selected="True">sequential count</option>
             	<option value="seq_id">Use Sequence Header from the input fasta file</option>
 	    </param>
-	    <param name="output_file_extension" type="select" label="Output file extension" help="Default: fasta">
-		<option value="default" selected="True">default</option>
-                <option value="fa" >fa</option>
-                <option value="seq">seq</option>
+	    <param name="output_file_extension" type="select" label="Output file extension">
+		<option value="fa" selected="True">fa (non-masked)</option>
+		<option value="seq">Seq (non-masked)</option>
+		<option value="fa.N">fa.masked (masked)</option>
+		<option value="seq.N">Seq.masked (masked)</option>
             </param>
     </inputs>
     <outputs>
-	   <collection name="fasta_collection" type="list" label="${tool.name} on ${on_string} : split seqences">
-	      <discover_datasets pattern="(?P&lt;designation&gt;.+)" directory="contigs" format="fasta"/>
-		 <!--<discover_datasets pattern="(?P&lt;designation&gt;.*)\.fa" format="fasta" directory="outdir"/>-->
+	   <collection name="fasta_collection" type="list" label="${tool.name} on ${on_string} : split sequences">
+	      <discover_datasets pattern="(?P&lt;designation&gt;.*)" directory="contigs" format="fasta"/>
            </collection>
     </outputs>
 	
@@ -48,44 +45,26 @@
 
 **Input**
 	    
-- input file  -  Genome or de novo assembly file in FASTA format and repeat masking fasta file  
+- input file  -  Genome or de novo assembly file in FASTA format 
 
 **Command line Example:**
 
-- FGENESHPIPE/run_pipe.pl  human_prj.cfg  -l seq_1.list  -m seq_1N.list  -d results_1
+- FGENESHPIPE/split_multi_fasta.pl <file>  -name [count|seq_id] -dir output_directory -ext [fa|seq]
 
-- human_prj.cfg - a configuration file containing path to database, path gene matrix and the settings of the third party softwares
-- seq_1.list - a list of chromosome / scaffolds (unmasked)
-- seq_1N.ist - a list of chromosome / scaffolds (masked)
-- results_1 - output folder
+- file - file with multiple FASTA sequences
+- name - seq_id = use sequences IDs in filenames; count = use numbers in filenames (count starting from 1)
+- dir  - directory where to put files
+- ext  - extension for fasta files
 
-
-**Parameters:**
-
-- matrix type - built-in index or select the index from the user history
-- species matrix - select the gene matrix that matches the species of your input genome if built-in index in the matrix type is selected
-- db type - built-in database or select the database from the user history
-- reference database - fgenesh comes with Mammal DB / Non Mammal DB if built-in database in the db type is selected
-- NR db type - built-in non-redundant database or select the non-redundant database from the user history
-- NR database - select the non-redundant database for your species
-- mRNAs - map known mRNA sequences to the genomic sequences (default: No). If Yes is selected, make sure .cdna, .pro and .dat files are available in the user history.
-- ESTs - map ESTs to the genomic sequences (default: No) if Yes is selected, make sure there is ESTs fasta file available in the user history
-- Predict GC - predict genes with GC donor splice sites or not (default:No)
-- USE_READS - use reads info to improve gene models (default:No)
-- Find homologs - find homologs for ab initio predicted genes (0 - no, 1 - yes)
-- USE_PROTEINS - Using known proteins for prediction (default: No)
-- INTRONIC_GENES - Predicting genes in long introns of other genes (default: No)
 
 **Output**
 
-- txt (resn3) - raw output produced by Fgenesh
-- gff3 - gff3 file format converted from the Fgenesh resn3 file
+- a collection of fasta files
 
 **Notes:**
 
 - Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
-
-
+ 
 .. class:: infomark
 
 **Contributor**
