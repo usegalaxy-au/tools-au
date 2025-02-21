@@ -4,7 +4,8 @@
     <token name="@PROFILE@">22.05</token>
     <xml name="requirements">
          <requirements>
-             <requirement type="package" version="@TOOL_VERSION@">xnatutils</requirement>
+		<requirement type="package" version="@TOOL_VERSION@">xnatutils</requirement>
+		<requirement type="package" version="1.0.20241211">dcm2niix</requirement>
          </requirements>
     </xml>
     <xml name="datatype">
@@ -20,17 +21,15 @@
                   <param name="without_scans" type="text" label="Exclude scan identifier(s)" help="Only download from sessions that don't contain the specified scans"/>
          </section>
          <section name="convert_type" title="File conversion option" expanded="false">
-                  <param name="to_type" type="select" multiple="false" label="convert to this type">
+		  <param name="to_type" type="select" multiple="false" label="convert to this type">
+			 <option value="dicom" selected="true">dicom</option>
                          <option value="nifti">nifti</option>
-                         <option value="nifti_gz">nifti.gz</option>
-                         <option value="matrix">matrix</option>
-                         <option value="matrix_gz">matrix.gz</option>
+                         <option value="nifti_gz">nifti_gz</option>
                   </param>
          </section>
          <section name="converter_option" title="File converter option" expanded="false">
-                  <param name="converter" type="select" multiple="false" label="Select a conversion tool" help="If not provided both converters are available, dcm2niix will be used for DICOM->NIFTI conversion and mrconvert for other conversions">
+		 <param name="converter" type="select" multiple="false" label="Select a conversion tool" help="If not provided both converters are available, dcm2niix will be used for DICOM->NIFTI conversion and mrconvert for other conversions">
                          <option value="dcm2niix">dcm2niix</option>
-                         <option value="mrconvert">mrconvert</option>
                   </param>
          </section>
          <section name="opt" title="Optional options" expanded="false">
@@ -43,10 +42,6 @@
 
                   <param argument="--strip_name" type="boolean" truevalue="--strip_name" falsevalue="" label="Strip the defaul name" help="Whether to strip the default name of each dicom file to have just a number. Ex. 0001.dcm. It will work just on DICOM files, not NIFTI"/>
           </section>
-          <param name="method" type="select" multiple="false" label="Select output file type">
-                 <option value="zip">compressed - zip</option>
-                 <option value="per_file">per file</option>
-          </param>
     </xml>
     <xml name="xnat_put_option">
 	 <section name="dataset_option" title="Dataset option" expanded="false">
