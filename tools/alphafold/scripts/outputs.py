@@ -20,12 +20,11 @@ import numpy as np
 import os
 import pickle as pk
 import shutil
+import zipfile
+from matplotlib import pyplot as plt
 from pathlib import Path
 from typing import Dict, List
 
-from matplotlib import pyplot as plt
-
-# Output file paths
 OUTPUT_DIR = 'extra'
 OUTPUTS = {
     'model_pkl': OUTPUT_DIR + '/ranked_{rank}.pkl',
@@ -64,7 +63,6 @@ class Settings:
         self.workdir = None
         self.output_confidence_scores = True
         self.output_residue_scores = False
-        self.is_multimer = False
         self.parse()
 
     def parse(self) -> None:
@@ -100,6 +98,11 @@ class Settings:
             help="Plot multiple-sequence alignment coverage as a heatmap",
             action="store_true",
         )
+        parser.add_argument(
+            "--msa",
+            help="Collect multiple-sequence alignments as ZIP archives",
+            action="store_true",
+        )
         args = parser.parse_args()
         self.workdir = Path(args.workdir.rstrip('/'))
         self.output_residue_scores = args.confidence_scores
@@ -107,7 +110,9 @@ class Settings:
         self.output_model_plots = args.plot
         self.output_pae = args.pae
         self.plot_msa = args.plot_msa
+        self.collect_msas = args.msa
         self.model_preset = self._sniff_model_preset()
+        self.is_multimer = self.model_preset == PRESETS.multimer
         self.output_dir = self.workdir / OUTPUT_DIR
         os.makedirs(self.output_dir, exist_ok=True)
 
@@ -126,7 +131,7 @@ class ExecutionContext:
     """Collect file paths etc."""
     def __init__(self, settings: Settings):
         self.settings = settings
-        if settings.model_preset == PRESETS.multimer:
+        if settings.is_multimer:
             self.plddt_key = PLDDT_KEY.multimer
         else:
             self.plddt_key = PLDDT_KEY.monomer
@@ -378,6 +383,38 @@ def plot_msa(wdir: Path, dpi: int = 150):
     plt.close()
 
 
+def collect_msas(settings: Settings, multimer: bool = False):
+    """Collect MSA files into ZIP archive(s).
+
+    Metadata for each MSA is stored in a JSON file in the ZIP archive. This is
+    either pulled from the input FASTA (monomer) or from the chain_id_map.json
+    file (multimer).
+    """
+
+    def zip_dir(directory: Path):
+        chain_id = directory.with_suffix('.zip').name
+        msa_dir = settings.output_dir / 'msas'
+        msa_dir.mkdir(exist_ok=True)
+        zip_name = f"MSA-{chain_id}" if multimer else "MSA-A.zip"
+        zip_path = msa_dir / zip_name
+        with zipfile.ZipFile(zip_path, 'w') as z:
+            for path in directory.glob('*'):
+                arcname = (
+                    path.parent / path.name
+                    if multimer
+                    else path.name
+                )
+                z.write(path, arcname)
+
+    msa_dir = settings.workdir / 'msas'
+    if multimer:
+        for path in msa_dir.glob('*'):
+            if path.is_dir():
+                zip_dir(path)
+    else:
+        zip_dir(msa_dir)
+
+
 def template_html(context: ExecutionContext):
     """Template HTML file.
 
@@ -414,7 +451,9 @@ def main():
     if settings.output_residue_scores:
         write_per_residue_scores(ranking, context)
     if settings.plot_msa:
-        plot_msa(context.settings.workdir)
+        plot_msa(settings.workdir)
+    if settings.collect_msas:
+        collect_msas(settings, multimer=settings.is_multimer)
 
 
 if __name__ == '__main__':

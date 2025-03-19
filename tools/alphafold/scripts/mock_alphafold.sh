@@ -24,7 +24,8 @@ fi
 echo "Using Python interpreter: $(which python)"
 
 MODEL_PRESET=$1
-TOOL_DIRECTORY=`dirname $0`
+SCRIPTS_DIRECTORY="$(dirname $0)"
+TOOL_DIRECTORY="$(dirname $SCRIPTS_DIRECTORY)"
 REMOTE_URL=https://github.com/usegalaxy-au/tools-au/archive/refs/heads/master.zip
 ZIPFILE=master.zip
 ZIPFILE_ROOT=tools-au-master
@@ -41,19 +42,6 @@ if [ -d $test_data_dir ]; then
 else
     echo "No test data available at $test_data_dir"
     exit 0
-
-    # I don't think remote fetch makes sense in any case... if the tool is deployed we should probably be running it properly:
-
-    echo "Fetching mock outputs from $REMOTE_URL..."
-    wget -nv -O $ZIPFILE $REMOTE_URL
-    echo "Unzipping $ZIPFILE..."
-    unzip $ZIPFILE "${ZIPFILE_ROOT}/${REPO_PATH}/*"
-    echo "Moving mock outputs to $OUT..."
-    mv "${ZIPFILE_ROOT}/${REPO_PATH}/*" $OUT
-    echo "Removing zipfile..."
-    rm $ZIPFILE
-    echo "Removing temporary directory..."
-    rm -rf "${ZIPFILE_ROOT}"
 fi
 
 echo Done
