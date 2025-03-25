@@ -246,7 +246,7 @@ $outputs.msa
                         format="zip"
                         label="MSA ZIP archive"
                         optional="false"
-                        help="ZIP archive extracted from a previous AlphaFold2 job. Hint - click the breadcrumbs to pick a dataset from within a collection."
+                        help="ZIP archive extracted from a previous AlphaFold2 job. HINT - click the breadcrumbs to pick a dataset from within a collection!"
                     />
                 </repeat>
             </when>
