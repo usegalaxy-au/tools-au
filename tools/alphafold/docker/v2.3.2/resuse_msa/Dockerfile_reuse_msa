@@ -1,0 +1,7 @@
+# docker build -t neoformit/alphafold:v2.3.2_2 -f resuse_msa/Dockerfile_reuse_msa .
+
+FROM neoformit/alphafold:v2.3.2_0
+
+RUN apt update && apt install -y zip
+COPY ./reuse_msa/run_alphafold.py.patch /tmp/run_alphafold.py.patch
+RUN git patch /app/alphafold/run_alphafold.py /tmp/run_alphafold.py.patch
