@@ -17,7 +17,7 @@
       <xref type="bio.tools">alphafold_2</xref>
     </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:v2.3.2_1</container>
+        <container type="docker">neoformit/alphafold:v2.3.2_2</container>
     </requirements>
     <required_files>
         <include path="scripts/outputs.py" />
@@ -54,8 +54,8 @@
 
 ## Read MSA input -------------------------------------------------------------
 
-#if $reuse_msa.selected and $reuse_msa.msas:
-    #for msa in $reuse_msa.msas:
+#if $advanced.reuse_msa.selected and $advanced.reuse_msa.msas:
+    #for msa in $advanced.reuse_msa.msas:
         #if $model_preset.selection == 'multimer':
         && MSA_DIR=output/alphafold/msas/${msa.chain}/
         #else
@@ -121,19 +121,18 @@
         --pdb70_database_path \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb70/pdb70
         #end if
 
-        #if $reuse_msa.selected and $reuse_msa.msas:
+        #if $advanced.reuse_msa.selected and $advanced.reuse_msa.msas:
         --use_precomputed_msas
         #end if
 
         ## Galaxy-specific options --------------------------------------------
         ## See https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy
-        #if $advanced.disable_amber_relax:
-        --disable_amber_relax
-        #end if
-
         #if $advanced.limit_model_outputs:
         --output_models=$limit_model_outputs
         #end if
+
+        $advanced.disable_amber_relax
+        $advanced.exit_after_msa
         ## End Galaxy-specific options ----------------------------------------
 
 #end if
@@ -225,40 +224,6 @@ $outputs.msa
             </when>
         </conditional>
 
-        <conditional name="reuse_msa">
-            <param
-                name="selected"
-                type="boolean"
-                checked="false"
-                label="Reuse MSAs"
-                help="Reuse the multiple sequence alignments (MSAs) from a previous AlphaFold run. This can be useful if you are modelling the same protein sequence(s) again (in a different multimer complex, for example). MSA collection can be enabled below under &quot;Optional outputs&quot;."
-            />
-            <when value="true">
-                <repeat name="msas" title="MSA archive(s)" help="The order of the MSAs provided here should match the order of your FASTA sequences. e.g. if you have an 'MSA-A' (collected from a previous job), and your first FASTA sequence matches the first sequence in the original job, then you should select that MSA and label it as chain 'A'. If the MSA matches the second sequence in your current FASTA file, you should label it as 'chain B', and so on.">
-                    <param name="chain" type="select" label="Chain" help="Which chain in your query FASTA does this MSA correspond to?">
-                        <option value="A">A</option>
-                        <option value="B">B</option>
-                        <option value="C">C</option>
-                        <option value="D">D</option>
-                        <option value="E">E</option>
-                        <option value="F">F</option>
-                        <option value="G">G</option>
-                        <option value="H">H</option>
-                        <option value="I">I</option>
-                        <option value="J">J</option>
-                    </param>
-                    <param
-                        name="file"
-                        type="data"
-                        multiple="false"
-                        format="zip"
-                        label="MSA ZIP archive"
-                        optional="false"
-                        help="ZIP archive extracted from a previous AlphaFold2 job. HINT - click the breadcrumbs to pick a dataset from within a collection!"
-                    />
-                </repeat>
-            </when>
-        </conditional>
 
         <section name="advanced" title="Advanced options" expanded="false">
             <param
@@ -282,6 +247,8 @@ $outputs.msa
                 label="Disable Amber relaxation"
                 value="false"
                 optional="true"
+                truevalue="--disable_amber_relax"
+                falsevalue=""
                 help="Amber relaxation can be disabled to speed up processing time. Amber relaxation is used to refine predicted structures by removing stereochemical violations, resulting in more accurate prediction of side-chain geometry. Disabling this option with large proteins may lead to artefacts in the predicted structure. Disabling amber relax will result in the unrelaxed models being collected as PDB outputs."
             />
 
@@ -294,6 +261,52 @@ $outputs.msa
                 min="1"
                 max="5"
             />
+
+            <param
+                name="exit_after_msa"
+                type="boolean"
+                label="MSA generation only"
+                value="false"
+                optional="true"
+                truevalue="--msa-only"
+                falsevalue=""
+                help="If you only want to collect MSAs, this option will exit early. No prediction will be made."
+            />
+
+            <conditional name="reuse_msa">
+                <param
+                    name="selected"
+                    type="boolean"
+                    checked="false"
+                    label="Reuse MSAs"
+                    help="Reuse the multiple sequence alignments (MSAs) from a previous AlphaFold run. This can be useful if you are modelling the same protein sequence(s) in numerous runs (as a different multimer complex, for example), as it eliminates redundant processing and speeds up the run time. MSA collection can be enabled below under &quot;Optional outputs&quot;."
+                />
+                <when value="true">
+                    <repeat name="msas" title="MSA archive(s)" help="The order of the MSAs provided here should match the order of your FASTA sequences. e.g. if you have an 'MSA-A' (collected from a previous job), and your first FASTA sequence matches the first sequence in the original job, then you should select that MSA and label it as chain 'A'. If the MSA matches the second sequence in your current FASTA file, you should label it as 'chain B', and so on.">
+                        <param name="chain" type="select" label="Chain" help="Which chain in your query FASTA does this MSA correspond to?">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                            <option value="G">G</option>
+                            <option value="H">H</option>
+                            <option value="I">I</option>
+                            <option value="J">J</option>
+                        </param>
+                        <param
+                            name="file"
+                            type="data"
+                            multiple="false"
+                            format="zip"
+                            label="MSA ZIP archive"
+                            optional="false"
+                            help="ZIP archive extracted from a previous AlphaFold2 job. HINT - click the breadcrumbs to pick a dataset from within a collection!"
+                        />
+                    </repeat>
+                </when>
+            </conditional>
         </section>
 
         <section name="outputs" title="Optional outputs" expanded="false">
