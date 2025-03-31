@@ -2,17 +2,23 @@
     <xml name="output_pdb_models">
         <data name="model5" format="pdb" from_work_dir="output/alphafold/ranked_4.pdb" label="${tool.name} on ${on_string}: PDB ranked 4">
             <filter>advanced['limit_model_outputs'] > 4</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data name="model4" format="pdb" from_work_dir="output/alphafold/ranked_3.pdb" label="${tool.name} on ${on_string}: PDB ranked 3">
             <filter>advanced['limit_model_outputs'] > 3</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data name="model3" format="pdb" from_work_dir="output/alphafold/ranked_2.pdb" label="${tool.name} on ${on_string}: PDB ranked 2">
             <filter>advanced['limit_model_outputs'] > 2</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data name="model2" format="pdb" from_work_dir="output/alphafold/ranked_1.pdb" label="${tool.name} on ${on_string}: PDB ranked 1">
             <filter>advanced['limit_model_outputs'] > 1</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
-        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: PDB ranked 0"/>
+        <data name="model1" format="pdb" from_work_dir="output/alphafold/ranked_0.pdb" label="${tool.name} on ${on_string}: PDB ranked 0">
+            <filter>not advanced['exit_after_msa']</filter>
+        </data>
     </xml>
 
     <xml name="output_pae_csv">
@@ -25,6 +31,7 @@
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
             <filter>advanced['limit_model_outputs'] > 4</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="pae_ranked_3"
@@ -35,6 +42,7 @@
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
             <filter>advanced['limit_model_outputs'] > 3</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="pae_ranked_2"
@@ -45,6 +53,7 @@
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
             <filter>advanced['limit_model_outputs'] > 2</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="pae_ranked_1"
@@ -55,6 +64,7 @@
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
             <filter>advanced['limit_model_outputs'] > 1</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="pae_ranked_0"
@@ -64,6 +74,7 @@
         >
             <filter>outputs['pae_csv']</filter>
             <filter>model_preset != "monomer"</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -76,6 +87,7 @@
         >
             <filter>outputs['model_pkls']</filter>
             <filter>advanced['limit_model_outputs'] > 4</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="output_ranked_3_pkl"
@@ -85,6 +97,7 @@
         >
             <filter>outputs['model_pkls']</filter>
             <filter>advanced['limit_model_outputs'] > 3</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="output_ranked_2_pkl"
@@ -94,6 +107,7 @@
         >
             <filter>outputs['model_pkls']</filter>
             <filter>advanced['limit_model_outputs'] > 2</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="output_ranked_1_pkl"
@@ -103,6 +117,7 @@
         >
             <filter>outputs['model_pkls']</filter>
             <filter>advanced['limit_model_outputs'] > 1</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="output_ranked_0_pkl"
@@ -111,6 +126,7 @@
             label="${tool.name} on ${on_string}: ranked_0.pkl"
         >
             <filter>outputs['model_pkls']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -123,6 +139,7 @@
         >
             <filter>outputs['plots']</filter>
             <filter>advanced['limit_model_outputs'] > 4</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="plot_ranked_3"
@@ -132,6 +149,7 @@
         >
             <filter>outputs['plots']</filter>
             <filter>advanced['limit_model_outputs'] > 3</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="plot_ranked_2"
@@ -141,6 +159,7 @@
         >
             <filter>outputs['plots']</filter>
             <filter>advanced['limit_model_outputs'] > 2</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="plot_ranked_1"
@@ -150,6 +169,7 @@
         >
             <filter>outputs['plots']</filter>
             <filter>advanced['limit_model_outputs'] > 1</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
         <data
             name="plot_ranked_0"
@@ -158,6 +178,7 @@
             label="${tool.name} on ${on_string}: pLDDT/PAE plot ranked 0"
         >
             <filter>outputs['plots']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -169,6 +190,7 @@
             label="${tool.name} on ${on_string}: Model confidence scores"
         >
             <filter>outputs['confidence_scores']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -180,6 +202,7 @@
             label="${tool.name} on ${on_string}: MSA plot"
         >
             <filter>outputs['plot_msa']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -191,6 +214,7 @@
             label="${tool.name} on ${on_string}: Per-residue confidence scores (plddts)"
         >
             <filter>outputs['plddts']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -202,6 +226,7 @@
             label="${tool.name} on ${on_string}: relax_metrics_ranked.json"
         >
             <filter>outputs['relax_json']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -213,6 +238,7 @@
             label="${tool.name} on ${on_string}: timings.json"
         >
             <filter>outputs['timings_json']</filter>
+            <filter>not advanced['exit_after_msa']</filter>
         </data>
     </xml>
 
@@ -224,7 +250,7 @@
                 format="zip"
                 visible="false"
             />
-            <filter>outputs['msa']</filter>
+            <filter>outputs['msa'] or advanced['exit_after_msa']</filter>
         </collection>
     </xml>
 </macros>
