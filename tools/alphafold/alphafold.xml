@@ -138,6 +138,7 @@
 #end if
 
 ## Generate additional outputs ------------------------------------------------
+#if $advanced.exit_after_msa != "":
 && python3 '$__tool_directory__/scripts/outputs.py' output/alphafold
 $outputs.plddts
 $outputs.model_pkls
@@ -155,6 +156,7 @@ $outputs.msa
 ## The working directory ends up two levels deep and the visualization html page
 ## fails to load the PDB files as static assets.
 && (([ -d working ] && cp -r working/* .) || true)
+#end if
 
 && (ls -l output/alphafold/msas || true)
 && (ls -l output/alphafold/extra/msas || true)
@@ -270,7 +272,7 @@ $outputs.msa
                 optional="true"
                 truevalue="--msa-only"
                 falsevalue=""
-                help="If you only want to collect MSAs, this option will exit early. No prediction will be made."
+                help="If you only want to collect MSAs, this option will exit early. MSAs will be collected and no prediction will be made."
             />
 
             <conditional name="reuse_msa">
