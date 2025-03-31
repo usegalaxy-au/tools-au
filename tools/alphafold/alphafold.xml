@@ -392,7 +392,9 @@ $outputs.msa
 
     <outputs>
         <expand macro="output_pdb_models" />
-        <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
+        <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization">
+            <filter>not advanced['exit_after_msa']</filter>
+        </data>
         <!-- Optional outputs -->
         <expand macro="output_plddts" />
         <expand macro="output_msa_plot" />
