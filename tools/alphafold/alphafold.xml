@@ -270,7 +270,7 @@ $outputs.msa
                 label="MSA generation only"
                 value="false"
                 optional="true"
-                truevalue="--msa-only"
+                truevalue="--msa_only"
                 falsevalue=""
                 help="If you only want to collect MSAs, this option will exit early. MSAs will be collected and no prediction will be made."
             />
