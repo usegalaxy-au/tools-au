@@ -138,7 +138,7 @@
 #end if
 
 ## Generate additional outputs ------------------------------------------------
-#if $advanced.exit_after_msa != "":
+#if not $advanced.exit_after_msa:
 && python3 '$__tool_directory__/scripts/outputs.py' output/alphafold
 $outputs.plddts
 $outputs.model_pkls
