@@ -65,12 +65,6 @@
         && ln -s '$msa.file' ${msa.chain}.zip
         && unzip ${msa.chain}.zip -d \$MSA_DIR
     #end for
-
-    && echo "Extracted MSAs:"
-    && ls -l output/alphafold/msas
-    #if $model_preset.selection == 'multimer':
-    && ls -l output/alphafold/msas/*
-    #end if
 #end if
 
 
@@ -138,7 +132,6 @@
 #end if
 
 ## Generate additional outputs ------------------------------------------------
-#if not $advanced.exit_after_msa:
 && python3 '$__tool_directory__/scripts/outputs.py' output/alphafold
 $outputs.plddts
 $outputs.model_pkls
@@ -146,7 +139,9 @@ $outputs.pae_csv
 $outputs.plots
 $outputs.plot_msa
 $outputs.msa
+$advanced.exit_after_msa
 
+#if not $advanced.exit_after_msa:
 ## HTML output
 && mkdir -p '${ html.files_path }'
 && cp output/alphafold/extra/alphafold.html '${html}'
@@ -157,9 +152,6 @@ $outputs.msa
 ## fails to load the PDB files as static assets.
 && (([ -d working ] && cp -r working/* .) || true)
 #end if
-
-&& (ls -l output/alphafold/msas || true)
-&& (ls -l output/alphafold/extra/msas || true)
 
     ]]></command>
     <stdio>
@@ -517,7 +509,7 @@ $outputs.msa
     |
 
 
-    **Input**
+    **Inputs**
 
     *Amino acid sequence*
 
@@ -599,6 +591,29 @@ $outputs.msa
     *timings.json (optional)*
 
     | A JSON-formatted text file containing the timings for each phase of the prediction.
+    |
+    |
+
+    *MSAs (optional)*
+
+    | A collection of multiple sequence alignments (MSAs) in ZIP format.
+    | For each sequence in the input FASTA file, a separate ZIP archive will be created and labelled in alphabetical sequence (e.g. A, B, C) with respect to the position of the sequence in the query FASTA file.
+    | If "MSAs only" is selected, this output will be collected automatically.
+    |
+    |
+
+    **Advanced features**
+
+    *Reusing MSAs*
+
+    | You can now re-use multiple sequence alignments (MSAs) from a previous AlphaFold run to speed up processing time. This is only useful if you wish to compute models for the same protein multiple times, for example in a one-to-many series of multimers. In these cases, the MSA for a given protein chain can be computed once and then re-used in subsequent jobs. To do this, you must begin by enabling the "Multiple sequence alignments (MSAs)" output in the "Optional outputs" section. This should result in a collection of ZIP archives being collected as an output.
+    |
+    | Once you have a collection of MSAs that you can re-use, you can then select "Reuse MSAs" in the "Advanced options" section. This will allow you to select the MSA ZIP archive(s) from your history. It is important that you select an MSA archive corresponding to a specific chain in your input FASTA file. If your MSA archive relates to the first chain in your FASTA file, you should select position "A". If your MSA archive relates to the second chain in your FASTA file, you should select position "B", and so on. Note that an MSA archive labelled MSA-A corresponds to the sequence order in the generating run. This does not necessarily correspond to the current run! Be sure to check the order of your sequences/chains. To avoid confusion here, you could re-label the MSA archives in your History to match the name of the protein/chain they were generated for.
+    |
+
+    *MSA-only mode*
+
+    | To speed up generation of MSAs, you can run AlphaFold in "MSA generation only" mode, available under "Advanced options". Use this mode if you only want to MSAs and don't want to waste time computing a model. If you have a list of MSAs that you want to generate, you can put them all into one FASTA file and submit them as an MSA-only job in multimer mode. This will result in a collection of MSA archives - one for each sequence provided. To make things less confusing when you come to reuse these MSAs, you may wish to rename each archive in the collection to match the corresponding protein/chain in your input FASTA file - this makes it easy to select the right one when you come to reuse them in a later job!
     |
     |
 

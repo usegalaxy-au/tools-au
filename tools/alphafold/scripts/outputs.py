@@ -103,6 +103,11 @@ class Settings:
             help="Collect multiple-sequence alignments as ZIP archives",
             action="store_true",
         )
+        parser.add_argument(
+            "--msa_only",
+            help="Alphafold generated MSA files only - skip all other outputs",
+            action="store_true",
+        )
         args = parser.parse_args()
         self.workdir = Path(args.workdir.rstrip('/'))
         self.output_residue_scores = args.confidence_scores
@@ -114,6 +119,7 @@ class Settings:
         self.model_preset = self._sniff_model_preset()
         self.is_multimer = self.model_preset == PRESETS.multimer
         self.output_dir = self.workdir / OUTPUT_DIR
+        self.msa_only = args.msa_only
         os.makedirs(self.output_dir, exist_ok=True)
 
     def _sniff_model_preset(self) -> bool:
@@ -125,6 +131,7 @@ class Settings:
                 if '_ptm_' in path.name:
                     return PRESETS.monomer_ptm
                 return PRESETS.monomer
+        return PRESETS.monomer
 
 
 class ExecutionContext:
@@ -383,7 +390,7 @@ def plot_msa(wdir: Path, dpi: int = 150):
     plt.close()
 
 
-def collect_msas(settings: Settings, multimer: bool = False):
+def collect_msas(settings: Settings):
     """Collect MSA files into ZIP archive(s).
 
     Metadata for each MSA is stored in a JSON file in the ZIP archive. This is
@@ -391,28 +398,30 @@ def collect_msas(settings: Settings, multimer: bool = False):
     file (multimer).
     """
 
-    def zip_dir(directory: Path):
+    def zip_dir(directory: Path, is_multimer):
         chain_id = directory.with_suffix('.zip').name
         msa_dir = settings.output_dir / 'msas'
         msa_dir.mkdir(exist_ok=True)
-        zip_name = f"MSA-{chain_id}" if multimer else "MSA-A.zip"
+        zip_name = f"MSA-{chain_id}" if is_multimer else "MSA-A.zip"
         zip_path = msa_dir / zip_name
         with zipfile.ZipFile(zip_path, 'w') as z:
             for path in directory.glob('*'):
                 arcname = (
                     path.parent / path.name
-                    if multimer
+                    if is_multimer
                     else path.name
                 )
                 z.write(path, arcname)
 
+    print("Collecting MSA archives...")
     msa_dir = settings.workdir / 'msas'
-    if multimer:
+    is_multimer = (msa_dir / 'A').exists()
+    if is_multimer:
         for path in msa_dir.glob('*'):
             if path.is_dir():
-                zip_dir(path)
+                zip_dir(path, is_multimer)
     else:
-        zip_dir(msa_dir)
+        zip_dir(msa_dir, is_multimer)
 
 
 def template_html(context: ExecutionContext):
@@ -434,26 +443,27 @@ def template_html(context: ExecutionContext):
 def main():
     """Parse output files and generate additional output files."""
     settings = Settings()
-    context = ExecutionContext(settings)
-    ranking = ResultRanking(context)
-    write_confidence_scores(ranking, context)
-    rekey_relax_metrics(ranking, context)
-    template_html(context)
+    if not settings.msa_only:
+        context = ExecutionContext(settings)
+        ranking = ResultRanking(context)
+        write_confidence_scores(ranking, context)
+        rekey_relax_metrics(ranking, context)
+        template_html(context)
 
-    # Optional outputs
-    if settings.output_model_pkls:
-        rename_model_pkls(ranking, context)
-    if settings.output_model_plots:
-        plddt_pae_plots(ranking, context)
-    if settings.output_pae:
-        # Only created by monomer_ptm and multimer models
-        extract_pae_to_csv(ranking, context)
-    if settings.output_residue_scores:
-        write_per_residue_scores(ranking, context)
-    if settings.plot_msa:
-        plot_msa(settings.workdir)
-    if settings.collect_msas:
-        collect_msas(settings, multimer=settings.is_multimer)
+        # Optional outputs
+        if settings.output_model_pkls:
+            rename_model_pkls(ranking, context)
+        if settings.output_model_plots:
+            plddt_pae_plots(ranking, context)
+        if settings.output_pae:
+            # Only created by monomer_ptm and multimer models
+            extract_pae_to_csv(ranking, context)
+        if settings.output_residue_scores:
+            write_per_residue_scores(ranking, context)
+        if settings.plot_msa:
+            plot_msa(settings.workdir)
+    if settings.collect_msas or settings.msa_only:
+        collect_msas(settings)
 
 
 if __name__ == '__main__':
