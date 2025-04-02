@@ -1,7 +1,8 @@
 <macros>
-    <!-- UPDATING: pull the latest container and check the version. Update both tokens. You MUST also update the model list. See README.md for more.  -->
-    <token name="@VERSION@">0.8.2+6b413c9</token>
-    <token name="@CONTAINER_HASH@">ae1d5e75f94041e4fd7af4a7ed6e6432b0eaea29</token>
+    <!-- UPDATING: pull the latest container and check the version. Update both tokens. You MUST
+    also update the model list. See README.md for more.  -->
+    <token name="@VERSION@">0.9.1+c8c2c9f</token>
+    <token name="@CONTAINER_HASH@">3d64678bdcbb70971ee56891c01b9902eab9deea</token>
     <xml name="requirements">
         <requirements>
             <container type="docker">nanoporetech/dorado:sha@CONTAINER_HASH@</container>
@@ -16,11 +17,11 @@
         <citations>
             <citation type="bibtex">
                 @misc{dorado,
-                    title = {Dorado},
-                    author = {{Oxford Nanopore}},
-                    year = {2024},
-                    url = {https://github.com/nanoporetech/dorado/},
-                    }
+                title = {Dorado},
+                author = {{Oxford Nanopore}},
+                year = {2024},
+                url = {https://github.com/nanoporetech/dorado/},
+                }
             </citation>
         </citations>
     </xml>
