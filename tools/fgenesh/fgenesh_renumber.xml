@@ -1,0 +1,142 @@
+<tool id="fgenesh_renumber" name="FGENESH reheader" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>rename fasta sequence header</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	  
+	    seq_renumber.pl 
+	    -i $input_fasta
+	    #if $check == '':
+	    	-o $output_fasta
+	    #end if
+	    #if $method == 'fuse':
+	    	-fuse
+	    #elif $method == 'insert':
+	    	-insert
+	    #elif $method == 'replace':
+	    	-replace
+	    #elif $method == 'count':
+	    	-count
+	    #elif $method == 'remove':
+	    	-remove
+	    #end if
+	    #if $check
+	    	--check > $statistic && 2>&1
+	    #end if
+
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
+	    <param name="check" argument="--check" type="boolean" checked="false" truevalue="--check" falsevalue="" label="check unique sequence IDs" />
+	    <param name="method" type="select" label="select a reheader option" help="check and reheader option are used mutually exclusive">
+		<option value="none" selected="true">None</option>
+		<option value="fuse">fuse - unique number with original seq_ID with underscore (--fuse)</option>
+	        <option value="insert">insert - insert unique number before original seq_ID (--insert)</option>
+	        <option value="replace">replace - replace original seq ID with unique number (--replace)</option>
+	        <option value="count">count - replace whole definition line with unique number (--count)</option>
+ 	        <option value="remove">remove - remove seq ID definition line (--remove)</option>
+	    </param>
+    </inputs>
+    <outputs>
+	    <data name="output_fasta" format="fasta" label="${tool.name} on ${on_string}: fasta reheader">
+		<filter>check is False</filter>
+	    </data>
+	    <data name="statistic" format="txt" label="${tool.name} on ${on_string}: check summary">
+	    	<filter>check</filter>
+	    </data>
+    </outputs>
+	
+    <tests>
+	 <test>
+		<!-- #1 test -->
+            <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
+            <param name="method" value="fuse"/>
+            <output name="output_fasta" file="ngasp_mrna_fuse.fa" ftype="fasta"/>
+    	</test>
+         <test>
+                <!-- #2 test -->
+            <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
+            <param name="method" value="insert"/>
+            <output name="output_fasta" file="ngasp_mrna_insert.fa" ftype="fasta"/>
+        </test>
+         <test>
+                <!-- #3 test -->
+            <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
+            <param name="method" value="replace"/>
+            <output name="output_fasta" file="ngasp_mrna_replace.fa" ftype="fasta"/>
+        </test>
+         <test>
+                <!-- #4 test -->
+            <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
+            <param name="method" value="count"/>
+            <output name="output_fasta" file="ngasp_mrna_count.fa" ftype="fasta"/>
+        </test>
+         <test>
+                <!-- #5 test -->
+            <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
+            <param name="method" value="remove"/>
+            <output name="output_fasta" file="ngasp_mrna_remove.fa" ftype="fasta"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*This tool is part of Fgenesh genome annotation suit and is used to rename the fasta sequence (i.e trinity) header*
+
+**Input**
+	    
+- input file  -  a de novo assembled transcriptome file in FASTA file format. 
+
+**Command line Example:**
+
+- seq_renumber.pl <file> -i <seq_file_in> [-o <seq_file_out>]
+
+- seq_file_in - file with multiple FASTA sequences
+
+**Options**
+
+- check  - check if sequence IDs are unique or not
+- fuse   - fuse unique number with original seq_ID (with '_') (by default)
+- insert - insert unique number before original seq_ID
+- replace- replace original seq_ID with unique number
+- count  - replace whole definition line with unique number
+- remove - remove seq_ID from definition line
+
+**Output**
+
+- a fasta file with header renamed.
+
+
+**Example how seqID is changed by different methods:**
+
+- >TRINITY_DN64_c0_g1_i1 len=845 ...    # original can be changed to the followings with different options
+	
+- fuse    - >1_TRINITY_DN64_c0_g1_i1 len=845 ...
+- insert  - >1 TRINITY_DN64_c0_g1_i1 len=845 ...
+- replace - >1 len=845 ... 
+- count   - >1
+- remove  - >len=845 ...
+
+
+
+
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>

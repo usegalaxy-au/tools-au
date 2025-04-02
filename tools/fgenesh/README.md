@@ -11,3 +11,6 @@ Requirements to run fgenesh on Galaxy.
 7) append the tool_data_table_conf.xml to tool_data_table_config_path in galaxy.xml
 
 Supported Species is based on the species offered in the gene matrix by Softberry
+
+## Tool versions
+Fgenesh tools wrapped for Galaxy is using Fgenesh v2024.2.

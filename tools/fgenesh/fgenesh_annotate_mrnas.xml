@@ -1,0 +1,239 @@
+<tool id="fgenesh_annotate_mrna" name="FGENESH annotate mRNA" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>sequences</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	  
+	    mrnas_annot.pl 
+	    -i $input_fasta 
+	    #if $tool_option.tool == "bestorf":
+	    	-p bestorf
+	    	-par $tool_option.matrix_type.own_file
+	    	-atg $tool_option.atg
+	    	-stop $tool_option.stop
+		-add_score $tool_option.add_score
+	    #elif $tool_option.tool == "maxorf"
+	    	-p maxorf
+	    	-polya:$tool_option.polya
+	    	-polya_thr:$tool_option.polya_thr
+	    	-min_orf:$tool_option.min_orf
+		#if $tool_option.no_atg:
+	    	    $tool_option.no_atg
+	    	#end if
+	    	#if $tool_option.all and $tool_option.top == 1:
+		    -all
+	    	#end if
+	    	#if $tool_option.top > 1:
+		    -top:$tool_option.top
+	    	#end if
+	    	#if $tool_option.incomplete_orfs != 'none':
+			$tool_option.incomplete_orfs
+	    	#end if
+		-sort:$tool_option.sort
+	    #end if
+	    -cov $common_option.cov
+	    -strand:$common_option.strand
+	    -min_cds:$common_option.min_cds
+	    -stop_in_cds:$common_option.stop_in_cds
+	    #if $common_option.chr_format.selector == 'chr_name':
+	    	-chr_name $common_option.chr_format.chrname
+	    #elif $common_option.chr_format.selector == 'chr_code' :
+	    	-chr_code $common_option.chr_format.chrcode
+	    #end if
+
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
+	    <conditional name="tool_option">
+	    	<param name="tool" type="select" label="program to predict ORFs" help="default: bestorf">
+                	<option value="bestorf" selected="True">bestorf</option>
+                	<option value="maxorf">maxorf</option>
+            	</param>
+		<when value="bestorf">
+			<param argument="-atg" type="integer" value="1" label="CDS must start with ATG in predicted ORFs" help="default: 1; 0 = without ATG, 1 = with ATG" />
+            		<param argument="-stop" type="integer" value="1" label="CDS must end with STOP codon in predicted ORFs" help="default: 1; 0 = without STOP codon, 1 = with STOP codon" />
+			<param argument="-add_score" type="integer" value="1" label="use additional score (prefer longer ORFs)" help="default: 1; 0 = disable, 1 = prefer longer ORFs" />
+		        <conditional name="matrix_type">
+                		<param name="matrix_type_selector" type="select" label="Select matrix type" help="Select matrix for your species">
+                         		<option value="indexed" selected="true">Use a built-in index</option>
+                         		<option value="history">Use one from the history</option>
+                  		</param>
+                  		<when value="indexed">
+                         		<param name="species_matrix" type="select" label="Select a species matrix" help="If your species of interest is not listed, contact your Galaxy admin">
+                          		<options from_data_table="fgenesh_matrix">
+                              			<filter type="sort_by" column="2"/>
+                              			<validator type="no_options" message="No indexes are available for the selected input dataset"/>
+                           		</options>
+                        		 </param>
+                  		</when>
+                  		<when value="history">
+                       			<param name="own_file" type="data" format="txt" label="Select species matrix" />
+                  		</when>
+            		</conditional>
+
+		</when>
+		<when value="maxorf">
+            		<param argument="-min_orf" type="integer" value="100" label="minimal ORF length (in aa)" help="set to minimal CDS length by default (100); if you are sure that sequences are full-length mRNAs, you can lower the default threshold to (i.e -min_cds:70)"/>
+			<param name="incomplete_orfs" type="select" label="allow prediction of incomplete ORFs(with no ATG and/or no STOP">
+				<option value="none" selected="true">None</option>
+				<option value="-allow_incomplete_orfs">allow_incomplete_orfs</option>
+				<option value="-allow_incomplete_5_orfs">allow_incomplete_5_orfs</option>
+				<option value="-allow_incomplete_3_orfs">allow_incomplete_3_orfs</option>
+			</param>
+			<param argument="-no_atg" type="boolean" checked="false" truevalue="-no_atg" falsevalue=""  label="allow prediction of ORFs with no ATG" help="default: 1; 0 = without ATG, 1 = with ATG" />
+			<param argument="-top" type="integer" value="1" label="print N longest ORFs" help="default: 1" />
+			<param argument="-all" type="boolean" checked="false" truevalue="true" falsevalue="" label="print all predicted ORFs" />
+			<param argument="-polya" type="integer" value="1" label="use polyA tail" help="use polyA tail as a hint to define mRNA strand (direct or reverse); use 0 for both strand; default:1"/>
+			<param argument="-polya_thr" type="integer" value="5" label="number nucloetides in poly tails" help="number of As/Ts at the end of mRNA to consider as polyA tail; default:5"/>
+			<param name="sort" type="select" label="sort ORFs in the output">
+				<option value="coord">sort by coordinates</option>
+                                <option value="frame" selected="true">sort by frame and coordinates (default)</option>
+                                <option value="len">sort by length</option>
+			</param>
+			<param name="out_format" type="select" label="print output in bestorf or maxorf format" help="default: bestorf">
+				<option value="bestorf" selected="true">bestorf</option>
+				<option value="maxorf">maxorf</option>
+			</param>
+		</when>
+	    </conditional>
+	    <section name="common_option" title="common parameter">
+           	<param argument="-cov" type="integer" value="0" label="minimal coverage" help="minimal coverage of mRNA by ORF(CDS) length (from 0 to 1); default 0" />
+           	<param argument="-check" type="integer" value="1" label="check mRNAs" help="post-annotational check for mRNAs 0 or 1; default: 1" />
+           	<param argument="-strand" type="integer" value="2" label="predict ORFs" help="predict ORFs on stand 0 for plus stand, 1 for minus strand, 2 for both strand; default: 2" />
+           	<param argument="-min_cds" type="integer" value="100" label="minimal CDS length" help="default:100; short CDS value will lead to the reate of false positive increase"/>
+		<param argument="-stop_in_cds" type="integer" value="1" label="include STOP codon in CDS / ORF coordinates" help="default:1; 1 - include CDS or ORF coordinates, 2 - exclude CDS or ORF coordinates"/>
+		<conditional name="chr_format">
+			<param name="selector" type="select" label="select chromosome type" help="all mRNA sequences will be used if None is selected">
+				<option value="na" selected="true">None</option>
+				<option value="chr_name">use chromosome name</option>
+				<option value="chr_code">use chromosome code</option>
+			</param>
+			<when value="na">
+			</when>
+			<when value="chr_name">
+				<param name="chrname" type="text" value="chr22" label="provide chromosome name with prefix (i.e chr22)" help="chromosome name with prefix (i.e chr)"/>	
+			</when>
+			<when value="chr_code">
+				<param name="chrcode" type="text" value="22" label="provide chromosome name without prefix (i.e 22)" help="chromosome name without prefix (i.e chr)"/>
+			</when>
+		 </conditional>
+	    </section>
+    </inputs>
+    <outputs>
+	  <data name="output_mrna_fasta" format="fasta" label="${tool.name} on ${on_string}: full-length mRNAs (based on predicted ORFs)" from_work_dir="*.mrna.fa"/>
+	  <data name="output_protein_fasta" format="fasta" label="${tool.name} on ${on_string}: proteins (CDS translation) for full-length mRNAs" from_work_dir="*.protein.fa"/>
+	  <data name="output_bestorf_prediction" format="txt" label="${tool.name} on ${on_string}: ORF prediction for mRNAs with bestorf" from_work_dir="*.bestorf">
+	  	<filter>tool_option['tool'] == 'bestorf'</filter>
+	  </data>
+          <data name="output_maxorf_prediction" format="txt" label="${tool.name} on ${on_string}: maxorf output (ORF predictions) for mRNAs" from_work_dir="*.maxorf">
+                <filter>tool_option['tool'] == 'maxorf'</filter>
+	  </data>
+          <data name="output_rna_fasta" format="txt" label="${tool.name} on ${on_string}: partial mRNAs (with no ORF prediction)" from_work_dir="*.rna.fa">
+                <filter>tool_option['tool'] == 'maxorf'</filter>
+          </data>
+          <data name="log" format="txt" label="${tool.name} on ${on_string}: log file" from_work_dir="*.log"/>			
+    </outputs>
+	
+    <tests>
+	 <test>
+	    <!-- #1 test -->
+	    <param name="input_fasta" value="chr22.trinity.mrna.fa"/>
+	    <conditional name="tool_option">
+	    	<param name="tool" value="bestorf"/>
+	    </conditional>
+	    <conditional name="matrix_type">
+	    	<param name="matrix_type_selector" value="history"/>
+		<param name="own_file" value="Human"/>
+	    </conditional>
+	    <output name="output_mrna_fasta" value="chr22.trinity.mrna.mrna.fa"/>
+	    <output name="output_protein_fasta" value="chr22.trinity.mrna.protein.fa"/>
+	    <output name="output_bestorf_prediction" value="chr22.trinity.mrna.mrna.bestorf" lines_diff="2774">
+		   <assert_contents>
+			   <has_n_lines n="30332"/>
+                   </assert_contents>
+	    </output>
+	    <output name="log" value="chr22.trinity.mrna.log"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*This tool is part of Fgenesh Genome Annotation suit. Predict ORFs and annotate transcripts*
+
+**Input**
+	    
+- input file  -  a de novo assembled transcriptome file in FASTA file format. 
+
+**Command line Example:**
+
+- mrnas_annot.pl <file> -i <seq_file_in> [-o <seq_file_out>]
+
+- seq_file_in - file with multiple FASTA sequences
+
+**Options**
+
+- program  - bestorf or maxorf (default: bestorf)
+- par   - for file with paramters for 'bestorf'
+- cov - minimal coverage of mRNA by ORF (CDS) length (from 0 to 1)
+- chr (chr_name) - chromosome name (chr22, chrX, etc.) or 'na'
+- code (chr_code) - chromosome code (number, X, Y, etc.) or 'na'
+- check - post-annotational check for mRNAs (1 by default)
+- strand - predict ORFs in + strand (0), - strand (1) or both (2) (2 by default)
+- min_cds:<LEN) - minimal CDS length (in aa) (100 by default) - do not make it too low otherwise rate of false positive increase
+- stop_in_cds - include STOP codon in CDS / ORF coordinates (1) or not (0) (1 by default)
+- polya	- use polyA tail as a hint to define mRNA strand (direct or reverse) (1 by default); option is used only when predicting ORFs in both strands
+- polya_hint - same as polyhint:0|1
+- polya_thr:<N: - number As at the end of mRNA to consider it as polyA tail (5 by default); number of Ts at the start in reverse strand
+
+**Output**
+
+- a fasta file with header renamed.
+
+
+**Fgenesh definition line**
+
+*FASTA file with full-length mRNAs have special format for definition lines with the following fields:*
+
+- # len = 845  atg = 283  stop = 711  target = chr22
+
+*where*
+
+- len    - length of mRNA
+- atg    - first coordinate of ATG
+- stop   - last  coordinate of STOP codon
+- target - chromosome to which this mRNA belongs or 'na'
+
+**Note:**
+
+- 'target' field is optional (it is assumed 'target = na' if it is absent)
+
+
+**Examples of deflines:**
+
+- >1_TRINITY_DN64_c0_g1_i1 len=845 path=[0:0-531 1:532-546 2:547-621 3:622-699 5:700-844]  # len = 845  atg = 283  stop = 711
+- >1_TRINITY_DN64_c0_g1_i1 len=845 path=[0:0-531 1:532-546 2:547-621 3:622-699 5:700-844]  # len = 845  atg = 283  stop = 711  target = na
+- >1_TRINITY_DN64_c0_g1_i1 len=845 path=[0:0-531 1:532-546 2:547-621 3:622-699 5:700-844]  # len = 845  atg = 283  stop = 711  target = chr22
+
+
+
+
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
