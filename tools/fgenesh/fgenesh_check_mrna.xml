@@ -1,0 +1,164 @@
+<tool id="fgenesh_check" name="FGENESH check" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>validate definition lines in full-length mRNAs file</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    check_mrnas.pl 
+	    $mrnas_fasta 
+	    #if $qc.pass:
+	    	-o $pass_fasta
+	    #end if
+	    #if $qc.fail:
+	    	-e $error_fasta
+	    #end if
+	    #if $compare.option.type == 'make_protein':
+		-make_prot $protein_fasta	
+	    #end if
+	    #if $compare.option.type == 'compare_mrna':
+	        -compare $compare.option.input_compare_mRNAs  > '$compare_result'
+	    #end if
+	    && 2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="mrnas_fasta" type="data" format="fasta" label="Fasta file"/>
+	    <param argument="-col" type="integer" value="80" label="columns number for the output fasta file" help="default:80" />
+	    <section name="compare" title="Compare mRNAs">
+		<conditional name="option">
+		   <param name="type" type="select" label="option" help="">
+		      <option value="none" selected="true">None</option>
+		      <option value="compare_mrna">compare input sequence to mRNAs sequence</option>
+		      <option value="make_protein">create translated protein sequence from mRNAs</option>	      
+	           </param>
+		   <when value="none">
+	           </when>
+		   <when value="compare_mrna">
+			<param name="input_compare_mRNAs" type="data" format="fasta" label="compare translated proteins with mRNAs" help="--compare" />
+		   </when>
+		   <when value="make_protein">
+		   </when>
+                </conditional>
+	     </section>
+            <section name="qc" title="Output option">
+                <param name="pass" type="boolean" checked="true" truevalue="true" falsevalue="" label="create sequences without error in fasta file" help="pass" />
+                <param name="fail" type="boolean" checked="false" truevalue="true" falsevalue="" label="create sequences with error in fasta file" help="fail" />
+		<!--<param name="make_prot" type="boolean" checked="false" truevalue="true" falsevalue="" label="create protein sequence" help="make_prot" /> -->
+            </section>
+    </inputs>
+    <outputs>
+	   <data name="pass_fasta" format="fasta" label="${tool.name} on ${on_string}: fasta pass ">
+		  <filter>qc['pass']</filter>
+	   </data>
+	   <data name="error_fasta" format="fasta" label="${tool.name} on ${on_string}: fasta error">
+		  <filter>qc['fail']</filter>
+	   </data>
+	   <data name="protein_fasta" format="fasta" label="${tool.name} on ${on_string}: tranlsated protein from mRNAs">
+		  <filter>compare['option']['type'] == 'make_protein'</filter>
+	   </data>
+	   <data name="compare_result" format="txt" label="${tool.name} on ${on_string}: compare result">
+		  <filter>compare['option']['type'] == 'compare_mrna'</filter>
+	   </data>
+    </outputs>
+	
+    <tests>
+	<!-- #1 test -->
+	<test>
+            <param name="mrnas_fasta" value="ngasp.mrna.fa"/>
+	    <param name="pass" value="true"/>
+            <output name="pass_fasta" file="ok.mrna.fa"/>
+    	</test>
+	<!-- #2 test -->
+	<test>
+            <param name="mrnas_fasta" value="ngasp.mrna.fa"/>
+            <param name="type" value="make_protein"/>
+            <output name="protein_fasta" file="ngasp.protein.fa"/>
+    	</test>
+        <!-- #3 test -->
+	<!--<test>
+            <param name="mrnas_fasta" value="ngasp.mrna.fa"/>
+	    <param name="type" value="compare_mrna"/>
+	    <param name="input_compare_mRNAs" value="ngasp.protein.fa"/>
+            <output name="compare_result" ftype="txt" value="compare.log">
+                <assert_contents>
+                    <has_size value="310" delta="1000"/>
+                </assert_contents>
+            </output>
+	</test> -->
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*This tool is part of Fgenesh genome annotation suit and is used to checks for the right format of mRNA definition line (deflines). It also checks that mRNAs are annotated without errors, i.e the following condition are met: 1) right ATG and STOP codon coordinates; 2) ORF length is divided by 3; 3) protein translated from mRNAs with protein from that file.*
+
+**Input**
+	    
+- input file  -  a de novo assembled transcriptome file in FASTA file format. 
+
+**Command line Example:**
+
+- check_mrnas.pl <seq_file_in>
+
+- seq_file_in - file with multiple FASTA sequences
+
+**Options**
+
+- o <mrna_file_ok> - file of mRNAs with correct annotation (error free)
+- e <mrna_file_err> - file of mRNAs with errors in annotation
+- col <N> - columns for proteins in output file (default: 80)
+- make_prot <protein_file>- output file for proteins translated from mRNAs
+- compare <protein_file>  - compare protein translated from mRNAs with protein from this file
+
+**Output**
+
+- error free output mrna
+- error output mrna
+
+
+**FGENESH Definition lines**
+
+*Fgenesh++ expects definition lines for full-length mRNAs to have the following fields at the end after the '#' character.*
+
+- # len = 845  atg = 283  stop = 711  target = chr22
+
+*where*
+
+- len    - length of mRNA
+- atg    - first coordinate of ATG
+- stop   - last  coordinate of STOP codon
+- target - chromosome to which this mRNA belongs or 'na'
+
+**Note:** 
+*'target' field is optional (it is assumed 'target = na' if it is absent)*
+
+
+*Examples of deflines:*
+
+- >1_TRINITY_DN64_c0_g1_i1 len=845 path=[0:0-531 1:532-546 2:547-621 3:622-699 5:700-844]  # len = 845  atg = 283  stop = 711
+- >1_TRINITY_DN64_c0_g1_i1 len=845 path=[0:0-531 1:532-546 2:547-621 3:622-699 5:700-844]  # len = 845  atg = 283  stop = 711  target = na
+- >1_TRINITY_DN64_c0_g1_i1 len=845 path=[0:0-531 1:532-546 2:547-621 3:622-699 5:700-844]  # len = 845  atg = 283  stop = 711  target = chr22
+
+
+- >NP_000375.1 NM_000384 apolipoprotein B (including Ag(x) antigen) (APOB), mRNA.  # len = 14121  atg = 129  stop = 13820  target = chr2
+- >NP_000375.1 NM_000384 apolipoprotein B (including Ag(x) antigen) (APOB), mRNA.  # len = 14121  atg = 129  stop = 13820  target = na
+- >NP_000375.1 NM_000384 apolipoprotein B (including Ag(x) antigen) (APOB), mRNA.  # len = 14121  atg = 129  stop = 13820
+
+
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>

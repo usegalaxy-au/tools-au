@@ -1,12 +1,10 @@
 <macros>
-    <token name="@TOOL_VERSION@">1.0.0</token>
-    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@TOOL_VERSION@">v2024.2</token>
+    <token name="@VERSION_SUFFIX@">1</token>
     <token name="@PROFILE@">22.05</token>
-    <token name="@VERSION@">2.13.0</token>
-    <token name="@DIGEST@">3e414082c1a12393ab10b1bc4e22de540397fef626840945824a76f6d62def6b</token>
     <xml name="requirements">
         <requirements>
-	      <container type="docker">wthang/genomepannotation:v2</container>
+	      <container type="docker">wthang/genomepannotation:@TOOL_VERSION@</container>
         </requirements>
     </xml>
     <xml name="stdio">

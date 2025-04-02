@@ -1,0 +1,10 @@
+
+Number of mRNAs (overall)                   :   253
+Number of mRNAs with correct   annotation   :   253
+Number of mRNAs with errors in annotation   :     0
+Number of mRNAs with different proteins (*) : 0
+
+(*) proteins translated from mRNAs that differ
+    from those provided with -compare ngasp.protein.fa
+
+
