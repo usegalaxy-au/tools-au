@@ -613,7 +613,7 @@ $advanced.exit_after_msa
 
     *MSA-only mode*
 
-    | To speed up generation of MSAs, you can run AlphaFold in "MSA generation only" mode, available under "Advanced options". Use this mode if you only want to MSAs and don't want to waste time computing a model. If you have a list of MSAs that you want to generate, you can put them all into one FASTA file and submit them as an MSA-only job in multimer mode. This will result in a collection of MSA archives - one for each sequence provided. To make things less confusing when you come to reuse these MSAs, you may wish to rename each archive in the collection to match the corresponding protein/chain in your input FASTA file - this makes it easy to select the right one when you come to reuse them in a later job!
+    | To speed up generation of MSAs, you can run AlphaFold in "MSA generation only" mode, available under "Advanced options". Use this mode if you only want to obtain MSAs and don't want to waste time computing a model. If you have a list of MSAs that you want to generate, you can put them all into one FASTA file and submit them as an MSA-only job in multimer mode. This will result in a collection of MSA archives - one for each sequence provided. To make things less confusing when you come to reuse these MSAs, you may wish to rename each archive in the collection to match the corresponding protein/chain in your input FASTA file - this makes it easy to select the right one when you come to reuse them in a later job!
     |
     |
 
