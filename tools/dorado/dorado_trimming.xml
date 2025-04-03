@@ -13,6 +13,7 @@ ln -s '$reads' ./reads
 
 dorado trim
 --verbose
+--sequencing-kit '${sequencing_kit}'
 --threads "\${GALAXY_SLOTS}"
 #if $trim_primers.no_trim_primers == 'dont_trim'
     --no-trim-primers
@@ -32,6 +33,9 @@ trimmed.bam
         ]]></command>
     <inputs>
         <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Existing, basecalled DNA dataset" help="Note: this tool does not support trimming adaptors from RNA reads. These need to be removed during basecalling."/>
+        <param type="select" argument="--sequencing-kit" optional="false" label="Sequencing kit that was used for the experiment." help="Dorado determines which adapter and primer sequences to search for and trim based on the sequencing-kit specified. Note that by default the dorado software only supports adapter and primer trimming for kit14 sequencing kits.">
+            <expand macro="sequencing_kits"/>
+        </param>
         <conditional name="trim_primers">
             <param argument="--no-trim-primers" type="select" label="Enable primer trimming" help="Selecting 'No' prevents the trimming of primer sequences. In this case only adapter sequences will be trimmed.">
                 <option value="trim" selected="true">Yes</option>
@@ -50,6 +54,7 @@ trimmed.bam
     <tests>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
+            <param name="sequencing_kit" value="SQK-LSK109"/>
             <output name="out_bam" ftype="unsorted.bam">
                 <assert_contents>
                     <has_size size="60725" delta="6000"/>
@@ -63,6 +68,7 @@ trimmed.bam
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
+            <param name="sequencing_kit" value="SQK-LSK109"/>
             <param name="no_trim_primers" value="dont_trim"/>
             <output name="out_bam" ftype="unsorted.bam">
                 <assert_contents>
@@ -77,6 +83,7 @@ trimmed.bam
         </test>
         <test expect_num_outputs="2">
             <param name="reads" value="lsk109_single_read.fastqsanger.gz" ftype="fastqsanger.gz"/>
+            <param name="sequencing_kit" value="SQK-LSK109"/>
             <param name="primer_sequences" value="custom_primers.fasta.gz" ftype="fasta.gz"/>
             <output name="out_bam" ftype="unsorted.bam">
                 <assert_contents>
@@ -117,11 +124,15 @@ Custom primer trimming
 ----------------------
 
 The software automatically searches for primer sequences used in Oxford
-Nanopore kits. However, you can specify an alternative set of primer
-sequences to search by adding a FASTA file of primer sequences in the
-**Custom primer sequences** option. The record names of the sequences do
-not matter. Note that if you use this option the normal primer sequences
-built-in to the dorado software will not be searched for.
+Nanopore kits. However, you can specify an alternative set of primer sequences
+to search by adding a FASTA file of primer sequences in the **Custom primer
+sequences** option. Note that if you use this option the normal primer
+sequences built-in to the dorado software will not be searched for.
+
+Oxford Nanopore uses a non-standard FASTA format for this file. The format is
+specified `here
+<https://github.com/nanoporetech/dorado/blob/release-v0.9/documentation/CustomPrimers.md#custom-adapterprimer-file-format>`__.
+
 
 RNA adapter trimming
 --------------------
