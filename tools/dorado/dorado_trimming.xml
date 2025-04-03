@@ -42,7 +42,7 @@ trimmed.bam
                 <option value="dont_trim">No</option>
             </param>
             <when value="trim">
-                <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. The record names of the sequences do not matter. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
+                <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
             </when>
             <when value="dont_trim"/>
         </conditional>
