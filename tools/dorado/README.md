@@ -46,3 +46,41 @@ sort -t$'\t' -k1,1V tool-data/dorado_models.loc.sample.old \
     > tool-data/dorado_models.loc.sample
 ```
 
+## Kits and Barcodes
+
+The list of acceptable kits and barcodes is not specified in the Dorado
+documentation.
+
+A list of all sequencing kits is in [`kits.cpp`](https://github.com/nanoporetech/dorado/blob/master/dorado/models/kits.cpp)
+
+Parsed into XML with the following GNU Awk program:
+
+```bash
+gawk '
+/namespace kit/ { in_kit_namespace = 1 } 
+in_kit_namespace && /codes_map/ { in_map = 1; print "Entering kit::codes_map" } 
+in_map && /^\s*\{/ { 
+    if (match($0, /\{\s*KC::[A-Z0-9_]+,\s*\{\s*"([^"]+)"/, m)) 
+        print "            <option value=\"" m[1] "\">" m[1] "</option>"; 
+} 
+/^\s*};/ { 
+    if (in_map) { 
+        print "Exiting kit::codes_map"; 
+        exit 
+    } 
+}' kits.cpp
+```
+
+I believe the allowed barcodes are in [`barcode_kits.cpp`](https://github.com/nanoporetech/dorado/blob/master/dorado/utils/barcode_kits.cpp).
+
+Parsed into XML with the following GNU Awk program:
+
+```bash
+gawk '
+/kit_info_map/ { in_map = 1 } 
+in_map && /^\s*\{/ { 
+    if (match($0, /^\s*\{\s*"([^"]+)",/, m)) 
+        print "            <option value=\"" m[1] "\">" m[1] "</option>"; 
+} 
+/^\s*};/ { if (in_map) exit }' barcode_kits.cpp
+```

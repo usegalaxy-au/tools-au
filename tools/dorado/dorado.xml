@@ -41,45 +41,9 @@ calls.bam
             <option value="adapters"> Adapters. Trim any detected adapters, but primers will not be trimmed, and if barcoding is enabled then barcodes will not be trimmed either.</option>
             <option value="none"> None. Nothing will be trimmed.</option>
         </param>
+        <!-- dev note: the barcode kits are hardcoded in https://github.com/nanoporetech/dorado/blob/release-v0.9/dorado/utils/barcode_kits.cpp -->
         <param type="select" argument="--kit-name" optional="true" label="Enable barcoding with the selected kit name." help="Reads are classified into their barcode groups during basecalling. The classification will be reflected in the read group name as well as in the BC tag of the output record.">
-            <option value="EXP-NBD103">EXP-NBD103</option>
-            <option value="EXP-NBD104">EXP-NBD104</option>
-            <option value="EXP-NBD114">EXP-NBD114</option>
-            <option value="EXP-NBD196">EXP-NBD196</option>
-            <option value="EXP-PBC001">EXP-PBC001</option>
-            <option value="EXP-PBC096">EXP-PBC096</option>
-            <option value="SQK-16S024">SQK-16S024</option>
-            <option value="SQK-16S114-24">SQK-16S114-24</option>
-            <option value="SQK-LWB001">SQK-LWB001</option>
-            <option value="SQK-MLK111-96-XL">SQK-MLK111-96-XL</option>
-            <option value="SQK-MLK114-96-XL">SQK-MLK114-96-XL</option>
-            <option value="SQK-NBD111-24">SQK-NBD111-24</option>
-            <option value="SQK-NBD111-96">SQK-NBD111-96</option>
-            <option value="SQK-NBD114-24">SQK-NBD114-24</option>
-            <option value="SQK-NBD114-96">SQK-NBD114-96</option>
-            <option value="SQK-PBK004">SQK-PBK004</option>
-            <option value="SQK-PCB109">SQK-PCB109</option>
-            <option value="SQK-PCB110">SQK-PCB110</option>
-            <option value="SQK-PCB111-24">SQK-PCB111-24</option>
-            <option value="SQK-PCB114-24">SQK-PCB114-24</option>
-            <option value="SQK-RAB201">SQK-RAB201</option>
-            <option value="SQK-RAB204">SQK-RAB204</option>
-            <option value="SQK-RBK001">SQK-RBK001</option>
-            <option value="SQK-RBK004">SQK-RBK004</option>
-            <option value="SQK-RBK110-96">SQK-RBK110-96</option>
-            <option value="SQK-RBK111-24">SQK-RBK111-24</option>
-            <option value="SQK-RBK111-96">SQK-RBK111-96</option>
-            <option value="SQK-RBK114-24">SQK-RBK114-24</option>
-            <option value="SQK-RBK114-96">SQK-RBK114-96</option>
-            <option value="SQK-RLB001">SQK-RLB001</option>
-            <option value="SQK-RPB004">SQK-RPB004</option>
-            <option value="SQK-RPB114-24">SQK-RPB114-24</option>
-            <option value="TWIST-16-UDI">TWIST-16-UDI</option>
-            <option value="TWIST-96A-UDI">TWIST-96A-UDI</option>
-            <option value="VSK-PTC001">VSK-PTC001</option>
-            <option value="VSK-VMK001">VSK-VMK001</option>
-            <option value="VSK-VMK004">VSK-VMK004</option>
-            <option value="VSK-VPS001">VSK-VPS001</option>
+            <expand macro="barcode_kits" />
         </param>
     </inputs>
     <outputs>
