@@ -277,7 +277,7 @@ $advanced.exit_after_msa
                 />
                 <when value="true">
                     <repeat name="msas" title="MSA archive(s)" help="The order of the MSAs provided here should match the order of your FASTA sequences. e.g. if you have an 'MSA-A' (collected from a previous job), and your first FASTA sequence matches the first sequence in the original job, then you should select that MSA and label it as chain 'A'. If the MSA matches the second sequence in your current FASTA file, you should label it as 'chain B', and so on.">
-                        <param name="chain" type="select" label="Chain" help="Which chain in your query FASTA does this MSA correspond to?">
+                        <param name="chain" type="select" label="Chain" help="Which chain in your query FASTA does this MSA correspond to? Note that the letter denotes the position in your FASTA input e.g. 'A' would be the first sequence.">
                             <option value="A">A</option>
                             <option value="B">B</option>
                             <option value="C">C</option>
