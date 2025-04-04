@@ -307,7 +307,7 @@ $advanced.exit_after_msa
             <param
                 name="plots"
                 type="boolean"
-                checked="false"
+                checked="true"
                 truevalue="--plot"
                 falsevalue=""
                 label="pLDDT and PAE matrix plots (per model)"
