@@ -8,8 +8,7 @@
     <command><![CDATA[
 	    ln -s '$resn3_file' '$resn3_file.element_identifier' &&
 	    ln -s '$sequence_file' '$sequence_file.element_identifier' &&
-	    get_mrnas_or_GC.pl '$resn3_file.element_identifier' '$sequence_file.element_identifier' $output_mrna_file $CDS -fix_id $fix_id_type 2>&1 | tee -a '$log'
-
+	    get_mrnas.pl '$resn3_file.element_identifier' '$sequence_file.element_identifier' $output_mrna_file $CDS -fix_id $fix_id_type 2>&1 | tee -a '$log'
 	    ]]></command>
     <inputs>
 	    <param name="resn3_file" format="txt" type="data" label="Input Resn3 file"/>
