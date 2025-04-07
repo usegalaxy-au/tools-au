@@ -1,0 +1,79 @@
+<tool id="fgenesh_get_mrnas_gc" name="FGENESH get mRNA or GC" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>rensn3 and genomic file</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    ln -s '$resn3_file' '$resn3_file.element_identifier' &&
+	    ln -s '$sequence_file' '$sequence_file.element_identifier' &&
+	    get_mrnas_or_GC.pl '$resn3_file.element_identifier' '$sequence_file.element_identifier' $output_mrna_file $CDS -fix_id $fix_id_type 2>&1 | tee -a '$log'
+
+	    ]]></command>
+    <inputs>
+	    <param name="resn3_file" format="txt" type="data" label="Input Resn3 file"/>
+	    <param name="sequence_file" format="fasta" type="data" label="Sequence file"/>
+	    <param argument="-CDS" type="boolean" truevalue="-CDS" falsevalue="" checked="true" label="CDS only" help="create CDS fasta file" />
+	    <param name="fix_id_type" type="select" label="fix header id in the output fasta file" help="Default: sequence name">
+                <option value="seq_No" selected="True">Sequence No</option>
+		<option value="seq_count">Sequence Count</option>
+		<option value="seq_nmae">Sequence Name</option>
+            </param>
+    </inputs>
+    <outputs>
+	    <data name="output_mrna_file" format="fasta"  label="${tool.name} on ${on_string}: mRNA file"/>
+	    <data name="log" format="txt" label="${tool.name} on ${on_string}: Report"/>
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh get_mrnas_or_GC.pl is a tool to extract CDS(mRNAs) sequences using the input file with Fgenesh/Fgenesh++ predictions*
+
+**Input**
+	    
+- resn3 file  -  input file with Fgenesh/Fgenesh++ predictions  
+
+- sequence file - input  file with genomic FASTA sequences
+
+
+**Command line Example:**
+
+- get_mrnas_or_GC.pl <resn3_file> <seq_file> <mrna_file> [-CDS] [-GC] [-fix_id seq_name | seq_No | seq_count]
+
+- mrna_file - output file with CDS sequences in fasta file format
+
+- CDS - CDS only
+
+- GC - rerport GC donor splice sites
+
+- fix_id 
+- 1) seq_name - use sequence names [example of ID: 'ENm002_gene_7'] 
+- 2) seq_No - (numbers are taken from 'Sequence: <No>' if such field is present, e.g., "Length of sequence: 1000000, Sequence: 2, File: encode_hg17_44N.fa") - [example of ID: 'seq_2_gene_7']
+- 3) seq_count - use numbers (count sequences starting from 1) [example of ID: 'seq_2_gene_7']
+	
+**Output**
+
+- mrna_file - output file with CDS sequences in fasta file format
+
+- report - a report file of CDS and GC
+
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
