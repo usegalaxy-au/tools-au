@@ -1,4 +1,4 @@
-<tool id="fgenesh_get_mrnas_gc" name="FGENESH get mRNA or GC" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+<tool id="fgenesh_get_mrnas" name="FGENESH get mRNA" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
     <description>rensn3 and genomic file</description>
     <macros>
 	  <import>macros.xml</import>
