@@ -17,9 +17,8 @@ dorado trim
 --threads "\${GALAXY_SLOTS}"
 #if $trim_primers.no_trim_primers == 'dont_trim'
     --no-trim-primers
-## dev note: this is disabled since 0.9.1. See https://github.com/usegalaxy-au/tools-au/issues/158
-## #else if $trim_primers.primer_sequences
-    ## --primer-sequences '${trim_primers.primer_sequences}'
+#else if $trim_primers.primer_sequences
+    --primer-sequences '${trim_primers.primer_sequences}'
 #end if
 reads
 > trimmed.bam
@@ -43,9 +42,7 @@ trimmed.bam
                 <option value="dont_trim">No</option>
             </param>
             <when value="trim">
-                <!-- dev note: this is disabled since 0.9.1. See https://github.com/usegalaxy-au/tools-au/issues/158  -->
-                <?ignore <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
-                ?>
+                <param argument="--primer-sequences" type="data" format="fasta" optional="true" label="Custom primer sequences" help="You can specify an alternative set of primer sequences to search for when trimming by adding a FASTA file containing the primer sequences you want to search for. Note that if you use this option the normal primer sequences built-in to the dorado software will not be searched for."/>
             </when>
             <when value="dont_trim"/>
         </conditional>
@@ -84,8 +81,7 @@ trimmed.bam
                 </assert_contents>
             </output>
         </test>
-        <!-- dev note: this is disabled since 0.9.1. See https://github.com/usegalaxy-au/tools-au/issues/158  -->
-        <?ignore <test expect_num_outputs="2">
+        <test expect_num_outputs="2">
             <param name="reads" value="lsk109_single_read.fastqsanger.gz" ftype="fastqsanger.gz"/>
             <param name="sequencing_kit" value="SQK-LSK109"/>
             <param name="primer_sequences" value="custom_primers.fasta.gz" ftype="fasta.gz"/>
@@ -100,7 +96,6 @@ trimmed.bam
                 </assert_contents>
             </output>
         </test>
-        ?>
     </tests>
     <help><![CDATA[
 Detect and remove any adapter and/or primer sequences from the beginning
@@ -128,18 +123,15 @@ the input is aligned/sorted or not.
 Custom primer trimming
 ----------------------
 
-**NOTE: CUSTOM TRIMMING IS TEMPORARILY DISABLED** in Dorado version 0.9.1. See
-https://github.com/usegalaxy-au/tools-au/issues/158
+The software automatically searches for primer sequences used in Oxford
+Nanopore kits. However, you can specify an alternative set of primer sequences
+to search by adding a FASTA file of primer sequences in the **Custom primer
+sequences** option. Note that if you use this option the normal primer
+sequences built-in to the dorado software will not be searched for.
 
-.. The software automatically searches for primer sequences used in Oxford
-.. Nanopore kits. However, you can specify an alternative set of primer sequences
-.. to search by adding a FASTA file of primer sequences in the **Custom primer
-.. sequences** option. Note that if you use this option the normal primer
-.. sequences built-in to the dorado software will not be searched for.
-
-.. Oxford Nanopore uses a non-standard FASTA format for this file. The format is
-.. specified `here
-.. <https://github.com/nanoporetech/dorado/blob/release-v0.9/documentation/CustomPrimers.md#custom-adapterprimer-file-format>`__.
+Oxford Nanopore uses a non-standard FASTA format for this file. The format is
+specified `here
+<https://github.com/nanoporetech/dorado/blob/release-v0.9/documentation/CustomPrimers.md#custom-adapterprimer-file-format>`__.
 
 
 RNA adapter trimming
