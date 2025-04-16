@@ -24,6 +24,14 @@
         <include path="scripts/validate_fasta.py" />
         <include path="scripts/alphafold.html" />
     </required_files>
+    <stdio>
+        <regex
+            match="concatenation axis must match exactly"
+            source="stderr"
+            level="fatal"
+            description="This error usually indicates that you are re-using an MSA that does not match the query sequence at the specified chain (e.g. position A should match the first sequence in the FASTA file)."
+        />
+    </stdio>
     <command detect_errors="exit_code"><![CDATA[
 
 ## Developers: to test with mock alphafold run, set `export PLANEMO_TESTING=1`
@@ -155,14 +163,6 @@ $advanced.exit_after_msa
 #end if
 
     ]]></command>
-    <stdio>
-        <regex
-            match="concatenation axis must match exactly"
-            source="stderr"
-            level="fatal"
-            description="This error usually indicates that you are re-using an MSA that does not match the query sequence at the specified chain (e.g. position A should match the first sequence in the FASTA file)."
-        />
-    </stdio>
     <inputs>
         <conditional name="fasta_or_text">
             <param name="input_mode" type="select" label="Fasta Input" help="Protein sequence(s) to fold. Input can be fasta file from history, or text. Sequence must be valid IUPAC amino acid characters. We recommend submitting sequences with a maximum length of 3000AA, because run time scales exponentially with sequence length. If multiple-sequence FASTA file provided, multimer mode must be selected.">
