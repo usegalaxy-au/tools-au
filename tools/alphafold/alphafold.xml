@@ -64,6 +64,7 @@
         && mkdir -p \$MSA_DIR
         && ln -s '$msa.file' ${msa.chain}.zip
         && unzip ${msa.chain}.zip -d \$MSA_DIR
+        && rm ${msa.chain}.zip
     #end for
 #end if
 
@@ -296,7 +297,7 @@ $advanced.exit_after_msa
                             format="zip"
                             label="MSA ZIP archive"
                             optional="false"
-                            help="ZIP archive extracted from a previous AlphaFold2 job. HINT - click the breadcrumbs to pick a dataset from within a collection!"
+                            help="ZIP archive extracted from a previous AlphaFold2 job. HINT - click the breadcrumbs to pick a dataset from within a collection."
                         />
                     </repeat>
                 </when>
