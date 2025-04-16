@@ -3,7 +3,7 @@
     <macros>
       <token name="@TOOL_VERSION@">2.3.2</token>
       <token name="@TOOL_MINOR_VERSION@">2.3</token>
-      <token name="@VERSION_SUFFIX@">2</token>
+      <token name="@VERSION_SUFFIX@">3</token>
       <import>macro_output.xml</import>
       <import>macro_test_output.xml</import>
     </macros>
@@ -17,13 +17,21 @@
       <xref type="bio.tools">alphafold_2</xref>
     </xrefs>
     <requirements>
-        <container type="docker">neoformit/alphafold:v2.3.2_0</container>
+        <container type="docker">neoformit/alphafold:v2.3.2_2</container>
     </requirements>
     <required_files>
         <include path="scripts/outputs.py" />
         <include path="scripts/validate_fasta.py" />
         <include path="scripts/alphafold.html" />
     </required_files>
+    <stdio>
+        <regex
+            match="concatenation axis must match exactly"
+            source="stderr"
+            level="fatal"
+            description="This error usually indicates that you are re-using an MSA that does not match the query sequence at the specified chain (e.g. position A should match the first sequence in the FASTA file)."
+        />
+    </stdio>
     <command detect_errors="exit_code"><![CDATA[
 
 ## Developers: to test with mock alphafold run, set `export PLANEMO_TESTING=1`
@@ -52,6 +60,23 @@
 #end if
 > alphafold.fasta
 
+## Read MSA input -------------------------------------------------------------
+
+#if $advanced.reuse_msa.selected and $advanced.reuse_msa.msas:
+    #for msa in $advanced.reuse_msa.msas:
+        #if $model_preset.selection == 'multimer':
+        && MSA_DIR=output/alphafold/msas/${msa.chain}/
+        #else
+        && MSA_DIR=output/alphafold/msas/
+        #end if
+        && mkdir -p \$MSA_DIR
+        && ln -s '$msa.file' ${msa.chain}.zip
+        && unzip ${msa.chain}.zip -d \$MSA_DIR
+        && rm ${msa.chain}.zip
+    #end for
+#end if
+
+
 ## Env vars -------------------------------------------------------------------
 && export TF_FORCE_UNIFIED_MEMORY=1
 && export XLA_PYTHON_CLIENT_MEM_FRACTION=4.0
@@ -61,7 +86,7 @@
 #if os.environ.get('PLANEMO_TESTING'):
     ## Run in testing mode (mocks a successful AlphaFold run by copying outputs)
     && echo "Creating dummy outputs for model_preset=$model_preset.selection..."
-    && bash '$__tool_directory__/scripts/mock_alphafold.sh' $model_preset
+    && bash '$__tool_directory__/scripts/mock_alphafold.sh' $model_preset.selection
 #else:
     ## Run AlphaFold
     && python /app/alphafold/run_alphafold.py
@@ -99,15 +124,18 @@
         --pdb70_database_path \${ALPHAFOLD_DB:-/data}/@TOOL_MINOR_VERSION@/pdb70/pdb70
         #end if
 
-        ## Galaxy-specific options --------------------------------------------
-        ## See https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy
-        #if $advanced.disable_amber_relax:
-        --disable_amber_relax
+        #if $advanced.reuse_msa.selected and $advanced.reuse_msa.msas:
+        --use_precomputed_msas
         #end if
 
+        ## Galaxy-specific options --------------------------------------------
+        ## See https://github.com/neoformit/alphafold/tree/release_2.3.2_galaxy
         #if $advanced.limit_model_outputs:
         --output_models=$limit_model_outputs
         #end if
+
+        $advanced.disable_amber_relax
+        $advanced.exit_after_msa
         ## End Galaxy-specific options ----------------------------------------
 
 #end if
@@ -119,7 +147,10 @@ $outputs.model_pkls
 $outputs.pae_csv
 $outputs.plots
 $outputs.plot_msa
+$outputs.msa
+$advanced.exit_after_msa
 
+#if not $advanced.exit_after_msa:
 ## HTML output
 && mkdir -p '${ html.files_path }'
 && cp output/alphafold/extra/alphafold.html '${html}'
@@ -129,6 +160,7 @@ $outputs.plot_msa
 ## The working directory ends up two levels deep and the visualization html page
 ## fails to load the PDB files as static assets.
 && (([ -d working ] && cp -r working/* .) || true)
+#end if
 
     ]]></command>
     <inputs>
@@ -158,20 +190,20 @@ $outputs.plot_msa
         </param>
 
         <conditional name="model_preset">
-        <param
+            <param
                 name="selection"
-            type="select"
-            label="Model preset"
-            help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction. The multimer model allows prediction of protein complexes."
-        >
-            <option value="monomer" selected="true">monomer - default prediction model</option>
-            <option value="monomer_ptm">
-                monomer_ptm - slightly less accurate version of the monomer model, but provides a pairwise alignment error (PAE) matrix
-            </option>
-            <option value="multimer">
-                multimer - model a protein complex (requires multi-sequence FASTA input)
-            </option>
-        </param>
+                type="select"
+                label="Model preset"
+                help="Select which prediction model to run. The monomer model is the most accurate for single protein prediction. The multimer model allows prediction of protein complexes."
+            >
+                <option value="monomer" selected="true">monomer - default prediction model</option>
+                <option value="monomer_ptm">
+                    monomer_ptm - slightly less accurate version of the monomer model, but provides a pairwise alignment error (PAE) matrix
+                </option>
+                <option value="multimer">
+                    multimer - model a protein complex (requires multi-sequence FASTA input)
+                </option>
+            </param>
             <when value="monomer"></when>
             <when value="monomer_ptm"></when>
             <when value="multimer">
@@ -186,6 +218,7 @@ $outputs.plot_msa
                 />
             </when>
         </conditional>
+
 
         <section name="advanced" title="Advanced options" expanded="false">
             <param
@@ -209,6 +242,8 @@ $outputs.plot_msa
                 label="Disable Amber relaxation"
                 value="false"
                 optional="true"
+                truevalue="--disable_amber_relax"
+                falsevalue=""
                 help="Amber relaxation can be disabled to speed up processing time. Amber relaxation is used to refine predicted structures by removing stereochemical violations, resulting in more accurate prediction of side-chain geometry. Disabling this option with large proteins may lead to artefacts in the predicted structure. Disabling amber relax will result in the unrelaxed models being collected as PDB outputs."
             />
 
@@ -221,13 +256,59 @@ $outputs.plot_msa
                 min="1"
                 max="5"
             />
+
+            <param
+                name="exit_after_msa"
+                type="boolean"
+                label="MSA generation only"
+                value="false"
+                optional="true"
+                truevalue="--msa_only"
+                falsevalue=""
+                help="If you only want to collect MSAs, this option will exit early. MSAs will be collected and no prediction will be made."
+            />
+
+            <conditional name="reuse_msa">
+                <param
+                    name="selected"
+                    type="boolean"
+                    checked="false"
+                    label="Reuse MSAs"
+                    help="Reuse the multiple sequence alignments (MSAs) from a previous AlphaFold run. This can be useful if you are modelling the same protein sequence(s) in numerous runs (as a different multimer complex, for example), as it eliminates redundant processing and speeds up the run time. MSA collection can be enabled below under &quot;Optional outputs&quot;."
+                />
+                <when value="true">
+                    <repeat name="msas" title="MSA archive(s)" help="The order of the MSAs provided here should match the order of your FASTA sequences. e.g. if you have an 'MSA-A' (collected from a previous job), and your first FASTA sequence matches the first sequence in the original job, then you should select that MSA and label it as chain 'A'. If the MSA matches the second sequence in your current FASTA file, you should label it as 'chain B', and so on.">
+                        <param name="chain" type="select" label="Chain" help="Which chain in your query FASTA does this MSA correspond to? Note that the letter denotes the position in your FASTA input e.g. 'A' would be the first sequence.">
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="D">D</option>
+                            <option value="E">E</option>
+                            <option value="F">F</option>
+                            <option value="G">G</option>
+                            <option value="H">H</option>
+                            <option value="I">I</option>
+                            <option value="J">J</option>
+                        </param>
+                        <param
+                            name="file"
+                            type="data"
+                            multiple="false"
+                            format="zip"
+                            label="MSA ZIP archive"
+                            optional="false"
+                            help="ZIP archive extracted from a previous AlphaFold2 job. HINT - click the breadcrumbs to pick a dataset from within a collection."
+                        />
+                    </repeat>
+                </when>
+            </conditional>
         </section>
 
         <section name="outputs" title="Optional outputs" expanded="false">
             <param
                 name="plots"
                 type="boolean"
-                checked="false"
+                checked="true"
                 truevalue="--plot"
                 falsevalue=""
                 label="pLDDT and PAE matrix plots (per model)"
@@ -290,12 +371,23 @@ $outputs.plot_msa
                 label="timings.json"
                 help="A JSON file with timings reported for each phase of the AlphaFold run."
             />
+            <param
+                name="msa"
+                type="boolean"
+                checked="false"
+                truevalue="--msa"
+                falsevalue=""
+                label="Multiple sequence alignments (MSAs)"
+                help="A ZIP archive of multiple sequence alignments which can be re-used in subsequent AlphaFold runs for increased efficiency. This is only useful if you will be modelling the same protein sequence again (in a different multimer complex, for example). For multimer runs, a ZIP archive will be created for each protein sequence input. The datasets will be labelled as an alphabetical sequence (e.g. A, B, C, ...) corresponding to the order of the FASTA sequence input."
+            />
         </section>
     </inputs>
 
     <outputs>
         <expand macro="output_pdb_models" />
-        <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization" />
+        <data name="html" format="html" label="${tool.name} on ${on_string}: Visualization">
+            <filter>not advanced['exit_after_msa']</filter>
+        </data>
         <!-- Optional outputs -->
         <expand macro="output_plddts" />
         <expand macro="output_msa_plot" />
@@ -305,6 +397,7 @@ $outputs.plot_msa
         <expand macro="output_plots" />
         <expand macro="output_relax_json" />
         <expand macro="output_timings_json" />
+        <expand macro="output_msa" />
     </outputs>
 
     <tests>
@@ -417,7 +510,7 @@ $outputs.plot_msa
     |
 
 
-    **Input**
+    **Inputs**
 
     *Amino acid sequence*
 
@@ -499,6 +592,29 @@ $outputs.plot_msa
     *timings.json (optional)*
 
     | A JSON-formatted text file containing the timings for each phase of the prediction.
+    |
+    |
+
+    *MSAs (optional)*
+
+    | A collection of multiple sequence alignments (MSAs) in ZIP format.
+    | For each sequence in the input FASTA file, a separate ZIP archive will be created and labelled in alphabetical sequence (e.g. A, B, C) with respect to the position of the sequence in the query FASTA file.
+    | If "MSAs only" is selected, this output will be collected automatically.
+    |
+    |
+
+    **Advanced features**
+
+    *Reusing MSAs*
+
+    | You can now re-use multiple sequence alignments (MSAs) from a previous AlphaFold run to speed up processing time. This is only useful if you wish to compute models for the same protein multiple times, for example in a one-to-many series of multimers. In these cases, the MSA for a given protein chain can be computed once and then re-used in subsequent jobs. To do this, you must begin by enabling the "Multiple sequence alignments (MSAs)" output in the "Optional outputs" section. This should result in a collection of ZIP archives being collected as an output.
+    |
+    | Once you have a collection of MSAs that you can re-use, you can then select "Reuse MSAs" in the "Advanced options" section. This will allow you to select the MSA ZIP archive(s) from your history. It is important that you select an MSA archive corresponding to a specific chain in your input FASTA file. If your MSA archive relates to the first chain in your FASTA file, you should select position "A". If your MSA archive relates to the second chain in your FASTA file, you should select position "B", and so on. Note that an MSA archive labelled MSA-A corresponds to the sequence order in the generating run. This does not necessarily correspond to the current run! Be sure to check the order of your sequences/chains. To avoid confusion here, you could re-label the MSA archives in your History to match the name of the protein/chain they were generated for.
+    |
+
+    *MSA-only mode*
+
+    | To speed up generation of MSAs, you can run AlphaFold in "MSA generation only" mode, available under "Advanced options". Use this mode if you only want to obtain MSAs and don't want to waste time computing a model. If you have a list of MSAs that you want to generate, you can put them all into one FASTA file and submit them as an MSA-only job in multimer mode. This will result in a collection of MSA archives - one for each sequence provided. To make things less confusing when you come to reuse these MSAs, you may wish to rename each archive in the collection to match the corresponding protein/chain in your input FASTA file - this makes it easy to select the right one when you come to reuse them in a later job!
     |
     |
 

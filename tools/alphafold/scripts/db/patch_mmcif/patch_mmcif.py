@@ -1,7 +1,8 @@
 import argparse
-import requests
 import shutil
 from pathlib import Path
+
+import requests
 
 RCSB_BASE_URL = 'https://files.rcsb.org/download/'
 LOG_DIR = Path('logs')

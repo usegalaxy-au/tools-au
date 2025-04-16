@@ -25,7 +25,7 @@ When you `planemo test` the wrapper should use the mock AlphaFold run, which cop
 
 ## Generating additional outputs
 
-To run the outputs.py file you will need to install some dependencies (a virtual environment is highly recommended):
+To run the outputs.py file you will need to install some dependencies (a virtual environment is highly recommended). Note if you want to run this with `planemo serve`, you will need to run the following in the planemo-galaxy's virtual environment (the path to the env being used is printed to stdout when you run the tool):
 
 ```sh
 pip install -r scripts/requirements.txt
