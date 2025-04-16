@@ -16,14 +16,16 @@ several output paths are determined dynamically.
 
 import argparse
 import json
-import numpy as np
 import os
 import pickle as pk
 import shutil
 import zipfile
-from matplotlib import pyplot as plt
 from pathlib import Path
 from typing import Dict, List
+
+from matplotlib import pyplot as plt
+
+import numpy as np
 
 OUTPUT_DIR = 'extra'
 OUTPUTS = {
