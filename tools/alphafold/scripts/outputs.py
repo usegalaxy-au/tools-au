@@ -391,37 +391,50 @@ def plot_msa(wdir: Path, dpi: int = 150):
 
 
 def collect_msas(settings: Settings):
-    """Collect MSA files into ZIP archive(s).
+    """Collect MSA files into ZIP archive(s)."""
 
-    Metadata for each MSA is stored in a JSON file in the ZIP archive. This is
-    either pulled from the input FASTA (monomer) or from the chain_id_map.json
-    file (multimer).
-    """
-
-    def zip_dir(directory: Path, is_multimer):
-        chain_id = directory.with_suffix('.zip').name
+    def zip_dir(directory: Path, is_multimer: bool, name: str):
+        chain_id = directory.with_suffix('.zip').stem
         msa_dir = settings.output_dir / 'msas'
         msa_dir.mkdir(exist_ok=True)
-        zip_name = f"MSA-{chain_id}" if is_multimer else "MSA-A.zip"
+        zip_name = (
+            f"MSA-{chain_id}-{name}.zip"
+            if is_multimer
+            else f"MSA-{name}.zip")
         zip_path = msa_dir / zip_name
         with zipfile.ZipFile(zip_path, 'w') as z:
             for path in directory.glob('*'):
-                arcname = (
-                    path.parent / path.name
-                    if is_multimer
-                    else path.name
-                )
-                z.write(path, arcname)
+                z.write(path, path.name)
 
     print("Collecting MSA archives...")
+    chain_names = get_input_sequence_ids(
+        settings.workdir.parent.parent / 'alphafold.fasta')
     msa_dir = settings.workdir / 'msas'
     is_multimer = (msa_dir / 'A').exists()
     if is_multimer:
-        for path in msa_dir.glob('*'):
-            if path.is_dir():
-                zip_dir(path, is_multimer)
+        msa_dirs = sorted([
+            path for path in msa_dir.glob('*')
+            if path.is_dir()
+        ])
+        for i, path in enumerate(msa_dirs):
+            zip_dir(path, is_multimer, chain_names[i])
     else:
-        zip_dir(msa_dir, is_multimer)
+        zip_dir(msa_dir, is_multimer, chain_names[0])
+
+
+def get_input_sequence_ids(fasta_file: Path) -> List[str]:
+    """Read headers from the input FASTA file.
+    Split them to get a sequence ID and truncate to 20 chars max.
+    """
+    headers = []
+    for line in fasta_file.read_text().split('\n'):
+        if line.startswith('>'):
+            seq_id = line[1:].split(' ')[0]
+            seq_id_trunc = seq_id[:20].strip()
+            if len(seq_id) > 20:
+                seq_id_trunc += '...'
+            headers.append(seq_id_trunc)
+    return headers
 
 
 def template_html(context: ExecutionContext):
