@@ -14,3 +14,31 @@ Supported Species is based on the species offered in the gene matrix by Softberr
 
 ## Tool versions
 Fgenesh tools wrapped for Galaxy is using Fgenesh v2024.2.
+
+## Update 9/5/2025
+- updated Fgenesh from version 7.2.2 to version 2024.2
+- added three new wrappers fgenesh_annotate_mrnas.xml, fgenesh_check_mrna.xml and fgenesh_renumber.xml to Fgenesh v2024.2
+- fgenesh_get_mrnas_gc.xml is available in v7.2.2 and replaced with fgenesh_get_mrnas.xml in v2024.2
+- create two separate folders 1) 7.2.2 and 2) 2024.2 for version control
+- update the `local_tool_conf.xml <https://github.com/mthang/infrastructure/blob/master/files/galaxy/config/local_tool_conf_dev.xml>`_ entry to manage different version of Fgenesh on dev and same as production.
+
+## Fgenesh tools in version 2024.2 folder
+```
+fgenesh_annotate.xml  
+fgenesh_get_mrnas.xml  
+fgenesh_check_mrna.xml  
+fgenesh_renumber.xml  
+fgenesh_annotate_mrnas.xml
+macros.xml
+```
+
+## Fgenesh tools in version 7.2.2 folder
+```
+fgenesh_annotate.xml  
+fgenesh_get_mrnas_gc.xml  
+fgenesh_get_proteins.xml  
+fgenesh_merge.xml  
+fgenesh_split.xml  
+fgenesh_to_genbank.xml  
+macros.xml
+```

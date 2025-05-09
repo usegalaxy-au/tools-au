@@ -1,0 +1,294 @@
+<tool id="fgenesh_annotate" name="FGENESH annotate" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>sequences</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    mkdir -p result &&
+	    mkdir -p output_gff &&
+	    BLAST_PATH=\$(which blastp) > configfile &&
+	    echo "BLASTP = \$BLAST_PATH" >> configfile &&
+	    echo "BLAST2 = \$BLAST_PATH" >> configfile &&
+	    echo "NUM_THREADS = \${GALAXY_SLOTS:-4}"  >> configfile &&
+	    cat '$cfg' >> configfile &&
+	    ### cat seqlit - data preparation  &&
+	    #if $inputs.input_type == 'single':
+	    	#for $input in $inputs.single_seq
+	    	   ln -fs '$input' $input.element_identifier &&
+	    	   echo `pwd`/$input.element_identifier >> seqlist &&
+		   echo `pwd`/$input.element_identifier > '$input.element_identifier'.list &&
+	    	#end for
+		sort seqlist > sorted_seqlist &&
+	    	#if $repeat_sequence.selector == 'single_masked_seq':
+		   #for $seq in $repeat_sequence.masked_seq_single
+	    		ln -fs '$seq' $seq.element_identifier &&
+	    		echo `pwd`/$seq.element_identifier >> seqlistN && 
+			echo `pwd`/$seq.element_identifier > '$seq.element_identifier'.list &&
+	    	#end for
+		sort seqlistN > sorted_seqlistN &&
+		#end if
+	    #elif $inputs.input_type == 'multiple':
+	    	#for $i,$input in enumerate($inputs.multiple_seq)
+	    	    ln -fs '$input' $input.element_identifier &&
+	    	    echo `pwd`/$input.element_identifier >> seqlist && 
+		    echo `pwd`/$input.element_identifier > '$input.element_identifier'.list &&
+	    	#end for
+                #if $repeat_sequence.selector == 'multiple_masked_seq':
+                   #for $e,$mseq in enumerate($repeat_sequence.masked_seq_multiple)
+                        ln -fs '$mseq' $mseq.element_identifier &&
+	    		echo `pwd`/$mseq.element_identifier >> seqlistN_temp && 
+	    		paste seqlistN_temp seqlist | sort | cut -f1 > seqlistN && #### sort the filename in the seqlistN file to maintain the same order as the filename in seqlist file
+			### prep fo parallel command
+	    		echo `pwd`/$mseq.element_identifier > '$mseq.element_identifier'.list &&
+	    	   #end for
+		#end if
+	    #end if
+
+	    ### cat seqlist
+	    #if $repeat_sequence.selector == 'no_repeat_seq':
+
+	    	for s in `cat sorted_seqlist`;
+	    	do
+	    	   echo  "run_pipe.pl configfile -l '\$s'.list -d result_'\$(basename \$s)'";
+	    	done > fgenesh_parallel_command.sh &&
+		
+	    	cat fgenesh_parallel_command.sh | parallel --will-cite -j "\${GALAXY_SLOTS:-10}" &&
+
+	    	####run_pipe.pl configfile -l seqlist -d result &&
+		mv result_*/* result/ &&
+	    	run_fgenesh_2_gff3.pl result output_gff -sort -print_exons && 2>&1
+	    #elif $repeat_sequence.selector == 'single_masked_seq':
+
+
+                for s in `cat sorted_seqlist`;
+                do
+                   echo  "run_pipe.pl configfile -l '\$s'.list -m '\$s'.N.list -d result_'\$(basename \$s)'";
+                done > fgenesh_parallel_command.sh &&
+
+                cat fgenesh_parallel_command.sh | parallel --will-cite -j "\${GALAXY_SLOTS:-10}" &&
+
+	    	####run_pipe.pl configfile -l seqlist -m seqlistN -d result && 
+		mv result_*/* result/ &&
+	    	run_fgenesh_2_gff3.pl result output_gff -sort -print_exons && 2>&1
+	    #elif $repeat_sequence.selector == 'multiple_masked_seq':
+	    
+	    	for s in `cat seqlist`;
+	    	do
+	     	    echo  "run_pipe.pl configfile -l '\$s'.list -m '\$s'.N.list -d result_'\$(basename \$s)'";
+	        done > fgenesh_parallel_command.sh &&
+
+	    	cat fgenesh_parallel_command.sh | parallel --will-cite -j "\${GALAXY_SLOTS:-10}" && 
+	    	###run_pipe.pl configfile -l seqlist -m seqlistN -d result &&
+		mv result_*/* result/ &&
+	    	run_fgenesh_2_gff3.pl result output_gff -sort -print_exons && 2>&1
+	    #end if
+
+	    ]]></command>
+    <configfiles>
+	    <configfile name="cfg"><![CDATA[
+GENE_PARAM = ${matrix_type.species_matrix.fields.path}
+PIPE_PARAM = ${db_type.genome_type.fields.path}
+PREDICT_GC = ${predict_gc}
+#if $map_mrna.mRNAs == '0'		    
+MAP_mRNAs = ${map_mrna.mRNAs}
+#else
+MAP_mRNAs = ${map_mrna.mRNAs}
+MRNA_FILE = ${map_mrna.mrna_file}
+#end if
+#if $map_est.ESTs == '0'
+MAP_ESTS = ${map_est.ESTs}
+#else
+MAP_ESTS = ${map_est.ESTs}
+EST_FILE = ${map_est.est_file}		    
+#end if
+USE_READS = ${use_reads}
+DIR_SITES = na
+PROG_PROT = ${use_proteins}
+USE_PROTEINS = ${use_proteins}
+PROTEIN_DB = ${nr_type.nr_db.fields.path}
+PROTEIN_DB_INDEX = ${nr_type.nr_db.fields.path}.ind
+PROTEIN_DB_TAG = NR
+BLAST_AI_PROTEINS =  ${find_homologs} # find homologs for ab initio predicted genes ( 0 - no , 1 - yes)
+INTRONIC_GENES = ${intronic_genes} 
+             ]]></configfile>
+    </configfiles>
+    <inputs>
+	    <conditional name="inputs">
+                <param name="input_type" type="select" label="Input type" help="Select single sequence or collection of sequence">
+			<option value="single" selected="true">Single sequence</option>
+			<option value="multiple">Multiple sequences</option>
+		</param>
+		<when value="single">
+			<param name="single_seq" format="fasta" type="data" label="Single sequence" help="Single sequence" multiple="true"/>
+		</when>
+		<when value="multiple">
+			<param name="multiple_seq" format="fasta" type="data_collection" collection_type="list" label="Multiple sequence"/>
+		</when>
+	    </conditional>
+            <conditional name="repeat_sequence">
+		    	<param name="selector" type="select" label="Use repeat masking sequence" help="Enable this option if you want to use repeat masked sequences .">
+			<option value="no_repeat_seq" selected="true">No repeat sequence</option>
+                	<option value="single_masked_seq">Single masked sequence</option>
+                	<option value="multiple_masked_seq">Multiple masked sequences</option>
+            	</param>
+		<when value="single_masked_seq">
+                      <param name="masked_seq_single" format="fasta" type="data" label="repeat masked sequence" help="Single masked sequence" multiple="true"/>
+                </when>
+		<when value="multiple_masked_seq">
+		      <param name="masked_seq_multiple" format="fasta" type="data_collection" collection_type="list" label="repeat masked sequence" help="Multiple repeat sequence"/>
+	      	</when>
+		<when value="no_repeat_seq"></when>
+            </conditional>
+            <conditional name="matrix_type">
+                  <param name="matrix_type_selector" type="select" label="Select matrix type" help="Select matrix for your species">
+                         <option value="indexed" selected="true">Use a built-in index</option>
+                         <option value="history">Use one from the history</option>
+                  </param>
+                  <when value="indexed">
+                         <param name="species_matrix" type="select" label="Select a species matrix" help="If your species of interest is not listed, contact your Galaxy admin">
+                          <options from_data_table="fgenesh_matrix">
+                              <filter type="sort_by" column="2"/>
+                              <validator type="no_options" message="No indexes are available for the selected input dataset"/>
+                           </options>
+                         </param>
+                  </when>
+                  <when value="history">
+                       <param name="own_file" type="data" format="txt" label="Select species matrix" />
+                  </when>
+            </conditional>
+            <conditional name="db_type">
+		  <param name="db_type_selector" type="select" label="Select db type" help="Select Mammal DB / Non Mammal DB">
+                         <option value="indexed" selected="true">Use a built-in index</option>
+                         <option value="history">Use one from the history</option>
+                  </param>
+                  <when value="indexed">
+                         <param name="genome_type" type="select" label="Select a reference database" help="If your database of interest is not listed, contact your Galaxy admin">
+                          <options from_data_table="fgenesh_db">
+                              <filter type="sort_by" column="2"/>
+                              <validator type="no_options" message="No indexes are available for the selected input dataset"/>
+                           </options>
+                         </param>
+                  </when>
+                  <when value="history">
+                       <param name="own_file" type="data" format="txt" label="Select reference database" />
+                  </when>
+	  </conditional>
+            <conditional name="nr_type">
+                  <param name="nr_type_selector" type="select" label="Select nr db type" help="Select NR database">
+                         <option value="indexed" selected="true">Use a built-in index</option>
+                         <option value="history">Use one from the history</option>
+                  </param>
+                  <when value="indexed">
+                         <param name="nr_db" type="select" label="Select a NR database" help="If your database of interest is not listed, contact your Galaxy admin">
+                          <options from_data_table="fgenesh_nr">
+                              <filter type="sort_by" column="2"/>
+                              <validator type="no_options" message="No indexes are available for the selected input dataset"/>
+                           </options>
+                         </param>
+                  </when>
+                  <when value="history">
+                       <param name="own_file" type="data" format="txt" label="Select reference database" />
+                  </when>
+           </conditional>
+           <conditional name="map_mrna">
+                  <param name="mRNAs" type="select" label="mRNAs" help="map known mRNA data to the genomic sequences">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                  </param>
+                  <when value="1">
+			  <param name="mrna_file" type="data" format="fasta" label="full-length mRNA file" help="full-length mRNAs"/>
+                  </when>
+                  <when value="0"/>
+	  </conditional>
+           <conditional name="map_est">
+                  <param name="ESTs" type="select" label="ESTs" help="map ESTs to the genomic sequences">
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                  </param>
+                  <when value="1">
+                          <param name="est_file" type="data" format="fasta" label="ESTs file" help="fasta file with ESTs"/>
+                  </when>
+                  <when value="0"/>
+          </conditional>
+	  <param name="predict_gc" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Predict GC" help="predict genes with GC donor splice sites or not"/>
+	  <param name="use_reads" type="boolean" checked="false" truevalue="1" falsevalue="0" label="USE_READS" help="use reads info to improve gene models"/>
+	  <param name="find_homologs" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Find homologs" help="find homologs for ab initio predicted genes"/>
+          <param name="use_proteins" type="boolean" checked="false" truevalue="1" falsevalue="0" label="USE_PROTEINS" help="Using known proteins for prediction"/>
+          <param name="intronic_genes" type="boolean" checked="false" truevalue="1" falsevalue="0" label="INTRONIC_GENES" help="predict genes in long introns of other genes"/>
+    </inputs>
+    <outputs>
+	    <!--<data name="single_annotation" format="txt" label="${tool.name} on ${on_string}: single annotation" from_work_dir="result/*.resn3">
+		  <filter>input['input_type'] == 'individual'</filter>
+	    </data>-->
+	    <collection name="multiple_annotation" type="list" label="${tool.name} on ${on_string}: multiple annotation">
+		  <discover_datasets pattern="(?P&lt;name&gt;.*).resn3$" format="txt" directory="result"/>
+			  <!--<filter>input['input_type'] == 'multiple'</filter>-->
+	    </collection>
+            <collection name="annotated_gff3" type="list" label="${tool.name} on ${on_string}: GFF3">
+                  <discover_datasets pattern="(?P&lt;name&gt;.*).gff3$" format="gff" directory="output_gff"/>
+	    </collection>
+    </outputs>
+	
+    <tests>
+	 <test>
+            <!-- #1 test -->
+        </test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh is a genome annotation tool*
+
+**IMPORTANT**
+Fgenesh (v2024.2) is no longer support cDNA, prot and dat file for mapping mRNA sequence to genomic sequences. A single full-length mRNAs fasta file is used. The full-length mRNAs fasta file can be made avaiavailable through transcriptome `de novo` assembly tool such as Trinity. Then, rename the header using `Fgenesh rename` to format the fasta file header before running `Fgenesh annotate` if `de novo` assembled transcripts is used. 
+
+**Input**
+	    
+- input file  -  Genome or de novo assembly file in FASTA format and repeat masking fasta file  
+
+**Command line Example:**
+
+- FGENESHPIPE/run_pipe.pl  human_prj.cfg  -l seq_1.list  -m seq_1N.list  -d results_1
+
+- human_prj.cfg - a configuration file containing path to database, path gene matrix and the settings of the third party softwares
+- seq_1.list - a list of chromosome / scaffolds (unmasked)
+- seq_1N.ist - a list of chromosome / scaffolds (masked)
+- results_1 - output folder
+
+
+**Parameters:**
+
+- matrix type - built-in index or select the index from the user history
+- species matrix - select the gene matrix that matches the species of your input genome if built-in index in the matrix type is selected
+- db type - built-in database or select the database from the user history
+- reference database - fgenesh comes with Mammal DB / Non Mammal DB if built-in database in the db type is selected
+- NR db type - built-in non-redundant database or select the non-redundant database from the user history
+- NR database - select the non-redundant database for your species
+- mRNAs - map known mRNA sequences to the genomic sequences (default: No). If Yes is selected, make sure .cdna, .pro and .dat files are available in the user history.
+- ESTs - map ESTs to the genomic sequences (default: No) if Yes is selected, make sure there is ESTs fasta file available in the user history
+- Predict GC - predict genes with GC donor splice sites or not (default:No)
+- USE_READS - use reads info to improve gene models (default:No)
+- Find homologs - find homologs for ab initio predicted genes (0 - no, 1 - yes)
+- USE_PROTEINS - Using known proteins for prediction (default: No)
+- INTRONIC_GENES - Predicting genes in long introns of other genes (default: No)
+
+**Output**
+
+- txt (resn3) - raw output produced by Fgenesh
+- gff3 - gff3 file format converted from the Fgenesh resn3 file
+
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
