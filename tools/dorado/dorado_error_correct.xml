@@ -1,0 +1,144 @@
+<tool id="dorado_error_correct" name="correct reads" version="@VERSION@+galaxy0" python_template_version="3.5" profile="24.1">
+    <description>improve the accuracy of nanopore sequencing reads</description>
+    <macros>
+        <import>macros.xml</import>
+    </macros>
+    <expand macro="xrefs"/>
+    <expand macro="requirements"/>
+    <command detect_errors="exit_code"><![CDATA[
+#import re
+#set input_identifier = re.sub('[^\s\w\-]', '_', str($input_file.element_identifier))
+
+#if $input_file.is_of_type('fastq', 'fastq.gz'):
+    #set input_identifier = $input_identifier + '.fastq'
+#end if
+#if $input_file.ext.endswith('.gz'):
+    #set input_identifier = $input_identifier + '.gz'
+#end if
+
+ln -s '${input_file}' '${input_identifier}' &&
+
+#set $batch_size = 256 if $device == 'cpu' else 64
+
+dorado correct
+#if $device == "cpu":
+--device '${device}'
+-t \${GALAXY_SLOTS:-4}
+#else	    
+--device '${device}'
+#end if
+-b ${batch_size}
+#if $use_model.model_selector == "model_file":
+   --model-path  '${use_model.model.fields.path}'
+#end if
+'${input_identifier}'
+#if $infer_type.infer_type_selector == "from_paf":
+--from-paf '$infer_type.input_paf' 
+#end if
+#if $to_paf:
+   $to_paf > overlaps.paf 
+#else:
+   > corrected_reads.fasta 2>&1
+#end if
+
+    ]]></command>
+    <inputs>
+	<param name="input_file" type="data" format="fastq,fastq.gz" label="Raw fastq file" help="Fastq file for improvement"/>
+        <conditional name="use_model">
+            <param name="model_selector" type="select" label="Use model file for read correction">
+                <option value="" selected="true">None</option>
+                <option value="model_file">Use model file for read correction</option>
+            </param>
+            <when value="model_file">
+        	<param name="model" type="select" label="Basecalling model. See the Help section for info on model names.">
+            		<options from_data_table="dorado_models">
+                	<!-- only allow models that shipped in this container -->
+                		<filter type="static_value" column="1" value="@CONTAINER_HASH@"/>
+	    		</options>
+    		</param>
+	    </when>
+	    <when value="" />
+    	</conditional>
+        <param name="device" type="select" label="Compute Device">
+          <option value="cuda:all">GPU (Fastest)</option>
+          <option value="cpu">CPU (Slower but more reliable)</option>
+        </param>
+	<param name="to_paf" type="boolean" truevalue="--to-paf" label="This option produces paf as output" />
+        <conditional name="infer_type">
+	    <param name="infer_type_selector" type="select" label="Use paf file for mapping and inference">
+		<option value="" selected="true">None</option>
+                <option value="from_paf">from paf</option>
+            </param>
+            <when value="from_paf">
+                <param name="input_paf" type="data" format="paf" label="Input paf file"/>
+	    </when>
+            <when value="" />
+        </conditional>
+    </inputs>
+    <outputs>
+	<data name="out_fasta" format="fasta" label="Corrected reads from ${on_string} correct by ${tool.name} with model" from_work_dir="corrected_reads.fasta">
+	    <filter>not to_paf</filter>
+	</data>
+        <data name="out_paf" format="paf" from_work_dir="overlaps.paf" label="${tool.name} ${on_string}, paf file">
+            <filter>to_paf</filter>
+        </data>	  
+    </outputs>
+    <tests>
+	<!-- test 1 -->
+        <test expect_num_outputs="1">
+            <param name="input_file" value="reads.fq" ftype="fastq" />
+            <param name="model_selector" value="model_file"/>
+            <param name="device" value="cuda:all"/>
+            <param name="model" value="herro-v1"/>
+            <output name="out_fasta" file="corrected_reads.fasta" ftype="fasta" compare="diff" lines_diff="50">
+                <assert_contents>
+			<has_size size="361982" delta="100"/>
+			<has_n_lines n="12"/>
+                </assert_contents>
+            </output>
+    	</test>
+	<!-- test 2 -->
+        <test expect_num_outputs="1">
+            <param name="input_file" value="reads.fq" ftype="fastq" />
+	    <param name="device" value="cuda:all"/>
+	    <param name="to_paf" value="true"/>
+            <output name="out_paf" file="overlaps.paf" ftype="paf" compare="diff" lines_diff="50">
+                <assert_contents>
+                        <has_size size="254" delta="10"/>
+                </assert_contents>
+            </output>
+        </test>
+	<!-- test 3 -->
+        <test expect_num_outputs="1">
+	    <param name="input_file" value="reads.fq" ftype="fastq" />
+	    <param name="device" value="cuda:all"/>
+            <conditional name="infer_type">
+          	<param name="infer_type_selector" value="from_paf"/>
+		<param name="input_paf" value="overlaps.paf"/>
+	    </conditional>		
+            <output name="out_fasta" file="corrected_reads_paf.fasta" ftype="fasta" compare="diff" lines_diff="5">
+                <assert_contents>
+                    <has_size size="273" delta="100"/>
+                </assert_contents>
+            </output>
+    	</test>
+    </tests>
+    <help><![CDATA[
+Dorado supports single-read error correction with the integration of the HERRO algorithm. 
+HERRO uses all-vs-all alignment followed by haplotype-aware correction using 
+a deep learning model to achieve higher single-read accuracies. 
+The corrected reads are primarily useful for generating de novo assemblies of diploid organisms
+using Oxford Nanopore’s open source
+`Dorado <https://github.com/nanoporetech/dorado/>`__ basecaller.
+
+Dorado correct only supports FASTQ(.gz) as the input and generates a FASTA file as output. 
+The input can be uncompressed or compressed with bgz. 
+
+Dorado Correct now also provides a feature to run mapping (CPU-only stage) and inference (GPU-intensive stage) individually. 
+This enables separation of the CPU and GPU heavy stages into individual steps which can even be run on different nodes with appropriate compute characteristics.
+Gzipped PAF is currently not supported for the --from-paf option.
+
+
+    ]]></help>
+    <expand macro="citation"/>
+</tool>
