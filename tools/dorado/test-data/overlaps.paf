@@ -1,0 +1,3 @@
+[2025-05-09 07:19:09.954] [[32minfo[m] Running: "correct" "test-data/reads.fq" "--to-paf"
+[2025-05-09 07:19:09.962] [[32minfo[m] Failed to load NVML
+[2025-05-09 07:19:09.965] [[31m[1merror[m] Input reads file test-data/reads.fq does not exist!
