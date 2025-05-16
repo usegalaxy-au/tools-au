@@ -25,6 +25,14 @@
             </citation>
         </citations>
     </xml>
+    <xml name="model_param">
+        <param name="model" type="select" label="Basecalling model. See the Help section for info on model names.">
+            <options from_data_table="dorado_models">
+                <!-- only allow models that shipped in this container -->
+                <filter type="static_value" column="1" value="@CONTAINER_HASH@"/>
+            </options>
+        </param>
+    </xml>
     <xml name="barcode_kits">
         <option value="EXP-NBD103">EXP-NBD103</option>
         <option value="EXP-NBD104">EXP-NBD104</option>
