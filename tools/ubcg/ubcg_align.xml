@@ -1,0 +1,139 @@
+<tool id="ubcg_align" name="UBCG align" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>generate multiple alignments from bcg</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    #import re
+	    mkdir -p output_dir &&
+	    ln -s '$__tool_directory__/programPath' ./programPath &&
+            ln -s '$__tool_directory__/UBCG.hmm' ./UBCG.hmm &&
+
+            #set bcg_folder="bcg_folder"
+            mkdir -p '$bcg_folder' &&
+	    #for $i in $input_bcg_collection:
+        	#set file_name = $i.file_name
+        	#set identifier = re.sub('[^\s\w\-\\.]', '_', str($i.element_identifier))
+        	ln -s '$file_name' '$bcg_folder/$identifier' &&
+    	    #end for
+
+	    java -jar /app/UBCG.jar align
+	    -bcg_dir $bcg_folder
+	    -out_dir output_dir
+	    -t \${GALAXY_SLOTS:-2}
+	    #if $prefix != '':
+	    	-prefix $prefix
+	    #end if
+	    -f $filter_cutoff
+	    -gsi_threshold $gsi_threshold
+	    -a $alignment_method
+	    -zZ
+	    -raxml
+	    && 2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_bcg_collection" type="data_collection" format="bcg" collection_type="list" label="bcg files for alignment"/>
+            <param name="alignment_method" type="select" label="select an alignment method" help="default: codon">
+                <option value="codon" selected="true">codon-based alignment</option>
+                <option value="nt">nucleotide sequence alignment</option>
+                <option value="aa">amino acid sequence alignment</option>
+                <option value="codon12">same as codon alignnment - only 1st and 2nd nucleotides of a codon are selected</option>
+            </param>
+	    <param name="filter_cutoff" type="integer" value="50" min="0" max="100" label="filtering cutoff for gap-containing position" help="default: 50. 0 - select all alignment positions. 100 - select positions that are present in all genomes. 50 - select positions that are present in a half of genomes"/>
+	    <param name="gsi_threshold" type="integer" value="95" min="1" max="100" label="Threshold for Gene Support Index" help="default: 95%" />
+	    <param name="use_raxml" argument="-raxml" type="boolean" truevalue="-raxml" falsevalue="" checked="false" label="use RAxML for phylogeny reconstruction" help="default: FastTree" />
+	    <param name="create_zZ_format" argument="-zZ" type="boolean"  checked="false" truevalue="-zZ" falsevalue="" label="Make zZ-formated files" help="create fasta/nwk files with zZ+uid+zZ format for the names of each genome" />
+	    <param name="uid" type="integer" optional="true" label="A unique integer id if not provided" help="i.e ignore if not applicable" />
+	    <param name="prefix" type="text" value="sample1" label="Append a prefix to all output files" help="i.e mycoplasma_11" />
+    </inputs>
+    <outputs>
+	    <!-- <data name="output_nwk" format="nwk" label="${tool.name} on ${on_string}: nwk" from_work_dir="output_dir/*.nwk"/>
+	    <data name="output_fasta" format="fasta" label="${tool.name} on ${on_string}: multiple alignment of genes" from_work_dir="output_dir/*.fasta"/>
+	    <data name="output_trm" format="txt" label="${tool.name} on ${on_string}: trm" from_work_dir="output_dir/*.trm"/>
+	    <data name="log" format="txt" label="${tool.name} on ${on_string}: log" from_work_dir="output_dir/*.log"/>
+	    -->
+	    <collection name="output_pangenome" type="list" label="${tool.name} on ${on_string}: Pangenome alignment output">
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;trm)" directory="output_dir/sample1" format="txt" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;log)" directory="output_dir/sample1" format="txt" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fasta)" directory="output_dir/sample1" format="fasta" visible="false" />
+		    <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;nwk)" directory="output_dir/sample1" format="nwk" visible="false" />
+	   </collection>
+    </outputs>
+	
+    <tests>
+	 <test>
+		<!-- #1 test -->
+	     <param name="input_bcg_collection">
+		<collection type="list">
+		    <element name="CP012646_s_GCA_001281025.1_KCOM_1350.bcg" value="CP012646_s_GCA_001281025.1_KCOM_1350.bcg" />
+		    <element name="Streptococcus_mitis_GCA_002014755.1_CCUG_31611_TYPE.bcg" value="Streptococcus_mitis_GCA_002014755.1_CCUG_31611_TYPE.bcg"/>
+		    <element name="CP014326_s_GCA_001560895.1_SVGS_061.bcg" value="CP014326_s_GCA_001560895.1_SVGS_061.bcg" />
+		    <element name="Streptococcus_pneumoniae_GCA_001457635.1_NCTC_7465_TYPE.bcg" value="Streptococcus_pneumoniae_GCA_001457635.1_NCTC_7465_TYPE.bcg"/>
+                </collection>
+             </param>
+	     <param name="prefix" value="sample1"/>
+	     <output_collection name="output_pangenome" type="list" count="373">
+             </output_collection>
+    	</test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*This tool is part of Fgenesh genome annotation suit and is used to rename the fasta sequence (i.e trinity) header*
+
+**Input**
+	    
+- input file  -  a de novo assembled transcriptome file in FASTA file format. 
+
+**Command line Example:**
+
+- seq_renumber.pl <file> -i <seq_file_in> [-o <seq_file_out>]
+
+- seq_file_in - file with multiple FASTA sequences
+
+**Options**
+
+- check  - check if sequence IDs are unique or not
+- fuse   - fuse unique number with original seq_ID (with '_') (by default)
+- insert - insert unique number before original seq_ID
+- replace- replace original seq_ID with unique number
+- count  - replace whole definition line with unique number
+- remove - remove seq_ID from definition line
+
+**Output**
+
+- a fasta file with header renamed.
+
+
+**Example how seqID is changed by different methods:**
+
+- >TRINITY_DN64_c0_g1_i1 len=845 ...    # original can be changed to the followings with different options
+	
+- fuse    - >1_TRINITY_DN64_c0_g1_i1 len=845 ...
+- insert  - >1 TRINITY_DN64_c0_g1_i1 len=845 ...
+- replace - >1 len=845 ... 
+- count   - >1
+- remove  - >len=845 ...
+
+
+
+
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>

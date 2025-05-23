@@ -1,0 +1,108 @@
+Run ID: test
+Genomes produced: 4
+Alignment mode: codon
+Filtered by: 50%
+
+Genomes included in the analysis
+uid	label	acc	taxon_name	strain_name	type	taxonomy	UBCG
+1744080968609	Streptococcus pneumoniae NCTC 7465(T)	null	Streptococcus pneumoniae	null	TYPE	null	null
+1744086046219	CP014326_s_SVGS_061	null	CP014326_s	null	null	null	null
+1744080931366	Streptococcus mitis CCUG 31611(T)	null	Streptococcus mitis	null	TYPE	null	null
+1747118854609	CP012646_s KCOM 1350	null	CP012646_s	null	null	null	null
+//
+
+The length of concatenated alignment: 87144
+
+The length of gene alignments
+alaS: 2619
+argS: 1692
+aspS: 1764
+cgtA: 1311
+coaE: 606
+cysS: 1344
+dnaA: 1362
+dnaG: 1761
+dnaX: 1656
+engA: 1311
+ffh: 1572
+fmt: 936
+frr: 558
+ftsY: 1290
+gmk: 627
+hisS: 1281
+ileS: 2793
+infB: 2793
+infC: 558
+ksgA: 873
+lepA: 1824
+leuS: 2502
+ligA: 1947
+nusA: 1125
+nusG: 537
+pgk: 1197
+pheS: 1047
+pheT: 2406
+prfA: 1080
+pyrG: 1608
+recA: 1167
+rbfA: 351
+rnc: 699
+rplA: 690
+rplB: 834
+rplC: 627
+rplD: 624
+rplE: 543
+rplF: 537
+rplI: 453
+rplJ: 501
+rplK: 426
+rplL: 369
+rplM: 447
+rplN: 369
+rplO: 441
+rplP: 414
+rplQ: 387
+rplR: 357
+rplS: 348
+rplT: 360
+rplU: 315
+rplV: 345
+rplW: 297
+rplX: 306
+rpmA: 294
+rpmC: 207
+rpmI: 201
+rpoA: 936
+rpoB: 3612
+rpoC: 3678
+rpsB: 780
+rpsC: 654
+rpsD: 612
+rpsE: 495
+rpsF: 291
+rpsG: 471
+rpsH: 399
+rpsI: 393
+rpsJ: 309
+rpsK: 384
+rpsL: 414
+rpsM: 366
+rpsO: 270
+rpsP: 273
+rpsQ: 261
+rpsR: 240
+rpsS: 282
+rpsT: 237
+secA: 2514
+secG: 234
+secY: 1311
+serS: 1275
+smpB: 468
+tig: 1284
+tilS: 1278
+truB: 879
+tsaD: 1011
+tsf: 1041
+uvrB: 1989
+ybeY: 498
+ychF: 1116
