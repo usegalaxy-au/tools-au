@@ -1,0 +1,121 @@
+<tool id="ubcg_extract" name="UBCG extract" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>convert genome assemblies or contigs to bcg files</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    mkdir -p bcg_dir &&
+	    ln -s $input_fasta ./input.fasta &&
+	    ln -s '$__tool_directory__/programPath' ./programPath &&
+	    ln -s '$__tool_directory__/UBCG.hmm' ./UBCG.hmm &&
+	    java -jar /app/UBCG.jar extract
+	    -i ./input.fasta
+	    -bcg_dir bcg_dir
+	    #if $label != '':
+	    	-label $label
+	    #end if
+	    #if $taxon_name != '':
+	    	-taxon 	$taxon_name
+	    #end if
+	    #if $strain != '':
+	    	-strain $strain
+	    #end if
+	    #if $accession != '' :
+	    	-acc $accession
+	    #end if
+	    #if $uid != '':
+	    	-uid $uid
+	    #end if
+	    -type
+	    && 2>&1
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_fasta" type="data" format="fasta" label="Genome assembly fasta file"/>
+	    <param name="label" type="text" label="full label of the strain/genome." help="It should be encompassed by single quotes (e.g 'Escherichia coli O157 876' "/>
+	    <param name="taxon_name" type="text" label="Name of species (optional)" help="taxon name (i.e Escherichia coli)" />
+	    <param name="strain" type="text" label="Name of the strain" help="i.e JC126" />
+	    <param name="type" argument="-type" type="boolean" truevalue="-type" falsevalue="" checked="false" label="a type strain of species or subspecies" />
+	    <param name="accession" argument="-acc" type="text" label="Accession of a genome sequence" help="i.e NCBI's assembly accession is used for public domain data" />
+	    <param name="uid" type="integer" optional="true" label="A unique integer id if not provided" help="i.e ignore if not applicable" />
+    </inputs>
+    <outputs>
+    	     <data name="output_bcg" format="bcg" label="${tool.name} on ${on_string}: convert fasta to bcg " from_work_dir="bcg_dir/*.bcg"/>
+    </outputs>
+	
+    <tests>
+	 <test>
+	    <!-- #1 test -->
+	    <param name="input_fasta" value="CP014326_s_GCA_001560895.1_SVGS_061.fasta" ftype="fasta"/>
+	    <param name="label" value="CP014326_s SVGS_061"/>
+	    <param name="acc" value="GCA_001560895.1"/>
+	    <param name="taxon" value="CP014326_s"/>
+	    <param name="strain" value="SVGS_061"/>
+	    <output name="output_bcg" file="CP014326_s_GCA_001560895.1_SVGS_061.bcg" ftype="bcg" compare="diff" lines_diff="10">
+                <assert_contents>
+			<has_size size="119616" delta="100"/>
+			<has_text text="SVGS_061"/>
+                </assert_contents>
+	    </output>
+    	</test>
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*This tool is part of Fgenesh genome annotation suit and is used to rename the fasta sequence (i.e trinity) header*
+
+**Input**
+	    
+- input file  -  a de novo assembled transcriptome file in FASTA file format. 
+
+**Command line Example:**
+
+- seq_renumber.pl <file> -i <seq_file_in> [-o <seq_file_out>]
+
+- seq_file_in - file with multiple FASTA sequences
+
+**Options**
+
+- check  - check if sequence IDs are unique or not
+- fuse   - fuse unique number with original seq_ID (with '_') (by default)
+- insert - insert unique number before original seq_ID
+- replace- replace original seq_ID with unique number
+- count  - replace whole definition line with unique number
+- remove - remove seq_ID from definition line
+
+**Output**
+
+- a fasta file with header renamed.
+
+
+**Example how seqID is changed by different methods:**
+
+- >TRINITY_DN64_c0_g1_i1 len=845 ...    # original can be changed to the followings with different options
+	
+- fuse    - >1_TRINITY_DN64_c0_g1_i1 len=845 ...
+- insert  - >1 TRINITY_DN64_c0_g1_i1 len=845 ...
+- replace - >1 len=845 ... 
+- count   - >1
+- remove  - >len=845 ...
+
+
+
+
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_. Note: The software license needs to acquired prior to use.
+
+	    
+	]]></help>
+</tool>
