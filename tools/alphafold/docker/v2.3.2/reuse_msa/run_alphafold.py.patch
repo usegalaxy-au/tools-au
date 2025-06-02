@@ -1,0 +1,24 @@
+diff --git a/run_alphafold.py b/run_alphafold.py
+index 32da6dd..f4f53a7 100644
+--- a/run_alphafold.py
++++ b/run_alphafold.py
+@@ -149,6 +149,7 @@ flags.DEFINE_boolean('disable_amber_relax', False, 'Whether to use amber'
+                      ' reduce computation time.')
+ flags.DEFINE_integer('output_models', None, 'Limit the number of predicted'
+                      ' models outputs (default 5).')
++flags.DEFINE_boolean('msa_only', False, 'Generate MSAs and then exit early.')
+ 
+ FLAGS = flags.FLAGS
+ 
+@@ -211,6 +212,11 @@ def predict_structure(
+   with open(features_output_path, 'wb') as f:
+     pickle.dump(feature_dict, f, protocol=4)
+ 
++  if FLAGS.msa_only:
++    logging.info('MSAs have been generated. Exiting early because --msa_only'
++                 ' has been set.')
++    return
++
+   unrelaxed_pdbs = {}
+   unrelaxed_proteins = {}
+   relaxed_pdbs = {}
