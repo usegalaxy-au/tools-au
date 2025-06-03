@@ -1,4 +1,4 @@
-<tool id="dorado_error_correct" name="correct reads" version="@VERSION@+galaxy1" python_template_version="3.5" profile="24.1">
+<tool id="dorado_error_correct" name="Dorado correct reads" version="@VERSION@+galaxy1" python_template_version="3.5" profile="24.1">
     <description>improve the accuracy of nanopore sequencing reads</description>
     <macros>
         <import>macros.xml</import>
