@@ -8,6 +8,8 @@ LOG_DIR = Path('logs')
 LOCAL_MMCIF_DIR = Path('mmcif_files')
 MMCIF_LOG_DIR = LOG_DIR / "mmcif_patches"
 DB_PATH_MMCIF_FILES = "pdb_mmcif/mmcif_files"
+DB_PATH_PDB_SEQRES = "pdb_seqres/pdb_seqres.txt"
+DB_PATH_OBSOLETE =  "pdb_mmcif/obsolete.dat"
 DB_PATH_PDB70_CLU = "pdb70/pdb70_clu.tsv"
 LOG_FILE_REQUIRED = "required_ids.log"
 LOG_FILE_EXISTING = "existing_ids.log"
@@ -136,6 +138,37 @@ def patch_all(
     required_mmcif_ids = set(mmcif_list)
     print_cli(f"Found {len(required_mmcif_ids)} required MMCIF files.")
     write_ids_to_file(required_mmcif_ids, LOG_FILE_REQUIRED)
+
+    pdb_seqres_file = db_path / DB_PATH_PDB_SEQRES
+    if pdb_seqres_file.exists():
+        print_cli(f"Reading additional PDB IDs from {pdb_seqres_file}...")
+        with open(pdb_seqres_file) as f:
+            for line in f:
+                if line.startswith(">"):
+                    pdb_id = line[1:5].lower()  # Extract first 4 chars after '>'
+                    required_mmcif_ids.add(pdb_id)
+        print_cli(f"Updated to {len(required_mmcif_ids)} total required MMCIF files.")
+    else:
+        print_cli(f"Warning: {pdb_seqres_file} not found, skipping extra IDs.")
+
+    # Read obsolete IDs from obsolete.dat and remove from required_mmcif_ids
+    obsolete_file = db_path / DB_PATH_OBSOLETE
+    obsolete_ids = set()
+    if obsolete_file.exists():
+        print_cli(f"Reading obsolete IDs from {obsolete_file}...")
+        with open(obsolete_file) as f:
+            for line in f:
+                if line.startswith("OBSLTE"):
+                    parts = line.split()
+                    if len(parts) >= 3:
+                        obsolete_id = parts[2].lower()
+                        if len(obsolete_id) == 4:
+                            obsolete_ids.add(obsolete_id)
+        print_cli(f"Found {len(obsolete_ids)} obsolete IDs.")
+        required_mmcif_ids -= obsolete_ids
+        print_cli(f"{len(required_mmcif_ids)} required MMCIF files after removing obsolete IDs.")
+    else:
+        print_cli(f"Warning: {obsolete_file} not found, skipping obsolete filtering.")
 
     print_cli(f"Scanning {db_mmcif_files_dir} for existing MMCIF files...")
     existing_mmcif_ids = {
