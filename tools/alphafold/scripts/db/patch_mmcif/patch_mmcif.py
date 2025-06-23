@@ -6,15 +6,17 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 RCSB_BASE_URL = 'https://files.rcsb.org/download/'
 LOG_DIR = Path('logs')
-LOCAL_MMCIF_DIR = Path('mmcif_files')
+LOCAL_MMCIF_DIR = Path('pdb_mmcif/mmcif_files')
 MMCIF_LOG_DIR = LOG_DIR / "mmcif_patches"
 DB_PATH_MMCIF_FILES = "pdb_mmcif/mmcif_files"
 DB_PATH_PDB_SEQRES = "pdb_seqres/pdb_seqres.txt"
 DB_PATH_OBSOLETE =  "pdb_mmcif/obsolete.dat"
 DB_PATH_PDB70_CLU = "pdb70/pdb70_clu.tsv"
+DB_PATH_PDB100 = "pdb100/pdb100_2021Mar03_pdb.ffindex"
 LOG_FILE_REQUIRED = "required_ids.log"
 LOG_FILE_EXISTING = "existing_ids.log"
 LOG_FILE_MISSING = "missing_ids.log"
+LOG_FILE_EXTRA = "extra_ids.log"
 
 
 def parse_args():
@@ -56,13 +58,19 @@ def parse_args():
             f"Write patched PDB files/IDs to ./{LOG_DIR}/."
             " This is useful for keeping track of which files were patched."
             f" The following files will be written: [{LOG_FILE_REQUIRED},"
-            f" {LOG_FILE_EXISTING}, {LOG_FILE_MISSING}]. Patched MMCIF files"
+            f" {LOG_FILE_EXISTING}, {LOG_FILE_MISSING}, {LOG_FILE_EXTRA}]. Patched MMCIF files"
             f" will be copied to ./{MMCIF_LOG_DIR}/."
         ),
     )
     parser.add_argument(
         "--threads", type=int, default=8, help=(
             "Number of concurrent downloads to use (default: 8)."
+        )
+    )
+    parser.add_argument(
+        "--prune", action="store_true", help=(
+            "Move orphaned (unreferenced) MMCIF files to ./orphaned/"
+            " so they can be reviewed or cleaned up manually."
         )
     )
     args = parser.parse_args()
@@ -122,28 +130,46 @@ def patch_all(
     prompt: bool = False,
     write_db: bool = False,
     threads: int = 8,
+    prune: bool = False,
 ):
     """Calculate and patch all missing MMCIF files in the databases."""
     def write_ids_to_file(ids, filename):
         if log:
             print_cli(f"Writing logs/{filename}...")
             with open(LOG_DIR / filename, 'w') as f:
-                f.write('\n'.join(ids))
+                f.write('\n'.join(sorted(ids)))
 
     if log:
         LOG_DIR.mkdir(exist_ok=True)
     db_mmcif_files_dir = db_path / DB_PATH_MMCIF_FILES
     pdb70_file = db_path / DB_PATH_PDB70_CLU
-    print_cli(f"Reading required MMCIF IDs from {pdb70_file}...")
-    mmcif_list = []
-    with open(pdb70_file) as f:
-        for line in f.readlines():
-            x, y = line.split()  # from line "XXXX_B  YYYY_B"
-            x = x.split('_')[0].lower()
-            y = y.split('_')[0].lower()
-            mmcif_list += [x, y]
-    required_mmcif_ids = set(mmcif_list)
-    print_cli(f"Found {len(required_mmcif_ids)} required MMCIF files.")
+    if pdb70_file:
+        print_cli(f"Reading required MMCIF IDs from {pdb70_file}...")
+        mmcif_list = []
+        with open(pdb70_file) as f:
+            for line in f.readlines():
+                x, y = line.split()  # from line "XXXX_B  YYYY_B"
+                x = x.split('_')[0].lower()
+                y = y.split('_')[0].lower()
+                mmcif_list += [x, y]
+        required_mmcif_ids = set(mmcif_list)
+        print_cli(f"Found {len(required_mmcif_ids)} required MMCIF files.")
+    else:
+        print_cli(f"Warning: {pdb70_file} not found, skipping extra IDs.")
+    write_ids_to_file(required_mmcif_ids, LOG_FILE_REQUIRED)
+
+    pdb100_file = db_path / DB_PATH_PDB100
+    if pdb100_file:
+        print_cli(f"Reading required MMCIF IDs from {pdb100_file}...")
+        with open(pdb100_file) as f:
+            for line in f.readlines():
+                pdb_chain = line.split()[0]  # e.g. 1a7e_A
+                pdb_id = pdb_chain.split('_')[0].lower()
+                if len(pdb_id) == 4:
+                    required_mmcif_ids.add(pdb_id)
+        print_cli(f"Updated to {len(required_mmcif_ids)} required MMCIF files.")
+    else:
+        print_cli(f"Warning: {pdb100_file} not found, skipping extra IDs.")
     write_ids_to_file(required_mmcif_ids, LOG_FILE_REQUIRED)
 
     pdb_seqres_file = db_path / DB_PATH_PDB_SEQRES
@@ -186,8 +212,20 @@ def patch_all(
     write_ids_to_file(existing_mmcif_ids, LOG_FILE_EXISTING)
 
     missing_mmcif_ids = required_mmcif_ids - existing_mmcif_ids
+    extra_mmcif_ids = existing_mmcif_ids - required_mmcif_ids
     print_cli(f'Found {len(missing_mmcif_ids)} missing MMCIF files.')
+    print_cli(f'Found {len(extra_mmcif_ids)} extra MMCIF files.')
     write_ids_to_file(missing_mmcif_ids, LOG_FILE_MISSING)
+    write_ids_to_file(extra_mmcif_ids, LOG_FILE_EXTRA)
+
+    if prune and extra_mmcif_ids:
+        orphan_dir = db_mmcif_files_dir.parent / "orphaned"
+        orphan_dir.mkdir(exist_ok=True)
+        for eid in extra_mmcif_ids:
+            old_path = db_mmcif_files_dir / f"{eid}.cif"
+            new_path = orphan_dir / f"{eid}.cif"
+            old_path.rename(new_path)
+            print_cli(f"Moved unreferenced {eid}.cif to orphaned/")
 
     if not len(missing_mmcif_ids):
         print_cli("No missing MMCIF files found. Exiting...")
@@ -245,6 +283,7 @@ def main():
             write_db=args.write_db,
             prompt=True,
             threads=args.threads,
+            prune=args.prune,
         )
     else:
         print_cli(f"Attempting to patch MMCIF file {args.id}...")
@@ -258,3 +297,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
