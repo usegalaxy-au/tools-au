@@ -2,6 +2,7 @@ import argparse
 import requests
 import shutil
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 RCSB_BASE_URL = 'https://files.rcsb.org/download/'
 LOG_DIR = Path('logs')
@@ -59,6 +60,11 @@ def parse_args():
             f" will be copied to ./{MMCIF_LOG_DIR}/."
         ),
     )
+    parser.add_argument(
+        "--threads", type=int, default=8, help=(
+            "Number of concurrent downloads to use (default: 8)."
+        )
+    )
     args = parser.parse_args()
 
     if args.id and len(args.id) != 4:
@@ -114,7 +120,8 @@ def patch_all(
     db_path: Path,
     log: bool = False,
     prompt: bool = False,
-    write_db: bool = False
+    write_db: bool = False,
+    threads: int = 8,
 ):
     """Calculate and patch all missing MMCIF files in the databases."""
     def write_ids_to_file(ids, filename):
@@ -192,9 +199,26 @@ def patch_all(
             print_cli("Aborted.")
             return
 
-    print_cli("Patching missing MMCIF files...")
-    for mmcif_id in missing_mmcif_ids:
-        patch_mmcif_file(mmcif_id, db_path, log=log, write_db=write_db)
+    print_cli(f"Patching {len(missing_mmcif_ids)} missing MMCIF files using {threads} threads...")
+
+    def download_wrapper(mmcif_id):
+        try:
+            patch_mmcif_file(mmcif_id, db_path, log=log, write_db=write_db)
+            return (mmcif_id, True, None)
+        except Exception as e:
+            return (mmcif_id, False, str(e))
+
+    with ThreadPoolExecutor(max_workers=threads) as executor:
+        futures = {executor.submit(download_wrapper, mmcif_id): mmcif_id for mmcif_id in missing_mmcif_ids}
+        completed = 0
+        for future in as_completed(futures):
+            mmcif_id, success, err = future.result()
+            completed += 1
+            if success:
+                print_cli(f"[{completed}/{len(missing_mmcif_ids)}] Patched {mmcif_id}")
+            else:
+                print_cli(f"[{completed}/{len(missing_mmcif_ids)}] Failed {mmcif_id}: {err}")
+
     print_cli("Done.")
 
 
@@ -220,6 +244,7 @@ def main():
             log=args.log,
             write_db=args.write_db,
             prompt=True,
+            threads=args.threads,
         )
     else:
         print_cli(f"Attempting to patch MMCIF file {args.id}...")
