@@ -143,7 +143,8 @@ def patch_all(
         LOG_DIR.mkdir(exist_ok=True)
     db_mmcif_files_dir = db_path / DB_PATH_MMCIF_FILES
     pdb70_file = db_path / DB_PATH_PDB70_CLU
-    if pdb70_file:
+    required_mmcif_ids = set()
+    if pdb70_file.exists():
         print_cli(f"Reading required MMCIF IDs from {pdb70_file}...")
         mmcif_list = []
         with open(pdb70_file) as f:
@@ -156,10 +157,9 @@ def patch_all(
         print_cli(f"Found {len(required_mmcif_ids)} required MMCIF files.")
     else:
         print_cli(f"Warning: {pdb70_file} not found, skipping extra IDs.")
-    write_ids_to_file(required_mmcif_ids, LOG_FILE_REQUIRED)
 
     pdb100_file = db_path / DB_PATH_PDB100
-    if pdb100_file:
+    if pdb100_file.exists():
         print_cli(f"Reading required MMCIF IDs from {pdb100_file}...")
         with open(pdb100_file) as f:
             for line in f.readlines():
@@ -170,7 +170,6 @@ def patch_all(
         print_cli(f"Updated to {len(required_mmcif_ids)} required MMCIF files.")
     else:
         print_cli(f"Warning: {pdb100_file} not found, skipping extra IDs.")
-    write_ids_to_file(required_mmcif_ids, LOG_FILE_REQUIRED)
 
     pdb_seqres_file = db_path / DB_PATH_PDB_SEQRES
     if pdb_seqres_file.exists():
@@ -202,6 +201,7 @@ def patch_all(
         print_cli(f"{len(required_mmcif_ids)} required MMCIF files after removing obsolete IDs.")
     else:
         print_cli(f"Warning: {obsolete_file} not found, skipping obsolete filtering.")
+    write_ids_to_file(required_mmcif_ids, LOG_FILE_REQUIRED)
 
     print_cli(f"Scanning {db_mmcif_files_dir} for existing MMCIF files...")
     existing_mmcif_ids = {
