@@ -216,7 +216,8 @@ def write_confidence_scores(ranking: ResultRanking, context: ExecutionContext):
     header = ['model', context.plddt_key]
 
     for i, path in enumerate(context.model_pkl_paths):
-        rank = int(path.name.split('model_')[-1][0])
+        model_name = 'model_' + path.stem.split('model_')[-1]
+        rank = ranking.get_rank_for_model(model_name)
         scores_ls = [ranking.get_plddt_for_rank(rank)]
         with open(path, 'rb') as f:
             data = pk.load(f)
