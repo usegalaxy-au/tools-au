@@ -40,7 +40,7 @@
     <inputs>
 	<param name="reads" type="data" format="fastq" label="Input long reads (FASTQ format)" required="true"/>
 	<conditional name="long_read_tool">
-	        <param name="assembler" type="select" label="Task to perform" required="true">
+	        <param name="assembler" type="select" label="Tool" required="true">
 	            <option value="genome_size">genome_size</option>
 	            <option value="flye">flye</option>
 	            <option value="miniasm">miniasm</option>
@@ -101,17 +101,17 @@
     <help><![CDATA[
 This tool wraps the `autocycler helper` command, allowing you to select from multiple genome assembly tasks and configure relevant parameters.
 
-**Tasks Available**:
+**Tool Available**:
+
 - genome_size
 - flye
 - miniasm
 - raven
 
 **Required**:
+	    
 - Reads (FASTQ)
 - Assembler selection or genome size (genome_size) estimation
-
-Other parameters are optional and task-dependent.
 
     ]]></help>
 </tool>
