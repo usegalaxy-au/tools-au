@@ -71,7 +71,7 @@
     </tests>
     <help><![CDATA[
 **AutoCycler Decompress Tool**
-
+	    
 This tool extracts decompressed sequences from a compressed assembly graph.
 
 **Inputs**
@@ -99,6 +99,16 @@ This tool extracts decompressed sequences from a compressed assembly graph.
 - Autocycler cannot make use of any sequences smaller than the k-mer size (51 by default). This means that if you have very small contigs in your assemblies, they will be ignored, and you will not be able to recover them with Autocycler decompress.
 - All contig header whitespace is converted to a single space and will therefore be restored that way when using Autocycler decompress.
 - When decompressing to a single file, the filename and contig name are concatenated. Any spaces in the filename are replaced with underscores (to prevent the truncation of the sequence name).
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler decompress`: https://github.com/rrwick/Autocycler/wiki/Autocycler-decompress
+
+**Citations**
+
+
     ]]></help>
 	    <expand macro="citations"/>
 </tool>

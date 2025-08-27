@@ -16,8 +16,10 @@
 
 	    autocycler helper
 	    #if $long_read_tool.assembler == "genome_size"
+		'$long_read_tool.assembler'
 		--reads '$reads.element_identifier'
-		genome_size > '$genome_size_stat' 2>&1
+		--threads \${GALAXY_SLOTS:-4}
+		> '$genome_size_stat' 2>&1
 	    #else	    
 	    	'$long_read_tool.assembler'
             	--reads '$reads.element_identifier'
@@ -79,14 +81,22 @@
     </outputs>
     <tests>
         <test>
-            <param name="reads" value="sample_01.fastq"/>
-	    <param name="assembler" value="genome_size"/>
+            <param name="reads" value="sample_00.fastq"/>
 	    <param name="read_type" value="ont_r10"/>
 	    <conditional name="long_read_tool">
                 <param name="assembler" value="genome_size"/>
             </conditional>
 	    <output name="genome_size_stat" file="genome_size_stat.txt" ftype="txt" compare="diff" lines_diff="200"/>  
-        </test>	    
+        </test>
+        <test>
+            <param name="reads" value="sample_00.fastq"/>
+            <param name="read_type" value="ont_r10"/>
+            <conditional name="long_read_tool">
+                <param name="assembler" value="flye"/>
+            </conditional>
+            <output name="output" file="raven_00.fasta" ftype="fasta" compare="diff" lines_diff="1000"/>
+            <output name="output" file="raven_00.gfa" ftype="gfa1" compare="diff" lines_diff="1000"/>
+        </test>
         <test>
 	    <param name="reads" value="sample_01.fastq"/>
 	    <param name="read_type" value="ont_r10"/>
@@ -95,23 +105,56 @@
             </conditional>
 	    <output name="output" file="flye_01.fasta" ftype="fasta" compare="diff" lines_diff="1000"/>
 	    <output name="output" file="flye_01.gfa" ftype="gfa1" compare="diff" lines_diff="1000"/>
-        </test>
+    	</test>
     </tests>
 
     <help><![CDATA[
-This tool wraps the `autocycler helper` command, allowing you to select from multiple genome assembly tasks and configure relevant parameters.
+Autocycler helper is a wrapper for various long-read assemblers, providing a consistent command-line interface and standardised outputs. It is an optional tool: not required for running Autocycler, but helpful for scripting and automation. By standardising how each assembler is invoked, it simplifies the process of generating input assemblies This is the wrapper of the `autocycler helper` command, allowing you to select from multiple genome assembly tasks and configure relevant parameters.
 
-**Tool Available**:
+**Input**
 
-- genome_size
-- flye
-- miniasm
-- raven
-
-**Required**:
-	    
-- Reads (FASTQ)
+- Reads in Fastq file format
 - Assembler selection or genome size (genome_size) estimation
+
+**Output**
+
+- a fasta file
+- a gfa file
+
+**Tools currently available in this wrapper**:
+
+- **genome_size**
+
+  - Assembly tool - Raven is used for genome size estimation    
+	    
+- **flye**
+
+  - Assembly tool - flye
+	    
+- **miniasm**
+
+  - Assembly tool - miniasm and minipolish
+
+- **raven**
+
+  - Assembly tool - Raven 
+
+**Parameters**
+
+- genome_size is unique:  prints output to a text file	    
+
+- Minimum absolute depth: Exclude contigs with read depth less than this absolute value
+
+- Minimum relative depth: Exclude contigs with read depth less than this fraction of the longest contig's depth 
+
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler helper`: https://github.com/rrwick/Autocycler/wiki/Autocycler-helper
+
+**Citations**
 
     ]]></help>
 </tool>

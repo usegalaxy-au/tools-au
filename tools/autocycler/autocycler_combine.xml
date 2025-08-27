@@ -74,19 +74,29 @@ This tool combines multiple cluster GFA files into a final assembly.
 
 **Inputs**
 
-- AutoCycler working directory
 - One or more cluster GFA files (from previous AutoCycler steps)
 
 **Outputs**
 	    
-- Final combined assembly in GFA format
-- Combination log file with processing details
+- Final combined assembly in GFA format (i.e 5_final.gfa1)
+- output files: 1_untrimmed_yaml.yaml, 2_trimmed_yaml.yaml, 1_untrimmed.gfa1, 2_trimmed.gfa1, 3_bridged.gfa1, 4_merged.gfa1
 
 **Notes**
+
 - While Autocycler combine is typically run using each cluster's final graph (5_final.gfa), it can also be run on earlier graphs (e.g. 4_merged.gfa) if desired.	    
 - This is typically the final assembly step in the AutoCycler pipeline
 - Multiple GFA files can be selected for combination
 - The output represents the complete assembled sequence graph
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler combine`: https://github.com/rrwick/Autocycler/wiki/Autocycler-combine
+
+**Citations**
+
+
     ]]></help>
 	    <expand macro="citations"/>
 </tool>

@@ -35,7 +35,7 @@
     </outputs>
     <tests>
         <test>
-            <param name="in_gfa" value="consensus_assembly.gfa"/>
+            <param name="in_gfa" value="consensus_assembly_unfiltered.gfa"/>
             <param name="remove" value="743,782"/>
 	    <output name="cleaned_gfa" file="clean.gfa" ftype="gfa1">
 		    <assert_contents>
@@ -47,8 +47,7 @@
     </tests>
     <help><![CDATA[
 **AutoCycler Clean Tool**
-
-This tool cleans and modifies assembly graphs by removing or duplicating specific segments.
+Autocycler clean allows users remove or duplicate sequences in a consensus assembly produced by Autocycler combine.
 
 **Inputs**
 	    
@@ -78,6 +77,15 @@ This tool cleans and modifies assembly graphs by removing or duplicating specifi
 - Can remove problematic segments or amplify important ones
 - Both removal and duplication can be performed in one operation
 - Input tig numbers should match those in your GFA file
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler clean`: https://github.com/rrwick/Autocycler/wiki/Autocycler-clean
+
+**Citations**
+
     ]]></help>
 	    <expand macro="citations"/>
 </tool>
