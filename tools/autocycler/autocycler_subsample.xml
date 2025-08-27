@@ -43,28 +43,28 @@
 		    	<assert_contents>
 			     <has_n_lines n="664"/>
 			     <has_text text="@SRR11550236.1 1/1"/>
-			     <has_size value="1525682" delta="500"/>
+			     <has_size value="1476688" delta="500"/>
 		    	</assert_contents>
 		    </element>
                     <element name="sample_02" file="sample_02.fastq" ftype="fastq">
                         <assert_contents>
                              <has_n_lines n="664"/>
                              <has_text text="@SRR11550236.2 2/1"/>
-                             <has_size value="1428884" delta="500"/>
+                             <has_size value="1543326" delta="500"/>
                         </assert_contents>
                     </element>
                     <element name="sample_03" file="sample_03.fastq" ftype="fastq">
                         <assert_contents>
                              <has_n_lines n="664"/>
                              <has_text text="@SRR11550236.3 3/1"/>
-                             <has_size value="1486664" delta="500"/>
+                             <has_size value="1473532" delta="500"/>
                         </assert_contents>
                     </element>
                     <element name="sample_04" file="sample_04.fastq" ftype="fastq">
                         <assert_contents>
                              <has_n_lines n="664"/>
                              <has_text text="@SRR11550236.4 4/1"/>
-                             <has_size value="1528032" delta="500"/>
+                             <has_size value="1458012" delta="500"/>
                         </assert_contents>
                     </element>		
 		    <element name="subsample" file="subsample.yaml" ftype="yaml">
@@ -74,7 +74,7 @@
 			     <has_text text="input_read_bases: 896705"/>
 			     <has_text text="input_read_n50: 6139"/>
                              <has_text text="count: 166"/>
-                             <has_text text="n50: 6228"/>
+                             <has_text text="n50: 6010"/>
                         </assert_contents>
                     </element>
 	    </output_collection>

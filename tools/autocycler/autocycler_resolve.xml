@@ -72,15 +72,21 @@
     <help><![CDATA[
 **AutoCycler Resolve Tool**
 
+This tool is erformed on a per-cluster basis. It aims to resolve repeats and ambiguities in the cluster by following these steps:
+
+- Identifying anchors: unitigs which occur exactly once in each of the cluster's contigs.
+	    
+- Creating bridges: connections between anchors that follow the most common path.
+	    
+- Applying bridges: first unique bridges (those with no conflicts) and then the most supported conflicting bridges.
+	    
+- Merging linear sequences into 'consentigs'.
+	    
 This tool generates consensus sequences from trimmed assembly clusters.
 
 **Inputs**
 	    
 - Cluster directory (must contain trimmed cluster data from trim step)
-
-**Parameters**
-	    
-- Verbose output: Enable detailed progress reporting (default: off)
 
 **Outputs**
 	    
@@ -90,6 +96,15 @@ This tool generates consensus sequences from trimmed assembly clusters.
 **Notes**
 
 - Examining the 4_merged.gfa file can reveal locations of structural heterogeneity in the genome – sites where input assemblies disagreed on the ordering of anchor unitigs.
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler resolve`: https://github.com/rrwick/Autocycler/wiki/Autocycler-resolve
+
+**Citations**
+
     ]]></help>
         <expand macro="citations"/>
 </tool>

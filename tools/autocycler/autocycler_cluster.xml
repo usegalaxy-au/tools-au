@@ -149,8 +149,8 @@
     </tests>
     <help><![CDATA[
 **AutoCycler Cluster Tool**
-
-This tool clusters assemblies based on their compressed representations.
+	    
+The autocycler cluster command groups input contigs into clusters. A cluster is a group of contigs which represent the same genomic sequence. It also decides which of these clusters should be included in the final assembly (QC-pass) and which should not (QC-fail).
 
 **Inputs**
 
@@ -169,7 +169,16 @@ This tool clusters assemblies based on their compressed representations.
 - Summary file with clustering statistics
 
 **Notes**
+
 - The --max_contigs option exists to catch obviously bad input data. If the mean number of contigs per input assemblies exceeds this value (default of 25), Autocycler cluster will refuse to run and display an error message. For example, if you give Autocycler 10 input assemblies with a total of 1000 contigs, that is an average of 100 contigs per assembly, which almost certainly means that they are fragmented or contaminated and thus not appropriate for Autocycler.
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler cluster`: https://github.com/rrwick/Autocycler/wiki/Autocycler-cluster
+
+**Citations**
     ]]></help>
 	    <expand macro="citations"/>
 </tool>

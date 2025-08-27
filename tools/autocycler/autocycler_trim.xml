@@ -86,7 +86,7 @@
     <help><![CDATA[
 **AutoCycler Trim Tool**
 
-This tool trims assemblies within clusters based on alignment information.
+Long-read contigs sometimes contain excess sequence which needs to be trimmed off. This often occurs with circular sequences (typical for bacteria) where there is overlap between the start and end of a contig. For small plasmids, this can sometimes involve the entire sequence being duplicated (or more) in a single contig. Linear sequences with hairpin ends can also create excess sequence which needs to be trimmed. This tool will trim assemblies within clusters based on alignment information.
 
 **Inputs**
 
@@ -101,7 +101,7 @@ This tool trims assemblies within clusters based on alignment information.
 **Outputs**
 	    
 - Collection of trimmed GFA files (one per cluster)
-- Trimming statistics summary file
+- In each cluster, 1_untrimmed (yaml and gfa1), 2_trimmed (yaml and gfa1) file
 
 **Notes**
 
@@ -110,7 +110,17 @@ This tool trims assemblies within clusters based on alignment information.
 - Autocycler trim cannot distinguish between artifactual and genuine duplications. E.g. if a plasmid really is doubled, Autocycler trim will still cut it down to a single copy.
 - The 2_trimmed.gfa graph made by Autocycler trim contains GFA path lines for the trimmed input contigs, so it can be used with Autocycler decompress.
 - The median absolute deviation is a good measure of how well trimming went. Ideally, this will be low (<50 bp or so). If it's high (e.g. 1000 bp), that suggests a lot of inconsistency in the contigs, which is a red flag.
-- Since identity is calculated using unitigs not bases (see implementation below), the default value for --min_identity of 0.75 represents a relatively strong alignment. That parameter can be reduced to much lower levels (e.g. --min_identity 0.25) to find weaker alignments.
+	    - Since identity is calculated using unitigs not bases (see implementation below), the default value for --min_identity of 0.75 represents a relatively strong alignment. That parameter can be reduced to much lower levels (e.g. --min_identity 0.25) to find weaker alignments.
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler trim`: https://github.com/rrwick/Autocycler/wiki/Autocycler-trim
+
+**Citations**
+
+
     ]]></help>
 	    <expand macro="citations"/>
 </tool>

@@ -1,5 +1,5 @@
 <macros>
-    <token name="@TOOL_VERSION@">0.5.0</token>
+    <token name="@TOOL_VERSION@">0.5.2</token>
     <token name="@VERSION_SUFFIX@">0</token>
     <token name="@PROFILE@">24.1</token>
     <xml name="requirements">
@@ -8,6 +8,7 @@
 		<requirement type="package" version="2.9.6">flye</requirement>
 		<requirement type="package" version="0.3">miniasm</requirement>
 		<requirement type="package" version="1.8.3">raven-assembler</requirement>
+		<requirement type="package" version="0.2.0">minipolish</requirement>
         </requirements>
     </xml>
     <xml name="version">

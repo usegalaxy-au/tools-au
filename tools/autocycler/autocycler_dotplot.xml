@@ -55,7 +55,7 @@
     <help><![CDATA[
 **AutoCycler Dotplot Tool**
 
-This tool generates dotplot visualizations from assembly data.
+Autocycler dotplot generates pairwise dotplots for input sequences. This can help to illuminate the differences between sequences and potential structural errors.
 
 **Inputs**
 	    
@@ -76,6 +76,16 @@ This tool generates dotplot visualizations from assembly data.
 - Performance scales with sequence length (n) and sequence number (n2).
 - While Autocycler dotplot can be run on large sequences (e.g. a bacterial chromosome), it can be slow, especially if there are many sequences.
 - Text size is scaled to fit in the margins. This means that having too many sequences or very short sequences can be a problem, as it will cause the text size to be very small.
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler dotplot`: https://github.com/rrwick/Autocycler/wiki/Autocycler-dotplot
+
+**Citations**
+
+
     ]]></help>
 	    <expand macro="citations"/>
 </tool>

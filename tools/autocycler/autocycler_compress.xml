@@ -79,8 +79,8 @@
 
     <help><![CDATA[
 **AutoCycler Compress Tool**
-
-This tool compresses multiple assemblies into a compressed representation using AutoCycler.
+	    
+The autocycler compress command uses your input assemblies to build a compacted De Bruijn graph (a.k.a. a unitig graph). This serves a few purposes. First, since the input assemblies are all quite similar (they are alternative assemblies of the same genome), the graph structure compresses them into a much smaller file. Second, the graph remembers the path of each input sequence, which means that the input assemblies can be fully recovered from this graph (see Autocycler decompress). Third, the graph structure provides a convenient way to manipulate the sequences in later steps, e.g. trimming overlap with Autocycler trim or building a consensus with Autocycler resolve. This tool compresses multiple assemblies into a compressed representation using AutoCycler.
 
 **Inputs**
 	    
@@ -101,6 +101,14 @@ This tool compresses multiple assemblies into a compressed representation using 
 - While different k-mer sizes will produce different unitig graphs, the final result of Autocycler is not sensitive to this parameter, so there is usually no need to change it from the default value.
 - Since Autocycler decompress can be used to fully restore the input assemblies (with a couple caveats, see the Autocycler decompress page), you can delete the input assemblies after running Autocycler compress.
 - The --max_contigs option exists to catch obviously bad input data. If the mean number of contigs per input assemblies exceeds this value (default of 25), Autocycler compress will refuse to run and display an error message. For example, if you give Autocycler 10 input assemblies with a total of 1000 contigs, that is an average of 100 contigs per assembly, which almost certainly means that they are fragmented or contaminated and thus not appropriate for Autocycler.
+
+.. class:: infomark
+
+**More Information**
+
+- `Autocycler compress`: https://github.com/rrwick/Autocycler/wiki/Autocycler-compress
+
+**Citations**
 
     ]]></help>
         <expand macro="citations"/>
