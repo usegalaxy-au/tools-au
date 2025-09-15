@@ -194,7 +194,7 @@ total_height <- (q_y - t_y) * 1.618
 y_axis_space <- (total_height - (q_y - t_y)) / 2
 middle_x <- tpaf[1, shift_tstart] + tpaf[.N, pad_tend] / 2
 
-all_contig_names <- c(tpaf[, unique(tname)])
+all_contig_names <- tpaf[, levels(tname)]
 all_colours <- viridis(
     length(all_contig_names) + palette_space + 1
 )
