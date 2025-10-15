@@ -30,6 +30,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
 	    <param name="check" argument="--check" type="boolean" checked="false" truevalue="--check" falsevalue="" label="check unique sequence IDs" />
 	    <param name="method" type="select" label="select a reheader option" help="check and reheader option are used mutually exclusive">
