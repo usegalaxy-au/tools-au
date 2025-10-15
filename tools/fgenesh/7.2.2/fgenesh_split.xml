@@ -12,6 +12,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
 	    <param name="filename_format" type="select" label="Output filename format" help="Default: count">
             	<option value="count" selected="True">sequential count</option>
