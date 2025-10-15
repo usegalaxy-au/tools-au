@@ -24,6 +24,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <conditional name="input">
 		<param name ="selector" type="select" label="Input file type (resn3/gff3) for merging">
 			<option value="gff">gff</option>

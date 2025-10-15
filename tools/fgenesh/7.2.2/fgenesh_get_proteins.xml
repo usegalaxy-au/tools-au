@@ -27,6 +27,7 @@
 
 	    ]]></command>
     <inputs>
+	 <expand macro="acknowledgement"/>
 	 <conditional name="input">
 	    <param name="selector" type="select" label="Input data type for extracting proten sequences. default: single">
 		 <option value="single">single</option>

@@ -107,6 +107,7 @@ INTRONIC_GENES = ${intronic_genes}
              ]]></configfile>
     </configfiles>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <conditional name="inputs">
                 <param name="input_type" type="select" label="Input type" help="Select single sequence or collection of sequence">
 			<option value="single" selected="true">Single sequence</option>

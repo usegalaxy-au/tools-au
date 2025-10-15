@@ -24,6 +24,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="mrnas_fasta" type="data" format="fasta" label="Fasta file"/>
 	    <param argument="-col" type="integer" value="80" label="columns number for the output fasta file" help="default:80" />
 	    <section name="compare" title="Compare mRNAs">
