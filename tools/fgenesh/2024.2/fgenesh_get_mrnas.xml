@@ -11,6 +11,7 @@
 	    get_mrnas.pl '$resn3_file.element_identifier' '$sequence_file.element_identifier' $output_mrna_file $CDS -fix_id $fix_id_type 2>&1 | tee -a '$log'
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="resn3_file" format="txt" type="data" label="Input Resn3 file"/>
 	    <param name="sequence_file" format="fasta" type="data" label="Sequence file"/>
 	    <param argument="-CDS" type="boolean" truevalue="-CDS" falsevalue="" checked="true" label="CDS only" help="create CDS fasta file" />
