@@ -13,6 +13,15 @@
          <exit_code range="1:"  level="fatal" description="Error" />
       </stdio>
     </xml>
+    <xml name="acknowledgement_latest">
+      <param name="license_agreements" type="boolean" truevalue="true" falsevalue="false" checked="false" label="I would like to acknowledge the provision of computing, data and tool resources provided by Australian BioCommons via Bioplatfors Australia funding, the Australian Research Data Commons">
+        <validator type="expression" message="You must agree to the Fgenesh++ license!">value == True</validator>
+        <help><![CDATA[
+                When you use a FGENESH++ tool in support of your publication or project, please acknowledge its use with the following acknowledgement statement - <i>“Access to the Australian FGENESH++ Service is through the Galaxy Australia service , both provided by <a href="https://www.biocommons.org.au/fgenesh-plus-plus" target="_blank" rel="noreferrer noopener"> Australian BioCommons</a> and its partners. These services receive NCRIS funding through Bioplatforms Australia, as well as the University of Melbourne and Queensland Government RICF funding."</i>
+                <br/><br/>
+        ]]></help>
+      </param>
+    </xml>
     <xml name="citations">
         <citations>
 		<citation type="doi">https://doi.org/10.1101/gr.10.4.516</citation>
