@@ -35,6 +35,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="genbank_header" format="genbank" type="data"  label="Genbank header file"/>
 	    <param name="resn3_collection" format="txt" type="data_collection" collection_type="list" label="Input resn3 file" help="list of files with predictions in Fgenesh/Fgenesh++ format"/>
 	    <param name="sequence_collection" format="fasta" type="data_collection" collection_type="list" label="Input fasta file"  help="list of files with sequences in FASTA format"/>
