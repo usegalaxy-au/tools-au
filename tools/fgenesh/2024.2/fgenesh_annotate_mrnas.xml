@@ -47,6 +47,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
 	    <conditional name="tool_option">
 	    	<param name="tool" type="select" label="program to predict ORFs" help="default: bestorf">
