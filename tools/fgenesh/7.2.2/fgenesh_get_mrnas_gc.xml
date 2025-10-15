@@ -12,6 +12,7 @@
 
 	    ]]></command>
     <inputs>
+		<expand macro="acknowledgement"/>
 	    <param name="resn3_file" format="txt" type="data" label="Input Resn3 file"/>
 	    <param name="sequence_file" format="fasta" type="data" label="Sequence file"/>
 	    <param argument="-CDS" type="boolean" truevalue="-CDS" falsevalue="" checked="true" label="CDS only" help="create CDS fasta file" />
