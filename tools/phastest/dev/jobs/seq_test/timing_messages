@@ -1,0 +1,20 @@
+[
+	{
+		"query":"seq_test",
+		"flag":"-s",
+		"success":0,
+		"seq_length":47343,
+		"genbank_retrieval":null,
+		"gene_prediction":0,
+		"fna_generation":null,
+		"faa_generation":0,
+		"ptt_generation":0,
+		"phage_alignment":2,
+		"tRNA_detection":1,
+		"phage_scan":1,
+		"bact_alignment":null,
+		"bact_annotation":null,
+		"make_json":null,
+		"total":null
+	}
+]

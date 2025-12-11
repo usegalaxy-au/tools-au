@@ -1,0 +1,20 @@
+[
+	{
+		"query":"contig_test_long",
+		"flag":"-c",
+		"success":0,
+		"seq_length":null,
+		"genbank_retrieval":null,
+		"gene_prediction":0,
+		"fna_generation":null,
+		"faa_generation":null,
+		"ptt_generation":null,
+		"phage_alignment":null,
+		"tRNA_detection":null,
+		"phage_scan":null,
+		"bact_alignment":null,
+		"bact_annotation":null,
+		"make_json":null,
+		"total":null
+	}
+]
