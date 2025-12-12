@@ -1,8 +1,0 @@
-seq_test  Wed Dec 10 22:57:39 UTC 2025
- fail No prophage region detected!
-contig_test  Thu Dec 11 00:37:44 UTC 2025
- fail Error running FragGeneScan
-contig_test_long  Thu Dec 11 00:40:18 UTC 2025
- fail Error running FragGeneScan
-contig_test_long  Thu Dec 11 00:54:27 UTC 2025
- fail Error running FragGeneScan
