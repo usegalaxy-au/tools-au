@@ -133,7 +133,7 @@ ENV PHASTEST_CLUSTER_HOME="/root/phastest-app"
 ENV PHASTEST_CLUSTER_HOST="root@127.0.0.1"
 ENV PHASTEST_CLUSTER_HOSTNAME="127.0.0.1"
 ENV PHASTEST_CLUSTER_USERNAME="root"
-ENV PATH="$PATH":"${PHASTEST_HOME}/sub_programs":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23/bin":"${PHASTEST_HOME}/sub_programs/FragGeneScan1.20":"${PHASTEST_HOME}/sub_programs/Prodigal-2.6.3":"${PHASTEST_HOME}/bin"
+ENV PATH="$PATH":"${PHASTEST_HOME}/sub_programs":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23/bin":"${PHASTEST_HOME}/sub_programs/FragGeneScan1.20":"${PHASTEST_HOME}/sub_programs/Prodigal-2.6.3":"${PHASTEST_CLUSTER_HOME}/sub_programs/ncbi-blast-2.3.0+/bin":"${PHASTEST_HOME}/bin"
 ENV PATH="$PATH":"${HOME}/bin"
 ENV PATH="$PATH":"${HOME}/BLAST+/bin"
 
@@ -152,6 +152,7 @@ RUN set -x \
 # Setup PHASTEST databases
 COPY ./phastest-app-docker/DB /root/phastest-app-docker/DB
 COPY ./phastest-app-docker/sub_programs/diamond /root/phastest-app-docker/sub_programs/diamond
+COPY ./phastest-app-docker/sub_programs/ncbi-blast-2.3.0+ /root/phastest-app-docker/sub_programs/ncbi-blast-2.3.0+
 
 RUN set -x \
     && makeblastdb -in /root/phastest-app-docker/DB/prophage_virus.db -dbtype prot \
