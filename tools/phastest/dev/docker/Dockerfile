@@ -138,8 +138,6 @@ RUN wget -q https://ftp.ncbi.nlm.nih.gov/blast/executables/blast+/2.13.0/ncbi-bl
 # Install additional bioinformatics tools
 RUN apt-get install -y \
     hmmer \
-    prodigal \
-    ncbi-blast+ \
     diamond-aligner \
     barrnap
 
@@ -150,14 +148,15 @@ ENV PHASTEST_CLUSTER_HOST="root@127.0.0.1"
 ENV PHASTEST_CLUSTER_HOSTNAME="127.0.0.1"
 ENV PHASTEST_CLUSTER_USERNAME="root"
 ENV PATH="$PATH":"${PHASTEST_HOME}/sub_programs":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23/bin":"${PHASTEST_HOME}/sub_programs/FragGeneScan1.20":"${PHASTEST_HOME}/sub_programs/Prodigal-2.6.3":"${PHASTEST_HOME}/bin"
-#ENV PATH="$PATH":"/root/bin"
-#ENV PATH="$PATH":"/root/BLAST+/bin"
 
 # Create directory structure
 RUN mkdir -p /root/phastest-app
 
 # Copy entire PHASTEST application
-COPY ./phastest-app-docker/ /root/phastest-app/
+COPY ./phastest-app-docker/helpers /root/phastest-app/helpers
+COPY ./phastest-app-docker/lib /root/phastest-app/lib
+COPY ./phastest-app-docker/scripts /root/phastest-app/scripts
+COPY ./phastest-app-docker/sub_programs /root/phastest-app/sub_programs
 
 # Create symlink for the path expected by phastest.sh
 RUN ln -s /root/phastest-app /phastest-app
@@ -177,7 +176,6 @@ RUN set -x \
     && if [ -d "/root/phastest-app/sub_programs/FragGeneScan1.20" ]; then \
         cd /root/phastest-app/sub_programs/FragGeneScan1.20 \
         && make \
-        && make clean \
         && cd /; \
     fi
 
@@ -190,6 +188,7 @@ RUN set -x \
     fi
 
 # Setup PHASTEST databases
+# Will be skipped if DBs are not baked into image
 RUN set -x \
     && if [ -f "/root/phastest-app/DB/prophage_virus.db" ]; then \
         makeblastdb -in /root/phastest-app/DB/prophage_virus.db -dbtype prot; \
@@ -214,11 +213,10 @@ RUN chmod -R +x /root/phastest-app/scripts/ && \
 # Create necessary directories
 RUN mkdir -p /root/phastest-app/log
 
-# Copy over the phastest "frontend" script, and set it as the entrypoint
+# Copy over the phastest entrypoint
 COPY ./phastest.sh /usr/bin/phastest
 RUN chmod +x /usr/bin/phastest
 
 WORKDIR /root/phastest-app
 
 ENTRYPOINT ["/usr/bin/phastest"]
-#CMD ["tail", "-f", "/dev/null"]
