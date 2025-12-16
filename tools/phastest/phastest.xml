@@ -13,17 +13,19 @@
   </macros>
 
   <xrefs>
-    <xref type="bio.tools">phastest-galaxy</xref>
+    <xref type="bio.tools">phastest</xref>
   </xrefs>
 
   <requirements>
-    <container type="docker">neoformit/phastest:latest</container>
+    <container type="docker">neoformit/phastest-galaxy:latest</container>
   </requirements>
 
   <command detect_errors="exit_code"><![CDATA[
 
-echo "\$USER"
-&& ls -lrh /usr/bin/phastest
+echo "Start tool"
+
+&& echo "id:"
+&& id
 
 ## Set up input file
 #if $input_type.input_selector == 'fasta' or $input_type.input_selector == 'contig'
@@ -31,6 +33,7 @@ echo "\$USER"
 #end if
 
 ## Run PHASTEST
+&& echo "Running PHASTEST..."
 && phastest
   -i $input_type.input_selector
 #if $input_type.input_selector == 'genbank'
