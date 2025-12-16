@@ -141,30 +141,34 @@ RUN apt-get install -y \
     diamond-aligner \
     barrnap
 
+# Create phastest user with uid=1000, gid=1000
+RUN groupadd -g 1000 phastest && \
+    useradd -m -u 1000 -g 1000 -s /bin/bash phastest
+
 # Set PHASTEST environment
-ENV PHASTEST_HOME="/root/phastest-app"
-ENV PHASTEST_CLUSTER_HOME="/root/phastest-app"
-ENV PHASTEST_CLUSTER_HOST="root@127.0.0.1"
+ENV PHASTEST_HOME="/home/phastest/phastest-app"
+ENV PHASTEST_CLUSTER_HOME="/home/phastest/phastest-app"
+ENV PHASTEST_CLUSTER_HOST="phastest@127.0.0.1"
 ENV PHASTEST_CLUSTER_HOSTNAME="127.0.0.1"
-ENV PHASTEST_CLUSTER_USERNAME="root"
+ENV PHASTEST_CLUSTER_USERNAME="phastest"
 ENV PATH="$PATH":"${PHASTEST_HOME}/sub_programs":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23":"${PHASTEST_HOME}/sub_programs/tRNAscan-SE-1.23/bin":"${PHASTEST_HOME}/sub_programs/FragGeneScan1.20":"${PHASTEST_HOME}/sub_programs/Prodigal-2.6.3":"${PHASTEST_HOME}/bin"
 
 # Create directory structure
-RUN mkdir -p /root/phastest-app
+RUN mkdir -p /home/phastest/phastest-app
 
 # Copy entire PHASTEST application
-COPY ./phastest-app-docker/helpers /root/phastest-app/helpers
-COPY ./phastest-app-docker/lib /root/phastest-app/lib
-COPY ./phastest-app-docker/scripts /root/phastest-app/scripts
-COPY ./phastest-app-docker/sub_programs /root/phastest-app/sub_programs
+COPY ./phastest-app-docker/helpers /home/phastest/phastest-app/helpers
+COPY ./phastest-app-docker/lib /home/phastest/phastest-app/lib
+COPY ./phastest-app-docker/scripts /home/phastest/phastest-app/scripts
+COPY ./phastest-app-docker/sub_programs /home/phastest/phastest-app/sub_programs
 
 # Create symlink for the path expected by phastest.sh
-RUN ln -s /root/phastest-app /phastest-app
+RUN ln -s /home/phastest/phastest-app /phastest-app
 
 # Set up PHASTEST sub-programs
 # Build tRNAscan-SE
 RUN set -x \
-    && cd /root/phastest-app/sub_programs/tRNAscan-SE-1.23 \
+    && cd /home/phastest/phastest-app/sub_programs/tRNAscan-SE-1.23 \
     && make \
     && make install \
     && make testrun \
@@ -173,16 +177,16 @@ RUN set -x \
 
 # Build FragGeneScan if present
 RUN set -x \
-    && if [ -d "/root/phastest-app/sub_programs/FragGeneScan1.20" ]; then \
-        cd /root/phastest-app/sub_programs/FragGeneScan1.20 \
+    && if [ -d "/home/phastest/phastest-app/sub_programs/FragGeneScan1.20" ]; then \
+        cd /home/phastest/phastest-app/sub_programs/FragGeneScan1.20 \
         && make \
         && cd /; \
     fi
 
 # Build Prodigal if present
 RUN set -x \
-    && if [ -d "/root/phastest-app/sub_programs/Prodigal-2.6.3" ]; then \
-        cd /root/phastest-app/sub_programs/Prodigal-2.6.3 \
+    && if [ -d "/home/phastest/phastest-app/sub_programs/Prodigal-2.6.3" ]; then \
+        cd /home/phastest/phastest-app/sub_programs/Prodigal-2.6.3 \
         && make \
         && cd /; \
     fi
@@ -190,31 +194,42 @@ RUN set -x \
 # Setup PHASTEST databases
 # Will be skipped if DBs are not baked into image
 RUN set -x \
-    && if [ -f "/root/phastest-app/DB/prophage_virus.db" ]; then \
-        makeblastdb -in /root/phastest-app/DB/prophage_virus.db -dbtype prot; \
+    && if [ -f "/home/phastest/phastest-app/DB/prophage_virus.db" ]; then \
+        makeblastdb -in /home/phastest/phastest-app/DB/prophage_virus.db -dbtype prot; \
     fi \
-    && if [ -f "/root/phastest-app/DB/bacteria_all_select.db" ]; then \
-        makeblastdb -in /root/phastest-app/DB/bacteria_all_select.db -dbtype prot; \
+    && if [ -f "/home/phastest/phastest-app/DB/bacteria_all_select.db" ]; then \
+        makeblastdb -in /home/phastest/phastest-app/DB/bacteria_all_select.db -dbtype prot; \
     fi \
-    && if [ -f "/root/phastest-app/DB/swissprot.db" ]; then \
-        makeblastdb -in /root/phastest-app/DB/swissprot.db -dbtype prot; \
+    && if [ -f "/home/phastest/phastest-app/DB/swissprot.db" ]; then \
+        makeblastdb -in /home/phastest/phastest-app/DB/swissprot.db -dbtype prot; \
     fi \
-    && if [ -f "/root/phastest-app/DB/bacteria_all_select.db" ]; then \
-        diamond makedb --in /root/phastest-app/DB/bacteria_all_select.db -d /root/phastest-app/DB/bacteria_all_select.dmnd; \
+    && if [ -f "/home/phastest/phastest-app/DB/bacteria_all_select.db" ]; then \
+        diamond makedb --in /home/phastest/phastest-app/DB/bacteria_all_select.db -d /home/phastest/phastest-app/DB/bacteria_all_select.dmnd; \
     fi \
-    && if [ -f "/root/phastest-app/DB/swissprot.db" ]; then \
-        diamond makedb --in /root/phastest-app/DB/swissprot.db -d /root/phastest-app/DB/swissprot.dmnd; \
+    && if [ -f "/home/phastest/phastest-app/DB/swissprot.db" ]; then \
+        diamond makedb --in /home/phastest/phastest-app/DB/swissprot.db -d /home/phastest/phastest-app/DB/swissprot.dmnd; \
     fi
 
 # Set proper permissions
-RUN chmod -R +x /root/phastest-app/scripts/ && \
-    chmod -R +x /root/phastest-app/sub_programs/
+RUN chmod -R +x /home/phastest/phastest-app/scripts/ \
+    /home/phastest/phastest-app/sub_programs/
 
 # Create necessary directories
-RUN mkdir -p /root/phastest-app/log
+RUN mkdir -p \
+  /home/phastest/phastest-app/log \
+  /phastest_inputs \
+  /phastest-app
+
+# Set ownership to phastest user
+RUN chown -R phastest:phastest /home/phastest/phastest-app \
+    /phastest-app \
+    /phastest_inputs \
+    /BLAST+
 
 # Copy over the phastest entrypoint
 COPY ./phastest.sh /usr/bin/phastest
-RUN chmod +x /usr/bin/phastest
+RUN chmod 777 /usr/bin/phastest
 
-WORKDIR /root/phastest-app
+# Switch to phastest user
+USER phastest
+WORKDIR /home/phastest/phastest-app

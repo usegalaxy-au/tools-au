@@ -39,7 +39,7 @@ exit_phastest()
 {
     echo "Exiting PHASTEST..."
     kill -9 $(ps aux | grep 'perl' | awk '{print $2}') > /dev/null 2>&1 & # Kill all currently running perl processes.
-    scancel --user=root & # Kill all running slurm jobs, if there are any.
+    scancel --user=phastest & # Kill all running slurm jobs, if there are any.
     exit 1
 }
 
@@ -57,9 +57,8 @@ yes_no()
 trap exit_phastest SIGINT
 
 # Set up environments and make sub-programs executable.
-source /root/.bashrc
-chmod -R 755 "/phastest-app"
-chmod -R 755 "/BLAST+"
+# Note: Skipping .bashrc sourcing and chmod commands as the container
+# now runs as the phastest user with proper permissions set at build time
 
 input_type=""
 anno_mode="lite"

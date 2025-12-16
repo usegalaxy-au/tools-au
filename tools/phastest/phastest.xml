@@ -49,8 +49,11 @@ echo "Start tool"
   --silent
 
 && mkdir -p output
-&& mv /root/phastest-app/JOBS/*/* output/
+&& mv \$PHASTEST_HOME/JOBS/*/* output/
+
+#if $input_type.input_selector == 'contig'
 && mv output/*_positions.txt output/positions.txt
+#end if
 
   ]]></command>
 
