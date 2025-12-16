@@ -30,4 +30,4 @@ docker run \
     -v ./test-data:/phastest_inputs \
     -v ./jobs/:/root/phastest-app/JOBS \
     -v ./refdata/DB:/root/phastest-app/DB \
-    $IMAGE -i $INPUT_MODE -s $INPUT_FILE
+    $IMAGE phastest -i $INPUT_MODE -s $INPUT_FILE

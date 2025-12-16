@@ -218,5 +218,3 @@ COPY ./phastest.sh /usr/bin/phastest
 RUN chmod +x /usr/bin/phastest
 
 WORKDIR /root/phastest-app
-
-ENTRYPOINT ["/usr/bin/phastest"]
