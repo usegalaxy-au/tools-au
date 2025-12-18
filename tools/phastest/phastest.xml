@@ -22,19 +22,13 @@
 
   <command detect_errors="exit_code"><![CDATA[
 
-echo "Start tool"
-
-&& echo "id:"
-&& id
-
 ## Set up input file
-#if $input_type.input_selector == 'fasta' or $input_type.input_selector == 'contig'
-  && ln -s '$input_type.sequence_file' /phastest_inputs/input_sequence.fna
+#if $input_type.input_selector != 'genbank'
+  ln -s '$input_type.sequence_file' /phastest_inputs/input_sequence.fna &&
 #end if
 
 ## Run PHASTEST
-&& echo "Running PHASTEST..."
-&& phastest
+phastest
   -i $input_type.input_selector
 #if $input_type.input_selector == 'genbank'
   -a '$input_type.accession'
@@ -46,13 +40,15 @@ echo "Start tool"
   --phage-only
 #end if
   --yes
-  --silent
 
 && mkdir -p output
 && mv \$PHASTEST_HOME/JOBS/*/* output/
 
-#if $input_type.input_selector == 'contig'
-&& mv output/*_positions.txt output/positions.txt
+#if $input_type.input_selector == 'fasta'
+&& rm output/*original.fna
+&& mv output/*.fna $
+#elif $input_type.input_selector == 'contig'
+&& mv output/*_positions.txt $
 #end if
 
   ]]></command>
