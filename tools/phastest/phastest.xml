@@ -41,14 +41,16 @@ phastest
 #end if
   --yes
 
+## Collect outputs
 && mkdir -p output
-&& mv \$PHASTEST_HOME/JOBS/*/* output/
+&& mv "\$PHASTEST_HOME/JOBS/*/*" output/
+&& mv output/summary.txt '$output_summary'
+&& mv output/detail.txt '$output_detail'
 
-#if $input_type.input_selector == 'fasta'
-&& rm output/*original.fna
-&& mv output/*.fna $
+#if $input_type.input_selector in ['fasta', 'genbank']
+  && mv output/region_DNA.txt '$output_dna_regions'
 #elif $input_type.input_selector == 'contig'
-&& mv output/*_positions.txt $
+  && mv output/*_positions.txt '$output_positions'
 #end if
 
   ]]></command>
@@ -121,24 +123,29 @@ phastest
     <data
       name="output_summary"
       format="txt"
-      from_work_dir="output/summary.txt"
       label="${tool.name} on ${on_string}: Summary"
     />
 
     <data
       name="output_detail"
       format="txt"
-      from_work_dir="output/detail.txt"
       label="${tool.name} on ${on_string}: Detailed results"
     />
 
     <data
-      name="output_genbank"
-      format="genbank"
-      from_work_dir="output/annotated.gbk"
-      label="${tool.name} on ${on_string}: Annotated GenBank"
+      name="output_dna_regions"
+      format="txt"
+      label="${tool.name} on ${on_string}: Region DNA"
     >
-        <filter>input_type['input_selector'] == 'genbank'</filter>
+        <filter>input_type['input_selector'] in ['fasta', 'genbank']</filter>
+    </data>
+
+    <data
+      name="output_positions"
+      format="txt"
+      label="${tool.name} on ${on_string}: Contig positions"
+    >
+        <filter>input_type['input_selector'] == 'contig'</filter>
     </data>
   </outputs>
 
