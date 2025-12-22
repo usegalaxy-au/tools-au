@@ -22,18 +22,22 @@
 
   <command detect_errors="exit_code"><![CDATA[
 
+#set OUTPUT_DIR = 'output'
+
+ln -s /mnt/galaxy/local_tools/db/phastest "$PHASTEST_HOME/DB"
+
 ## Set up input file
 #if $input_type.input_selector != 'genbank'
-  ln -s '$input_type.sequence_file' /phastest_inputs/input_sequence.fna &&
+  && ln -s '$input_type.sequence_file' /phastest_inputs/input_sequence.fasta
 #end if
 
 ## Run PHASTEST
-phastest
+&& phastest
   -i $input_type.input_selector
 #if $input_type.input_selector == 'genbank'
   -a '$input_type.accession'
 #else
-  -s input_sequence.fna
+  -s input_sequence.fasta
 #end if
   -m $annotation_mode
 #if $phage_only
@@ -42,15 +46,14 @@ phastest
   --yes
 
 ## Collect outputs
-&& mkdir -p output
-&& mv "\$PHASTEST_HOME/JOBS/*/*" output/
-&& mv output/summary.txt '$output_summary'
-&& mv output/detail.txt '$output_detail'
+&& mv "\$PHASTEST_HOME/JOBS/input_sequence" '$OUTPUT_DIR'
+&& mv '$OUTPUT_DIR/summary.txt' '$output_summary'
+&& mv '$OUTPUT_DIR/detail.txt' '$output_detail'
 
 #if $input_type.input_selector in ['fasta', 'genbank']
-  && mv output/region_DNA.txt '$output_dna_regions'
+  && mv '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
 #elif $input_type.input_selector == 'contig'
-  && mv output/*_positions.txt '$output_positions'
+  && mv '$OUTPUT_DIR/*_positions.txt' '$output_positions'
 #end if
 
   ]]></command>
