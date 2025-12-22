@@ -220,11 +220,13 @@ RUN mkdir -p \
   /phastest_inputs \
   /phastest-app
 
-# Set ownership to phastest user
-RUN chown -R phastest:phastest /home/phastest/phastest-app \
-    /phastest-app \
-    /phastest_inputs \
-    /BLAST+
+# Set open file permissions to allow any non-root user to run
+RUN find \
+  /home/phastest/phastest-app \
+  /phastest-app \
+  /phastest_inputs \
+  /BLAST+ \
+  -exec chmod a=rwX {} +
 
 # Copy over the phastest entrypoint
 COPY ./phastest.sh /usr/bin/phastest
