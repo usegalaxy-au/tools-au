@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import argparse
 import re
 import sys
@@ -201,7 +203,7 @@ def parse_detail(path: Path) -> list[ResultDetail]:
             if current_region is not None:
                 results.append(ResultDetail(
                     query=query_info if query_info else 'Unknown',
-                    region=int(region_num) if region_num.isdigit() else region_num,
+                    region=int(current_region) if current_region.isdigit() else current_region,
                     hits=current_hits
                 ))
             # Start new region

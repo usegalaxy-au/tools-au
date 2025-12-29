@@ -61,12 +61,12 @@ echo "Starting tool command"
 && bash '${check_output_script}' '$OUTPUT_DIR'
 
 ## Collect output files
-&& mv '$OUTPUT_DIR/summary.txt' '$output_summary'
-&& mv '$OUTPUT_DIR/detail.txt' '$output_detail'
+&& cp '$OUTPUT_DIR/summary.txt' '$output_summary'
+&& cp '$OUTPUT_DIR/detail.txt' '$output_detail'
 #if $input_type.contigs
-  && mv '$OUTPUT_DIR/input_sequence_positions.txt' '$output_positions'
+  && cp '$OUTPUT_DIR/input_sequence_positions.txt' '$output_positions'
 #else
-  && mv '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
+  && cp '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
 #end if
 
 ## Build fancy HTML report
