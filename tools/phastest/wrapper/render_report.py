@@ -139,15 +139,12 @@ def _split_composite_columns(row_dict: dict) -> dict:
 
 def calculate_bs_class(completeness: str) -> str:
     """Calculate bootstrap class based on completeness."""
-    match completeness:
-        case 'intact':
-            return 'success'
-        case 'questionable':
-            return 'warning'
-        case 'incomplete':
-            return 'danger'
-        case _:
-            return ''
+    _map = {
+        'intact': 'success',
+        'questionable': 'warning',
+        'incomplete': 'danger'
+    }
+    return _map.get(completeness, '')
 
 
 def parse_detail(path: Path) -> list[ResultDetail]:
