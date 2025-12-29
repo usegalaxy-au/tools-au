@@ -5,7 +5,7 @@
   python_template_version="3.5"
   profile="22.05"
 >
-  <description>PHAge Search Tool with Enhanced Sequence Translation - rapid identification and annotation of prophage sequences</description>
+  <description> - rapid identification and annotation of prophage sequences</description>
 
   <macros>
     <token name="@TOOL_VERSION@">1.0</token>
@@ -20,45 +20,56 @@
     <container type="docker">neoformit/phastest-galaxy:latest</container>
   </requirements>
 
+  <required_files>
+      <include path="render_report.py" />
+      <include path="templates/index.html" />
+  </required_files>
+
   <command detect_errors="exit_code"><![CDATA[
 
 #set OUTPUT_DIR = 'output'
 
 echo "Starting tool command"
 
-## Set up input file
-#if $input_type.input_selector != 'genbank'
+## Parse input file type
+#if $input_type.input_selector == 'genbank'
+  #set input_type_str = 'genbank'
+  #set input_param_str = '-a $input_type.accession'
+#else
+  #set input_type_str = 'contig' if $input_type.contigs else 'fasta'
+  #set input_param_str = '-s input_sequence.fasta'
   && ln -s '$input_type.sequence_file' /phastest_inputs/input_sequence.fasta
 #end if
 
+&& echo "Running PHASTEST..."
+
 ## Run PHASTEST
 && phastest
-  -i $input_type.input_selector
-#if $input_type.input_selector == 'genbank'
-  -a '$input_type.accession'
-#else
-  -s input_sequence.fasta
-#end if
+  -i $input_type_str
+  $input_param_str
   -m $annotation_mode
-#if $phage_only
-  --phage-only
-#end if
+  $phage_only
   --yes
 
 ## Collect output dir
-&& mv "\$PHASTEST_HOME/JOBS/input_sequence" '$OUTPUT_DIR'
+&& mkdir -p '$OUTPUT_DIR'
+&& mv \$PHASTEST_HOME/JOBS/input_sequence/* '$OUTPUT_DIR'
 
 ## Check whether it failed
 && bash '${check_output_script}' '$OUTPUT_DIR'
 
 ## Collect output files
-&& mv '$OUTPUT_DIR/summary.txt' '$output_summary'
-&& mv '$OUTPUT_DIR/detail.txt' '$output_detail'
-#if $input_type.input_selector in ['fasta', 'genbank']
-  && mv '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
-#elif $input_type.input_selector == 'contig'
-  && mv '$OUTPUT_DIR/*_positions.txt' '$output_positions'
+&& cp '$OUTPUT_DIR/summary.txt' '$output_summary'
+&& cp '$OUTPUT_DIR/detail.txt' '$output_detail'
+#if $input_type.contigs
+  && cp '$OUTPUT_DIR/input_sequence_contig_positions.txt' '$output_positions'
+#else
+  && cp '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
 #end if
+
+## Build fancy HTML report
+&& python3 '$__tool_directory__/render_report.py' '$OUTPUT_DIR'
+  --output '$output_html_report'
 
   ]]></command>
 
@@ -75,33 +86,28 @@ fi
   <inputs>
     <conditional name="input_type">
       <param
-        name="input_selector"
-        type="select"
-        label="Input format"
-        help="Select the type of input data for PHASTEST analysis"
+      name="input_selector"
+      type="select"
+      label="Input format"
+      help="Select the type of input data for PHASTEST analysis"
       >
-        <option value="fasta" selected="true">FASTA sequence</option>
-        <option value="contig">Contig sequence</option>
+        <option value="sequence" selected="true">FASTA sequence(s)</option>
         <option value="genbank">GenBank accession</option>
       </param>
 
-      <when value="fasta">
+      <when value="sequence">
         <param
           name="sequence_file"
           type="data"
           format="fasta"
           label="FASTA sequence file"
-          help="Bacterial genome or plasmid sequence in FASTA format. Minimum sequence length is 1500bp."
+          help="Bacterial genome or plasmid sequence in FASTA format."
         />
-      </when>
-
-      <when value="contig">
         <param
-          name="sequence_file"
-          type="data"
-          format="fasta"
-          label="Contig sequence file"
-          help="Whole genome shotgun contigs in FASTA format"
+          name="contigs"
+          type="boolean"
+          label="Input consists of multiple separate contigs"
+          help="For FASTA files containing shotgun contigs"
         />
       </when>
 
@@ -131,12 +137,20 @@ fi
       name="phage_only"
       type="boolean"
       checked="false"
+      truevalue="--phage-only"
+      falsevalue=""
       label="Annotate phage regions only"
       help="If enabled, only predicted phage regions will be annotated. By default, whole genomes are scanned and annotated."
     />
   </inputs>
 
   <outputs>
+    <data
+      name="output_html_report"
+      format="html"
+      label="${tool.name} on ${on_string}: Report"
+    />
+
     <data
       name="output_summary"
       format="txt"
@@ -154,7 +168,7 @@ fi
       format="txt"
       label="${tool.name} on ${on_string}: Region DNA"
     >
-        <filter>input_type['input_selector'] in ['fasta', 'genbank']</filter>
+      <filter>input_type['input_selector'] == 'genbank' or not input_type['contigs']</filter>
     </data>
 
     <data
@@ -162,7 +176,7 @@ fi
       format="txt"
       label="${tool.name} on ${on_string}: Contig positions"
     >
-        <filter>input_type['input_selector'] == 'contig'</filter>
+      <filter>input_type['input_selector'] == 'sequence' and input_type['contigs']</filter>
     </data>
   </outputs>
 
