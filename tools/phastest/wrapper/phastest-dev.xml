@@ -64,7 +64,7 @@ echo "Starting tool command"
 && cp '$OUTPUT_DIR/summary.txt' '$output_summary'
 && cp '$OUTPUT_DIR/detail.txt' '$output_detail'
 #if $input_type.contigs
-  && cp '$OUTPUT_DIR/input_sequence_positions.txt' '$output_positions'
+  && cp '$OUTPUT_DIR/input_sequence_contig_positions.txt' '$output_positions'
 #else
   && cp '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
 #end if

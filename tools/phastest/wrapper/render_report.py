@@ -51,6 +51,7 @@ def parse_summary(path: Path) -> tuple[str, list[dict]]:
     for i, line in enumerate(lines):
         if 'regions have been identified.' in line:
             regions_info = line.strip()
+            regions_info_ix = i
         elif 'REGION' in line and 'REGION_LENGTH' in line:
             header_idx = i
             break
@@ -59,7 +60,7 @@ def parse_summary(path: Path) -> tuple[str, list[dict]]:
         return "", []
 
     # Extract result metadata (everything before the table)
-    header_text = ''.join(lines[:header_idx]).strip()
+    header_text = ''.join(lines[:regions_info_ix]).strip(' \n')
     query_title = lines[header_idx - 1].strip()
     header_line = lines[header_idx].strip()
     headers = header_line.split()
@@ -203,7 +204,11 @@ def parse_detail(path: Path) -> list[ResultDetail]:
             if current_region is not None:
                 results.append(ResultDetail(
                     query=query_info if query_info else 'Unknown',
-                    region=int(current_region) if current_region.isdigit() else current_region,
+                    region=(
+                        int(current_region)
+                        if current_region.isdigit()
+                        else current_region
+                    ),
                     hits=current_hits
                 ))
             # Start new region
@@ -246,7 +251,11 @@ def parse_detail(path: Path) -> list[ResultDetail]:
     if current_region is not None:
         results.append(ResultDetail(
             query=query_info if query_info else 'Unknown',
-            region=int(current_region) if current_region.isdigit() else current_region,
+            region=(
+                int(current_region)
+                if current_region.isdigit()
+                else current_region
+            ),
             hits=current_hits
         ))
 
