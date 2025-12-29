@@ -14,7 +14,8 @@ EXCLUDE  = {
     'sync.sh',
     '.lsyncd.lua',
     'nohup.out',
-    '*.log'
+    '*.log',
+    '__pycache__/*'
 }
 
 
