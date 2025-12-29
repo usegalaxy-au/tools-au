@@ -24,7 +24,7 @@
 
 #set OUTPUT_DIR = 'output'
 
-ln -s /mnt/galaxy/local_tools/db/phastest "$PHASTEST_HOME/DB"
+echo "Starting tool command"
 
 ## Set up input file
 #if $input_type.input_selector != 'genbank'
@@ -45,11 +45,15 @@ ln -s /mnt/galaxy/local_tools/db/phastest "$PHASTEST_HOME/DB"
 #end if
   --yes
 
-## Collect outputs
+## Collect output dir
 && mv "\$PHASTEST_HOME/JOBS/input_sequence" '$OUTPUT_DIR'
+
+## Check whether it failed
+&& bash '${check_output_script}' '$OUTPUT_DIR'
+
+## Collect output files
 && mv '$OUTPUT_DIR/summary.txt' '$output_summary'
 && mv '$OUTPUT_DIR/detail.txt' '$output_detail'
-
 #if $input_type.input_selector in ['fasta', 'genbank']
   && mv '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
 #elif $input_type.input_selector == 'contig'
@@ -57,6 +61,16 @@ ln -s /mnt/galaxy/local_tools/db/phastest "$PHASTEST_HOME/DB"
 #end if
 
   ]]></command>
+
+  <configfiles>
+    <configfile name="check_output_script"><![CDATA[
+OUTPUT_DIR="\$1"
+if [ -f "\$OUTPUT_DIR/fail.txt" ]; then
+  cat "\$OUTPUT_DIR/fail.txt" >&2
+  exit 1
+fi
+    ]]></configfile>
+  </configfiles>
 
   <inputs>
     <conditional name="input_type">

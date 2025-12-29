@@ -232,6 +232,9 @@ RUN find \
 COPY ./phastest.sh /usr/bin/phastest
 RUN chmod 777 /usr/bin/phastest
 
+# Install Galaxy tool dependencies
+RUN pip3 install --no-cache-dir Jinja2
+
 # Switch to phastest user
 USER phastest
 WORKDIR /home/phastest/phastest-app
