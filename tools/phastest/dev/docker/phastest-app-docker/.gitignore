@@ -1,0 +1,8 @@
+DB/
+helpers/
+JOBS/
+lib/
+log/
+sub_programs/
+test/
+node_modules/
