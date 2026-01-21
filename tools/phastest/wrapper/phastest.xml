@@ -31,6 +31,15 @@
 
 echo "Starting tool command"
 
+## Set up PHASTEST DB path if env variable is set
+&& echo "PHASTEST_DB_PATH: \$PHASTEST_DB_PATH"
+&& {
+  [ -n "\$PHASTEST_DB_PATH" ]
+  && [ "\$PHASTEST_DB_PATH" != "\$PHASTEST_HOME/DB" ]
+  && ln -s "\$PHASTEST_DB_PATH" "\$PHASTEST_HOME/DB";
+  true;
+}
+
 ## Parse input file type
 #if $input_type.input_selector == 'genbank'
   #set input_type_str = 'genbank'
@@ -182,12 +191,30 @@ fi
 
   <tests>
     <!-- Test with FASTA input -->
-    <test expect_num_outputs="2">
-      <param name="input_selector" value="fasta" />
-      <param name="sequence_file" value="seq_test.fna" ftype="fasta" />
+    <test expect_num_outputs="4">
+      <param name="input_selector" value="sequence" />
+      <param name="sequence_file" value="sequence.fasta" ftype="fasta" />
       <param name="annotation_mode" value="lite" />
-      <output name="output_summary" ftype="txt" file="test_summary.txt" />
-      <output name="output_detail" ftype="txt" file="test_detail.txt" />
+      <output name="output_detail" ftype="txt" file="detail.txt" />
+      <output name="output_dna_regions" ftype="txt" file="regions.txt" />
+
+      <output name="output_summary">
+          <assert_contents>
+              <has_text text="integrase,tail,head,portal,terminase,lysis,lysin" />
+              <has_text text="PHAGE_Entero_mEp460_NC_019716" />
+              <has_text text="intact(150)" />
+              <has_text text="52.40%" />
+          </assert_contents>
+      </output>
+
+      <output name="output_html_report">
+          <assert_contents>
+              <has_text text="gi|00000000|ref|NC_000000|" />
+              <has_text text="PHAGE_Entero_mEp460_NC_019716" />
+              <has_text text="52.40%" />
+              <has_text text="PHAGE_Entero_mEp460_NC_019716: integrase; PP_00002; phage; -" />
+          </assert_contents>
+      </output>
     </test>
   </tests>
 
