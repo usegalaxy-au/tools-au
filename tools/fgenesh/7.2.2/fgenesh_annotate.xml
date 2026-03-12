@@ -206,8 +206,8 @@ INTRONIC_GENES = ${intronic_genes}
                         <option value="1">Yes</option>
                   </param>
                   <when value="1">
-                          <param name="prot_file" type="data" format="fasta" label="cDNA file" help="cdna fasta file for known mRNAs"/>
-                          <param name="cdna_file" type="data" format="fasta" label="Protein file" help="protein fasta file for known mRNAs"/>
+                          <param name="cdna_file" type="data" format="fasta" label="cDNA file" help="cdna fasta file for known mRNAs"/>
+                          <param name="prot_file" type="data" format="fasta" label="Protein file" help="protein fasta file for known mRNAs"/>
                           <param name="dat_file" type="data" format="txt" label="Dat file" help="dat file for known mRNAs"/>
                   </when>
                   <when value="0"/>
