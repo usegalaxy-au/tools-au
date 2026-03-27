@@ -1,0 +1,60 @@
+<tool id="cpc2" name="Coding Potential Calculator" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@">
+    <description>Fast and accurate coding potential calculator based on sequence intrinsic features</description>
+    <macros>
+	  <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="xrefs"/>
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    touch 'output' &&
+	    CPC2.py 
+	    -i $sequence
+	    -o output &&
+	    cp 'output.txt' '$result'
+	    2>&1
+
+    ]]></command>
+    <inputs>
+	    <param name="sequence" type="data" format="fasta" label="Input Sequence" help="Sequences for Coding Potential Calculator"/>
+    </inputs>
+    <outputs>
+	    <data name="result" format="txt" label="${tool.name} on ${on_string}: Coding Potential Statistic"/>
+    </outputs>
+
+    <tests>
+	 <test>
+              <!-- #1 test on forward strand only -->
+              <param name="sequence" value="example.fa" ftype="fasta"/>
+              <output name="result" file="forward_only.tsv" ftype="tsv"/>
+        </test> 
+    </tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+
+Coding Potential Calculator. Fast and accurate coding potential calculator based on sequence intrinsic features.
+
+**Input**
+	    
+- input file: a sequence file (fasta format)
+
+**Parameters**
+
+- ORF : 
+
+**Output**
+
+- coverage_stats.csv
+
+.. class:: infomark
+	    
+**References**
+
+]]></help>
+     <citations>
+        <citation type="doi">DOI: 10.1093/nar/gkx428</citation>
+    </citations>
+</tool>
