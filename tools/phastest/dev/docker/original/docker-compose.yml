@@ -1,0 +1,29 @@
+services:
+  phastest:
+    image: wishartlab/phastest-docker-single
+    platform: linux/x86_64
+    hostname: slurmctld
+    entrypoint: ["phastest"]
+    # entrypoint: ["tail", "-f", "/dev/null"]
+    container_name: phastest
+    privileged: true
+    volumes:
+      - ./phastest-app-docker/sub_programs/ncbi-blast-2.3.0+:/BLAST+
+      - ./phastest-app-docker/sub_programs/ncbi-blast-2.3.0+:/root/BLAST+
+      - ./phastest-app-docker:/phastest-app
+      - ./phastest-app-docker:/root/phastest-app
+      - ./phastest_inputs:/phastest_inputs
+
+  debug:
+    image: wishartlab/phastest-docker-single
+    platform: linux/x86_64
+    hostname: slurmctld
+    entrypoint: ["tail", "-f", "/dev/null"]
+    container_name: phastest-debug
+    privileged: true
+    volumes:
+      - ./phastest-app-docker/sub_programs/ncbi-blast-2.3.0+:/BLAST+
+      - ./phastest-app-docker/sub_programs/ncbi-blast-2.3.0+:/root/BLAST+
+      - ./phastest-app-docker:/phastest-app
+      - ./phastest-app-docker:/root/phastest-app
+      - ./phastest_inputs:/phastest_inputs
