@@ -1,0 +1,4 @@
+FROM phastest:latest
+
+COPY ./phastest-app-docker/ /root/phastest-app/
+RUN chmod -R +x /root/phastest-app/scripts/

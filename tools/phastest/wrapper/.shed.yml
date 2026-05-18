@@ -1,0 +1,22 @@
+categories:
+- Sequence Analysis
+- Genome annotation
+description: PHASTEST - rapid identification and annotation of prophage sequences
+homepage_url: https://phastest.ca
+long_description: |
+  PHASTEST is designed for rapid identification and annotation of prophage sequences within bacterial genomes and plasmids. It is an improved version of the popular PHAST (PHAge Search Tool) web server with enhanced speed and accuracy.
+name: phastest
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au
+type: unrestricted
+include:
+  - strip_components: 0
+    source:
+    - test-data/detail.txt
+    - test-data/regions.txt
+    - test-data/sequence.fasta
+    - test-data/summary.txt
+    - templates/index.html
+    - phastest.xml
+    - render_report.py
+    - README.rst

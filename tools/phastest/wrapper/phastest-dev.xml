@@ -1,0 +1,257 @@
+<tool
+  id="phastest_dev"
+  name="PHASTEST (TEST)"
+  version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@"
+  python_template_version="3.5"
+  profile="22.05"
+>
+  <description>PHAge Search Tool with Enhanced Sequence Translation - rapid identification and annotation of prophage sequences</description>
+
+  <macros>
+    <token name="@TOOL_VERSION@">1.0</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+  </macros>
+
+  <xrefs>
+    <xref type="bio.tools">phastest</xref>
+  </xrefs>
+
+  <requirements>
+    <container type="docker">neoformit/phastest-galaxy:latest</container>
+  </requirements>
+
+  <required_files>
+      <include path="scripts/parse.py" />
+      <include path="scripts/combined.html" />
+      <include path="scripts/summary.html" />
+  </required_files>
+
+  <command detect_errors="exit_code"><![CDATA[
+
+#set OUTPUT_DIR = 'output'
+
+
+echo "Starting tool command"
+
+## Parse input file type
+#if $input_type.input_selector == 'genbank'
+  #set input_type_str = 'genbank'
+  #set input_param_str = '-a $input_type.accession'
+#else
+  #set input_type_str = 'contig' if $input_type.contigs else 'fasta'
+  #set input_param_str = '-s input_sequence.fasta'
+  && ln -s '$input_type.sequence_file' /phastest_inputs/input_sequence.fasta
+#end if
+
+&& echo "Running PHASTEST..."
+
+## Run PHASTEST
+&& phastest
+  -i $input_type_str
+  $input_param_str
+  -m $annotation_mode
+  $phage_only
+  --yes
+
+## Collect output dir
+&& mkdir -p '$OUTPUT_DIR'
+&& mv \$PHASTEST_HOME/JOBS/input_sequence/* '$OUTPUT_DIR'
+
+## Check whether it failed
+&& bash '${check_output_script}' '$OUTPUT_DIR'
+
+## Collect output files
+&& cp '$OUTPUT_DIR/summary.txt' '$output_summary'
+&& cp '$OUTPUT_DIR/detail.txt' '$output_detail'
+#if $input_type.contigs
+  && cp '$OUTPUT_DIR/input_sequence_contig_positions.txt' '$output_positions'
+#else
+  && cp '$OUTPUT_DIR/region_DNA.txt' '$output_dna_regions'
+#end if
+
+## Build fancy HTML report
+&& python3 '$__tool_directory__/render_report.py' '$OUTPUT_DIR'
+  --output '$output_html_report'
+
+  ]]></command>
+
+  <configfiles>
+    <configfile name="check_output_script"><![CDATA[
+OUTPUT_DIR="\$1"
+if [ -f "\$OUTPUT_DIR/fail.txt" ]; then
+  cat "\$OUTPUT_DIR/fail.txt" >&2
+  exit 1
+fi
+    ]]></configfile>
+  </configfiles>
+
+  <inputs>
+    <conditional name="input_type">
+      <param
+      name="input_selector"
+      type="select"
+      label="Input format"
+      help="Select the type of input data for PHASTEST analysis"
+      >
+        <option value="sequence" selected="true">FASTA sequence(s)</option>
+        <option value="genbank">GenBank accession</option>
+      </param>
+
+      <when value="sequence">
+        <param
+          name="sequence_file"
+          type="data"
+          format="fasta"
+          label="FASTA sequence file"
+          help="Bacterial genome or plasmid sequence in FASTA format."
+        />
+        <param
+          name="contigs"
+          type="boolean"
+          label="Input consists of multiple separate contigs"
+          help="For FASTA files containing shotgun contigs"
+        />
+      </when>
+
+      <when value="genbank">
+        <param
+          name="accession"
+          type="text"
+          label="GenBank accession number"
+          help="Accession number for the genome (e.g., NC_000907.1, KF030445.1). For WGS sequences, provide the master record accession number. Requires internet connection to download from NCBI."
+        >
+          <validator type="empty_field" />
+        </param>
+      </when>
+    </conditional>
+
+    <param
+      name="annotation_mode"
+      type="select"
+      label="Annotation mode"
+      help="'lite' uses Prophage Database and Swissprot (faster). 'deep' uses Prophage Database and PHAST-BSD Bacterial Database (more comprehensive but slower)."
+    >
+      <option value="lite" selected="true">Lite (Prophage DB + Swissprot)</option>
+      <option value="deep">Deep (Prophage DB + PHAST-BSD)</option>
+    </param>
+
+    <param
+      name="phage_only"
+      type="boolean"
+      checked="false"
+      truevalue="--phage-only"
+      falsevalue=""
+      label="Annotate phage regions only"
+      help="If enabled, only predicted phage regions will be annotated. By default, whole genomes are scanned and annotated."
+    />
+  </inputs>
+
+  <outputs>
+    <data
+      name="output_html_report"
+      format="html"
+      label="${tool.name} on ${on_string}: Report"
+    />
+
+    <data
+      name="output_summary"
+      format="txt"
+      label="${tool.name} on ${on_string}: Summary"
+    />
+
+    <data
+      name="output_detail"
+      format="txt"
+      label="${tool.name} on ${on_string}: Detailed results"
+    />
+
+    <data
+      name="output_dna_regions"
+      format="txt"
+      label="${tool.name} on ${on_string}: Region DNA"
+    >
+      <filter>input_type['input_selector'] == 'genbank' or not input_type['contigs']</filter>
+    </data>
+
+    <data
+      name="output_positions"
+      format="txt"
+      label="${tool.name} on ${on_string}: Contig positions"
+    >
+      <filter>input_type['input_selector'] == 'sequence' and input_type['contigs']</filter>
+    </data>
+  </outputs>
+
+  <tests>
+    <!-- Test with FASTA input -->
+    <test expect_num_outputs="2">
+      <param name="input_selector" value="fasta" />
+      <param name="sequence_file" value="seq_test.fna" ftype="fasta" />
+      <param name="annotation_mode" value="lite" />
+      <output name="output_summary" ftype="txt" file="test_summary.txt" />
+      <output name="output_detail" ftype="txt" file="test_detail.txt" />
+    </test>
+  </tests>
+
+  <help><![CDATA[
+
+.. class:: infomark
+
+**What it does**
+
+PHASTEST (PHAge Search Tool with Enhanced Sequence Translation) provides rapid identification and annotation of prophage sequences within bacterial genomes and plasmids. It is compatible with:
+
+- GenBank nucleotide records (complete sequences or whole genome shotgun sequences)
+- Nucleotide sequence files in FASTA format
+
+PHASTEST identifies prophage regions, annotates genes, and provides detailed information about the prophage structure and potential function.
+
+**Inputs**
+
+There are three input options:
+
+1. **FASTA sequence**: Upload a bacterial genome or plasmid sequence in FASTA format (minimum 1500bp)
+
+2. **Contig sequence**: Upload whole genome shotgun contigs in FASTA format
+
+3. **GenBank accession**: Provide an accession number (e.g., NC_000907.1, KF030445.1, LZPG00000000.1) to automatically download and analyze the sequence from NCBI. Note: This requires internet connection and depends on NCBI server availability.
+
+**Parameters**
+
+- **Annotation mode**:
+
+  - *Lite*: Uses Prophage Database and Swissprot. Faster processing, suitable for most analyses.
+  - *Deep*: Uses Prophage Database and PHAST-BSD Bacterial Database. More comprehensive but takes significantly longer to complete.
+
+- **Annotate phage regions only**: When enabled, only the predicted phage regions will be annotated. By default, whole genomes are scanned and annotated.
+
+**Outputs**
+
+- **Summary**: High-level summary of identified prophage regions
+- **Detailed results**: Comprehensive annotation of prophage sequences and genes
+- **Annotated GenBank**: GenBank format file with annotated prophage regions
+
+**Notes**
+
+- For FASTA/contig inputs, minimum sequence length is 1500bp
+- Deep annotation mode may take significantly longer to complete
+- GenBank input requires internet connection and depends on NCBI server status
+
+.. class:: infomark
+
+**References**
+
+For more information about PHASTEST, visit the official website at https://phastest.ca/
+
+  ]]></help>
+
+  <citations>
+    <citation type="bibtex">
+@misc{phastest,
+  title={PHASTEST: PHAge Search Tool with Enhanced Sequence Translation},
+  url={https://phastest.ca/},
+  note={Web service for rapid identification and annotation of prophage sequences}
+}
+    </citation>
+  </citations>
+</tool>

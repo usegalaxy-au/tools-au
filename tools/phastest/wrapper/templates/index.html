@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>PHASTEST Results</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap5.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        padding: 20px;
+        background-color: #f5f5f5;
+      }
+      .summary-table {
+        margin-bottom: 20px;
+      }
+      .summary-table th {
+        background-color: #4caf50;
+        color: white;
+      }
+      .analysis-details {
+        background-color: #f8f9fa;
+        padding: 15px;
+        border-left: 4px solid #4caf50;
+        white-space: pre-wrap;
+        font-family: monospace;
+        font-size: 12px;
+        line-height: 1.4;
+        margin-top: 20px;
+      }
+      .dataTables_wrapper {
+        font-size: 13px;
+      }
+      table.dataTable thead th {
+        background-color: #0d6efd;
+        color: white;
+      }
+      /* Vertical tabs styling */
+      .vertical-tabs-container {
+        display: flex;
+        gap: 0;
+        min-height: 600px;
+      }
+      .vertical-nav-tabs {
+        flex: 0 0 200px;
+        background-color: white;
+        border-right: 1px solid #dee2e6;
+        padding: 0;
+      }
+      .vertical-nav-tabs .nav-link {
+        border-radius: 0;
+        border: none;
+        border-bottom: 1px solid #dee2e6;
+        text-align: left;
+        padding: 12px 20px;
+        color: #495057;
+      }
+      .vertical-nav-tabs .nav-link:hover {
+        background-color: #f8f9fa;
+      }
+      .vertical-nav-tabs .nav-link.active {
+        background-color: #0d6efd;
+        color: white;
+        font-weight: 500;
+      }
+      .vertical-tab-content {
+        flex: 1;
+        background-color: white;
+        padding: 20px;
+      }
+      .region-info {
+        background-color: #e7f3ff;
+        padding: 10px 15px;
+        border-left: 4px solid #0d6efd;
+        margin-bottom: 15px;
+        font-size: 14px;
+      }
+      .region-info strong {
+        color: #0d6efd;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container-fluid">
+      <h1 class="mb-4">PHASTEST Results</h1>
+
+      <!-- Main horizontal tabs -->
+      <ul class="nav nav-tabs mb-3" id="mainTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link active"
+            id="summary-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#summary"
+            type="button"
+            role="tab"
+          >
+            Summary
+          </button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button
+            class="nav-link"
+            id="details-tab"
+            data-bs-toggle="tab"
+            data-bs-target="#details"
+            type="button"
+            role="tab"
+          >
+            Region Details
+          </button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="mainTabContent">
+        <!-- Summary Tab -->
+        <div class="tab-pane fade show active" id="summary" role="tabpanel">
+          <div class="bg-white p-4">
+            <h2>Prophage Regions Summary</h2>
+            <p>Query: <code>{{ result_summary.query_title }}</code></p>
+            <p>{{ result_summary.regions_info }}</p>
+            <table class="table summary-table">
+              <thead>
+                <tr>
+                  <th>Region</th>
+                  <th>Region Length</th>
+                  <th>Completeness</th>
+                  <th>Score</th>
+                  <th># Total Proteins</th>
+                  <th>Region Position</th>
+                  <th>Most Common Phage</th>
+                  <th>GC%</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in result_summary.table_rows %}
+                <tr class="alert-{{ calculate_bs_class(row['COMPLETENESS']) }}">
+                  <td>{{ row.REGION }}</td>
+                  <td>{{ row.REGION_LENGTH }}</td>
+                  <td>{{ row.COMPLETENESS }}</td>
+                  <td>{{ row.score }}</td>
+                  <td>{{ row.TOTAL_PROTEIN_NUM }}</td>
+                  <td>{{ row.REGION_POSITION }}</td>
+                  <td>{{ row['MOST_COMMON_PHAGE_NAME'].split(',')[0] }}</td>
+                  <td>{{ row.GC_PERCENTAGE }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+
+            <p>
+              <strong>Region:</strong> The number assigned to the region.
+              <br>
+              <strong>Region Length:</strong> The length of the sequence of that region (in bp).
+              <br>
+              <strong>Completeness:</strong> A prediction of whether the region contains a intact or incomplete
+              prophage based on the above criteria.
+              <br>
+              <strong>Score:</strong> The score of the region based on the above criteria.
+              <br>
+              <strong># Total Proteins:</strong> The number of ORFs present in the region.
+              <br>
+              <strong>Region Position:</strong> The start and end positions of the region on the bacterial chromosome.
+              <br>
+              <strong>Most Common Phage:</strong> The phage(s) with the highest number of proteins most
+              similar to those in the region.
+              <br>
+              <strong>GC %:</strong> The percentage of GC nucleotides of the region.
+            </p>
+
+            <h3>Analysis Details</h3>
+            <div class="analysis-details">{{ result_summary.header_text }}</div>
+          </div>
+        </div>
+
+        <!-- Details Tab with Vertical Tabs -->
+        <div class="tab-pane fade" id="details" role="tabpanel">
+          <div class="vertical-tabs-container">
+            <!-- Vertical navigation tabs -->
+            <div
+              class="nav flex-column vertical-nav-tabs"
+              id="regionTabs"
+              role="tablist"
+            >
+              {% for region_data in detail_data %}
+              <button
+                class="nav-link {% if loop.first %}active{% endif %}"
+                id="region-{{ region_data.region }}-tab"
+                data-bs-toggle="tab"
+                data-bs-target="#region-{{ region_data.region }}"
+                type="button"
+                role="tab"
+              >
+                Region {{ region_data.region }}
+                <small class="d-block" style="font-size: 11px"
+                  >{{ region_data.hits|length }} hits</small
+                >
+              </button>
+              {% endfor %}
+            </div>
+
+            <!-- Tab content for each region -->
+            <div class="tab-content vertical-tab-content" id="regionTabContent">
+              {% for region_data in detail_data %}
+              <div
+                class="tab-pane fade {% if loop.first %}show active{% endif %}"
+                id="region-{{ region_data.region }}"
+                role="tabpanel"
+              >
+                <div class="region-info">
+                  <strong>Query:</strong> <code>{{ region_data.query }}</code>
+                  <br>
+                  <strong>Region:</strong> <code>{{ region_data.region }}</code>
+                  <span class="mx-3">|</span>
+                  <strong>Total Hits:</strong> <code>{{ region_data.hits|length }}</code>
+                </div>
+
+                <table
+                  class="table table-striped table-sm region-table"
+                  style="width: 100%"
+                >
+                  <thead>
+                    <tr>
+                      <th>CDS Position</th>
+                      <th>Blast Hit</th>
+                      <th>E-value</th>
+                      <th>Sequence</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for hit in region_data.hits %}
+                    <tr>
+                      <td>{{ hit.CDS_POSITION }}</td>
+                      <td>{{ hit.BLAST_HIT }}</td>
+                      <td>{{ hit.EVALUE }}</td>
+                      <td>
+                        <button
+                          class="btn btn-sm btn-secondary"
+                          onclick="showSequenceModal(this);"
+                          data-sequence="{{ hit.prophage_PRO_SEQ }}"
+                        >
+                          View
+                        </button>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                  </tbody>
+                </table>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Sequence Modal -->
+    <div
+      class="modal fade"
+      id="sequenceModal"
+      tabindex="-1"
+      aria-labelledby="sequenceModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="sequenceModalLabel">
+              Prophage Sequence
+            </h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <pre id="sequenceContent" style="white-space: pre-wrap"></pre>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap5.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        // Initialize DataTables for each region table
+        $(".region-table").each(function () {
+          $(this).DataTable({
+            pageLength: 15,
+            order: [[2, "asc"]],
+            columnDefs: [{ targets: [1], orderable: false }],
+            dom: "frtip",
+          });
+        });
+      });
+
+      function showSequenceModal(el) {
+        const sequence = $(el).data("sequence");
+        $("#sequenceContent").text(sequence);
+        const sequenceModal = new bootstrap.Modal(
+          document.getElementById("sequenceModal")
+        );
+        sequenceModal.show();
+      }
+    </script>
+  </body>
+</html>
