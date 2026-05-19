@@ -18,7 +18,7 @@ ln -s '$reads' ./reads
 dorado demux
 --output-dir ./output
 --threads "\${GALAXY_SLOTS}"
-#if $classify.mode == 'classify'
+#if $classify.classify_mode == 'classify'
     --kit-name '${classify.kit_name}'
     #if $classify.barcode_both_ends
         --barcode-both-ends
@@ -42,7 +42,7 @@ dorado summary ./output/*.bam > summary.tsv
     <inputs>
         <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Basecalled reads" help="Basecalled reads in BAM or FASTQ format."/>
         <conditional name="classify">
-            <param name="mode" type="select" label="Barcode classification mode">
+            <param name="classify_mode" type="select" label="Barcode classification mode">
                 <option value="classify" selected="true">Classify reads using a barcode kit</option>
                 <option value="no_classify">Use existing barcode annotations (--no-classify)</option>
             </param>
@@ -74,10 +74,10 @@ dorado summary ./output/*.bam > summary.tsv
     <tests>
         <test expect_num_outputs="2">
             <param name="reads" value="FAL00375_473bf0ed_0.ten_reads.bam"/>
-            <param name="mode" value="classify"/>
+            <param name="classify_mode" value="classify"/>
             <param name="kit_name" value="SQK-RBK114-96"/>
             <output_collection name="out_bam" type="list">
-                <element name="unclassified" ftype="unsorted.bam">
+                <element name="473bf0edfc2f8f756173de35db5da9b6f6db4959_unclassified" ftype="unsorted.bam">
                     <assert_contents>
                         <has_size min="50000"/>
                     </assert_contents>
