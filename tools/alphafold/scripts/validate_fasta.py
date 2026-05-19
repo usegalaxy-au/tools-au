@@ -12,7 +12,7 @@ STRIP_SEQUENCE_CHARS = ['\n', '\r', '\t', ' ']
 class Fasta:
     def __init__(self, header_str: str, seq_str: str):
         self.header = header_str
-        self.aa_seq = seq_str
+        self.sequence = seq_str
 
 
 class FastaLoader:
@@ -140,16 +140,16 @@ class FastaValidator:
         """Confirm whether sequence length is valid."""
         fasta = self.fasta_list[0]
         if self.min_length:
-            if len(fasta.aa_seq) < self.min_length:
+            if len(fasta.sequence) < self.min_length:
                 raise ValueError(
                     'Error encountered validating FASTA:\n Sequence too short'
-                    f' ({len(fasta.aa_seq)}AA).'
+                    f' ({len(fasta.sequence)}AA).'
                     f' Minimum length is {self.min_length}AA.')
         if self.max_length:
-            if len(fasta.aa_seq) > self.max_length:
+            if len(fasta.sequence) > self.max_length:
                 raise ValueError(
                     'Error encountered validating FASTA:\n'
-                    f' Sequence too long ({len(fasta.aa_seq)}AA).'
+                    f' Sequence too long ({len(fasta.sequence)}AA).'
                     f' Maximum length is {self.max_length}AA.')
 
     def validate_alphabet(self):
@@ -158,7 +158,7 @@ class FastaValidator:
         If not, report the offending character and its position.
         """
         fasta = self.fasta_list[0]
-        for i, char in enumerate(fasta.aa_seq.upper()):
+        for i, char in enumerate(fasta.sequence.upper()):
             if char not in self.iupac_characters:
                 raise ValueError(
                     'Error encountered validating FASTA:\n Invalid amino acid'
@@ -167,7 +167,7 @@ class FastaValidator:
     def validate_x(self):
         """Check for X bases."""
         fasta = self.fasta_list[0]
-        for i, char in enumerate(fasta.aa_seq.upper()):
+        for i, char in enumerate(fasta.sequence.upper()):
             if char == 'X':
                 raise ValueError(
                     'Error encountered validating FASTA:\n Unsupported AA code'
@@ -180,14 +180,14 @@ class FastaWriter:
 
     def write(self, fasta: Fasta):
         header = fasta.header
-        seq = self.format_sequence(fasta.aa_seq)
+        seq = self.format_sequence(fasta.sequence)
         sys.stdout.write(header + '\n')
         sys.stdout.write(seq)
 
-    def format_sequence(self, aa_seq: str):
+    def format_sequence(self, sequence: str):
         formatted_seq = ''
-        for i in range(0, len(aa_seq), self.line_wrap):
-            formatted_seq += aa_seq[i: i + self.line_wrap] + '\n'
+        for i in range(0, len(sequence), self.line_wrap):
+            formatted_seq += sequence[i: i + self.line_wrap] + '\n'
         return formatted_seq.upper()
 
 
@@ -214,7 +214,7 @@ def main():
         sys.stderr.write("Validated FASTA sequence(s):\n\n")
         for fas in clean_fastas:
             sys.stderr.write(fas.header + '\n')
-            sys.stderr.write(fas.aa_seq + '\n\n')
+            sys.stderr.write(fas.sequence + '\n\n')
 
     except ValueError as exc:
         sys.stderr.write(f"{exc}\n\n")
