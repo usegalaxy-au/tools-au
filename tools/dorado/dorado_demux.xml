@@ -40,7 +40,7 @@ dorado summary ./output/*.bam > summary.tsv
 
     ]]></command>
     <inputs>
-        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Basecalled reads" help="Basecalled reads in BAM or FASTQ format."/>
+        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam,pod5" label="Basecalled reads" help="Basecalled reads in BAM, FASTQ or POD5 format."/>
         <conditional name="classify">
             <param name="classify_mode" type="select" label="Barcode classification mode">
                 <option value="classify" selected="true">Classify reads using a barcode kit</option>
