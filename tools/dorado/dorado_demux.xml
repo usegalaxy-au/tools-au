@@ -7,17 +7,14 @@
     <expand macro="requirements"/>
     <command detect_errors="exit_code"><![CDATA[
 
-mkdir -p ./output
+mkdir -p output
 
-&&
+&& ln -s '$reads' reads
 
-ln -s '$reads' ./reads
-
-&&
-
-dorado demux
---output-dir ./output
+&& dorado demux
+--output-dir output
 --threads "\${GALAXY_SLOTS}"
+--emit-summary
 #if $classify.classify_mode == 'classify'
     --kit-name '${classify.kit_name}'
     #if $classify.barcode_both_ends
@@ -32,15 +29,11 @@ dorado demux
 #if $no_trim
     --no-trim
 #end if
-./reads
-
-&&
-
-dorado summary ./output/*.bam > summary.tsv
+reads
 
     ]]></command>
     <inputs>
-        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam,pod5" label="Basecalled reads" help="Basecalled reads in BAM, FASTQ or POD5 format."/>
+        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Basecalled reads" help="Basecalled reads in BAM or FASTQ format."/>
         <conditional name="classify">
             <param name="classify_mode" type="select" label="Barcode classification mode">
                 <option value="classify" selected="true">Classify reads using a barcode kit</option>
@@ -69,7 +62,7 @@ dorado summary ./output/*.bam > summary.tsv
         <collection name="out_bam" type="list" label="Demultiplexed reads from ${on_string}">
             <discover_datasets pattern="(?P&lt;name&gt;.+)\.bam" directory="output" format="unsorted.bam"/>
         </collection>
-        <data format="tsv" name="out_summary" label="${tool.name} summary for ${on_string}" from_work_dir="summary.tsv"/>
+        <data format="tsv" name="out_summary" label="${tool.name} summary for ${on_string}" from_work_dir="output/barcoding_summary.txt"/>
     </outputs>
     <tests>
         <test expect_num_outputs="2">
