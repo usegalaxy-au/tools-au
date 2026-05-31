@@ -33,14 +33,14 @@ reads
 
     ]]></command>
     <inputs>
-        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Basecalled reads" help="Basecalled reads in BAM or FASTQ format."/>
+        <param name="reads" type="data" format="bam,fastqsanger,unsorted.bam" label="Basecalled reads (BAM)" help="A BAM file produced by the Dorado basecaller. Raw POD5 data is not accepted here — you must basecall it first with the Dorado basecalling tool on Galaxy. See the Help section below for full details."/>
         <conditional name="classify">
             <param name="classify_mode" type="select" label="Barcode classification mode">
                 <option value="classify" selected="true">Classify reads using a barcode kit</option>
                 <option value="no_classify">Use existing barcode annotations (--no-classify)</option>
             </param>
             <when value="classify">
-                <param argument="--kit-name" type="select" label="Barcode kit" help="The barcode kit used during library preparation.">
+                <param argument="--kit-name" type="select" label="Barcode kit" help="The barcode kit used during library preparation. If you don't know which kit was used, see the &quot;Identifying the barcode kit&quot; section in the Help below.">
                     <expand macro="barcode_kits"/>
                 </param>
                 <param argument="--barcode-both-ends" type="boolean" truevalue="--barcode-both-ends" falsevalue=""
@@ -93,8 +93,62 @@ This tool classifies basecalled reads by their barcode sequence and writes
 them into individual BAM files — one per detected barcode — plus an
 ``unclassified.bam`` for reads that could not be assigned.
 
-**If you have raw (un-basecalled) data, you can basecall and demultiplex
-simultaneously with the Dorado basecalling tool on Galaxy.**
+Input requirements
+-------------------
+
+The input to this tool **must be a BAM file** produced by the Dorado
+basecaller. Raw POD5 data is **not** accepted here — POD5 contains raw
+electrical signal which has to be basecalled into nucleotide sequences before
+demultiplexing can take place.
+
+If you have POD5 data, the workflow is:
+
+1. Run the **Dorado basecalling** tool on Galaxy to convert your POD5 file(s)
+   into a basecalled BAM file.
+2. Pass that BAM file into this tool to split it by barcode.
+
+The basecaller's ``--kit-name`` option only *tags* reads with their barcode
+classification — it does **not** split them into separate files. This tool
+performs the actual split. You can therefore choose either of two patterns:
+
+- Set ``--kit-name`` during basecalling (reads are pre-classified) and then
+  run this tool in **Use existing barcode annotations** mode, or
+- Skip ``--kit-name`` during basecalling and run this tool in **Classify
+  reads using a barcode kit** mode to classify and split in one step.
+
+Identifying the barcode kit
+----------------------------
+
+If you don't know which barcode kit was used to prepare your library, try
+the following, in order of reliability:
+
+1. **Ask your sequencing facility or the person who prepared the library** —
+   the library preparation kit is recorded at the bench and is the most
+   reliable source.
+2. **Inspect the POD5 metadata** if you still have the raw data. From a
+   terminal::
+
+       pip install pod5
+       pod5 inspect read your_file.pod5 <read_id>
+
+   Look for ``sequencing_kit`` or ``barcoding_kits`` in the ``context_tags``
+   field of the printed run info.
+3. **Inspect the BAM header** if the file was basecalled with ``--kit-name``
+   — the kit name is embedded in the ``@RG`` read group identifiers::
+
+       samtools view -H your.bam | grep '@RG'
+
+   Look for a segment like ``..._SQK-RBK114-96_barcode01`` in the ``ID``
+   field; the kit name is the part immediately before ``_barcode``.
+
+Common kit-name prefixes:
+
+- ``SQK-RBK*``, ``SQK-NBD*``, ``SQK-PCB*``, ``SQK-16S*``, ``SQK-MLK*`` —
+  barcoded (multiplexed) kits
+- ``EXP-NBD*``, ``EXP-PBC*``, ``TWIST-*`` — barcode expansion kits, used
+  alongside an ``SQK-LSK*`` ligation kit
+- ``SQK-LSK*``, ``SQK-RAD*``, ``SQK-ULK*`` — **single-sample** ligation /
+  rapid kits (not barcoded; this tool is not applicable)
 
 Barcode classification modes
 -----------------------------
