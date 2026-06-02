@@ -1,4 +1,4 @@
-<tool id="dorado_demux" name="Dorado demultiplexer" version="@VERSION@+galaxy1" python_template_version="3.5" profile="24.1">
+<tool id="dorado_demux" name="Dorado demultiplexer" version="@VERSION@+galaxy2" python_template_version="3.5" profile="24.1">
     <description>for Oxford Nanopore (ONT) barcoded reads</description>
     <macros>
         <import>macros.xml</import>
