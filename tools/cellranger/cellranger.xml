@@ -7,8 +7,10 @@
     <expand macro="stdio" />
     <command><![CDATA[
 
+        GALAXY_MEMORY_GB=\$((\${GALAXY_MEMORY_MB:-81920}/1024)) &&
+        CELLRANGER_RAM=\${CELLRANGER_RAM:-\${GALAXY_MEMORY_GB}} &&
+		
 	    #import re
-	    #import os
 
 	    #set tool_type = $tool_cond.tool
 	    #if $tool_type == "count":
@@ -55,7 +57,7 @@
                   		--sample=$collection_identifier
                   		--transcriptome=$tool_cond.reference_source.ref_file.fields.path
                   		--localcores=\${GALAXY_SLOTS:-2}
-	    			--localmem=\${GALAXY_MEMORY_GB:-8} 
+		    			--localmem=\${CELLRANGER_RAM:-8} 
 	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/matrix.mtx.gz
 	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/features.tsv.gz
 	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/barcodes.tsv.gz
@@ -67,7 +69,7 @@
                                 --sample=$collection_identifier
                                 --transcriptome=reference_directory
                                 --localcores=\${GALAXY_SLOTS:-2}
-	    			--localmem=\${GALAXY_MEMORY_GB:-8}
+	    						--localmem=\${CELLRANGER_RAM:-8}
 	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/matrix.mtx.gz
 	    		&& gunzip output_directory/outs/filtered_feature_bc_matrix/features.tsv.gz
 			&& gunzip output_directory/outs/filtered_feature_bc_matrix/barcodes.tsv.gz
@@ -76,9 +78,9 @@
 	    #elif str($tool_cond.tool) == "mkref"
 	    	cellranger mkref --genome=reference_directory
 	    			 --fasta=$genome_fasta
-	    		         --genes=$genome_gtf 
-	    			 --nthreads=\${GALAXY_SLOTS:-6}
-	    			 --memgb=\${GALAXY_MEMORY_GB:-8}
+	    		      --genes=$genome_gtf 
+	    			 --nthreads=\${GALAXY_SLOTS:-8}
+	    			 --memgb=\${CELLRANGER_RAM:-16}
 	    && tar -zcf '$tar_ref_output' reference_directory
 	    &&
             2>&1
@@ -91,7 +93,7 @@
                 cellranger multi --id=output_directory
                                  --csv=config.txt
                                  --localcores=\${GALAXY_SLOTS:-2}
-                                 --localmem=\${GALAXY_MEMORY_GB:-8}
+                                 --localmem=\${CELLRANGER_RAM:-8}
                                 --disable-ui
                 && gunzip -f output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/matrix.mtx.gz
                 && gunzip -f output_directory/outs/per_sample_outs/output_directory/count/sample_filtered_feature_bc_matrix/features.tsv.gz
