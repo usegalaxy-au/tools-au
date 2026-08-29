@@ -1,0 +1,10 @@
+name: cpc2
+owner: galaxy-australia
+description: Coding Potential Calculator.
+homepage_url: http://cpc2.gao-lab.org/index.php
+long_description: |
+    A fast and accurate coding potential calculator based on sequence intrinsic features..
+remote_repository_url: https://github.com/mthang/galaxy-local-tools/tree/cpc2/tools/cpc2
+type: unrestricted
+categories:
+- Assembly
