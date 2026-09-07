@@ -11,7 +11,7 @@ exclude:
 homepage_url: https://github.com/bluenote-1577/sylph-tax
 long_description: >
   sylph-tax turn sylph's TSV output into a taxonomic profile.
-name: kaptive
+name: sylph_tax
 owner: galaxy-australia
 remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/sylph_tax
 suite:

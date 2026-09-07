@@ -1,0 +1,23 @@
+<macros>
+    <token name="@TOOL_VERSION@">1.0.6</token>
+    <token name="@VERSION_SUFFIX@">0</token>
+    <token name="@PROFILE@">22.05</token>
+    <token name="@CONTAINER_HASH@">a445df2828744fae488a3214d24751985fe90a0039e4dc4c1f85e3b184327847</token>
+    <xml name="requirements">
+        <requirements>
+		<!--<container type="docker">endix1029/ufcg:sha@CONTAINER_HASH@</container>-->
+		<container type="docker">endix1029/ufcg:latest</container>
+        </requirements>
+    </xml>
+    <xml name="stdio">
+      <stdio>
+         <exit_code range=":-1"  level="fatal" description="Error: Cannot open file" />
+         <exit_code range="1:"  level="fatal" description="Error" />
+      </stdio>
+    </xml>
+    <xml name="citations">
+        <citations>
+            <citation type="doi">10.1093/nar/gkac894</citation>
+        </citations>
+    </xml>
+</macros>
