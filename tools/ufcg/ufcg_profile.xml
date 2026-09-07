@@ -1,0 +1,159 @@
+<tool id="ufcg_profile" name="UFCG profile" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>Extract UFCG profile from Fungal whole genome sequences</description>
+    <macros>
+          <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command detect_errors="exit_code"><![CDATA[
+	#set $strip_ansi = "sed 's/\\x1b\\[[0-9;]*m//g'"
+    	#set $filter_logs = "grep '^\\['"
+
+	mkdir input_dir &&
+	mkdir output_dir &&
+        #import re
+
+        #import re
+	    
+#for $input_file in $input_directory
+    #if $input_file.is_of_type("fasta", "fasta.gz"):
+        ## 1. Clear bad characters out of the filename
+        #set $identifier = re.sub(r'[^\s\w\-\\.]', '_', str($input_file.element_identifier))
+        
+        ## 2. Check if the file is tracked as a .gz or its name explicitly ends with .gz
+        #if $input_file.ext.endswith(".gz") or $identifier.endswith(".gz")
+            ## Strip trailing .gz or .fasta.gz to avoid filename duplication
+            #set $base_name = re.sub(r'\.fasta(\.gz)?$', '', $identifier)
+            
+            ## Bash Command: If it is gzipped, decompress it into the directory
+            gunzip -c '$input_file' > 'input_dir/${base_name}.fasta' &&
+        #else
+            ## Strip trailing .fasta to avoid duplication
+            #set $base_name = re.sub(r'\.fasta$', '', $identifier)
+            
+            ## Bash Command: If it is already uncompressed, just symlink it
+            ln -s '$input_file' 'input_dir/${base_name}.fasta' &&
+        #end if
+    #end if
+#end for
+
+
+
+        ufcg profile
+            -i input_dir
+            -o output_dir
+	    -t \${GALAXY_SLOTS:-4}
+	    -k
+	    -w "\${_GALAXY_JOB_TMP_DIR:-/tmp}"
+	    #if $marker_set
+	    	-s '$marker_set'
+	    #end if
+            #if $exclude_introns
+                -n
+	    #end if
+	    2>&1
+	    | $strip_ansi
+    	    | $filter_logs
+	    | tee ufcg_profile.log	    
+    ]]></command>
+    <inputs>
+	<param name="input_directory" type="data_collection" collection_type="list" format="fasta,fasta.gz"  label="Input directory"
+                        help="Directory containing fungal genome assemblies (FASTA format)"/> 
+	<!-- <param name="metadata_file" type="data" format="tabular,csv" optional="true" label="Metadata file" help="Optional file containing metadata (TSV/CSV format)"/>-->
+        <param name="marker_set" type="boolean" truevalue="PRO" falsevalue="false" checked="false" label="Extract protein markers from the sequences" help="PRO is used"/>
+        <param name="exclude_introns" type="boolean" truevalue="true" falsevalue="false" checked="false" label="Exclude introns" help="Exclude introns and store cDNA sequences"/>
+    </inputs>
+    
+    <outputs>
+        <collection name="output_directory" type="list" label="UFCG Profile results for ${tool.name} on ${on_string}">
+	      <discover_datasets pattern="(?P&lt;designation&gt;.+)\.ucg" directory="output_dir/" recurse="true" format="data" visible="false"/>
+       </collection>
+       <data format="txt" name="output_log" label="${tool.name} on ${on_string}: log file" from_work_dir="ufcg_profile.log" />
+    </outputs>
+    
+    <tests>
+	<test>
+            <param name="input_directory">
+                <collection type="list">
+                    <element name="GCF_000091045.1.fasta" 
+                         value="GCF_000091045.1.fna" 
+                         location="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/091/045/GCF_000091045.1_ASM9104v1/GCF_000091045.1_ASM9104v1_genomic.fna.gz" 
+			 />
+                    <element name="GCF_000146045.2.fasta"
+                         value="GCF_000146045.2.fna"
+                         location="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/146/045/GCF_000146045.2_R64/GCF_000146045.2_R64_genomic.fna.gz"
+                         />
+                    <element name="GCF_000149205.2.fasta"
+                         value="GCF_000149205.2.fna"
+                         location="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/149/205/GCF_000149205.2_ASM14920v2/GCF_000149205.2_ASM14920v2_genomic.fna.gz"
+                         />
+                    <element name="GCF_000697725.1.fasta"
+                         value="GCF_000697725.1.fna"
+                         location="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCA/000/697/725/GCA_000697725.1_RhiOry99-892-1.0/GCA_000697725.1_RhiOry99-892-1.0_genomic.fna.gz"
+                         />
+		    <element name="GCF_000182565.1.fasta"
+                         value="GCF_000182565.1.fna"
+                         location="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/182/565/GCF_000182565.1_S_punctatus_V1/GCF_000182565.1_S_punctatus_V1_genomic.fna.gz"
+                         />
+		    <element name="GCF_000271585.1.fasta"
+                         value="GCF_000271585.1.fna"
+                         location="https://ftp.ncbi.nlm.nih.gov/genomes/all/GCF/000/271/585/GCF_000271585.1_Trametes_versicolor_v1.0/GCF_000271585.1_Trametes_versicolor_v1.0_genomic.fna.gz"
+			 />
+                </collection>
+	   </param>
+            <output_collection name="output_directory" count="6" type="list">
+                    <element name="GCF_000091045.1" file="GCF_000091045.1.ucg" ftype="data" compare="diff" lines_diff="10">
+                          <assert_contents>
+                                <has_size value="227834" delta="1000"/>
+                          </assert_contents>
+                    </element>
+                    <element name="GCF_000146045.2" file="GCF_000146045.2.ucg" ftype="data" compare="diff" lines_diff="10">
+                          <assert_contents>
+                                <has_size value="179422" delta="1000"/>
+                          </assert_contents>
+                    </element>
+                    <element name="GCF_000149205.2" file="GCF_000149205.2.ucg" ftype="data" compare="diff" lines_diff="10">
+                          <assert_contents>
+                                <has_size value="211327" delta="1000"/>
+                          </assert_contents>
+                    </element>
+                    <element name="GCF_000182565.1" file="GCF_000182565.1.ucg" ftype="data" compare="diff" lines_diff="10">
+                          <assert_contents>
+                                <has_size value="216008" delta="1000"/>
+                          </assert_contents>
+		    </element>
+                    <element name="GCF_000271585.1" file="GCF_000271585.1.ucg" ftype="data" compare="diff" lines_diff="10">
+                          <assert_contents>
+                                <has_size value="253613" delta="1000"/>
+                          </assert_contents>
+                    </element>
+                    <element name="GCF_000697725.1" file="GCF_000697725.1.ucg" ftype="data" compare="diff" lines_diff="10">
+                          <assert_contents>
+                                <has_size value="269656" delta="1000"/>
+                          </assert_contents>
+                    </element>
+	    </output_collection>
+        </test>
+    </tests>
+    
+    <help><![CDATA[
+**UFCG Profile Tool**
+
+This tool extracts marker genes from fungal genome assemblies using the UFCG (Universal Fungal Core Genes) pipeline.
+
+**Input**
+- Input directory containing fungal genome assemblies (nucleotides) in FASTA format
+
+**Output**
+- Extracted marker gene sequences and profiles for each input genome 
+
+**Marker Sets**
+- PRO: Standard marker set for fungal phylogenomics
+
+**Citation**
+If you use UFCG in your research, please cite the appropriate publications.
+    ]]></help>
+    
+	<expand macro="citations"/>
+
+</tool>

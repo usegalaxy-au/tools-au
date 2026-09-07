@@ -1,0 +1,239 @@
+<tool id="ufcg_align" name="UFCG align" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>Align genes and provide multiple sequence alignments from UFCG profiles</description>
+    <macros>
+          <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command detect_errors="exit_code"><![CDATA[
+        mkdir input_dir &&
+        mkdir temp_dir &&
+        mkdir output_dir &&
+        #import re
+        #for $input_file in $input_directory
+                #set $identifier = re.sub('[^\w\-_\.]', '_', $input_file.element_identifier)
+                ln -s '$input_file' 'input_dir/${identifier}.ucg' &&
+        #end for
+
+        ufcg align
+            -i input_dir
+            -o temp_dir
+            -t \${GALAXY_SLOTS:-4}
+            -l $tree_leaf_format
+            -a $alignment_method
+            -c $align_multiple_gene
+            -f $gap_rich_filter 2>&1 | tee ufcg_align.log
+            && mv temp_dir/align output_dir/
+            && mv temp_dir/misc output_dir/
+            && mv temp_dir/aligned_concatenated.fasta output_dir/
+            && mv temp_dir/align.ckp output_dir/
+            && mv temp_dir/align.log output_dir/
+            &&
+            cat ufcg_align.log
+            | tail > "$log_file"
+
+    ]]></command>
+    <inputs>
+        <param name="input_directory" type="data_collection" collection_type="list" format="data"  label="Input directory"
+                help="Directory containing fungal genome assemblies (ufcg format)"/>
+        <param name="tree_leaf_format" type="select" multiple="true" value="label" label="Select Tree Leaf format" help="Multiple options can be selected. default: label">
+                    <option value="uid">UID</option>
+                    <option value="acc">Accession</option>
+                    <option value="label">Label</option>
+                    <option value="taxon">Taxon</option>
+                    <option value="strain">strain</option>
+                    <option value="type">Type</option>
+                    <option value="taxonomy">Taxonomy</option>
+        </param>
+        <param name="alignment_method" type="select" multiple="false" value="protein" label="Select alignment method" help="default: protein">
+                    <option value="nucleotide">Nucleotide</option>
+                    <option value="codon">Codon</option>
+                    <option value="codon12">Codon12</option>
+                    <option value="protein">Protein</option>
+        </param>
+        <param name="align_multiple_gene" type="integer" value="0" label="Number of genes to align" help="Align multiple copied genes: default 0"/>
+        <param name="gap_rich_filter" type="integer" min="0" max="100" value="50" label="Set Gap-rich filter percentage threshold" help="Threshold for Gap-rich filter threshold"/>
+    </inputs>
+
+    <outputs>
+        <data name="log_file" format="txt" label="${tool.name} on ${on_string}: log"/>
+        <data name="aligned_fasta" from_work_dir="output_dir/aligned_concatenated.fasta" format="fasta" label="${tool.name} on ${on_string} : aligned concatenated fasta"/>
+        <data name="align_ckp" from_work_dir="output_dir/align.ckp" format="txt" label="${tool.name} on ${on_string} : align ckp"/>
+        <data name="align_log" from_work_dir="output_dir/align.log" format="txt" label="${tool.name} on ${on_string} : align log"/>
+        <collection name="output_directory" type="list:list" label="UFCG tree results for ${tool.name} on ${on_string}">
+                <discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.fasta$" format="fasta" directory="output_dir/" recurse="true" match_relative_path="true"/>
+                <discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.fasta$" format="fasta" directory="output_dir/" recurse="true" match_relative_path="true"/>
+        </collection>
+
+    </outputs>
+
+    <tests>
+        <test>
+           <param name="input_directory">
+		<collection type="list">
+		    <element name="GCF_000146045.2.ucg" value="GCF_000146045.2.ucg" />	   
+		    <element name="GCF_000182565.2.ucg" value="GCF_000182565.2.ucg" />
+		    <element name="GCF_000271585.1.ucg" value="GCF_000271585.1.ucg" />
+		    <element name="GCF_000149205.2.ucg" value="GCF_000149205.2.ucg" />
+                    <element name="GCF_000182565.1.ucg" value="GCF_000182565.1.ucg" />
+                    <element name="GCF_000091045.1.ucg" value="GCF_000091045.1.ucg" />
+                    <element name="GCF_000697725.1.ucg" value="GCF_000697725.1.ucg" />
+                </collection>
+            </param>
+            <param name="tree_leaf_format" value="label"/>
+            <param name="alignment_method" value="nucleotide"/>
+            <param name="align_multiple_gene" value="0"/>
+            <param name="gap_rich_filter" value="50"/>
+            <output name="aligned_fasta">
+		<assert_contents>
+			<has_size value="878185" delta="2000"/>
+			<has_text text="GCF_000146045.2"/>
+                        <has_line_matching expression="^>.*"/>
+			<has_line_matching expression="^[ACGTN-]+$"/>
+                </assert_contents>
+            </output>
+            <output name="align_ckp" file="align/align.ckp" ftype="txt">
+                 <assert_contents>
+                        <has_n_lines n="1"/>
+                        <has_text text="align"/>
+                </assert_contents>
+            </output>
+            <output name="align_log" file="align/align.log" ftype="txt">
+	     <assert_contents>
+        	    <has_n_lines n="14"/>
+	            <has_text text="Genomes included in the analysis"/>
+		    <has_text_matching expression="GCF_000146045.2" />
+		    <has_text_matching expression="GCA_000182565.2" />
+		    <has_text_matching expression="GCF_000271585.1" />
+		    <has_text_matching expression="GCF_000149205.2" />
+		    <has_text_matching expression="GCF_000182565.1" />
+		    <has_text_matching expression="GCF_000091045.1" />
+		    <has_text_matching expression="GCF_000697725.1" />
+	            <has_text text="UUCG"/>
+	     </assert_contents>			
+             </output>
+             <output_collection name="output_directory" type="list:list">
+                     <element name="align">
+                             <element name="aligned_ACT1">
+				<assert_contents>     
+					<has_text text=">GCF_000146045.2"/>
+					<has_line_matching expression="^[ACGTN-]+$"/>
+                                </assert_contents>
+                             </element>
+                     </element>
+             </output_collection>
+     	</test>
+        <test>
+           <param name="input_directory">
+                <collection type="list">
+                    <element name="GCF_000146045.2.ucg" value="GCF_000146045.2.ucg" />
+                    <element name="GCF_000182565.2.ucg" value="GCF_000182565.2.ucg" />
+                    <element name="GCF_000271585.1.ucg" value="GCF_000271585.1.ucg" />
+                    <element name="GCF_000149205.2.ucg" value="GCF_000149205.2.ucg" />
+                    <element name="GCF_000182565.1.ucg" value="GCF_000182565.1.ucg" />
+                    <element name="GCF_000091045.1.ucg" value="GCF_000091045.1.ucg" />
+                    <element name="GCF_000697725.1.ucg" value="GCF_000697725.1.ucg" />
+                </collection>
+            </param>
+            <param name="tree_leaf_format" value="uid"/>
+            <param name="alignment_method" value="protein"/>
+            <param name="align_multiple_gene" value="0"/>
+            <param name="gap_rich_filter" value="50"/>
+            <output name="aligned_fasta">
+                <assert_contents>
+                        <has_size value="263464" delta="1000"/>
+                        <has_text text="790677864777078018"/>
+                        <has_line_matching expression="^>.*"/>
+                        <has_line_matching expression="^[ARNDCEQGHILKMFPSTWYV-]+$"/>
+                </assert_contents>
+            </output>
+            <output name="align_ckp" file="align/align.ckp" ftype="txt">
+                 <assert_contents>
+                        <has_n_lines n="1"/>
+                        <has_text text="align"/>
+                </assert_contents>
+            </output>
+            <output name="align_log">
+             <assert_contents>
+                    <has_n_lines n="14"/>
+                    <has_text text="Genomes included in the analysis"/>
+                    <has_text_matching expression="GCF_000146045.2" />
+                    <has_text_matching expression="GCA_000182565.2" />
+                    <has_text_matching expression="GCF_000271585.1" />
+                    <has_text_matching expression="GCF_000149205.2" />
+                    <has_text_matching expression="GCF_000182565.1" />
+                    <has_text_matching expression="GCF_000091045.1" />
+                    <has_text_matching expression="GCF_000697725.1" />
+                    <has_text text="UUCG"/>
+             </assert_contents>
+             </output>
+             <output_collection name="output_directory" type="list:list">
+                     <element name="align">
+                             <element name="aligned_ACT1">
+                                <assert_contents>
+					<has_text text=">8215573294074245211"/>
+                                        <has_line_matching expression="^[ARNDCEQGHILKMFPSTWYV-]+$"/>
+                                </assert_contents>
+                             </element>
+                     </element>
+             </output_collection>
+        </test>
+    </tests>
+
+    <help><![CDATA[
+**UFCG Profile Tool**
+
+Align genes and provide multiple sequence alignments from UFCG (Universal Fungal Core Genes) profiles pipeline.
+
+**Input**
+- Input directory containing fungal genome assemblies in UCG format
+
+The options are::
+
+    -a, Alignment method
+        - nucleotide : Use given nucleotide sequence (default)
+        - protein : Use given amino acid sequence
+        - codon : Use codons encrypting given amino acid sequence
+        - codon12 : Use codons without third bases
+    -l, Tree leaf format, comma-separated string containing one or more of the following keywords
+        - uid
+        - acc
+        - label
+        - taxon
+        - strain
+        - type
+        - taxonomy
+    -c, Align multiple copied gene (default : 0)
+    -f, Gap-rich filter percentage threshold (0 - 100) [50]
+
+
+**Output**
+
+.. list-table::
+   :widths: 10 30 60
+   :header-rows: 1
+
+   * - Type
+     - Name
+     - Description
+   * - Align
+     - aligned_concatenated.fasta
+     - Concatenated sequences of entire core gene alignments
+   * -
+     - align/aligned_[GENE].fasta
+     - Aligned sequences of each single gene
+   * -
+     - align.log
+     - Log file containing information about this run
+   * - Misc
+     - misc/[GENE]_pro.fasta
+     - Aligned protein sequences of each single gene
+
+
+**Citation**
+If you use UFCG in your research, please cite the appropriate publications.
+    ]]></help>
+
+        <expand macro="citations"/>
+
+</tool>

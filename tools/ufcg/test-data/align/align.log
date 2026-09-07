@@ -1,0 +1,14 @@
+Run ID: align
+Genomes produced: 7
+Alignment mode: nucleotide
+Filtered by: 50%
+
+Genomes included in the analysis
+uid	label	acc	taxon_name	strain_name	type	taxonomy	UUCG
+8215573294074245211	GCF_000146045.2	GCF_000146045.2	none	none	false	none	62
+790677864777078018	GCA_000182565.2	GCA_000182565.2	none	none	false	none	53
+8682389012176078528	GCF_000271585.1	GCF_000271585.1	none	none	false	none	59
+2278662150209714424	GCF_000149205.2	GCF_000149205.2	none	none	false	none	66
+3747255225309460507	GCF_000182565.1	GCF_000182565.1	none	none	false	none	53
+3199403957347027935	GCF_000091045.1	GCF_000091045.1	none	none	false	none	57
+343112465621542558	GCF_000697725.1	GCF_000697725.1	none	none	false	none	86
