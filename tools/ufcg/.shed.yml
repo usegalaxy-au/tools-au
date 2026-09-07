@@ -1,0 +1,23 @@
+---
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "{{ tool_name }} from the ufcg suite"
+categories:
+  - Phylogenetics
+description: UFCG is a suite of database and pipeline about highly conserved and evolutionarily informative set of fungal marker genes, pre-defined with a qualified set of genome sequences from the species across the kingdom of Fungi.
+exclude:
+  - tool_test_output.html
+  - tool_test_output.json
+homepage_url: https://ufcg.steineggerlab.com/ufcg
+long_description: >
+  UFCG pipeline provides methods for a genome-wide taxonomic profiling and annotation of your own biological sequences of Fungi.
+name: ufcg
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/ufcg
+suite:
+  name: suite_ufcg
+  description: >
+    UFCG is a suite of database and pipeline about highly conserved and evolutionarily informative set of fungal marker genes, pre-defined with a qualified set of genome sequences from the species across the kingdom of Fungi.
+  long_description: >
+    UFCG is a suite of database and pipeline about highly conserved and evolutionarily informative set of fungal marker genes, pre-defined with a qualified set of genome sequences from the species across the kingdom of Fungi.
+type: unrestricted
