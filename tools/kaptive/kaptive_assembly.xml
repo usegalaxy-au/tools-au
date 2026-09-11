@@ -16,7 +16,10 @@
 
 	#set $assembly_fasta = []
         #for $fasta in $input_fasta:
-	     #set $safename = re.sub('[^\w\-_\.]', '_', $fasta.element_identifier) 
+	     #set $safename = re.sub('[^\w\-_\.]', '_', $fasta.element_identifier)
+	     #if not $safename.endswith('.fasta')
+        	#set $safename = $safename + '.fasta'
+    	     #end if
 	     ln -s '$fasta' '${safename}' &&
 	    #silent $assembly_fasta.append($safename)
         #end for
@@ -99,89 +102,98 @@
             <discover_datasets pattern="(?P&lt;designation&gt;.+)\.(?P&lt;ext&gt;fna)" format="fasta" directory="fasta_output" />
         </collection>
     </outputs>
-   <tests>
-        <!-- Test 1: Single fasta file output  -->
-        <test>
-	    <param name="db" value="9lps.gbk" ftype="genbank"/>
-	    <param name="input_fasta" value="L7_P1581_H8.fasta,L8_P2723_H16.fasta,L9_Past29_LPS.fasta" ftype="fasta"/>
-	    <param name="output_type" value="single_file"/>
-	    <param name="min_cov" value="50.0" />
-	    <param name="score_metric" value="0" />
-	    <param name="weight_metric" value="3" />
-	    <param name="gene_threshold" value="80" />
-	    <param name="n_best" value="2" />
-	    <param name="max_other_genes" value="1" />
-	    <param name="percent_expected" value="50" />
-	    <param name="below_threshold" value="false" />
-	    <param name="json_output" value="True" />
-	    <output name="L7_L8_L9_tabular" file="L7_L8_L9_tabular.txt" ftype="tabular" >
-		<assert_contents>
-		    <has_n_lines n="4"/>
-		    <has_size value="1515"/>
-		    <has_text text="LPS7-H8_01_rpl31_2"/>
-		    <has_text text="LPS8-H16_01_gatM"/>
-		    <has_text text="LPS9-Past29_01_hptE"/>
-                </assert_contents>
-	    </output>
-	    <output name="L7_L8_L9_json" file="L7_L8_L9_json.json" ftype="json" compare="sim_size" delta_frac="0.05" >
-	        <assert_contents>
-		    <has_n_lines n="3"/>
-		    <has_size value="52547" delta="100"/>
-		    <has_text text="LPS7-H8_06_ppgA"/>
-		    <has_text text="LPS8-H16_01_gatM"/>
-		    <has_text text="LPS8-H16_02_rpl31_2"/>
-		    <has_text text="LPS9-Past29_03_rpmE"/>
-                </assert_contents>
-	    </output>
-            <output name="kaptive_results" value="kaptive_results.fasta" ftype="fasta">
- 		<assert_contents>
-			<has_size value="21009"/>
- 			<has_line_matching expression="^>.*"/>
-			<has_line_matching expression="^[ACGTN]+$"/>
-		</assert_contents>
-	    </output>
-        </test>
-        <!-- Test 2: Multiple fasta file output in a directory-->
-        <test>
-		<param name="db" value="9lps.gbk" ftype="genbank" />
-		<param name="input_fasta" value="L7_P1581_H8.fasta,L8_P2723_H16.fasta,L9_Past29_LPS.fasta" ftype="fasta"/>
-		<param name="output_type" value="directory"/>
-            	<param name="min_cov" value="50.0" />
-            	<param name="score_metric" value="0" />
-            	<param name="weight_metric" value="3" />
-            	<param name="gene_threshold" value="80" />
-            	<param name="n_best" value="2" />
-            	<param name="max_other_genes" value="1" />
-            	<param name="percent_expected" value="50" />
-            	<param name="below_threshold" value="false" />
-                <output_collection name="fasta_collection" type="list">
-                         <element name="L7_P1581_H8_kaptive_results" file="L7_P1581_H8_kaptive_results.fna">
-                                 <assert_contents>
-                                         <has_size value="6989" delta="100"/>
-                                         <has_n_lines n="2"/>
-                                         <has_line_matching expression="^>.*"/>
-                                         <has_text text="L7_P1581_H8"/>
-                                 </assert_contents>
-			 </element>
-                        <element name="L8_P2723_H16_kaptive_results" file="L8_P2723_H16_kaptive_results.fna">
-                                 <assert_contents>
-                                         <has_size value="7091" delta="100"/>
-                                         <has_n_lines n="2"/>
-                                         <has_line_matching expression="^>.*"/>
-                                         <has_text text="L8_P2723_H16"/>
-                                 </assert_contents>
-                         </element>
-                        <element name="L9_Past29_LPS_kaptive_results" file="L9_Past29_LPS_kaptive_results.fna">
-                                 <assert_contents>
-                                         <has_size value="6929" delta="100"/>
-                                         <has_n_lines n="2"/>
-                                         <has_line_matching expression="^>.*"/>
-                                         <has_text text="L9_Past29_LPS"/>
-                                 </assert_contents>
-                         </element>
-		</output_collection>
-	</test>
-   </tests>
+<tests>
+    <!-- Test 1: Single fasta file output  -->
+    <test expect_num_outputs="3">
+        <param name="db" value="9lps.gbk" ftype="genbank"/>
+        <param name="input_fasta" value="L7_P1581_H8.fasta,L8_P2723_H16.fasta,L9_Past29_LPS.fasta" ftype="fasta"/>
+        <param name="output_type" value="single_file"/>
+        <param name="min_cov" value="50.0" />
+        <param name="score_metric" value="0" />
+        <param name="weight_metric" value="3" />
+        <param name="gene_threshold" value="80" />
+        <param name="n_best" value="2" />
+        <param name="max_other_genes" value="1" />
+        <param name="percent_expected" value="50" />
+        <param name="below_threshold" value="false" />
+        <param name="json_output" value="True" />
+        <output name="tabular_results" file="L7_L8_L9_tabular.txt" ftype="tabular">
+            <assert_contents>
+                <has_n_lines n="4"/>
+                <has_size value="1515"/>
+                <has_text text="LPS7-H8_01_rpl31_2"/>
+                <has_text text="LPS8-H16_01_gatM"/>
+                <has_text text="LPS9-Past29_01_hptE"/>
+            </assert_contents>
+        </output>
+        <output name="json_results" file="L7_L8_L9_json.json" ftype="json" compare="sim_size" delta_frac="0.05">
+            <assert_contents>
+                <has_n_lines n="3"/>
+                <has_size value="52547" delta="100"/>
+                <has_text text="LPS7-H8_06_ppgA"/>
+                <has_text text="LPS8-H16_01_gatM"/>
+                <has_text text="LPS8-H16_02_rpl31_2"/>
+                <has_text text="LPS9-Past29_03_rpmE"/>
+            </assert_contents>
+        </output>
+        <output name="fasta_single" file="kaptive_results.fasta" ftype="fasta">
+            <assert_contents>
+                <has_size value="21009"/>
+                <has_line_matching expression="^>.*"/>
+                <has_line_matching expression="^[ACGTN]+$"/>
+            </assert_contents>
+        </output>
+    </test>
+<!-- Test 2: Multiple fasta file output in a directory-->
+<test expect_num_outputs="2">
+    <param name="db" value="9lps.gbk" ftype="genbank" />
+    <param name="input_fasta" value="L7_P1581_H8.fasta,L8_P2723_H16.fasta,L9_Past29_LPS.fasta" ftype="fasta"/>
+    <param name="output_type" value="directory"/>
+    <param name="min_cov" value="50.0" />
+    <param name="score_metric" value="0" />
+    <param name="weight_metric" value="3" />
+    <param name="gene_threshold" value="80" />
+    <param name="n_best" value="2" />
+    <param name="max_other_genes" value="1" />
+    <param name="percent_expected" value="50" />
+    <param name="below_threshold" value="false" />
+    <output_collection name="fasta_collection" type="list">
+        <element name="L7_P1581_H8_kaptive_results" file="L7_P1581_H8_kaptive_results.fna">
+            <assert_contents>
+                <has_size value="6989" delta="100"/>
+                <has_n_lines n="2"/>
+                <has_line_matching expression="^>.*"/>
+                <has_text text="L7_P1581_H8"/>
+            </assert_contents>
+        </element>
+        <element name="L8_P2723_H16_kaptive_results" file="L8_P2723_H16_kaptive_results.fna">
+            <assert_contents>
+                <has_size value="7091" delta="100"/>
+                <has_n_lines n="2"/>
+                <has_line_matching expression="^>.*"/>
+                <has_text text="L8_P2723_H16"/>
+            </assert_contents>
+        </element>
+        <element name="L9_Past29_LPS_kaptive_results" file="L9_Past29_LPS_kaptive_results.fna">
+            <assert_contents>
+                <has_size value="6929" delta="100"/>
+                <has_n_lines n="2"/>
+                <has_line_matching expression="^>.*"/>
+                <has_text text="L9_Past29_LPS"/>
+            </assert_contents>
+        </element>
+    </output_collection>
+    <output name="tabular_results" file="L7_L8_L9_tabular.txt" ftype="tabular">
+        <assert_contents>
+            <has_n_lines n="4"/>
+            <has_size value="1515"/>
+            <has_text text="LPS7-H8_01_rpl31_2"/>
+            <has_text text="LPS8-H16_01_gatM"/>
+            <has_text text="LPS9-Past29_01_hptE"/>
+        </assert_contents>
+    </output>
+</test>
+</tests>
     <help><![CDATA[
 **Kaptive Assembly Tool**
 
