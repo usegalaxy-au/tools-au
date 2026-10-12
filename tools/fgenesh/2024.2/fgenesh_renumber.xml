@@ -9,7 +9,7 @@
 	  
 	    seq_renumber.pl 
 	    -i $input_fasta
-	    #if $check == '':
+	    #if $checkid == '':
 	    	-o $output_fasta
 	    #end if
 	    #if $method == 'fuse':
@@ -23,17 +23,16 @@
 	    #elif $method == 'remove':
 	    	-remove
 	    #end if
-	    #if $check
+	    #if $checkid
 	    	--check > $statistic && 2>&1
 	    #end if
 
 
 	    ]]></command>
     <inputs>
-		<expand macro="acknowledgement"/>
-	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
-	    <param name="check" argument="--check" type="boolean" checked="false" truevalue="--check" falsevalue="" label="check unique sequence IDs" />
-	    <param name="method" type="select" label="select a reheader option" help="check and reheader option are used mutually exclusive">
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Input Fasta file" help="FASTA file containing sequences to renumber or validate"/>
+	    <param name="checkid" argument="--check" type="boolean" checked="false" truevalue="--check" falsevalue="" label="Validate sequence IDs only" help="Check for duplicate sequence IDs without modifying the file" />
+	    <param name="method" type="select" label="Sequence renaming method" help="Select how to modify sequence headers. Note: Validation mode (above) and renaming are mutually exclusive">
 		<option value="none" selected="true">None</option>
 		<option value="fuse">fuse - unique number with original seq_ID with underscore (--fuse)</option>
 	        <option value="insert">insert - insert unique number before original seq_ID (--insert)</option>
@@ -44,39 +43,39 @@
     </inputs>
     <outputs>
 	    <data name="output_fasta" format="fasta" label="${tool.name} on ${on_string}: fasta reheader">
-		<filter>check is False</filter>
+		<filter>checkid is False</filter>
 	    </data>
 	    <data name="statistic" format="txt" label="${tool.name} on ${on_string}: check summary">
-	    	<filter>check</filter>
+	    	<filter>checkid</filter>
 	    </data>
     </outputs>
 	
     <tests>
-	 <test>
+	 <test expect_num_outputs="1">
 		<!-- #1 test -->
             <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
             <param name="method" value="fuse"/>
             <output name="output_fasta" file="ngasp_mrna_fuse.fa" ftype="fasta"/>
     	</test>
-         <test>
+         <test expect_num_outputs="1">
                 <!-- #2 test -->
             <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
             <param name="method" value="insert"/>
             <output name="output_fasta" file="ngasp_mrna_insert.fa" ftype="fasta"/>
         </test>
-         <test>
+         <test expect_num_outputs="1">
                 <!-- #3 test -->
             <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
             <param name="method" value="replace"/>
             <output name="output_fasta" file="ngasp_mrna_replace.fa" ftype="fasta"/>
         </test>
-         <test>
+         <test expect_num_outputs="1">
                 <!-- #4 test -->
             <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
             <param name="method" value="count"/>
             <output name="output_fasta" file="ngasp_mrna_count.fa" ftype="fasta"/>
         </test>
-         <test>
+         <test expect_num_outputs="1">
                 <!-- #5 test -->
             <param name="input_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
             <param name="method" value="remove"/>

@@ -24,17 +24,16 @@
 
 	    ]]></command>
     <inputs>
-		<expand macro="acknowledgement"/>
 	    <conditional name="input">
-		<param name ="selector" type="select" label="Input file type (resn3/gff3) for merging">
+		<param name ="selector" type="select" label="Input file format for merging">
 			<option value="gff">gff</option>
 			<option value="resn3">resn3</option>
 		</param>
 	   	<when value="gff">
-            		<param name="input_gff_collection" format="gff3" type="data_collection" collection_type="list" label="collection"/>
+            		<param name="input_gff_collection" format="gff3" type="data_collection" collection_type="list" label="GFF3 file collection"/>
 		</when>
 		<when value="resn3">
-			<param name="input_resn3_collection" format="txt" type="data_collection" collection_type="list" label="collection"/>
+			<param name="input_resn3_collection" format="txt" type="data_collection" collection_type="list" label="RESN3 file collection"/>
 		</when>
 	    </conditional>
     </inputs>
@@ -48,9 +47,65 @@
     </outputs>
 	
     <tests>
-	 <test>
-            <!-- #1 test -->
-        </test>
+	 <test expect_num_outputs="1">
+		 <!-- #1 test -->
+	 <conditional name="input">	 
+	   <param name="selector" value="resn3"/>		 
+           <param name="input_resn3_collection">
+                <collection type="list">
+                    <element name="1.seq" value="1.seq.res" />
+                    <element name="2.seq" value="2.seq.res" />
+		    <element name="3.seq" value="3.seq.res" />
+                </collection>
+	   </param>
+        </conditional>
+	<output name="output_resn3">
+          <assert_contents>
+                <!-- One block per merged sequence -->
+                <has_text text="Seq name:"/>
+                <has_text text="Length of sequence:"/>
+                <has_text text="Number of predicted genes"/>
+                <has_text text="Number of predicted exons"/>
+
+                <!-- Check that all three input files were merged -->
+                <has_text text="File: 1.seq"/>
+                <has_text text="File: 2.seq"/>
+                <has_text text="File: 3.seq"/>
+
+                <!-- Structural checks -->
+                <has_line_matching expression="^ Seq name: .+$"/>
+                <has_line_matching expression="^ Length of sequence: \d+, Sequence: \d+, File: \S+$"/>
+                <has_line_matching expression="^ Number of predicted genes \d+: in \+chain \d+, in -chain \d+\.$"/>
+                <has_line_matching expression="^ Number of predicted exons \d+: in \+chain \d+, in -chain \d+\.$"/>
+            </assert_contents>		
+        </output>
+	</test>
+    <!-- Test 2: merge gff3 files -->
+    <test expect_num_outputs="1">
+        <conditional name="input">
+            <param name="selector" value="gff"/>
+            <param name="input_gff_collection">
+                <collection type="list">
+		    <element name="1.seq.resn3" value="1.seq.resn3.gff3"/>
+		    <element name="2.seq.resn3" value="2.seq.resn3.gff3"/>
+		    <element name="3.seq.resn3" value="3.seq.resn3.gff3"/>
+                </collection>
+            </param>
+        </conditional>
+	<output name="output_gff" file="merge_annotation.gff3" compare="diff" lines_diff="100" >
+	    <assert_contents>	
+            <!-- Mandatory GFF3 header -->
+            <has_text text="##gff-version 3"/>
+
+            <!-- Per-sequence region and comment lines -->
+            <has_line_matching expression="^##sequence-region \S+ \d+ \d+$"/>
+            <has_line_matching expression="^# \S+$"/>
+
+            <!-- At least one real feature line (9 tab-separated columns) -->
+            <has_line_matching expression="^\S+\t\S+\t\S+\t\d+\t\d+\t\S+\t[+-]\t\S+\t.*"/>
+	    </assert_contents>
+        </output>
+    </test>
     </tests>
     <help><![CDATA[
 	    
