@@ -1,0 +1,23 @@
+---
+auto_tool_repositories:
+  name_template: "{{ tool_id }}"
+  description_template: "{{ tool_name }} from the FGENESH suite"
+categories:
+  - Genome Annotation
+description: FGENESH is a eukaryotic gene prediction tool that identifies genes, exons, and splice sites in genomic DNA using species-specific scoring matrices.
+exclude:
+  - tool_test_output.html
+  - tool_test_output.json
+homepage_url: https://australianbiocommons.github.io/how-to-guides/genome_annotation/Fgenesh
+long_description: >
+  FGENESH is a eukaryotic gene prediction tool that identifies genes, exons, and splice sites in genomic DNA using species-specific scoring matrices.
+name: fgenesh
+owner: galaxy-australia
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/fgenesh
+suite:
+  name: suite_fgenesh
+  description: >
+    FGENESH is a eukaryotic gene prediction tool that identifies genes, exons, and splice sites in genomic DNA using species-specific scoring matrices.
+  long_description: >
+    FGENESH is a eukaryotic gene prediction tool that identifies genes, exons, and splice sites in genomic DNA using species-specific scoring matrices.
+type: unrestricted

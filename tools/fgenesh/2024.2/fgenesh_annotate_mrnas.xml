@@ -47,24 +47,23 @@
 
 	    ]]></command>
     <inputs>
-		<expand macro="acknowledgement"/>
-	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Input mRNA sequences" help="FASTA file containing mRNA sequences to annotate with ORF predictions" />
 	    <conditional name="tool_option">
-	    	<param name="tool" type="select" label="program to predict ORFs" help="default: bestorf">
+	    	<param name="tool" type="select" label="ORF prediction algorithm" help="Select the algorithm for identifying open reading frames (ORFs). default: bestorf">
                 	<option value="bestorf" selected="True">bestorf</option>
                 	<option value="maxorf">maxorf</option>
             	</param>
 		<when value="bestorf">
-			<param argument="-atg" type="integer" value="1" label="CDS must start with ATG in predicted ORFs" help="default: 1; 0 = without ATG, 1 = with ATG" />
-            		<param argument="-stop" type="integer" value="1" label="CDS must end with STOP codon in predicted ORFs" help="default: 1; 0 = without STOP codon, 1 = with STOP codon" />
-			<param argument="-add_score" type="integer" value="1" label="use additional score (prefer longer ORFs)" help="default: 1; 0 = disable, 1 = prefer longer ORFs" />
+			<param argument="-atg" type="integer" value="1" label="Require ATG start codon" help="Require predicted ORFs to start with ATG codon (0=allow non-ATG starts, 1=require ATG)" />
+            		<param argument="-stop" type="integer" value="1" label="Require STOP codon" help="Require predicted ORFs to end with a STOP codon (0=allow no STOP, 1=require STOP)" />
+			<param argument="-add_score" type="integer" value="1" label="Length preference score" help="Prefer longer ORFs when scoring predictions (0=disable, 1=prefer longer ORFs)" />
 		        <conditional name="matrix_type">
-                		<param name="matrix_type_selector" type="select" label="Select matrix type" help="Select matrix for your species">
+                		<param name="matrix_type_selector" type="select" label="Species-specific matrix" help="Select the species-specific scoring matrix for ORF prediction">
                          		<option value="indexed" selected="true">Use a built-in index</option>
                          		<option value="history">Use one from the history</option>
                   		</param>
                   		<when value="indexed">
-                         		<param name="species_matrix" type="select" label="Select a species matrix" help="If your species of interest is not listed, contact your Galaxy admin">
+                         		<param name="species_matrix" type="select" label="Select species matrix" help="Choose a pre-configured scoring matrix for your species">
                           		<options from_data_table="fgenesh_matrix">
                               			<filter type="sort_by" column="2"/>
                               			<validator type="no_options" message="No indexes are available for the selected input dataset"/>
@@ -72,43 +71,43 @@
                         		 </param>
                   		</when>
                   		<when value="history">
-                       			<param name="own_file" type="data" format="txt" label="Select species matrix" />
+                       			<param name="own_file" type="data" format="txt" label="Custom scoring matrix" help="Upload your own species-specific scoring matrix file" />
                   		</when>
             		</conditional>
 
 		</when>
 		<when value="maxorf">
-            		<param argument="-min_orf" type="integer" value="100" label="minimal ORF length (in aa)" help="set to minimal CDS length by default (100); if you are sure that sequences are full-length mRNAs, you can lower the default threshold to (i.e -min_cds:70)"/>
-			<param name="incomplete_orfs" type="select" label="allow prediction of incomplete ORFs(with no ATG and/or no STOP">
+            		<param argument="-min_orf" type="integer" value="100" label="minimal ORF length" help="Minimum ORF length in amino acids (default: 100; lower for full-length mRNAs)"/>
+			<param name="incomplete_orfs" type="select" label="Allow incomplete ORFs" help="Allow prediction of ORFs missing start and/or stop codons">
 				<option value="none" selected="true">None</option>
 				<option value="-allow_incomplete_orfs">allow_incomplete_orfs</option>
 				<option value="-allow_incomplete_5_orfs">allow_incomplete_5_orfs</option>
 				<option value="-allow_incomplete_3_orfs">allow_incomplete_3_orfs</option>
 			</param>
-			<param argument="-no_atg" type="boolean" checked="false" truevalue="-no_atg" falsevalue=""  label="allow prediction of ORFs with no ATG" help="default: 1; 0 = without ATG, 1 = with ATG" />
-			<param argument="-top" type="integer" value="1" label="print N longest ORFs" help="default: 1" />
-			<param argument="-all" type="boolean" checked="false" truevalue="true" falsevalue="" label="print all predicted ORFs" />
-			<param argument="-polya" type="integer" value="1" label="use polyA tail" help="use polyA tail as a hint to define mRNA strand (direct or reverse); use 0 for both strand; default:1"/>
-			<param argument="-polya_thr" type="integer" value="5" label="number nucloetides in poly tails" help="number of As/Ts at the end of mRNA to consider as polyA tail; default:5"/>
-			<param name="sort" type="select" label="sort ORFs in the output">
+			<param argument="-no_atg" type="boolean" checked="false" truevalue="-no_atg" falsevalue=""  label="Allow ORFs without ATG" help="Allow prediction of ORFs that don't start with ATG codon" />
+			<param argument="-top" type="integer" value="1" label="Number of longest ORFs" help="Print the N longest ORFs for each mRNA (default: 1)" />
+			<param argument="-all" type="boolean" checked="false" truevalue="true" falsevalue="" label="Print all predicted ORFs" help="Output all predicted ORFs instead of just the longest ones" />
+			<param argument="-polya" type="integer" value="1" label="use polyA tail for strand detection" help="Use polyA tail to determine mRNA strand orientation (0=both strands, 1=use polyA hint)"/>
+			<param argument="-polya_thr" type="integer" value="5" label="PolyA tail threshold" help="nMinimum number of consecutive A/T nucleotides to consider as polyA tail (default: 5)"/>
+			<param name="sort" type="select" label="ORF sorting method" help="Select how to sort ORFs in the output">
 				<option value="coord">sort by coordinates</option>
                                 <option value="frame" selected="true">sort by frame and coordinates (default)</option>
                                 <option value="len">sort by length</option>
 			</param>
-			<param name="out_format" type="select" label="print output in bestorf or maxorf format" help="default: bestorf">
+			<param name="out_format" type="select" label="Output format" help="Select the format for ORF predictions. default: bestorf">
 				<option value="bestorf" selected="true">bestorf</option>
 				<option value="maxorf">maxorf</option>
 			</param>
 		</when>
 	    </conditional>
 	    <section name="common_option" title="common parameter">
-           	<param argument="-cov" type="integer" value="0" label="minimal coverage" help="minimal coverage of mRNA by ORF(CDS) length (from 0 to 1); default 0" />
-           	<param argument="-check" type="integer" value="1" label="check mRNAs" help="post-annotational check for mRNAs 0 or 1; default: 1" />
-           	<param argument="-strand" type="integer" value="2" label="predict ORFs" help="predict ORFs on stand 0 for plus stand, 1 for minus strand, 2 for both strand; default: 2" />
-           	<param argument="-min_cds" type="integer" value="100" label="minimal CDS length" help="default:100; short CDS value will lead to the reate of false positive increase"/>
-		<param argument="-stop_in_cds" type="integer" value="1" label="include STOP codon in CDS / ORF coordinates" help="default:1; 1 - include CDS or ORF coordinates, 2 - exclude CDS or ORF coordinates"/>
+           	<param argument="-cov" type="integer" value="0" label="Minimal mRNA coverage" help="Minimum fraction of mRNA length covered by ORF (0.0 to 1.0, default: 0)" />
+		<param argument="-check" type="integer" value="1" label="Post-annotation validation" help="Perform validation checks on predicted ORFs (0=disable, 1=enable, default: 1)" />
+           	<param argument="-strand" type="integer" value="2" label="Strand for ORF prediction" help="Predict ORFs on: 0=plus strand only, 1=minus strand only, 2=both strands (default)" />
+           	<param argument="-min_cds" type="integer" value="100" label="Minimal CDS length" help="Minimum coding sequence length in nucleotides (default: 100; lower values increase false positives)"/>
+		<param argument="-stop_in_cds" type="integer" value="1" label="Include STOP codon in coordinates" help="Include STOP codon in ORF/CDS coordinates (1=include, 2=exclude, default: 1)"/>
 		<conditional name="chr_format">
-			<param name="selector" type="select" label="select chromosome type" help="all mRNA sequences will be used if None is selected">
+			<param name="selector" type="select" label="Chromosome naming convention" help="Select how to name chromosomes in the output annotations">
 				<option value="na" selected="true">None</option>
 				<option value="chr_name">use chromosome name</option>
 				<option value="chr_code">use chromosome code</option>
@@ -116,10 +115,10 @@
 			<when value="na">
 			</when>
 			<when value="chr_name">
-				<param name="chrname" type="text" value="chr22" label="provide chromosome name with prefix (i.e chr22)" help="chromosome name with prefix (i.e chr)"/>	
+				<param name="chrname" type="text" value="chr22" label="Chromosome name with prefix" help="Chromosome name including prefix (e.g., chr22, chrX, chrM)"/>	
 			</when>
 			<when value="chr_code">
-				<param name="chrcode" type="text" value="22" label="provide chromosome name without prefix (i.e 22)" help="chromosome name without prefix (i.e chr)"/>
+				<param name="chrcode" type="text" value="22" label="Chromosome code without prefix" help="Chromosome number/code without prefix (e.g., 22, X, M)"/>
 			</when>
 		 </conditional>
 	    </section>
@@ -140,7 +139,7 @@
     </outputs>
 	
     <tests>
-	 <test>
+	 <test expect_num_outputs="4">
 	    <!-- #1 test -->
 	    <param name="input_fasta" value="chr22.trinity.mrna.fa"/>
 	    <conditional name="tool_option">

@@ -12,13 +12,12 @@
 
 	    ]]></command>
     <inputs>
-		<expand macro="acknowledgement"/>
-	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Fasta file"/>
-	    <param name="filename_format" type="select" label="Output filename format" help="Default: count">
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Input Fasta file" help="FASTA file containing sequences to split into individual files"/>
+	    <param name="filename_format" type="select" label="Output filename naming convention" help="Select how to name the output sequence files. Default: count">
             	<option value="count" selected="True">sequential count</option>
             	<option value="seq_id">Use Sequence Header from the input fasta file</option>
 	    </param>
-	    <param name="output_file_extension" type="select" label="Output file extension">
+	    <param name="output_file_extension" type="select" label="Output file format">
 		<option value="fa" selected="True">fa (non-masked)</option>
 		<option value="seq">Seq (non-masked)</option>
 		<option value="fa.N">fa.masked (masked)</option>
@@ -30,12 +29,92 @@
 	      <discover_datasets pattern="(?P&lt;designation&gt;.*)" directory="contigs" format="fasta"/>
            </collection>
     </outputs>
-	
-    <tests>
-	 <test>
-            <!-- #1 test -->
-        </test>
-    </tests>
+<tests>
+    <!-- Test 1: sequential count naming, .seq extension -->
+    <test expect_num_outputs="1">
+        <param name="input_fasta" value="123.seq"/>
+        <param name="filename_format" value="count"/>
+        <param name="output_file_extension" value="seq"/>
+        <output_collection name="fasta_collection" type="list" count="3">
+            <element name="1.seq">
+                <assert_contents>
+                    <has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="2.seq">
+                <assert_contents>
+                    <has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="3.seq">
+                <assert_contents>
+                    <has_text text=">I:12000001..13000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+    </test>
+
+    <!-- Test 2: seq_id naming — expected to fall back to 1.seq, 2.seq, 3.seq
+    	because headers (I:2000001..3000000) are not usable as file names
+    <test expect_num_outputs="1">
+        <param name="input_fasta" value="123.seq"/>
+        <param name="filename_format" value="seq_id"/>
+        <param name="output_file_extension" value="seq"/>
+        <output_collection name="fasta_collection" type="list" count="3">
+            <element name="1.seq">
+                <assert_contents>
+                    <has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="2.seq">
+                <assert_contents>
+                    <has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="3.seq">
+                <assert_contents>
+                    <has_text text=">I:12000001..13000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+    </test> -->
+ 
+    <!-- Test 3: sequential naming with masked extension -->
+    <test expect_num_outputs="1">
+        <param name="input_fasta" value="123.seq"/>
+        <param name="filename_format" value="count"/>
+        <param name="output_file_extension" value="seq.N"/>
+        <output_collection name="fasta_collection" type="list" count="3">
+            <element name="1.seq.N">
+                <assert_contents>
+                    <has_text text=">I:2000001..3000000"/>
+                </assert_contents>
+            </element>
+            <element name="2.seq.N">
+                <assert_contents>
+                    <has_text text=">II:13000001..14000000"/>
+                </assert_contents>
+            </element>
+            <element name="3.seq.N">
+                <assert_contents>
+                    <has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+    </test>
+</tests>
     <help><![CDATA[
 	    
 .. class:: infomark

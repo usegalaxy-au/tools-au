@@ -6,31 +6,102 @@
     <expand macro="requirements" />
     <expand macro="stdio" />
     <command><![CDATA[
-	    ln -s '$resn3_file' '$resn3_file.element_identifier' &&
-	    ln -s '$sequence_file' '$sequence_file.element_identifier' &&
-	    get_mrnas.pl '$resn3_file.element_identifier' '$sequence_file.element_identifier' $output_mrna_file $CDS -fix_id $fix_id_type 2>&1 | tee -a '$log'
+#import re
+
+#set resn3_name = re.sub('[^\w\-\.]', '_', str($resn3_file.element_identifier))
+#set seq_name   = re.sub('[^\w\-\.]', '_', str($sequence_file.element_identifier))
+
+#if not $resn3_name.endswith('.resn3')
+    #set resn3_name = $resn3_name + '.resn3'
+#end if
+
+#if not $seq_name.endswith('.fa')
+    #set seq_name = $seq_name + '.fa'
+#end if
+
+ln -s '$resn3_file'    '${resn3_name}' &&
+ln -s '$sequence_file' '${seq_name}' &&
+get_mrnas.pl
+    '${resn3_name}'
+    '${seq_name}'
+    '$output_mrna_file'
+    $CDS
+    -fix_id $fix_id_type
+    2> '$log'
+
 	    ]]></command>
     <inputs>
-		<expand macro="acknowledgement"/>
-	    <param name="resn3_file" format="txt" type="data" label="Input Resn3 file"/>
-	    <param name="sequence_file" format="fasta" type="data" label="Sequence file"/>
-	    <param argument="-CDS" type="boolean" truevalue="-CDS" falsevalue="" checked="true" label="CDS only" help="create CDS fasta file" />
-	    <param name="fix_id_type" type="select" label="fix header id in the output fasta file" help="Default: sequence name">
+	    <param name="resn3_file" format="txt" type="data" label="FGENESH result file (Resn3 format)" help="File containing gene predictions in FGENESH/FGENESH++ Resn3 format"/>
+	    <param name="sequence_file" format="fasta" type="data" label="Genomics sequence file" help="FASTA file containing the genomic sequence used for predictions"/>
+	    <param argument="-CDS" type="boolean" truevalue="-CDS" falsevalue="" checked="true" label="Extract CDS sequence" help="Generate FASTA file containing only coding sequences (CDS), excluding UTRs" />
+	    <param name="fix_id_type" type="select" label="FASTA header format" help="Select naming convention for mRNA sequences in output FASTA file">
                 <option value="seq_No" selected="True">Sequence No</option>
 		<option value="seq_count">Sequence Count</option>
-		<option value="seq_nmae">Sequence Name</option>
+		<option value="seq_name">Sequence Name</option>
             </param>
     </inputs>
     <outputs>
 	    <data name="output_mrna_file" format="fasta"  label="${tool.name} on ${on_string}: mRNA file"/>
 	    <data name="log" format="txt" label="${tool.name} on ${on_string}: Report"/>
     </outputs>
-	
-    <tests>
-	 <test>
-            <!-- #1 test -->
-        </test>
-    </tests>
+<tests>
+    <!-- #1 test: full mRNA, seq_name naming -->
+    <test expect_num_outputs="2">
+        <param name="resn3_file" value="1.seq.res" ftype="txt"/>
+        <param name="sequence_file" value="1.seq" ftype="fasta"/>
+        <param name="fix_id_type" value="seq_name"/>
+	<output name="output_mrna_file" ftype="fasta">
+	    <assert_contents>
+		    <has_text text=">"/>
+		    <has_size value="228407" delta="0"/>
+	    </assert_contents>		
+	</output>	
+        <output name="log" ftype="txt">
+            <assert_contents>
+                <has_size value="0" min="0"/>
+            </assert_contents>
+        </output>
+    </test>
+
+    <!-- #2 test: full mRNA, seq_count naming -->
+    <test expect_num_outputs="2">
+        <param name="resn3_file" value="1.seq.res" ftype="txt"/>
+	<param name="sequence_file" value="1.seq" ftype="fasta"/>
+	<param name="CDS" value="false"/>
+        <param name="fix_id_type" value="seq_count"/>
+	<output name="output_mrna_file" ftype="fasta">
+	    <assert_contents>
+                    <has_text text=">"/>
+                    <has_size value="228594" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="log" ftype="txt">
+            <assert_contents>
+                <has_size value="0" min="0"/>
+            </assert_contents>
+        </output>	
+    </test>
+
+    <!-- #3 test: CDS only, seq_count naming -->
+    <test expect_num_outputs="2">
+        <param name="resn3_file" value="1.seq.res" ftype="txt"/>
+        <param name="sequence_file" value="1.seq" ftype="fasta"/>
+        <param name="CDS" value="true"/>
+        <param name="fix_id_type" value="seq_count"/>
+	<output name="output_mrna_file" ftype="fasta">
+	    <assert_contents>
+                    <has_text text=">"/>
+                    <has_size value="226119" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="log" ftype="txt">
+            <assert_contents>
+                <has_size value="0" min="0"/>
+            </assert_contents>
+        </output>
+    </test>
+</tests>
+
     <help><![CDATA[
 	    
 .. class:: infomark

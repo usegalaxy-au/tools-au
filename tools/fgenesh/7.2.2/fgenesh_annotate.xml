@@ -40,14 +40,14 @@
 	    	    echo `pwd`/'${identifier}' > '${identifier}'.list &&
 	    	#end for
                 #if $repeat_sequence.selector == 'multiple_masked_seq':
-	    	#for $e,$mseq in enumerate($repeat_sequence.masked_seq_multiple)
+	    	   #for $e,$mseq in enumerate($repeat_sequence.masked_seq_multiple)
 			#set $identifier = re.sub('[^\w\-_\.]', '_', $mseq.element_identifier)
-	    		ln -fs '$mseq' '${identifier}' &&
-	    		echo `pwd`/'${identifier}' >> seqlistN_temp && 
-	    		paste seqlistN_temp seqlist | sort | cut -f1 > seqlistN && #### sort the filename in the seqlistN file to maintain the same order as the filename in seqlist file
+	    		ln -fs '$mseq' '${identifier}.N' &&
+	    		echo `pwd`/'${identifier}.N' >> seqlistN_temp && 
 			### prep fo parallel command
-	    		echo `pwd`/$mseq.element_identifier > '$mseq.element_identifier'.list &&
+	    		echo `pwd`/'${identifier}.N' > '${identifier}'.N.list &&
 	    	   #end for
+		   paste seqlistN_temp seqlist | sort | cut -f1 > seqlistN && #### sort the filename in the seqlistN file to maintain the same order as the filename in seqlist file
 		#end if
 	    #end if
 
@@ -122,40 +122,39 @@ INTRONIC_GENES = ${intronic_genes}
              ]]></configfile>
     </configfiles>
     <inputs>
-		<expand macro="acknowledgement"/>
 	    <conditional name="inputs">
-                <param name="input_type" type="select" label="Input type" help="Select single sequence or collection of sequence">
+                <param name="input_type" type="select" label="Genome assembly sequence" help="Select whether your genome assembly is in a single contig or multiple contigs">
 			<option value="single" selected="true">assembled genome, in a single contig</option>
 			<option value="multiple">assembled genome, in multiple contigs</option>
 		</param>
 		<when value="single">
-			<param name="single_seq" format="fasta" type="data" label="Single sequence" help="Single sequence" multiple="true"/>
+			<param name="single_seq" format="fasta" type="data" label="Genomic sequence (single contig)" help="FASTA file containing a single genomic sequence/contig" multiple="true"/>
 		</when>
 		<when value="multiple">
-			<param name="multiple_seq" format="fasta" type="data_collection" collection_type="list" label="Multiple sequence"/>
+			<param name="multiple_seq" format="fasta" type="data_collection" collection_type="list" label="Genomic sequences (multiple contigs)" help="Collection of FASTA files, each containing one genomic contig"/>
 		</when>
 	    </conditional>
             <conditional name="repeat_sequence">
-		    	<param name="selector" type="select" label="Use repeat masking sequence" help="Enable this option if you want to use repeat masked sequences .">
+		    	<param name="selector" type="select" label="Repeat-masked genome" help="Select whether to use repeat-masked genomic sequences for prediction">
 			<option value="no_repeat_seq" selected="true">No repeat-masked genome</option>
                 	<option value="single_masked_seq">Repeat-masked genome in a single contig</option>
                 	<option value="multiple_masked_seq">Repeat-masked genome in multiple contigs</option>
             	</param>
 		<when value="single_masked_seq">
-                      <param name="masked_seq_single" format="fasta" type="data" label="repeat masked sequence" help="Single masked sequence" multiple="true"/>
+                      <param name="masked_seq_single" format="fasta" type="data" label="Repeat-masked genomic sequence" help="FASTA file containing repeat-masked genomic sequence (lowercase = masked)" multiple="true"/>
                 </when>
 		<when value="multiple_masked_seq">
-		      <param name="masked_seq_multiple" format="fasta" type="data_collection" collection_type="list" label="repeat masked sequence" help="Multiple repeat sequence"/>
+		      <param name="masked_seq_multiple" format="fasta" type="data_collection" collection_type="list" label="Repeat-masked genomic sequence" help="Collection of repeat-masked FASTA files (lowercase = masked)"/>
 	      	</when>
 		<when value="no_repeat_seq"></when>
             </conditional>
             <conditional name="matrix_type">
-                  <param name="matrix_type_selector" type="select" label="Select matrix type" help="Select matrix for your species">
+                  <param name="matrix_type_selector" type="select" label="Species-specific matrix" help="Select the species-specific scoring matrix for gene prediction">
                          <option value="indexed" selected="true">Use a built-in index</option>
                          <option value="history">Use one from the history</option>
                   </param>
                   <when value="indexed">
-                         <param name="species_matrix" type="select" label="Select a species matrix" help="If your species of interest is not listed, contact your Galaxy admin">
+			 <param name="species_matrix" type="select" label="Select species matrix" help="Choose a pre-configured scoring matrix for your species.">
                           <options from_data_table="fgenesh_matrix">
                               <filter type="sort_by" column="2"/>
                               <validator type="no_options" message="No indexes are available for the selected input dataset"/>
@@ -163,16 +162,16 @@ INTRONIC_GENES = ${intronic_genes}
                          </param>
                   </when>
                   <when value="history">
-                       <param name="own_file" type="data" format="txt" label="Select species matrix" />
+                       <param name="own_file" type="data" format="txt" label="Select species matrix" help="Upload your own species-specific scoring matrix file" />
                   </when>
             </conditional>
             <conditional name="db_type">
-		  <param name="db_type_selector" type="select" label="Select db type" help="Select Mammal DB / Non Mammal DB">
+		  <param name="db_type_selector" type="select" label="Reference database" help="Select Mammal DB or Non-Mammal DB">
                          <option value="indexed" selected="true">Use a built-in index</option>
                          <option value="history">Use one from the history</option>
                   </param>
                   <when value="indexed">
-                         <param name="genome_type" type="select" label="Select a reference database" help="If your database of interest is not listed, contact your Galaxy admin">
+                         <param name="genome_type" type="select" label="Select reference database" help="Choose a pre-configured reference database (mammalian or non-mammalian)">
                           <options from_data_table="fgenesh_db">
                               <filter type="sort_by" column="2"/>
                               <validator type="no_options" message="No indexes are available for the selected input dataset"/>
@@ -180,16 +179,16 @@ INTRONIC_GENES = ${intronic_genes}
                          </param>
                   </when>
                   <when value="history">
-                       <param name="own_file" type="data" format="txt" label="Select reference database" />
+                       <param name="own_file" type="data" format="txt" label="Custom reference database" help="Upload your own reference database file" />
                   </when>
 	  </conditional>
             <conditional name="nr_type">
-                  <param name="nr_type_selector" type="select" label="Select nr db type" help="Select NR database">
+                  <param name="nr_type_selector" type="select" label="Non-redundant (NR) protein database" help="Select the NR protein database for homology searches">
                          <option value="indexed" selected="true">Use a built-in index</option>
                          <option value="history">Use one from the history</option>
                   </param>
                   <when value="indexed">
-                         <param name="nr_db" type="select" label="Select a NR database" help="If your database of interest is not listed, contact your Galaxy admin">
+                         <param name="nr_db" type="select" label="Select NR database" help="Choose a pre-configured non-redundant protein database">
                           <options from_data_table="fgenesh_nr">
                               <filter type="sort_by" column="2"/>
                               <validator type="no_options" message="No indexes are available for the selected input dataset"/>
@@ -197,41 +196,38 @@ INTRONIC_GENES = ${intronic_genes}
                          </param>
                   </when>
                   <when value="history">
-                       <param name="own_file" type="data" format="txt" label="Select reference database" />
+                       <param name="own_file" type="data" format="txt" label="Custom NR database" help="Upload your own non-redundant protein database file" />
                   </when>
            </conditional>
            <conditional name="map_mrna">
-                  <param name="mRNAs" type="select" label="mRNAs" help="map known mRNA data to the genomic sequences">
+                  <param name="mRNAs" type="select" label="map Known mRNAs" help="Map known mRNA sequences to the genomic sequence to improve predictions">
                         <option value="0">No</option>
                         <option value="1">Yes</option>
                   </param>
                   <when value="1">
-                          <param name="cdna_file" type="data" format="fasta" label="cDNA file" help="cdna fasta file for known mRNAs"/>
-                          <param name="prot_file" type="data" format="fasta" label="Protein file" help="protein fasta file for known mRNAs"/>
-                          <param name="dat_file" type="data" format="txt" label="Dat file" help="dat file for known mRNAs"/>
+                          <param name="cdna_file" type="data" format="fasta" label="cDNA sequences (FASTA)" help="FASTA file containing known cDNA/mRNA sequences"/>
+                          <param name="prot_file" type="data" format="fasta" label="Protein sequences (FASTA)" help="FASTA file containing known protein sequences"/>
+                          <param name="dat_file" type="data" format="txt" label="Annotation data file" help="DAT file containing additional annotation information for known mRNAs"/>
                   </when>
                   <when value="0"/>
 	  </conditional>
            <conditional name="map_est">
-                  <param name="ESTs" type="select" label="ESTs" help="map ESTs to the genomic sequences">
+                  <param name="ESTs" type="select" label="Map EST sequence" help="Map Expressed Sequence Tags (ESTs) to the genomic sequence">
                         <option value="0">No</option>
                         <option value="1">Yes</option>
                   </param>
                   <when value="1">
-                          <param name="est_file" type="data" format="fasta" label="ESTs file" help="fasta file with ESTs"/>
+                          <param name="est_file" type="data" format="fasta" label="EST sequences (FASTA)" help="FASTA file containing Expressed Sequence Tags (ESTs)"/>
                   </when>
                   <when value="0"/>
           </conditional>
-	  <param name="predict_gc" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Predict GC" help="predict genes with GC donor splice sites or not"/>
-	  <param name="use_reads" type="boolean" checked="false" truevalue="1" falsevalue="0" label="USE_READS" help="use reads info to improve gene models"/>
-	  <param name="find_homologs" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Find homologs" help="find homologs for ab initio predicted genes"/>
-          <param name="use_proteins" type="boolean" checked="false" truevalue="1" falsevalue="0" label="USE_PROTEINS" help="Using known proteins for prediction"/>
-          <param name="intronic_genes" type="boolean" checked="false" truevalue="1" falsevalue="0" label="INTRONIC_GENES" help="predict genes in long introns of other genes"/>
+	  <param name="predict_gc" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Predict GC-rich genes" help="Identify genes with GC donor splice sites (common in CpG islands)"/>
+	  <param name="use_reads" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Use RNA-seq reads" help="Incorporate RNA-seq read alignment information to improve gene models"/>
+	  <param name="find_homologs" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Find homologs" help="Search for homologous proteins for ab initio predicted genes"/>
+          <param name="use_proteins" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Use known proteins" help="Incorporate known protein sequences to guide gene prediction"/>
+          <param name="intronic_genes" type="boolean" checked="false" truevalue="1" falsevalue="0" label="Predict intronic genes" help="Identify genes located within introns of other genes"/>
     </inputs>
     <outputs>
-	    <!--<data name="single_annotation" format="txt" label="${tool.name} on ${on_string}: single annotation" from_work_dir="result/*.resn3">
-		  <filter>input['input_type'] == 'individual'</filter>
-	    </data>-->
 	    <collection name="multiple_annotation" type="list" label="${tool.name} on ${on_string}: multiple annotation">
 		  <discover_datasets pattern="(?P&lt;name&gt;.*).resn3$" format="txt" directory="result"/>
 			  <!--<filter>input['input_type'] == 'multiple'</filter>-->
@@ -240,12 +236,151 @@ INTRONIC_GENES = ${intronic_genes}
                   <discover_datasets pattern="(?P&lt;name&gt;.*).gff3$" format="gff3" directory="output_gff"/>
 	    </collection>
     </outputs>
-	
-    <tests>
-	 <test>
-            <!-- #1 test -->
-        </test>
-    </tests>
+<tests>
+    <!-- Test 1: single contig, no repeat masking, built-in matrix and DBs -->
+    <test expect_num_outputs="2">
+        <conditional name="inputs">
+            <param name="input_type" value="single"/>
+            <param name="single_seq" value="1.seq" ftype="fasta"/>
+        </conditional>
+        <conditional name="repeat_sequence">
+            <param name="selector" value="no_repeat_seq"/>
+        </conditional>
+        <conditional name="matrix_type">
+            <param name="matrix_type_selector" value="indexed"/>
+            <param name="species_matrix" value="celegans"/>
+        </conditional>
+        <conditional name="db_type">
+            <param name="db_type_selector" value="indexed"/>
+            <param name="genome_type" value="nonmammal_db"/>
+        </conditional>
+        <conditional name="nr_type">
+            <param name="nr_type_selector" value="indexed"/>
+            <param name="nr_db" value="nr_ce"/>
+        </conditional>
+
+        <conditional name="map_mrna">
+            <param name="mRNAs" value="0"/>
+        </conditional>
+        <conditional name="map_est">
+            <param name="ESTs" value="0"/>
+        </conditional>
+        <param name="predict_gc" value="false"/>
+        <param name="use_reads" value="false"/>
+        <param name="find_homologs" value="false"/>
+        <param name="use_proteins" value="false"/>
+        <param name="intronic_genes" value="false"/>
+
+        <output_collection name="multiple_annotation" type="list" count="1">
+            <element name="1.seq">
+                <assert_contents>
+                    <has_text text="Seq name"/>
+                    <has_text text="Number of predicted genes"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+
+        <output_collection name="annotated_gff3" type="list" count="1">
+	    <element name="1.seq.resn3"> <!-- v7.2.2 output is resn3 not res (v2024.2) -->
+                <assert_contents>
+                    <has_text text="##gff-version 3"/>
+                    <has_line_matching expression="^\S+\t\S+\tgene\t\d+\t\d+\t.*"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+   </test>
+
+<!-- Test 2: multiple contigs, repeat-masked genome -->
+<test expect_num_outputs="2">
+    <conditional name="inputs">
+        <param name="input_type" value="multiple"/>
+        <param name="multiple_seq">
+            <collection type="list">
+                <element name="1.seq" value="1.seq"/>
+                <element name="2.seq" value="2.seq"/>
+                <element name="3.seq" value="3.seq"/>
+            </collection>
+        </param>
+    </conditional>
+    <conditional name="repeat_sequence">
+        <param name="selector" value="multiple_masked_seq"/>
+        <param name="masked_seq_multiple">
+            <collection type="list">
+                <element name="1.seq" value="1.seq.N"/>
+                <element name="2.seq" value="2.seq.N"/>
+                <element name="3.seq" value="3.seq.N"/>
+            </collection>
+        </param>
+    </conditional>
+    <conditional name="matrix_type">
+        <param name="matrix_type_selector" value="indexed"/>
+        <param name="species_matrix" value="celegans"/>
+    </conditional>
+    <conditional name="db_type">
+        <param name="db_type_selector" value="indexed"/>
+        <param name="genome_type" value="nonmammal_db"/>
+    </conditional>
+    <conditional name="nr_type">
+        <param name="nr_type_selector" value="indexed"/>
+        <param name="nr_db" value="nr_ce"/>
+    </conditional>
+
+    <conditional name="map_mrna">
+        <param name="mRNAs" value="0"/>
+    </conditional>
+    <conditional name="map_est">
+        <param name="ESTs" value="0"/>
+    </conditional>
+    <param name="predict_gc" value="false"/>
+    <param name="use_reads" value="false"/>
+    <param name="find_homologs" value="false"/>
+    <param name="use_proteins" value="false"/>
+    <param name="intronic_genes" value="false"/>
+
+    <output_collection name="multiple_annotation" type="list" count="3">
+        <element name="1.seq.N">
+            <assert_contents>
+                <has_text text="Seq name"/>
+                <has_text text="Number of predicted genes"/>
+            </assert_contents>
+        </element>
+        <element name="2.seq.N">
+            <assert_contents>
+                <has_text text="Seq name"/>
+                <has_text text="Number of predicted genes"/>
+            </assert_contents>
+        </element>
+        <element name="3.seq.N">
+            <assert_contents>
+                <has_text text="Seq name"/>
+                <has_text text="Number of predicted genes"/>
+            </assert_contents>
+        </element>
+    </output_collection>
+
+    <output_collection name="annotated_gff3" type="list" count="3">
+        <element name="1.seq.N.resn3">
+            <assert_contents>
+                <has_text text="##gff-version 3"/>
+                <has_line_matching expression="^\S+\t\S+\tgene\t\d+\t\d+\t.*"/>
+            </assert_contents>
+        </element>
+        <element name="2.seq.N.resn3">
+            <assert_contents>
+                <has_text text="##gff-version 3"/>
+                <has_line_matching expression="^\S+\t\S+\tgene\t\d+\t\d+\t.*"/>
+            </assert_contents>
+        </element>
+        <element name="3.seq.N.resn3">
+            <assert_contents>
+                <has_text text="##gff-version 3"/>
+                <has_line_matching expression="^\S+\t\S+\tgene\t\d+\t\d+\t.*"/>
+            </assert_contents>
+        </element>
+    </output_collection>
+</test>
+
+</tests>
     <help><![CDATA[
 	    
 .. class:: infomark

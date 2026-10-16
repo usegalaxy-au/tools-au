@@ -1,5 +1,5 @@
 <tool id="fgenesh_get_proteins" name="FGENESH get protein" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
-    <description>sequences using rensn3 files</description>
+    <description>sequences using resn3 files</description>
     <macros>
 	  <import>macros.xml</import>
     </macros>
@@ -27,14 +27,13 @@
 
 	    ]]></command>
     <inputs>
-	 <expand macro="acknowledgement"/>
 	 <conditional name="input">
 	    <param name="selector" type="select" label="Input data type for extracting proten sequences. default: single">
 		 <option value="single">single</option>
-	         <option value="multiple" select="true">multiple</option>
+	         <option value="multiple" selected="true">multiple</option>
 	    </param>
 	    <when value="single">
-		<param name="resn3" format="txt" type="data" multiple="false" label="Input resn3 file" help="single resn3 files with predictions in Fgenesh/Fgenesh++ format"/>
+		<param name="resn3" format="txt" type="data" multiple="false" label="FGENESH result file (Resn3 format)" help="single resn3 files with predictions in Fgenesh/Fgenesh++ Resn3 format"/>
                 <param name="fix_id_type" type="select" label="fix header id in the output fasta file" help="Default: sequence name">
                 	<option value="seq_No" selected="True">Sequence No</option>
                 	<option value="seq_count">Sequence Count</option>
@@ -55,12 +54,63 @@
                     <filter> input['selector'] == "single" </filter>
             </data>
     </outputs>
-	
-    <tests>
-	 <test>
-            <!-- #1 test -->
-        </test>
-    </tests>
+<tests>
+    <!-- Test 1: extract protein sequences from a single resn3 file -->
+    <test expect_num_outputs="1">
+        <conditional name="input">
+            <param name="selector" value="single"/>
+            <param name="resn3" value="1.seq.resn3" ftype="txt"/>
+            <param name="fix_id_type" value="seq_name"/>
+        </conditional>
+
+        <output name="output_prot_file" ftype="fasta">
+            <assert_contents>
+                <has_text text=">"/>
+                <has_text text=">I:2000001..3000000_gene_1"/>
+                <has_line_matching expression="^>I:2000001\.\.3000000_gene_\d+\s.*$"/>
+                <has_line_matching expression="^[ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstvwy*]+$"/>
+            </assert_contents>
+        </output>
+    </test>
+
+<!-- Test 2: extract protein sequences from a collection of resn3 files -->
+<test expect_num_outputs="1">
+    <conditional name="input">
+        <param name="selector" value="multiple"/>
+        <param name="resn3_collection">
+            <collection type="list">
+                <element name="1.seq" value="1.seq.resn3"/>
+                <element name="2.seq" value="2.seq.resn3"/>
+                <element name="3.seq" value="3.seq.resn3"/>
+            </collection>
+        </param>
+    </conditional>
+
+    <output_collection name="output_protein_sequences" type="list" count="3">
+        <element name="1.seq.resn3">
+            <assert_contents>
+		<has_text text=">"/>
+		<has_text text="Protein GAP-3"/>
+                <has_line_matching expression="^[ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstvwy*]+$"/>
+            </assert_contents>
+        </element>
+        <element name="2.seq.resn3">
+            <assert_contents>
+                <has_text text=">"/>
+		<has_text text="Protein SKR-8" />
+                <has_line_matching expression="^[ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstvwy*]+$"/>
+            </assert_contents>
+        </element>
+        <element name="3.seq.resn3">
+            <assert_contents>
+                <has_text text=">"/>
+                <has_text text="Protein Y53C10A.5" />
+                <has_line_matching expression="^[ACDEFGHIKLMNPQRSTVWYacdefghiklmnpqrstvwy*]+$"/>
+            </assert_contents>
+        </element>
+    </output_collection>
+</test>
+</tests>
     <help><![CDATA[
 	    
 .. class:: infomark

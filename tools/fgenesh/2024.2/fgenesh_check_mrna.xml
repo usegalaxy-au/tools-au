@@ -24,12 +24,11 @@
 
 	    ]]></command>
     <inputs>
-		<expand macro="acknowledgement"/>
-	    <param name="mrnas_fasta" type="data" format="fasta" label="Fasta file"/>
-	    <param argument="-col" type="integer" value="80" label="columns number for the output fasta file" help="default:80" />
+	    <param name="mrnas_fasta" type="data" format="fasta" label="Input mRNA sequence fasta file" help="FASTA file containing mRNA sequences to validate and process"/>
+	    <param argument="-col" type="integer" value="80" label="FASTA line width" help="Number of characters per line in output FASTA files (default: 80)" />
 	    <section name="compare" title="Compare mRNAs">
 		<conditional name="option">
-		   <param name="type" type="select" label="option" help="">
+		   <param name="type" type="select" label="Additional processing option" help="Select additional option to perform">
 		      <option value="none" selected="true">None</option>
 		      <option value="compare_mrna">compare input sequence to mRNAs sequence</option>
 		      <option value="make_protein">create translated protein sequence from mRNAs</option>	      
@@ -37,16 +36,15 @@
 		   <when value="none">
 	           </when>
 		   <when value="compare_mrna">
-			<param name="input_compare_mRNAs" type="data" format="fasta" label="compare translated proteins with mRNAs" help="--compare" />
+			<param name="input_compare_mRNAs" type="data" format="fasta" label="compare translated proteins with mRNAs" help="FASTA file containing reference mRNA sequences for comparison" />
 		   </when>
 		   <when value="make_protein">
 		   </when>
                 </conditional>
 	     </section>
             <section name="qc" title="Output option">
-                <param name="pass" type="boolean" checked="true" truevalue="true" falsevalue="" label="create sequences without error in fasta file" help="pass" />
-                <param name="fail" type="boolean" checked="false" truevalue="true" falsevalue="" label="create sequences with error in fasta file" help="fail" />
-		<!--<param name="make_prot" type="boolean" checked="false" truevalue="true" falsevalue="" label="create protein sequence" help="make_prot" /> -->
+                <param name="pass" type="boolean" checked="true" truevalue="true" falsevalue="" label="Output valid sequences" help="Create FASTA file containing only sequences that pass validation" />
+                <param name="fail" type="boolean" checked="false" truevalue="true" falsevalue="" label="Output invalid sequences" help="Create FASTA file containing only sequences that fail validation" />
             </section>
     </inputs>
     <outputs>
@@ -66,28 +64,26 @@
 	
     <tests>
 	<!-- #1 test -->
-	<test>
+	<test expect_num_outputs="1">
             <param name="mrnas_fasta" value="ngasp.mrna.fa"/>
 	    <param name="pass" value="true"/>
             <output name="pass_fasta" file="ok.mrna.fa"/>
     	</test>
 	<!-- #2 test -->
-	<test>
-            <param name="mrnas_fasta" value="ngasp.mrna.fa"/>
-            <param name="type" value="make_protein"/>
-            <output name="protein_fasta" file="ngasp.protein.fa"/>
-    	</test>
-        <!-- #3 test -->
-	<!--<test>
-            <param name="mrnas_fasta" value="ngasp.mrna.fa"/>
-	    <param name="type" value="compare_mrna"/>
-	    <param name="input_compare_mRNAs" value="ngasp.protein.fa"/>
-            <output name="compare_result" ftype="txt" value="compare.log">
-                <assert_contents>
-                    <has_size value="310" delta="1000"/>
-                </assert_contents>
-            </output>
-	</test> -->
+	<test expect_num_outputs="2">
+	    <param name="mrnas_fasta" value="ngasp.mrna.fa" ftype="fasta"/>
+	    <section name="qc">
+	        <param name="pass" value="true"/>
+	        <param name="fail" value="false"/>
+	    </section>
+	    <section name="compare">
+	        <conditional name="option">
+	            <param name="type" value="make_protein"/>
+	        </conditional>
+	    </section>
+	    <output name="pass_fasta" file="ok.mrna.fa" ftype="fasta"/>
+	    <output name="protein_fasta" file="ngasp.protein.fa" ftype="fasta"/>
+	</test>	
     </tests>
     <help><![CDATA[
 	    
