@@ -1,0 +1,14 @@
+name: lca_with_fishbase
+owner: galaxy-australia
+description: LCA with FishBase, taxonomy assignment for eDNA sequences from BLAST hits (OceanOmics amplicon pipeline)
+long_description: |
+  Runs the script calculateLCAWithFishbase_Claude_FAIReCompatible.py of the OceanOmics amplicon
+  pipeline (Minderoo Foundation OceanOmics Centre, release 1.3.4). It assigns a taxonomic name to
+  each sequence by the lowest common ancestor of its BLAST hits, with lineages from the NCBI
+  taxonomy, FishBase and WoRMS, and writes the LCA table and the FAIRe taxa_raw and taxa_final tables.
+homepage_url: https://github.com/Minderoo-OceanOmics-Centre-UWA/OceanOmics-amplicon-nf
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/lca_with_fishbase
+type: unrestricted
+categories:
+  - Metagenomics
+  - Sequence Analysis

@@ -1,0 +1,10 @@
+domain	phylum	class	order	family	genus	species	OTU	length	numberOfUnq_BlastHits	%ID	queryCoverage	species_in_LCA	sources	OcOm_2101_17_1	OcOm_2101_17_2	OcOm_2101_17_3	OcOm_2101_17_4	OcOm_2101_17_5	OcOm_2101_18_1	OcOm_2101_18_2	OcOm_2101_18_3	OcOm_2101_18_4	OcOm_2101_18_5
+Eukaryota	Chordata	Actinopteri	Perciformes/Serranoidei	Anthiadidae	Pseudanthias	dropped	ASV_1	210	2	100.0	100	Pseudanthias pascalus, Pseudanthias tuka	fishbase	0	0	0	0	4	0	0	5	7	0
+Eukaryota	Chordata	Actinopteri	Eupercaria/misc	Scaridae	Scarus	dropped	ASV_2	200	74	99.502	100	Scarus rubroviolaceus, Scarus persicus, Scarus ferrugineus, Scarus aff., Scarus zufar	fishbase	0	0	0	12	0	0	0	0	0	0
+Eukaryota	Chordata	Actinopteri	Eupercaria/misc	Caesionidae	Pterocaesio	Pterocaesio tile	ASV_3	202	60	100.0	100	Pterocaesio tile	fishbase	0	0	0	0	0	7	0	0	0	0
+Eukaryota	Chordata	Actinopteri	Acanthuriformes	Acanthuridae	Ctenochaetus	dropped	ASV_4	202	37	100.0	100	Ctenochaetus striatus, Ctenochaetus hawaiiensis	fishbase	0	0	0	0	0	0	0	0	0	6
+Eukaryota	Chordata	Actinopteri	Eupercaria/misc	Labridae	dropped	dropped	ASV_5	199	29	100.0	100	Thalassoma hardwicke, Thalassoma jansenii, Halichoeres margaritaceus, Thalassoma quinquevittatum	fishbase	0	0	0	0	0	5	0	0	0	0
+Eukaryota	Chordata	Actinopteri	Perciformes/Serranoidei	Anthiadidae	Pseudanthias	dropped	ASV_6	210	2	100.0	100	Pseudanthias pascalus, Pseudanthias tuka	fishbase	0	0	0	0	0	0	0	4	0	0
+Eukaryota	Chordata	Actinopteri	Eupercaria/misc	Scaridae	Chlorurus	dropped	ASV_7	202	72	99.01	100	Chlorurus strongylocephalus, Chlorurus microrhinos, Chlorurus gibbus	fishbase	0	0	0	0	0	0	3	0	0	0
+Eukaryota	Chordata	Actinopteri	Eupercaria/misc	Scaridae	Scarus	dropped	ASV_8	201	72	99.502	100	Scarus globiceps, Scarus psittacus, Scarus rivulatus, Scarus oviceps	fishbase	0	0	0	0	0	0	0	0	0	3
+Eukaryota	Chordata	Actinopteri	Perciformes/Serranoidei	Epinephelidae	Cephalopholis	Cephalopholis leopardus	ASV_9	204	14	99.51	100	Cephalopholis leopardus	fishbase	0	2	0	0	0	0	0	0	0	0

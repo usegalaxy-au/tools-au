@@ -1,0 +1,2 @@
+# Tab-separated: value	name	path
+# path is the directory that holds names.dmp and nodes.dmp (as written by the NCBI taxonomy data manager)

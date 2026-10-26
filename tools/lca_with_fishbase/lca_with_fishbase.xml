@@ -1,0 +1,146 @@
+<tool id="lca_with_fishbase" name="LCA with FishBase" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0" license="MIT">
+    <description>assign taxonomy to eDNA sequences from BLAST hits</description>
+    <macros>
+        <token name="@TOOL_VERSION@">1.3.4</token>
+        <token name="@VERSION_SUFFIX@">1</token>
+    </macros>
+    <requirements>
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="18.0.0">pyarrow</requirement>
+    </requirements>
+    <command><![CDATA[
+## The script looks in ./cache before any download and uses a cached file when it exists,
+## so the reference files are placed there and the job needs no network access.
+mkdir -p cache/taxdump &&
+ln -s '${taxonomy.fields.path}/nodes.dmp' cache/taxdump/nodes.dmp &&
+ln -s '${taxonomy.fields.path}/names.dmp' cache/taxdump/names.dmp &&
+ln -s '$fishbase_species' cache/fishbase_species.parquet &&
+ln -s '$fishbase_families' cache/fishbase_families.parquet &&
+ln -s '$fishbase_synonyms' cache/fishbase_synonyms.parquet &&
+ln -s '$worms' worms_species.txt &&
+python '$__tool_directory__/calculateLCAWithFishbase_Claude_FAIReCompatible.py'
+    -f '$blast_results'
+    --asv_table '$asv_table'
+    -o lca_output.tsv
+    --raw_output taxaRaw.tsv
+    --final_output taxaFinal.tsv
+    --missing_out missing.csv
+    --worms_file worms_species.txt
+    --pident $pident
+    --min_coverage $min_coverage
+    --cutoff $cutoff
+    $use_bitwise
+    $normalise_identity
+    --log_level $log_level
+&&
+## the script writes no output when no hit passes the filters
+if [ ! -s lca_output.tsv ]; then echo 'No BLAST hit passed the identity and coverage filters, so there is no LCA to report' >&2; exit 1; fi &&
+## Nextflow (LCA_WITH_FISHBASE) removes the quotes from the two FAIRe tables
+sed 's/"//g' taxaRaw.tsv > taxa_raw.tsv &&
+sed 's/"//g' taxaFinal.tsv > taxa_final.tsv
+    ]]></command>
+    <inputs>
+        <param name="blast_results" type="data" format="tabular" label="BLAST table" help="BLAST tabular output with the 22 columns qseqid sseqid staxids sscinames scomnames sskingdoms pident length qlen slen mismatch gapopen gaps qstart qend sstart send stitle evalue bitscore qcovs qcovhsp, in this order"/>
+        <param name="asv_table" type="data" format="tabular" label="ASV table with sequences" help="Read counts per sample. First column: the sequence name as in the BLAST table (ASV); last column: the sequence (ASV_sequence); a header line"/>
+        <param name="taxonomy" type="select" label="NCBI taxonomy" help="A copy of the NCBI taxonomy (nodes.dmp and names.dmp) installed on this Galaxy. Use a copy from March 2025 or later: the script reads the rank 'domain', which NCBI introduced then; with an older copy every domain is 'Unknown'">
+            <options from_data_table="ncbi_taxonomy">
+                <filter type="sort_by" column="0" reverse_sort_order="true"/>
+                <validator type="no_options" message="No NCBI taxonomy is installed on this Galaxy. Ask the administrator to run the NCBI taxonomy data manager"/>
+            </options>
+        </param>
+        <param name="fishbase_species" type="data" format="parquet" label="FishBase species table" help="File species.parquet of a FishBase release (for example v24.07 from huggingface.co/datasets/cboettig/fishbase)"/>
+        <param name="fishbase_families" type="data" format="parquet" label="FishBase families table" help="File families.parquet of the same FishBase release"/>
+        <param name="fishbase_synonyms" type="data" format="parquet" label="FishBase synonyms table" help="File synonyms.parquet of the same FishBase release"/>
+        <param name="worms" type="data" format="tabular" label="WoRMS species file" help="Tab-separated, no header, 10 columns (species, genus, kingdom, phylum, class, order, family, genus, unused, epithet), as worms_species.txt in the LCA_With_Fishbase repository"/>
+        <param argument="--pident" type="float" value="90" min="0" max="100" label="Minimum percent identity" help="BLAST hits below this identity are not used"/>
+        <param argument="--min_coverage" type="float" value="90" min="0" max="100" label="Minimum query coverage (percent)" help="BLAST hits with a lower query coverage (qcovs) are not used"/>
+        <param argument="--cutoff" type="float" value="1" min="0" label="Identity window (percentage points)" help="At each rank, the hits within this many percentage points of the top hit decide the assignment. Hits that agree give a name; hits that disagree give 'dropped'"/>
+        <param argument="--use_bitwise" type="boolean" truevalue="--use_bitwise" falsevalue="" checked="true" label="Rank the hits by bit score" help="Yes: the top hit is the hit with the highest bit score. No: the top hit is the hit with the highest percent identity"/>
+        <param argument="--normalise_identity" type="boolean" truevalue="--normalise_identity" falsevalue="" checked="false" label="Normalise identity by query coverage" help="Multiplies the percent identity of each hit by its query coverage before the comparison"/>
+        <param argument="--log_level" type="select" label="Log detail">
+            <option value="INFO" selected="true">Normal</option>
+            <option value="DEBUG">Detailed</option>
+            <option value="WARNING">Warnings only</option>
+        </param>
+    </inputs>
+    <outputs>
+        <data name="lca_output" format="tabular" from_work_dir="lca_output.tsv" label="${tool.name} on ${on_string}: LCA table"/>
+        <data name="taxa_raw" format="tabular" from_work_dir="taxa_raw.tsv" label="${tool.name} on ${on_string}: taxa_raw (FAIRe)"/>
+        <data name="taxa_final" format="tabular" from_work_dir="taxa_final.tsv" label="${tool.name} on ${on_string}: taxa_final (FAIRe)"/>
+        <data name="missing" format="tabular" from_work_dir="missing.csv" label="${tool.name} on ${on_string}: hits with no lineage"/>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="4">
+            <!-- outputs: LCA table, taxa_raw, taxa_final, hits with no lineage -->
+            <param name="blast_results" value="blast_results.tabular"/>
+            <param name="asv_table" value="asv_table.tabular"/>
+            <param name="taxonomy" value="test_taxonomy"/>
+            <param name="fishbase_species" value="fishbase_species.parquet"/>
+            <param name="fishbase_families" value="fishbase_families.parquet"/>
+            <param name="fishbase_synonyms" value="fishbase_synonyms.parquet"/>
+            <param name="worms" value="worms_species.tabular"/>
+            <output name="lca_output">
+                <assert_contents>
+                    <has_n_lines n="10"/>
+                    <has_n_columns n="24"/>
+                    <has_line_matching expression="Eukaryota\tChordata\tActinopteri\tPerciformes/Serranoidei\tAnthiadidae\tPseudanthias\tdropped\tASV_1\t210\t2\t100.0\t100\t.*fishbase\t0\t0\t0\t0\t4\t0\t0\t5\t7\t0"/>
+                    <has_line_matching expression="Eukaryota\tChordata\tActinopteri\tEupercaria/misc\tCaesionidae\tPterocaesio\tPterocaesio tile\tASV_3\t202\t60\t100.0\t100\tPterocaesio tile\tfishbase.*"/>
+                    <has_text text="Scarus aff."/>
+                </assert_contents>
+            </output>
+            <output name="taxa_final" file="taxa_final.tabular"/>
+            <output name="taxa_raw" file="taxa_raw.tabular"/>
+            <output name="missing">
+                <assert_contents>
+                    <has_n_columns n="22"/>
+                </assert_contents>
+            </output>
+            <assert_stdout>
+                <has_text text="Parsing nodes.dmp"/>
+            </assert_stdout>
+        </test>
+    </tests>
+    <help><![CDATA[
+**What it does**
+
+Assigns a taxonomic name to each sequence (ASV, ZOTU or OTU) from its BLAST hits, by the lowest common ancestor (LCA) method of the OceanOmics amplicon pipeline (Minderoo Foundation OceanOmics Centre). It is the script *calculateLCAWithFishbase_Claude_FAIReCompatible.py* of the pipeline, release 1.3.4, unchanged except one comment line that the style check needs.
+
+For each sequence:
+
+1. BLAST hits below the minimum identity or the minimum query coverage are removed.
+2. Each remaining hit gets a lineage (domain to species). A hit with an NCBI taxonomy ID gets its lineage from the NCBI taxonomy; for a fish, the genus and family come from FishBase when the genus is there, then from WoRMS. A hit without a taxonomy ID (N/A or 0) is named from FishBase or WoRMS by the genus name in the hit title. A hit with no lineage is skipped.
+3. One hit per taxonomy ID is kept. The hits are ranked by bit score (default) or by percent identity.
+4. At each rank, from domain to species, the hits within the identity window of the top hit are compared. If they agree, the name is assigned; if they do not, the rank is "dropped".
+
+**Inputs**
+
+- BLAST table: tabular output of blastn with these 22 columns in this order: qseqid sseqid staxids sscinames scomnames sskingdoms pident length qlen slen mismatch gapopen gaps qstart qend sstart send stitle evalue bitscore qcovs qcovhsp.
+- ASV table with sequences: one row per sequence; first column the sequence name as in the BLAST table, then one column per sample with read counts, last column the sequence.
+- NCBI taxonomy: a copy installed on this Galaxy (data table *ncbi_taxonomy*). Use a copy from March 2025 or later, because the script reads the rank "domain".
+- FishBase tables: the files *species.parquet*, *families.parquet* and *synonyms.parquet* of one FishBase release, for example v24.07 from https://huggingface.co/datasets/cboettig/fishbase (folder data/fb/v24.07/parquet). The pipeline uses v24.07.
+- WoRMS species file: *worms_species.txt.gz* from https://github.com/Minderoo-OceanOmics-Centre-UWA/LCA_With_Fishbase (folder data), uploaded to Galaxy (Galaxy decompresses it).
+
+**Outputs**
+
+- LCA table: one row per sequence with at least one kept hit: lineage, sequence name, length, number of hits with different taxonomy IDs, identity and coverage of the top hit, the species among the compared hits, the name source, and the read counts per sample.
+- taxa_raw: up to 10 hits per sequence, one row each, in the FAIRe format.
+- taxa_final: one row per sequence in the FAIRe format.
+- hits with no lineage: the BLAST lines that were skipped because no lineage was found (tab-separated).
+
+The job needs no network access: the taxonomy, FishBase and WoRMS files are given to the script as local files.
+
+**Pipeline settings**
+
+The OceanOmics pipeline (ocom profile) runs the script with minimum identity 90, minimum coverage 90, identity window 1 and ranking by bit score.
+    ]]></help>
+    <citations>
+        <citation type="bibtex">
+@misc{oceanomics_amplicon_nf,
+  author = {Bennett, Adam and Mousavi, Mahsa and Rauschert, Sebastian and Bayer, Philipp and Pearce, Jessica},
+  title = {OceanOmics-amplicon-nf: a Nextflow pipeline for eDNA amplicon data},
+  note = {GitHub repository, release 1.3.4},
+  url = {https://github.com/Minderoo-OceanOmics-Centre-UWA/OceanOmics-amplicon-nf}
+}
+        </citation>
+    </citations>
+</tool>

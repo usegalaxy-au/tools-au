@@ -1,0 +1,285 @@
+1	|	1	|	no rank	|		|	8	|	0	|	1	|	0	|	0	|	0	|	0	|	0	|		|
+2759	|	131567	|	domain	|		|	1	|	0	|	1	|	0	|	1	|	0	|	0	|	0	|		|
+6072	|	33208	|	clade	|		|	1	|	1	|	1	|	1	|	5	|	0	|	1	|	0	|		|
+7711	|	33511	|	phylum	|		|	1	|	1	|	1	|	1	|	5	|	1	|	0	|	0	|	code compliant	|
+7742	|	89593	|	clade	|		|	10	|	0	|	1	|	1	|	2	|	1	|	0	|	0	|		|
+7776	|	7742	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+7898	|	117571	|	superclass	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+8111	|	1489922	|	order	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+8247	|	1489928	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+8248	|	8247	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+8249	|	8248	|	species	|	GV	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+12912	|	145345	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+12913	|	12912	|	species	|	AN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+29146	|	1489937	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+30850	|	2024539	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+30860	|	3051910	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+30871	|	1489943	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+32443	|	41665	|	infraclass	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+33154	|	2759	|	clade	|		|	4	|	0	|	1	|	1	|	1	|	1	|	1	|	0	|		|
+33208	|	33154	|	kingdom	|		|	1	|	0	|	1	|	1	|	1	|	1	|	0	|	0	|	code compliant	|
+33213	|	6072	|	clade	|		|	1	|	1	|	1	|	1	|	5	|	1	|	1	|	0	|		|
+33511	|	33213	|	clade	|		|	1	|	1	|	1	|	1	|	5	|	1	|	1	|	0	|		|
+40493	|	119691	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+40494	|	40493	|	species	|	LJ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40495	|	40493	|	species	|	LA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40496	|	40493	|	species	|	LS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40497	|	40493	|	species	|	LM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40498	|	119691	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+40499	|	40498	|	species	|	OC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40500	|	40493	|	species	|	LV	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40502	|	40493	|	species	|	LA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40503	|	40493	|	species	|	LG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40504	|	40493	|	species	|	LB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40505	|	40493	|	species	|	LC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+40506	|	119691	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+40507	|	40506	|	species	|	RA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+41665	|	186623	|	subclass	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+51758	|	12912	|	species	|	AC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+51788	|	8247	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+59660	|	3043427	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+59661	|	59660	|	species	|	SI	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+75013	|	12912	|	species	|	AG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+75014	|	12912	|	species	|	AX	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+75019	|	145345	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+75020	|	75019	|	species	|	CB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+75041	|	75382	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+75382	|	1489923	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+76337	|	8247	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+76338	|	76337	|	species	|	TB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+84543	|	59660	|	species	|	SV	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+89593	|	7711	|	subphylum	|		|	10	|	0	|	1	|	1	|	2	|	0	|	0	|	0	|	code compliant	|
+91742	|	1505891	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+117570	|	7776	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+117571	|	117570	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|		|
+119691	|	30850	|	subfamily	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+119692	|	30850	|	subfamily	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+119693	|	119692	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+119694	|	119693	|	species	|	CC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+119723	|	40493	|	species	|	LD	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+123365	|	1489388	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|		|
+123366	|	123365	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+123367	|	123366	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+123368	|	123367	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|		|
+123369	|	123368	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+126670	|	3043427	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+126671	|	126670	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+126672	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+131567	|	1	|	cellular root	|	CO	|	8	|	1	|	1	|	1	|	0	|	1	|	1	|	0	|		|
+145345	|	29146	|	subfamily	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+157584	|	12912	|	species	|	AB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+157585	|	12912	|	species	|	AC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+160708	|	91742	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+160709	|	91742	|	species	|	CU	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+160732	|	1505891	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+160733	|	160732	|	species	|	PC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175430	|	12912	|	species	|	AM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175431	|	12912	|	species	|	AN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175432	|	12912	|	species	|	AN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175433	|	12912	|	species	|	AP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175434	|	12912	|	species	|	AT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175435	|	12912	|	species	|	AT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175436	|	75019	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+175445	|	75019	|	species	|	CC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+181462	|	1489923	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+181465	|	119692	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+181466	|	181465	|	species	|	PT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+182665	|	119693	|	species	|	CC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+182666	|	490331	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+182667	|	182666	|	species	|	DB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+186623	|	7898	|	class	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+186625	|	1489341	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+188103	|	59660	|	species	|	SC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+188104	|	59660	|	species	|	SG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+188105	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+188108	|	126670	|	species	|	CO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+188113	|	3043427	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+188114	|	188113	|	species	|	HL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+202603	|	76337	|	species	|	TP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+206148	|	59660	|	species	|	SH	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+211833	|	40493	|	species	|	LS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+211834	|	40493	|	species	|	LA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+211835	|	40493	|	species	|	LE	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+215356	|	40493	|	species	|	LR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+219283	|	76337	|	species	|	TH	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+219410	|	76337	|	species	|	TL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+219412	|	76337	|	species	|	TQ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+219413	|	76337	|	species	|	TP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+225755	|	75041	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+232193	|	40493	|	species	|	LR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+238050	|	12912	|	species	|	AB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+238051	|	12912	|	species	|	AD	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+238052	|	12912	|	species	|	AN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+238053	|	12912	|	species	|	AO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239032	|	76337	|	species	|	TA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239033	|	76337	|	species	|	TN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239034	|	76337	|	species	|	TN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239036	|	76337	|	species	|	TS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239037	|	8248	|	species	|	GC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239039	|	76337	|	species	|	TA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239040	|	76337	|	species	|	TB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239042	|	76337	|	species	|	TC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239043	|	76337	|	species	|	TD	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239044	|	76337	|	species	|	TG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239045	|	76337	|	species	|	TH	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239046	|	76337	|	species	|	TJ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239047	|	76337	|	species	|	TL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239048	|	76337	|	species	|	TL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239049	|	76337	|	species	|	TL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239056	|	76337	|	species	|	TR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239057	|	76337	|	species	|	TR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239059	|	76337	|	species	|	TT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239060	|	76337	|	species	|	TV	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+239370	|	76337	|	species	|	TG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+241294	|	51788	|	species	|	HM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+241344	|	59660	|	species	|	SD	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+242802	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+242806	|	59660	|	species	|	SG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+242807	|	59660	|	species	|	SN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+242808	|	59660	|	species	|	SO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247620	|	59660	|	species	|	SC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247621	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247622	|	59660	|	species	|	SG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247623	|	59660	|	species	|	SO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247624	|	59660	|	species	|	SP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247625	|	59660	|	species	|	SP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247626	|	59660	|	species	|	SQ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247627	|	59660	|	species	|	SR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247628	|	59660	|	species	|	SR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+247629	|	59660	|	species	|	SS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+257886	|	30860	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+260524	|	40493	|	species	|	LF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+260525	|	40493	|	species	|	LF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+270577	|	3363800	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+274794	|	30871	|	subfamily	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+290247	|	40493	|	species	|	LP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+306585	|	91742	|	species	|	CF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+319431	|	40493	|	species	|	LA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+320609	|	40493	|	species	|	LN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+327771	|	91742	|	species	|	CL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+327798	|	160732	|	species	|	PF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+327801	|	91742	|	species	|	CT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+327811	|	91742	|	species	|	CN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+334883	|	30860	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+334884	|	334883	|	species	|	ZE	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+334885	|	257886	|	species	|	PR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+334914	|	91742	|	species	|	CM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+342439	|	75019	|	species	|	CM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+379402	|	40493	|	species	|	LV	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+390296	|	12912	|	species	|	AJ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+390315	|	75019	|	species	|	CH	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+390329	|	181462	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+396783	|	40493	|	species	|	LA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396784	|	40493	|	species	|	LB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396785	|	40493	|	species	|	LC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396786	|	40493	|	species	|	LG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396787	|	40493	|	species	|	LK	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396788	|	40493	|	species	|	LM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396789	|	40493	|	species	|	LQ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396790	|	119691	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+396791	|	396790	|	species	|	MN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396793	|	181465	|	species	|	PM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+396794	|	181465	|	species	|	PP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+425378	|	40493	|	species	|	LO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+443703	|	40493	|	species	|	LL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+455479	|	40493	|	species	|	LG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+459747	|	12912	|	species	|	AL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+483362	|	12912	|	species	|	AL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+490331	|	30850	|	subfamily	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+490875	|	390329	|	species	|	ES	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+497154	|	181465	|	species	|	PD	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+520515	|	40493	|	species	|	LB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544410	|	126670	|	species	|	CB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544411	|	126670	|	species	|	CB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544412	|	126670	|	species	|	CC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544413	|	126670	|	species	|	CJ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544414	|	126670	|	species	|	CM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544415	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544416	|	59660	|	species	|	SH	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544417	|	59660	|	species	|	SS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544418	|	59660	|	species	|	ST	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+544419	|	59660	|	species	|	ST	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+546538	|	30850	|	subfamily	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+586769	|	12912	|	species	|	AT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+586812	|	75019	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+586855	|	270577	|	species	|	PP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+626241	|	126670	|	species	|	CG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+661170	|	270577	|	species	|	PT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+697225	|	40493	|	species	|	LC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+753643	|	12912	|	species	|	AA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+753644	|	12912	|	species	|	AN	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+909114	|	91742	|	species	|	CH	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+909121	|	40493	|	species	|	LE	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+990634	|	181465	|	species	|	PC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+990996	|	546538	|	genus	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+990997	|	990996	|	species	|	PS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1087062	|	40493	|	species	|	LM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1099943	|	396790	|	species	|	MM	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1146960	|	91742	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1146985	|	59660	|	species	|	SS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1156098	|	126670	|	species	|	CF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1223551	|	40493	|	species	|	LL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236048	|	126670	|	species	|	CA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236049	|	126670	|	species	|	CC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236050	|	126670	|	species	|	CE	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236052	|	126670	|	species	|	CP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236053	|	126670	|	species	|	CR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236054	|	126670	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236055	|	126670	|	species	|	CS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236057	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236058	|	59660	|	species	|	SC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236059	|	59660	|	species	|	SC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236060	|	59660	|	species	|	SC	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236061	|	59660	|	species	|	SD	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236062	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236063	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236064	|	59660	|	species	|	SF	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236065	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236066	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236067	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236068	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236069	|	59660	|	species	|	SK	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236070	|	59660	|	species	|	SL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236071	|	59660	|	species	|	SP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236072	|	59660	|	species	|	SP	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236074	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236075	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236076	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236077	|	59660	|	species	|	SA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1236078	|	59660	|	species	|	SR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236079	|	59660	|	species	|	ST	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236080	|	59660	|	species	|	SV	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236081	|	59660	|	species	|	SX	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236082	|	59660	|	species	|	SZ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1236083	|	59660	|	species	|	SZ	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1267419	|	40493	|	species	|	LB	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1311420	|	119693	|	species	|	CT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1314976	|	59660	|	species	|	SO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1316013	|	12912	|	species	|	AT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1316014	|	75019	|	species	|	CT	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1484166	|	12912	|	species	|	AG	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1484167	|	12912	|	species	|	AS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1489341	|	32443	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1489388	|	186625	|	cohort	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant	|
+1489872	|	123369	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1489922	|	1489872	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|		|
+1489923	|	1489922	|	no rank	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1489928	|	1489922	|	order	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+1489937	|	1489922	|	order	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+1489943	|	8111	|	suborder	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+1505891	|	274794	|	tribe	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+1522394	|	91742	|	species	|	CA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1550411	|	91742	|	species	|	CO	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1697922	|	40493	|	species	|	LX	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1772181	|	2619398	|	species	|	LS	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+1828434	|	40493	|	species	|	LR	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1828454	|	12912	|	species	|	AL	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+1917454	|	12912	|	species	|	AA	|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|	code compliant; specified	|
+2024539	|	1489922	|	order	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+2609487	|	12912	|	species	|	AG	|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant; specified	|
+2619398	|	40493	|	no rank	|		|	10	|	1	|	1	|	1	|	2	|	1	|	1	|	0	|		|
+2703934	|	40493	|	species	|	LF	|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant; specified	|
+3043427	|	8247	|	clade	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|		|
+3051910	|	1489922	|	order	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
+3358813	|	990996	|	species	|	PX	|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant; specified	|
+3363800	|	8111	|	family	|		|	10	|	1	|	1	|	1	|	2	|	1	|	0	|	0	|	code compliant	|
