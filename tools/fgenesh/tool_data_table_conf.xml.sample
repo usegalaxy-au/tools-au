@@ -1,0 +1,18 @@
+<tables>
+    <table name="fgenesh_db" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="tool-data/fgenesh_db.loc" />
+    </table>
+    <table name="fgenesh_db_v2024" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="tool-data/fgenesh_db_v2024.loc" />
+    </table>
+    <table name="fgenesh_matrix" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="tool-data/fgenesh_matrix.loc" />
+    </table>
+    <table name="fgenesh_nr" comment_char="#">
+        <columns>value, name, path</columns>
+        <file path="tool-data/fgenesh_nr.loc" />
+    </table>
+</tables>

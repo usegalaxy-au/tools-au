@@ -1,0 +1,152 @@
+<tool id="fgenesh_get_mrnas" name="FGENESH get mRNA" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>rensn3 and genomic file</description>
+    <macros>
+	    <import>macros.xml</import>
+	    <token name="@TOOL_VERSION@">v2024.2</token>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+#import re
+
+#set resn3_name = re.sub('[^\w\-\.]', '_', str($resn3_file.element_identifier))
+#set seq_name   = re.sub('[^\w\-\.]', '_', str($sequence_file.element_identifier))
+
+#if not $resn3_name.endswith('.resn3')
+    #set resn3_name = $resn3_name + '.resn3'
+#end if
+
+#if not $seq_name.endswith('.fa')
+    #set seq_name = $seq_name + '.fa'
+#end if
+
+ln -s '$resn3_file'    '${resn3_name}' &&
+ln -s '$sequence_file' '${seq_name}' &&
+get_mrnas.pl
+    '${resn3_name}'
+    '${seq_name}'
+    '$output_mrna_file'
+    $CDS
+    -fix_id $fix_id_type
+    2> '$log'
+
+	    ]]></command>
+    <inputs>
+	    <param name="resn3_file" format="txt" type="data" label="FGENESH result file (Resn3 format)" help="File containing gene predictions in FGENESH/FGENESH++ Resn3 format"/>
+	    <param name="sequence_file" format="fasta" type="data" label="Genomics sequence file" help="FASTA file containing the genomic sequence used for predictions"/>
+	    <param argument="-CDS" type="boolean" truevalue="-CDS" falsevalue="" checked="true" label="Extract CDS sequence" help="Generate FASTA file containing only coding sequences (CDS), excluding UTRs" />
+	    <param name="fix_id_type" type="select" label="FASTA header format" help="Select naming convention for mRNA sequences in output FASTA file">
+                <option value="seq_No" selected="True">Sequence No</option>
+		<option value="seq_count">Sequence Count</option>
+		<option value="seq_name">Sequence Name</option>
+            </param>
+    </inputs>
+    <outputs>
+	    <data name="output_mrna_file" format="fasta"  label="${tool.name} on ${on_string}: mRNA file"/>
+	    <data name="log" format="txt" label="${tool.name} on ${on_string}: Report"/>
+    </outputs>
+<tests>
+    <!-- #1 test: full mRNA, seq_name naming -->
+    <test expect_num_outputs="2">
+        <param name="resn3_file" value="1.seq.res" ftype="txt"/>
+        <param name="sequence_file" value="1.seq" ftype="fasta"/>
+        <param name="fix_id_type" value="seq_name"/>
+	<output name="output_mrna_file" ftype="fasta">
+	    <assert_contents>
+		    <has_text text=">"/>
+		    <has_size value="228407" delta="0"/>
+	    </assert_contents>		
+	</output>	
+        <output name="log" ftype="txt">
+            <assert_contents>
+                <has_size value="0" min="0"/>
+            </assert_contents>
+        </output>
+    </test>
+
+    <!-- #2 test: full mRNA, seq_count naming -->
+    <test expect_num_outputs="2">
+        <param name="resn3_file" value="1.seq.res" ftype="txt"/>
+	<param name="sequence_file" value="1.seq" ftype="fasta"/>
+	<param name="CDS" value="false"/>
+        <param name="fix_id_type" value="seq_count"/>
+	<output name="output_mrna_file" ftype="fasta">
+	    <assert_contents>
+                    <has_text text=">"/>
+                    <has_size value="228594" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="log" ftype="txt">
+            <assert_contents>
+                <has_size value="0" min="0"/>
+            </assert_contents>
+        </output>	
+    </test>
+
+    <!-- #3 test: CDS only, seq_count naming -->
+    <test expect_num_outputs="2">
+        <param name="resn3_file" value="1.seq.res" ftype="txt"/>
+        <param name="sequence_file" value="1.seq" ftype="fasta"/>
+        <param name="CDS" value="true"/>
+        <param name="fix_id_type" value="seq_count"/>
+	<output name="output_mrna_file" ftype="fasta">
+	    <assert_contents>
+                    <has_text text=">"/>
+                    <has_size value="226119" delta="0"/>
+            </assert_contents>
+        </output>
+        <output name="log" ftype="txt">
+            <assert_contents>
+                <has_size value="0" min="0"/>
+            </assert_contents>
+        </output>
+    </test>
+</tests>
+
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh get_mrnas.pl is a tool to extract CDS(mRNAs) sequences using the input file with Fgenesh/Fgenesh++ predictions*
+
+**Input**
+	    
+- resn3 file  -  input file with Fgenesh/Fgenesh++ predictions  
+
+- sequence file - input  file with genomic FASTA sequences
+
+
+**Command line Example:**
+
+- get_mrnas_or_GC.pl <resn3_file> <seq_file> <mrna_file> [-CDS] [-GC] [-fix_id seq_name | seq_No | seq_count]
+
+- mrna_file - output file with CDS sequences in fasta file format
+
+- CDS - CDS only
+
+- GC - rerport GC donor splice sites
+
+- fix_id 
+- 1) seq_name - use sequence names [example of ID: 'ENm002_gene_7'] 
+- 2) seq_No - (numbers are taken from 'Sequence: <No>' if such field is present, e.g., "Length of sequence: 1000000, Sequence: 2, File: encode_hg17_44N.fa") - [example of ID: 'seq_2_gene_7']
+- 3) seq_count - use numbers (count sequences starting from 1) [example of ID: 'seq_2_gene_7']
+	
+**Output**
+
+- mrna_file - output file with CDS sequences in fasta file format
+
+- report - a report file of CDS and GC
+
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_.
+
+	    
+	]]></help>
+	<expand macro="citations" />
+</tool>
