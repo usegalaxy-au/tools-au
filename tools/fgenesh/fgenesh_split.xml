@@ -1,0 +1,158 @@
+<tool id="fgenesh_split" name="FGENESH split" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>fasta sequences</description>
+    <macros>
+	    <import>macros.xml</import>
+	    <token name="@TOOL_VERSION@">7.2.2</token>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+    <command><![CDATA[
+	    mkdir -p contigs &&
+	  
+	    split_multi_fasta.pl $input_fasta -name $filename_format -dir contigs/ -ext $output_file_extension
+
+	    ]]></command>
+    <inputs>
+	    <param name="input_fasta" type="data" format="fasta,fasta.gz" label="Input Fasta file" help="FASTA file containing sequences to split into individual files"/>
+	    <param name="filename_format" type="select" label="Output filename naming convention" help="Select how to name the output sequence files. Default: count">
+            	<option value="count" selected="True">sequential count</option>
+            	<option value="seq_id">Use Sequence Header from the input fasta file</option>
+	    </param>
+	    <param name="output_file_extension" type="select" label="Output file format">
+		<option value="fa" selected="True">fa (non-masked)</option>
+		<option value="seq">Seq (non-masked)</option>
+		<option value="fa.N">fa.masked (masked)</option>
+		<option value="seq.N">Seq.masked (masked)</option>
+            </param>
+    </inputs>
+    <outputs>
+	   <collection name="fasta_collection" type="list" label="${tool.name} on ${on_string} : split sequences">
+	      <discover_datasets pattern="(?P&lt;designation&gt;.*)" directory="contigs" format="fasta"/>
+           </collection>
+    </outputs>
+<tests>
+    <!-- Test 1: sequential count naming, .seq extension -->
+    <test expect_num_outputs="1">
+        <param name="input_fasta" value="123.seq"/>
+        <param name="filename_format" value="count"/>
+        <param name="output_file_extension" value="seq"/>
+        <output_collection name="fasta_collection" type="list" count="3">
+            <element name="1.seq">
+                <assert_contents>
+                    <has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="2.seq">
+                <assert_contents>
+                    <has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="3.seq">
+                <assert_contents>
+                    <has_text text=">I:12000001..13000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+    </test>
+
+    <!-- Test 2: seq_id naming — expected to fall back to 1.seq, 2.seq, 3.seq
+    	because headers (I:2000001..3000000) are not usable as file names
+    <test expect_num_outputs="1">
+        <param name="input_fasta" value="123.seq"/>
+        <param name="filename_format" value="seq_id"/>
+        <param name="output_file_extension" value="seq"/>
+        <output_collection name="fasta_collection" type="list" count="3">
+            <element name="1.seq">
+                <assert_contents>
+                    <has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="2.seq">
+                <assert_contents>
+                    <has_text text=">II:13000001..14000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+            <element name="3.seq">
+                <assert_contents>
+                    <has_text text=">I:12000001..13000000"/>
+                    <not_has_text text=">I:2000001..3000000"/>
+                    <not_has_text text=">II:13000001..14000000"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+    </test> -->
+ 
+    <!-- Test 3: sequential naming with masked extension -->
+    <test expect_num_outputs="1">
+        <param name="input_fasta" value="123.seq"/>
+        <param name="filename_format" value="count"/>
+        <param name="output_file_extension" value="seq.N"/>
+        <output_collection name="fasta_collection" type="list" count="3">
+            <element name="1.seq.N">
+                <assert_contents>
+                    <has_text text=">I:2000001..3000000"/>
+                </assert_contents>
+            </element>
+            <element name="2.seq.N">
+                <assert_contents>
+                    <has_text text=">II:13000001..14000000"/>
+                </assert_contents>
+            </element>
+            <element name="3.seq.N">
+                <assert_contents>
+                    <has_text text=">I:12000001..13000000"/>
+                </assert_contents>
+            </element>
+        </output_collection>
+    </test>
+</tests>
+    <help><![CDATA[
+	    
+.. class:: infomark
+
+**What it does**
+	    
+*Fgenesh is a genome annotation tool*
+
+**Input**
+	    
+- input file  -  Genome or de novo assembly file in FASTA format 
+
+**Command line Example:**
+
+- FGENESHPIPE/split_multi_fasta.pl <file>  -name [count|seq_id] -dir output_directory -ext [fa|seq]
+
+- file - file with multiple FASTA sequences
+- name - seq_id = use sequences IDs in filenames; count = use numbers in filenames (count starting from 1)
+- dir  - directory where to put files
+- ext  - extension for fasta files
+
+
+**Output**
+
+- a collection of fasta files
+
+**Notes:**
+
+- Galaxy can only genreate output dataset up to 10000. Please filter out shorter contigs if the number of contigs > 10000 in your input datasets.
+ 
+.. class:: infomark
+
+**Contributor**
+
+Galaxy Australia wrapped the Fgenesh: the original software is available on this website `FGENESH <http://www.softberry.com/berry.phtml?topic=fgenesh_plus_plus&group=help&subgroup=pipelines>`_.
+
+	    
+	]]></help>
+	<expand macro="citations" />
+</tool>
