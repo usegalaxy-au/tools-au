@@ -1,0 +1,11 @@
+name: figaro
+owner: galaxy-australia
+description: FIGARO An efficient and objective tool for optimizing microbiome rRNA gene trimming parameters.
+long_description: |
+  analyze error rates in a directory of FASTQ files to determine optimal trimming parameters for high-resolution targeted microbiome sequencing pipeline.
+homepage_url: https://zymoresearch.eu/pages/figaro?srsltid=AYCX9vKQIbjC7OojZtULiIO-uVvaxgx1VEfrNCjcvhgEy3Xl-n8LPEGn 
+remote_repository_url: https://github.com/usegalaxy-au/tools-au/tree/master/tools/figaro
+type: unrestricted
+categories:
+  - Metagenomics
+  - Sequence Analysis

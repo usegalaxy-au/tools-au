@@ -1,0 +1,119 @@
+<tool id="figaro" name="Figaro" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="@PROFILE@" >
+    <description>Determine optimal truncation parameters for amplicon sequencing data</description>
+    <macros>
+            <import>macros.xml</import>
+    </macros>
+    <expand macro="requirements" />
+    <expand macro="stdio" />
+
+    <command detect_errors="exit_code"><![CDATA[
+	#import re
+	mkdir -p 'output_dir' &&
+        #set input_directory = 'input_directory'
+	mkdir $input_directory &&
+
+	#for $input in $input_collection
+	    #set $fwd = re.sub('[^\w\-_\.]', '_', str($input.forward.name))
+	    #set $rvs = re.sub('[^\w\-_\.]', '_', str($input.reverse.name))
+	    ln -fs '${input.forward}' '$input_directory/$fwd' &&
+	    ln -fs '${input.reverse}' '$input_directory/$rvs' &&
+	#end for
+
+	/opt/figaro/figaro/figaro.py 
+            --inputDirectory $input_directory
+            --outputDirectory 'output_dir'
+            --ampliconLength $ampliconLength
+            --forwardPrimerLength $forwardPrimerLength
+            --reversePrimerLength $reversePrimerLength
+            #if $minimumOverlap:
+                --minimumOverlap $minimumOverlap
+            #end if
+            #if $subsample:
+                --subsample $subsample
+            #end if
+            #if $percentile:
+                --percentile $percentile
+            #end if
+	    2>&1 | tee output_dir/figaro.log;
+    ]]></command>
+    <inputs>
+        <param name="input_collection" format="fastqsanger,fastq" type="data_collection" collection_type="list:paired" label="Select your paired collection to analyze"/>
+        <param name="ampliconLength" type="integer" value="" label="Amplicon Length" help="Length of amplicon (not including primers)." />
+        <param name="forwardPrimerLength" type="integer" value="" label="Forward Primer Length" help="Length of forward primer." />
+        <param name="reversePrimerLength" type="integer" value="" label="Reverse Primer Length" help="Length of reverse primer." />
+
+        <section name="advanced" title="Advanced Options" expanded="false">
+            <param name="minimumOverlap" type="integer" value="20" min="1" label="Minimum Overlap" help="Minimum overlap between the paired-end reads." />
+            <param name="subsample" type="integer" optional="true" label="Subsample Level" help="Subsampling level (will analyze approximately 1/x reads)." />
+	    <param name="percentile" type="integer" value="83" min="1" label="Percentile" help="Percentile to use for expected error model."/>
+        </section>
+    </inputs>
+    <outputs>
+        <data name="json_output" format="json" from_work_dir="output_dir/trimParameters.json" label="${tool.name} on ${on_string}: Trim Parameters JSON" />
+	<data name="logfile" format="txt" from_work_dir="output_dir/figaro.log" label="${tool.name} on ${on_string}: Log File" />
+	<collection name="png_files" type="list" label="${tool.name} on ${on_string}: png plots">
+            <discover_datasets pattern="(?P&lt;name&gt;.+)\.png" format="png" directory="output_dir"/>
+        </collection>
+    </outputs>
+    <tests>
+        <test>
+	    <param name="input_collection">
+                    <collection type="list:paired">
+                        <element name="S102">
+                            <collection type="paired">
+                                <element name="forward" value="L1-1_S102_R1_001.fastq" ftype="fastqsanger"/>
+                                <element name="reverse" value="L1-1_S102_R2_001.fastq" ftype="fastqsanger"/>
+                            </collection>
+                        </element>
+                        <element name="S112">
+                            <collection type="paired">
+                                <element name="forward" value="L1-2_S112_R1_001.fastq" ftype="fastqsanger"/>
+                                <element name="reverse" value="L1-2_S112_R2_001.fastq" ftype="fastqsanger"/>
+                            </collection>
+                        </element>
+		    </collection>
+	    </param>
+            <param name="ampliconLength" value="426" />
+            <param name="forwardPrimerLength" value="17" />
+	    <param name="reversePrimerLength" value="21" />
+	    <param name="minimumOverlap" value="20" />
+	    <param name="percentile" value="83" />
+	    <output name="json_output" file="trimParameters.json" />
+	    <output_collection name="png_files" type="list">
+    		<element name="forwardExpectedError" value="forwardExpectedError.png" compare="sim_size"/>
+		<element name="reverseExpectedError" value="reverseExpectedError.png" compare="sim_size"/>
+	    </output_collection>
+	    <output name="logfile" file="figaro.log"/>
+        </test>
+    </tests>
+    <help><![CDATA[
+What it does
+------------
+Figaro analyzes paired-end sequencing reads to determine the optimal truncation parameters for DADA2 denoising, maximizing the number of reads that successfully overlap.
+
+
+Inputs
+------
+- **Input FASTQ files**: Paired-end raw or trimmed reads with consistent read length in a collection.
+- **Amplicon Length**: The expected length of the amplicon excluding primers.
+- **Primer Lengths**: The exact lengths of the forward and reverse primers.
+
+Outputs
+-----
+- **png**: forwardExpectedError.png and reverseExpectedError.png. Figaro tool only produces the forward and reverse png of the final paired-end data.
+- **json**: trimParameters.json
+- **log**: standard output 
+
+**NOTE:** The input paired-end dataset should be uncompressed paired-end dataset and in a collection. Please see `Creating a paired collection`_.
+
+For more information please look at the `github repository`_ and tutorial_.
+
+.. _github repository: https://github.com/Zymo-Research/figaro
+.. _tutorial: https://nuriamw.github.io/micro4all/tutorial/package_workflow.html#figaro-selection-of-trimming-parameters
+.. _Creating a paired collection: https://training.galaxyproject.org/training-material/faqs/galaxy/collections_build_list_paired.html
+
+
+   ]]></help>
+   
+   <expand macro="citations"/>
+</tool>
