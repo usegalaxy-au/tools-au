@@ -1,0 +1,1089 @@
+1	|	all	|		|	synonym	|
+1	|	root	|		|	scientific name	|
+2759	|	Eucarya	|		|	synonym	|
+2759	|	Eucaryotae	|		|	synonym	|
+2759	|	Eukarya	|		|	synonym	|
+2759	|	Eukaryotae	|		|	synonym	|
+2759	|	Eukaryota	|		|	scientific name	|
+2759	|	eukaryotes	|	eukaryotes <blast name>	|	blast name	|
+2759	|	eukaryotes	|	eukaryotes <genbank common name>	|	genbank common name	|
+6072	|	Eumetazoa	|		|	scientific name	|
+7711	|	Chordata	|		|	scientific name	|
+7711	|	chordates	|	chordates <blast name>	|	blast name	|
+7711	|	chordates	|	chordates <genbank common name>	|	genbank common name	|
+7742	|	Vertebrata Cuvier, 1812	|		|	authority	|
+7742	|	Vertebrata	|	Vertebrata <vertebrates>	|	scientific name	|
+7742	|	vertebrates	|	vertebrates <blast name>	|	blast name	|
+7742	|	vertebrates	|	vertebrates <genbank common name>	|	genbank common name	|
+7776	|	Gnathostomata	|	Gnathostomata <vertebrates>	|	scientific name	|
+7776	|	jawed vertebrates	|		|	genbank common name	|
+7898	|	Actinopterygii	|		|	scientific name	|
+7898	|	Actinopterygi	|		|	synonym	|
+7898	|	fishes	|	fishes <ray-finned fishes>	|	common name	|
+7898	|	fish	|	fish <ray-finned fishes>	|	common name	|
+7898	|	Osteichthyes	|	Osteichthyes <ray-finned fishes>	|	in-part	|
+7898	|	ray-finned fishes	|	ray-finned fishes <blast name>	|	blast name	|
+7898	|	ray-finned fishes	|	ray-finned fishes <genbank common name>	|	genbank common name	|
+8111	|	perches and others	|		|	genbank common name	|
+8111	|	Perciformes	|		|	scientific name	|
+8111	|	Scorpaeniformes	|		|	synonym	|
+8111	|	Serraniformes	|		|	synonym	|
+8247	|	Callyodontidae	|		|	synonym	|
+8247	|	Labridae	|		|	scientific name	|
+8247	|	parrotfishes	|	parrotfishes <Labridae>	|	common name	|
+8247	|	Scaridae	|		|	synonym	|
+8247	|	wrasses	|	wrasses <Labridae>	|	genbank common name	|
+8248	|	Gomphosus	|		|	scientific name	|
+8249	|	Gomphosus varius Lacepede, 1801	|		|	authority	|
+8249	|	Gomphosus varius	|		|	scientific name	|
+12912	|	Acanthurus	|		|	scientific name	|
+12913	|	Acanthurus nigrofuscus (Fabricius, 1775)	|		|	authority	|
+12913	|	Acanthurus nigrofuscus	|		|	scientific name	|
+12913	|	brown surgeonfish	|		|	genbank common name	|
+12913	|	Chaetodon nigrofuscus Fabricius, 1775	|		|	authority	|
+12913	|	Chaetodon nigrofuscus	|		|	synonym	|
+29146	|	Acanthuridae	|		|	scientific name	|
+29146	|	surgeonfishes	|		|	genbank common name	|
+30850	|	Caesionidae	|		|	synonym	|
+30850	|	fusiliers	|	fusiliers <Lutjanidae>	|	common name	|
+30850	|	Lutjanidae	|		|	scientific name	|
+30850	|	snappers	|		|	genbank common name	|
+30860	|	armorheads	|		|	genbank common name	|
+30860	|	Pentacerotidae	|		|	scientific name	|
+30871	|	sea basses	|		|	genbank common name	|
+30871	|	Serranidae	|		|	scientific name	|
+32443	|	Teleostei	|		|	scientific name	|
+32443	|	teleost fishes	|		|	genbank common name	|
+33154	|	Fungi/Metazoa group	|		|	synonym	|
+33154	|	Opisthokonta Cavalier-Smith 1987	|		|	authority	|
+33154	|	Opisthokonta	|		|	scientific name	|
+33154	|	opisthokonts	|		|	synonym	|
+33208	|	Animalia	|		|	synonym	|
+33208	|	animals	|	animals <blast name>	|	blast name	|
+33208	|	animals	|	animals <genbank common name>	|	genbank common name	|
+33208	|	metazoans	|		|	common name	|
+33208	|	Metazoa	|		|	scientific name	|
+33208	|	multicellular animals	|		|	common name	|
+33213	|	Bilateria	|		|	scientific name	|
+33511	|	deuterostomes	|		|	common name	|
+33511	|	Deuterostomia	|		|	scientific name	|
+40493	|	Lutianus	|		|	synonym	|
+40493	|	Lutjanus	|		|	scientific name	|
+40494	|	Anthias jocu Bloch & Schneider, 1801	|		|	authority	|
+40494	|	Anthias jocu	|		|	synonym	|
+40494	|	dog snapper	|		|	genbank common name	|
+40494	|	Lutjanus jocu (Bloch & Schneider, 1801)	|		|	authority	|
+40494	|	Lutjanus jocu	|		|	scientific name	|
+40495	|	Lutjanus analis (Cuvier, 1828)	|		|	authority	|
+40495	|	Lutjanus analis	|		|	scientific name	|
+40495	|	Mesoprion analis Cuvier, 1828	|		|	authority	|
+40495	|	Mesoprion analis	|		|	synonym	|
+40495	|	mutton snapper	|		|	genbank common name	|
+40496	|	lane snapper	|		|	genbank common name	|
+40496	|	Lutjanus synagris (Linnaeus, 1758)	|		|	authority	|
+40496	|	Lutjanus synagris	|		|	scientific name	|
+40496	|	Sparus synagris Linnaeus, 1758	|		|	authority	|
+40496	|	Sparus synagris	|		|	synonym	|
+40497	|	Lutjanus mahogoni (Cuvier, 1828)	|		|	authority	|
+40497	|	Lutjanus mahogoni	|		|	scientific name	|
+40497	|	mahogany snapper	|		|	genbank common name	|
+40497	|	Mesoprion mahogoni Cuvier, 1828	|		|	authority	|
+40497	|	Mesoprion mahogoni	|		|	synonym	|
+40498	|	Ocyurus	|		|	scientific name	|
+40499	|	Ocyurus chrysurus (Bloch, 1791)	|		|	authority	|
+40499	|	Ocyurus chrysurus	|		|	scientific name	|
+40499	|	Sparus chrysurus Bloch, 1791	|		|	authority	|
+40499	|	Sparus chrysurus	|		|	synonym	|
+40500	|	Lutjanus vivanus (Cuvier, 1828)	|		|	authority	|
+40500	|	Lutjanus vivanus	|		|	scientific name	|
+40500	|	Mesoprion vivanus Cuvier, 1828	|		|	authority	|
+40500	|	Mesoprion vivanus	|		|	synonym	|
+40500	|	silk snapper	|		|	genbank common name	|
+40502	|	Lutjanus apodus	|		|	scientific name	|
+40502	|	Lutjanus apodus (Walbaum, 1792)	|		|	authority	|
+40502	|	Perca apoda	|		|	synonym	|
+40502	|	Perca apoda Walbaum, 1792	|		|	authority	|
+40502	|	schoolmaster snapper	|		|	genbank common name	|
+40503	|	grey snapper	|		|	genbank common name	|
+40503	|	Labrus griseus Linnaeus, 1758	|		|	authority	|
+40503	|	Labrus griseus	|		|	synonym	|
+40503	|	Lutjanus griseus (Linnaeus, 1758)	|		|	authority	|
+40503	|	Lutjanus griseus	|		|	scientific name	|
+40504	|	blackfin snapper	|		|	genbank common name	|
+40504	|	Lutjanus buccanella (Cuvier, 1828)	|		|	authority	|
+40504	|	Lutjanus buccanella	|		|	scientific name	|
+40504	|	Mesoprion buccanella Cuvier, 1828	|		|	authority	|
+40504	|	Mesoprion buccanella	|		|	synonym	|
+40505	|	Lutjanus campechanus (Poey, 1860)	|		|	authority	|
+40505	|	Lutjanus campechanus	|		|	scientific name	|
+40505	|	Mesoprion campechanus Poey, 1860	|		|	authority	|
+40505	|	Mesoprion campechanus	|		|	synonym	|
+40505	|	northern red snapper	|		|	genbank common name	|
+40505	|	red snapper	|		|	common name	|
+40505	|	USNM:FISH 25235	|	USNM:FISH 25235 <holotype>	|	type material	|
+40505	|	USNM:FISH-25235	|	USNM:FISH-25235 <holotype>	|	type material	|
+40505	|	USNM:FISH:25235	|	USNM:FISH:25235 <holotype>	|	type material	|
+40505	|	USNM:FISH25235	|	USNM:FISH25235 <holotype>	|	type material	|
+40506	|	Rhomboplites	|		|	scientific name	|
+40507	|	Centropristes aurorubens Cuvier, 1829	|		|	authority	|
+40507	|	Centropristes aurorubens	|		|	synonym	|
+40507	|	Rhomboplites aurorubens (Cuvier, 1829)	|		|	authority	|
+40507	|	Rhomboplites aurorubens	|		|	scientific name	|
+41665	|	Neopterygii	|		|	scientific name	|
+41665	|	Neopterygi	|		|	synonym	|
+51758	|	Acanthurus chirurgus (Bloch, 1787)	|		|	authority	|
+51758	|	Acanthurus chirurgus	|		|	scientific name	|
+51758	|	Chaetodon chirurgus Bloch, 1787	|		|	authority	|
+51758	|	Chaetodon chirurgus	|		|	synonym	|
+51758	|	doctorfish	|		|	genbank common name	|
+51788	|	Halichoeres	|		|	scientific name	|
+59660	|	Scarus	|		|	scientific name	|
+59661	|	Callyodon iseri Bloch, 1789	|		|	authority	|
+59661	|	Callyodon iseri	|		|	synonym	|
+59661	|	grey chub	|		|	common name	|
+59661	|	Scarus iseri (Bloch, 1789)	|		|	authority	|
+59661	|	Scarus iseri	|		|	scientific name	|
+59661	|	Scarus iserti	|		|	synonym	|
+59661	|	striped parrotfish	|	striped parrotfish <Scarus iseri>	|	genbank common name	|
+75013	|	Acanthurus guttatus Forster, 1801	|		|	authority	|
+75013	|	Acanthurus guttatus	|		|	scientific name	|
+75013	|	whitespotted surgeonfish	|		|	genbank common name	|
+75014	|	Acanthurus xanthopterus	|		|	scientific name	|
+75014	|	Acanthurus xanthopterus Valenciennes, 1835	|		|	authority	|
+75014	|	yellowfin surgeonfish	|		|	genbank common name	|
+75019	|	Ctenochaetus	|		|	scientific name	|
+75020	|	Ctenochaetus binotatus Randall, 1955	|		|	authority	|
+75020	|	Ctenochaetus binotatus	|		|	scientific name	|
+75020	|	twospot surgeonfish	|		|	genbank common name	|
+75020	|	USNM:FISH 136125	|	USNM:FISH 136125 <holotype>	|	type material	|
+75020	|	USNM:FISH-136125	|	USNM:FISH-136125 <holotype>	|	type material	|
+75020	|	USNM:FISH:136125	|	USNM:FISH:136125 <holotype>	|	type material	|
+75020	|	USNM:FISH136125	|	USNM:FISH136125 <holotype>	|	type material	|
+75041	|	Siganus	|		|	scientific name	|
+75382	|	rabbitfishes	|		|	genbank common name	|
+75382	|	Siganidae	|		|	scientific name	|
+76337	|	Thalassoma	|		|	scientific name	|
+76338	|	bluehead	|		|	genbank common name	|
+76338	|	bluehead wrasse	|		|	common name	|
+76338	|	Labrus bifasciatus Bloch, 1791	|		|	authority	|
+76338	|	Labrus bifasciatus	|		|	synonym	|
+76338	|	Thalassoma bifasciatum (Bloch, 1791)	|		|	authority	|
+76338	|	Thalassoma bifasciatum	|		|	scientific name	|
+84543	|	queen parrotfish	|	queen parrotfish <Scarus vetula>	|	genbank common name	|
+84543	|	Scarus vetula Bloch & Schneider, 1801	|		|	authority	|
+84543	|	Scarus vetula	|		|	scientific name	|
+89593	|	Craniata	|	Craniata <chordates>	|	scientific name	|
+91742	|	Cephalopholis	|		|	scientific name	|
+117570	|	Teleostomi	|		|	scientific name	|
+117571	|	bony vertebrates	|		|	genbank common name	|
+117571	|	Euteleostomi	|		|	scientific name	|
+119691	|	Lutjaninae	|		|	scientific name	|
+119692	|	Caesioninae	|		|	scientific name	|
+119692	|	fusiliers	|	fusiliers <Caesioninae>	|	genbank common name	|
+119693	|	Caesio	|		|	scientific name	|
+119694	|	Caesio cuning (Bloch, 1791)	|		|	authority	|
+119694	|	Caesio cuning	|		|	scientific name	|
+119694	|	Caesio erythrogaster Cuvier, 1830	|		|	authority	|
+119694	|	Caesio erythrogaster	|		|	synonym	|
+119694	|	Cichla cuning	|		|	synonym	|
+119694	|	redbelly yellowtail fusilier	|		|	genbank common name	|
+119694	|	Sparus cuning Bloch, 1791	|		|	authority	|
+119694	|	Sparus cuning	|		|	synonym	|
+119723	|	checkered snapper	|		|	common name	|
+119723	|	Lutjanus decussatus (Cuvier, 1828)	|		|	authority	|
+119723	|	Lutjanus decussatus	|		|	scientific name	|
+119723	|	Mesoprion decussatus Cuvier, 1828	|		|	authority	|
+119723	|	Mesoprion decussatus	|		|	synonym	|
+123365	|	Neoteleostei	|		|	scientific name	|
+123366	|	Eurypterygia	|		|	scientific name	|
+123366	|	Eurypterygii	|		|	synonym	|
+123367	|	Ctenosquamata	|		|	scientific name	|
+123368	|	Acanthomorpha	|		|	synonym	|
+123368	|	Acanthomorphata	|		|	scientific name	|
+123369	|	Euacanthomorphacea	|		|	scientific name	|
+123369	|	Euacanthomorpha	|		|	synonym	|
+126670	|	Chlorurus	|		|	scientific name	|
+126671	|	Chlorurus sordidus (Fabricius, 1775)	|		|	authority	|
+126671	|	Chlorurus sordidus	|		|	scientific name	|
+126671	|	daisy parrotfish	|		|	genbank common name	|
+126671	|	Scarus sordidus Forsskal, 1775	|		|	authority	|
+126671	|	Scarus sordidus	|		|	synonym	|
+126672	|	bridled parrotfish	|		|	genbank common name	|
+126672	|	Scarus frenatus Lacepede, 1802	|		|	authority	|
+126672	|	Scarus frenatus	|		|	scientific name	|
+131567	|	biota	|		|	synonym	|
+131567	|	cellular organisms	|		|	scientific name	|
+145345	|	Acanthurinae	|		|	scientific name	|
+157584	|	Acanthurus bahianus Castelnau, 1855	|		|	authority	|
+157584	|	Acanthurus bahianus	|		|	scientific name	|
+157584	|	ocean surgeon	|		|	genbank common name	|
+157585	|	Acanthurus coeruleus Bloch & Schneider, 1801	|		|	authority	|
+157585	|	Acanthurus coeruleus	|		|	scientific name	|
+157585	|	blue tang surgeonfish	|		|	genbank common name	|
+160708	|	Cephalopholis sonnerati	|		|	scientific name	|
+160708	|	Cephalopholis sonnerati (Valenciennes, 1828)	|		|	authority	|
+160708	|	Serranus sonnerati	|		|	synonym	|
+160708	|	Serranus sonnerati Valenciennes, 1828	|		|	authority	|
+160708	|	tomato hind	|		|	genbank common name	|
+160709	|	BMNH:1979.6.13.7	|	BMNH:1979.6.13.7 <holotype>	|	type material	|
+160709	|	Cephalopholis urodeta (Forster, 1801)	|		|	authority	|
+160709	|	Cephalopholis urodeta	|		|	scientific name	|
+160709	|	darkfin hind	|		|	genbank common name	|
+160709	|	Perca urodeta Forster, 1801	|		|	authority	|
+160709	|	Perca urodeta	|		|	synonym	|
+160732	|	Paranthias	|		|	scientific name	|
+160733	|	Cephalopholis colonus	|		|	synonym	|
+160733	|	Cephalopholis colonus (Valenciennes, 1846)	|		|	authority	|
+160733	|	Pacific creole-fish	|		|	genbank common name	|
+160733	|	Paranthias colonus	|		|	scientific name	|
+160733	|	Paranthias colonus (Valenciennes, 1846)	|		|	authority	|
+160733	|	Serranus colonus	|		|	synonym	|
+160733	|	Serranus colonus Valenciennes, 1846	|		|	authority	|
+175430	|	Acanthurus mata (Cuvier, 1829)	|		|	authority	|
+175430	|	Acanthurus mata	|		|	scientific name	|
+175430	|	Chaetodon mata Cuvier, 1829	|		|	authority	|
+175430	|	Chaetodon mata	|		|	synonym	|
+175430	|	elongate surgeonfish	|		|	genbank common name	|
+175431	|	Acanthurus nigricans (Linnaeus, 1758)	|		|	authority	|
+175431	|	Acanthurus nigricans	|		|	scientific name	|
+175431	|	Chaetodon nigricans Linnaeus, 1758	|		|	authority	|
+175431	|	Chaetodon nigricans	|		|	synonym	|
+175431	|	whitecheek surgeonfish	|		|	genbank common name	|
+175432	|	Acanthurus nigroris	|		|	scientific name	|
+175432	|	Acanthurus nigroris Valenciennes, 1835	|		|	authority	|
+175432	|	bluelined surgeonfish	|		|	genbank common name	|
+175433	|	Acanthurus pyroferus Kittlitz, 1834	|		|	authority	|
+175433	|	Acanthurus pyroferus	|		|	scientific name	|
+175433	|	chocolate surgeonfish	|		|	genbank common name	|
+175434	|	Acanthurus thompsoni (Fowler, 1923)	|		|	authority	|
+175434	|	Acanthurus thompsoni	|		|	scientific name	|
+175434	|	BPBM:3394	|	BPBM:3394 <holotype>	|	type material	|
+175434	|	Hepatus thompsoni Fowler, 1923	|		|	authority	|
+175434	|	Hepatus thompsoni	|		|	synonym	|
+175434	|	Thompson's surgeonfish	|		|	genbank common name	|
+175435	|	Acanthurus triostegus (Linnaeus, 1758)	|		|	authority	|
+175435	|	Acanthurus triostegus	|		|	scientific name	|
+175435	|	Chaetodon triostegus Linnaeus, 1758	|		|	authority	|
+175435	|	Chaetodon triostegus	|		|	synonym	|
+175435	|	convict surgeonfish	|		|	genbank common name	|
+175436	|	Acanthurus striatus Quoy & Gaimard, 1825	|		|	authority	|
+175436	|	Acanthurus striatus	|		|	synonym	|
+175436	|	Ctenochaetus striatus (Quoy & Gaimard, 1825)	|		|	authority	|
+175436	|	Ctenochaetus striatus	|		|	scientific name	|
+175436	|	striated surgeonfish	|		|	genbank common name	|
+175445	|	Ctenochaetus cyanocheilus Randall & Clements, 2001	|		|	authority	|
+175445	|	Ctenochaetus cyanocheilus	|		|	scientific name	|
+181462	|	Emmelichthyidae	|		|	scientific name	|
+181462	|	rovers	|		|	genbank common name	|
+181465	|	Pterocaesio	|		|	scientific name	|
+181466	|	Caesio tile Cuvier, 1830	|		|	authority	|
+181466	|	Caesio tile	|		|	synonym	|
+181466	|	dark-banded fusilier	|		|	genbank common name	|
+181466	|	Pterocaesio tile (Cuvier, 1830)	|		|	authority	|
+181466	|	Pterocaesio tile	|		|	scientific name	|
+182665	|	blue and gold fusilier	|		|	genbank common name	|
+182665	|	Caesio caerulaurea Lacepede, 1801	|		|	authority	|
+182665	|	Caesio caerulaurea	|		|	scientific name	|
+182666	|	Dipterygonotus	|		|	scientific name	|
+182667	|	Dipterygonotus balteatus	|		|	scientific name	|
+182667	|	Dipterygonotus balteatus (Valenciennes, 1830)	|		|	authority	|
+182667	|	mottled fusilier	|		|	genbank common name	|
+182667	|	Smaris balteatus	|		|	synonym	|
+182667	|	Smaris balteatus Valenciennes, 1830	|		|	authority	|
+186623	|	Actinopteri	|		|	scientific name	|
+186625	|	Clupeocephala	|		|	scientific name	|
+188103	|	midnight parrotfish	|		|	genbank common name	|
+188103	|	Scarus coelestinus	|		|	scientific name	|
+188103	|	Scarus coelestinus Valenciennes, 1840	|		|	authority	|
+188104	|	rainbow parrotfish	|		|	genbank common name	|
+188104	|	Scarus guacamaia Cuvier, 1829	|		|	authority	|
+188104	|	Scarus guacamaia	|		|	scientific name	|
+188105	|	Scarus flavipectoralis Schultz, 1958	|		|	authority	|
+188105	|	Scarus flavipectoralis	|		|	scientific name	|
+188105	|	USNM:FISH 112217	|	USNM:FISH 112217 <holotype>	|	type material	|
+188105	|	USNM:FISH-112217	|	USNM:FISH-112217 <holotype>	|	type material	|
+188105	|	USNM:FISH:112217	|	USNM:FISH:112217 <holotype>	|	type material	|
+188105	|	USNM:FISH112217	|	USNM:FISH112217 <holotype>	|	type material	|
+188105	|	yellowfin parrotfish	|		|	genbank common name	|
+188108	|	Callyodon oedema Snyder, 1909	|		|	authority	|
+188108	|	Callyodon oedema	|		|	synonym	|
+188108	|	Chlorurus oedema	|		|	scientific name	|
+188108	|	Chlorurus oedema (Snyder, 1909)	|		|	authority	|
+188108	|	knothead parrotfish	|		|	genbank common name	|
+188108	|	USNM:FISH 62951	|	USNM:FISH 62951 <holotype>	|	type material	|
+188108	|	USNM:FISH-62951	|	USNM:FISH-62951 <holotype>	|	type material	|
+188108	|	USNM:FISH:62951	|	USNM:FISH:62951 <holotype>	|	type material	|
+188108	|	USNM:FISH62951	|	USNM:FISH62951 <holotype>	|	type material	|
+188113	|	Hipposcarus	|		|	scientific name	|
+188114	|	Hipposcarus longiceps	|		|	scientific name	|
+188114	|	Hipposcarus longiceps (Valenciennes, 1840)	|		|	authority	|
+188114	|	Pacific longnose parrotfish	|		|	genbank common name	|
+188114	|	Scarus longiceps	|		|	synonym	|
+188114	|	Scarus longiceps Valenciennes, 1840	|		|	authority	|
+202603	|	Labrus pavo Linnaeus, 1758	|		|	authority	|
+202603	|	Labrus pavo	|		|	synonym	|
+202603	|	Thalassoma pavo	|		|	scientific name	|
+206148	|	Guinean parrotfish	|		|	genbank common name	|
+206148	|	Pseudoscarus hoefleri Steindachner, 1881	|		|	authority	|
+206148	|	Pseudoscarus hoefleri	|		|	synonym	|
+206148	|	Scarus hoefleri	|		|	scientific name	|
+206148	|	Scarus hoefleri (Steindachner, 1881)	|		|	authority	|
+211833	|	Lutjanus stellatus Akazaki, 1983	|		|	authority	|
+211833	|	Lutjanus stellatus	|		|	scientific name	|
+211833	|	star snapper	|		|	genbank common name	|
+211834	|	Lutjanus argentimaculatus (Fabricius, 1775)	|		|	authority	|
+211834	|	Lutjanus argentimaculatus	|		|	scientific name	|
+211834	|	mangrove red snapper	|		|	genbank common name	|
+211834	|	Sciaena argentimaculata Forsskal, 1775	|		|	authority	|
+211834	|	Sciaena argentimaculata	|		|	synonym	|
+211835	|	crimson snapper	|		|	genbank common name	|
+211835	|	Lutjanus erythropterus Bloch, 1790	|		|	authority	|
+211835	|	Lutjanus erythropterus	|		|	scientific name	|
+215356	|	blubberlip snapper	|		|	genbank common name	|
+215356	|	Diacope rivulata Cuvier, 1828	|		|	authority	|
+215356	|	Diacope rivulata	|		|	synonym	|
+215356	|	Lutjanus rivulatus (Cuvier, 1828)	|		|	authority	|
+215356	|	Lutjanus rivulatus	|		|	scientific name	|
+219283	|	Sparus hardwicke Bennett, 1830	|		|	authority	|
+219283	|	Sparus hardwicke	|		|	synonym	|
+219283	|	Thalassoma hardwicke	|		|	scientific name	|
+219410	|	Labrus lunaris Linnaeus, 1758	|		|	authority	|
+219410	|	Labrus lunaris	|		|	synonym	|
+219410	|	Thalassoma lunare	|		|	scientific name	|
+219412	|	Scarus quinquevittatus Lay & Bennett, 1839	|		|	authority	|
+219412	|	Scarus quinquevittatus	|		|	synonym	|
+219412	|	Thalassoma quinquevittatum	|		|	scientific name	|
+219413	|	Scarus purpureus Forsskal, 1775	|		|	authority	|
+219413	|	Scarus purpureus	|		|	synonym	|
+219413	|	Thalassoma purpureum	|		|	scientific name	|
+225755	|	Amphacanthus argenteus Quoy & Gaimard, 1825	|		|	authority	|
+225755	|	Amphacanthus argenteus	|		|	synonym	|
+225755	|	Siganus argenteus (Quoy & Gaimard, 1825)	|		|	authority	|
+225755	|	Siganus argenteus	|		|	scientific name	|
+225755	|	Siganus rostratus	|		|	synonym	|
+225755	|	streamlined spinefoot	|		|	genbank common name	|
+232193	|	Lutjanus russellii (Bleeker, 1849)	|		|	authority	|
+232193	|	Lutjanus russellii	|		|	scientific name	|
+232193	|	Lutjanus russelli	|		|	synonym	|
+232193	|	Mesoprion russellii Bleeker, 1849	|		|	authority	|
+232193	|	Mesoprion russellii	|		|	synonym	|
+232193	|	Russell's snapper	|		|	genbank common name	|
+238050	|	Acanthurus blochii	|		|	scientific name	|
+238050	|	Acanthurus blochii Valenciennes, 1835	|		|	authority	|
+238050	|	ringtail surgeonfish	|		|	genbank common name	|
+238051	|	Acanthurus dussumieri	|		|	scientific name	|
+238051	|	Acanthurus dussumieri Valenciennes, 1835	|		|	authority	|
+238051	|	eyestripe surgeonfish	|		|	genbank common name	|
+238052	|	Acanthurus nubilus (Fowler & Bean, 1929)	|		|	authority	|
+238052	|	Acanthurus nubilus	|		|	scientific name	|
+238052	|	bluelined surgeon	|		|	genbank common name	|
+238052	|	Hepatus nubilus Fowler & Bean, 1929	|		|	authority	|
+238052	|	Hepatus nubilus	|		|	synonym	|
+238052	|	USNM:89980	|	USNM:89980 <holotype>	|	type material	|
+238053	|	Acanthurus olivaceus Bloch & Schneider, 1801	|		|	authority	|
+238053	|	Acanthurus olivaceus	|		|	scientific name	|
+238053	|	orangespot surgeonfish	|		|	genbank common name	|
+239032	|	Julis ascensionis Quoy & Gaimard, 1834	|		|	authority	|
+239032	|	Julis ascensionis	|		|	synonym	|
+239032	|	Thalassoma ascensionis	|		|	scientific name	|
+239033	|	Julis newtoni Osorio, 1891	|		|	authority	|
+239033	|	Julis newtoni	|		|	synonym	|
+239033	|	Thalassoma newtoni	|		|	scientific name	|
+239034	|	BMNH:1888.1.19.132-136	|	BMNH:1888.1.19.132-136 <syntype>	|	type material	|
+239034	|	Julis noronhana Boulenger, 1890	|		|	authority	|
+239034	|	Julis noronhana	|		|	synonym	|
+239034	|	Thalassoma noronhanum	|		|	scientific name	|
+239036	|	Julis sanctaehelenae	|		|	synonym	|
+239036	|	Julis sanctaehelenae Valenciennes, 1839	|		|	authority	|
+239036	|	Thalassoma sanctaehelenae	|		|	scientific name	|
+239037	|	Gomphosus caeruleus Lacepede, 1801	|		|	authority	|
+239037	|	Gomphosus caeruleus	|		|	scientific name	|
+239039	|	blunt-headed wrasse	|		|	genbank common name	|
+239039	|	Julis amblycephalus Bleeker, 1856	|		|	authority	|
+239039	|	Julis amblycephalus	|		|	synonym	|
+239039	|	Thalassoma amblycephalum (Bleeker, 1856)	|		|	authority	|
+239039	|	Thalassoma amblycephalum	|		|	scientific name	|
+239040	|	Julis ballieui	|		|	synonym	|
+239040	|	Julis ballieui Vaillant & Sauvage, 1875	|		|	authority	|
+239040	|	Thalassoma ballieui	|		|	scientific name	|
+239042	|	Julis cupido	|		|	synonym	|
+239042	|	Julis cupido Temminck & Schlegel, 1845	|		|	authority	|
+239042	|	RMNH:2217a	|	RMNH:2217a <lectotype>	|	type material	|
+239042	|	RMNH:2217b-c	|	RMNH:2217b-c <paralectotype>	|	type material	|
+239042	|	RMNH:D1386	|	RMNH:D1386 <paralectotype>	|	type material	|
+239042	|	Thalassoma cupido	|		|	scientific name	|
+239043	|	Julis duperrey Quoy & Gaimard, 1824	|		|	authority	|
+239043	|	Julis duperrey	|		|	synonym	|
+239043	|	Thalassoma duperrey	|		|	scientific name	|
+239044	|	Julis genivittatus	|		|	synonym	|
+239044	|	Julis genivittatus Valenciennes, 1839	|		|	authority	|
+239044	|	Thalassoma genivittatum	|		|	scientific name	|
+239045	|	Labrus hebraicus Lacepede, 1801	|		|	authority	|
+239045	|	Labrus hebraicus	|		|	synonym	|
+239045	|	Thalassoma hebraicum	|		|	scientific name	|
+239046	|	Julis jansenii Bleeker, 1856	|		|	authority	|
+239046	|	Julis jansenii	|		|	synonym	|
+239046	|	Thalassoma jansenii	|		|	scientific name	|
+239047	|	Thalassoma loxum Randall & Mee, 1994	|		|	authority	|
+239047	|	Thalassoma loxum	|		|	scientific name	|
+239048	|	BMNH:1862.5.21.10	|	BMNH:1862.5.21.10 <syntype>	|	type material	|
+239048	|	Julis lucasanus Gill, 1862	|		|	authority	|
+239048	|	Julis lucasanus	|		|	synonym	|
+239048	|	MCZ:35989	|	MCZ:35989 <syntype>	|	type material	|
+239048	|	MCZ:37271	|	MCZ:37271 <syntype>	|	type material	|
+239048	|	Thalassoma lucasanum	|		|	scientific name	|
+239048	|	USNM:3676-3677	|	USNM:3676-3677 <syntype>	|	type material	|
+239048	|	USNM:4396	|	USNM:4396 <syntype>	|	type material	|
+239049	|	Julis lutescens Lay & Bennett, 1839	|		|	authority	|
+239049	|	Julis lutescens	|		|	synonym	|
+239049	|	Thalassoma lutescens	|		|	scientific name	|
+239056	|	Thalassoma robertsoni Allen, 1995	|		|	authority	|
+239056	|	Thalassoma robertsoni	|		|	scientific name	|
+239057	|	Julis rueppellii Klunzinger, 1871	|		|	authority	|
+239057	|	Julis rueppellii	|		|	synonym	|
+239057	|	Thalassoma rueppellii	|		|	scientific name	|
+239059	|	Labrus trilobatus Lacepede, 1801	|		|	authority	|
+239059	|	Labrus trilobatus	|		|	synonym	|
+239059	|	Thalassoma trilobatum	|		|	scientific name	|
+239060	|	Thalassoma virens Gilbert, 1890	|		|	authority	|
+239060	|	Thalassoma virens	|		|	scientific name	|
+239370	|	Thalassoma grammaticum Gilbert, 1890	|		|	authority	|
+239370	|	Thalassoma grammaticum	|		|	scientific name	|
+241294	|	Halichoeres margaritaceus	|		|	scientific name	|
+241294	|	Halichoeres margaritaceus (Valenciennes, 1839)	|		|	authority	|
+241294	|	Julis margaritaceus	|		|	synonym	|
+241294	|	Julis margaritaceus Valenciennes, 1839	|		|	authority	|
+241294	|	pink-belly wrasse	|		|	genbank common name	|
+241344	|	Scarus dimidiatus Bleeker, 1859	|		|	authority	|
+241344	|	Scarus dimidiatus	|		|	scientific name	|
+241344	|	yellowbarred parrotfish	|		|	genbank common name	|
+242802	|	Forsten's parrotfish	|		|	genbank common name	|
+242802	|	Pseudoscarus forsteni Bleeker, 1861	|		|	authority	|
+242802	|	Pseudoscarus forsteni	|		|	synonym	|
+242802	|	Scarus forsteni (Bleeker, 1861)	|		|	authority	|
+242802	|	Scarus forsteni	|		|	scientific name	|
+242806	|	blue-barred parrotfish	|		|	genbank common name	|
+242806	|	Scarus ghobban Forsskal, 1775	|		|	authority	|
+242806	|	Scarus ghobban	|		|	scientific name	|
+242807	|	dusky parrotfish	|		|	genbank common name	|
+242807	|	Scarus niger Forsskal, 1775	|		|	authority	|
+242807	|	Scarus niger	|		|	scientific name	|
+242808	|	dark capped parrotfish	|		|	genbank common name	|
+242808	|	Scarus oviceps	|		|	scientific name	|
+242808	|	Scarus oviceps Valenciennes, 1840	|		|	authority	|
+247620	|	chameleon parrotfish	|		|	genbank common name	|
+247620	|	Scarus chameleon Choat & Randall, 1986	|		|	authority	|
+247620	|	Scarus chameleon	|		|	scientific name	|
+247621	|	festive parrotfish	|		|	genbank common name	|
+247621	|	Scarus festivus	|		|	scientific name	|
+247621	|	Scarus festivus Valenciennes, 1840	|		|	authority	|
+247622	|	globehead parrotfish	|		|	genbank common name	|
+247622	|	Scarus globiceps	|		|	scientific name	|
+247622	|	Scarus globiceps Valenciennes, 1840	|		|	authority	|
+247623	|	knobsnout parrotfish	|		|	genbank common name	|
+247623	|	Scarus ovifrons	|		|	scientific name	|
+247623	|	Scarus ovifrons Temminck & Schlegel, 1846	|		|	authority	|
+247624	|	Scarus prasiognathos	|		|	scientific name	|
+247624	|	Scarus prasiognathos Valenciennes, 1840	|		|	authority	|
+247624	|	Singapore parrotfish	|		|	genbank common name	|
+247625	|	common parrotfish	|		|	genbank common name	|
+247625	|	Scarus psittacus Forsskal, 1775	|		|	authority	|
+247625	|	Scarus psittacus	|		|	scientific name	|
+247626	|	Quoy's parrotfish	|		|	genbank common name	|
+247626	|	Scarus quoyi	|		|	scientific name	|
+247626	|	Scarus quoyi Valenciennes, 1840	|		|	authority	|
+247627	|	rivulated parrotfish	|		|	genbank common name	|
+247627	|	Scarus rivulatus	|		|	scientific name	|
+247627	|	Scarus rivulatus Valenciennes, 1840	|		|	authority	|
+247628	|	ember parrotfish	|		|	genbank common name	|
+247628	|	Scarus rubroviolaceus Bleeker, 1847	|		|	authority	|
+247628	|	Scarus rubroviolaceus	|		|	scientific name	|
+247629	|	Pseudoscarus schlegeli Bleeker, 1861	|		|	authority	|
+247629	|	Pseudoscarus schlegeli	|		|	synonym	|
+247629	|	Scarus schlegeli (Bleeker, 1861)	|		|	authority	|
+247629	|	Scarus schlegeli	|		|	scientific name	|
+247629	|	yellowband parrotfish	|		|	genbank common name	|
+257886	|	Pseudopentaceros	|		|	scientific name	|
+260524	|	blacktail snapper	|		|	genbank common name	|
+260524	|	BMNH:1979.6.13.6	|	BMNH:1979.6.13.6 <holotype>	|	type material	|
+260524	|	Holocentrus fulvus Forster, 1801	|		|	authority	|
+260524	|	Holocentrus fulvus	|		|	synonym	|
+260524	|	Lutjanus fulvus (Forster, 1801)	|		|	authority	|
+260524	|	Lutjanus fulvus	|		|	scientific name	|
+260524	|	Lutjanus vaigiensis	|		|	synonym	|
+260525	|	dory snapper	|		|	genbank common name	|
+260525	|	Lutjanus fulviflamma (Fabricius, 1775)	|		|	authority	|
+260525	|	Lutjanus fulviflamma	|		|	scientific name	|
+260525	|	Lutjanus fulviflammus	|		|	synonym	|
+260525	|	Sciaena fulviflamma Forsskal, 1775	|		|	authority	|
+260525	|	Sciaena fulviflamma	|		|	synonym	|
+270577	|	Pseudanthias	|		|	scientific name	|
+274794	|	Epinephelinae	|		|	scientific name	|
+290247	|	Lutjanus peru (Nichols & Murphy, 1922)	|		|	authority	|
+290247	|	Lutjanus peru	|		|	scientific name	|
+290247	|	Neomaenis peru Nichols & Murphy, 1922	|		|	authority	|
+290247	|	Neomaenis peru	|		|	synonym	|
+290247	|	Pacific red snapper	|		|	genbank common name	|
+306585	|	bluelined hind	|		|	common name	|
+306585	|	Cephalopholis formosa	|		|	scientific name	|
+306585	|	Cephalopholis formosa (Shaw, 1812)	|		|	authority	|
+306585	|	Sciaena formosa Shaw, 1812	|		|	authority	|
+306585	|	Sciaena formosa	|		|	synonym	|
+319431	|	Lutjanus argentiventris (Peters, 1869)	|		|	authority	|
+319431	|	Lutjanus argentiventris	|		|	scientific name	|
+319431	|	Mesoprion argentiventris Peters, 1869	|		|	authority	|
+319431	|	Mesoprion argentiventris	|		|	synonym	|
+319431	|	yellow snapper	|		|	genbank common name	|
+320609	|	Lutjanus novemfasciatus Gill, 1862	|		|	authority	|
+320609	|	Lutjanus novemfasciatus	|		|	scientific name	|
+320609	|	Pacific cubera snapper	|		|	genbank common name	|
+327771	|	Cephalopholis leopardus (Lacepede, 1801)	|		|	authority	|
+327771	|	Cephalopholis leopardus	|		|	scientific name	|
+327771	|	Labrus leopardus Lacepede, 1801	|		|	authority	|
+327771	|	Labrus leopardus	|		|	synonym	|
+327771	|	leopard hind	|		|	genbank common name	|
+327798	|	Paranthias furcifer	|		|	scientific name	|
+327798	|	Serranus furcifer	|		|	synonym	|
+327798	|	Serranus furcifer Valenciennes, 1828	|		|	authority	|
+327801	|	Cephalopholis taeniops	|		|	scientific name	|
+327801	|	Cephalopholis taeniops (Valenciennes, 1828)	|		|	authority	|
+327801	|	Serranus taeniops	|		|	synonym	|
+327801	|	Serranus taeniops Valenciennes, 1828	|		|	authority	|
+327811	|	Cephalopholis nigripinna	|		|	synonym	|
+327811	|	Cephalopholis nigripinnis	|		|	scientific name	|
+327811	|	Cephalopolis nigripinnis	|		|	synonym	|
+327811	|	Cephalopolis nigripinnis (Valenciennes, 1828)	|		|	authority	|
+327811	|	Serranus nigripinnis	|		|	synonym	|
+327811	|	Serranus nigripinnis Valenciennes, 1828	|		|	authority	|
+334883	|	Zanclistius	|		|	scientific name	|
+334884	|	AMS:I.1894	|	AMS:I.1894 <holotype>	|	type material	|
+334884	|	Histiopterus elevatus Ramsay & Ogilby, 1888	|		|	authority	|
+334884	|	Histiopterus elevatus	|		|	synonym	|
+334884	|	Zanclistius elevatus	|		|	scientific name	|
+334885	|	Nelson's boarfish	|		|	common name	|
+334885	|	pelagic armorhead	|		|	genbank common name	|
+334885	|	pelagic armourhead	|		|	common name	|
+334885	|	Pentaceros richardsoni Smith, 1844	|		|	authority	|
+334885	|	Pentaceros richardsoni	|		|	synonym	|
+334885	|	Pseudopentaceros richardsoni	|		|	scientific name	|
+334885	|	Pseudopentaceros richardsoni (Smith, 1844)	|		|	authority	|
+334885	|	Richardson.s boarfish	|		|	common name	|
+334885	|	southern boarfish	|		|	common name	|
+334914	|	Cephalopholis miniata (Fabricius, 1775)	|		|	authority	|
+334914	|	Cephalopholis miniata	|		|	scientific name	|
+334914	|	Cephalopholis miniatus	|		|	synonym	|
+334914	|	coral hind	|		|	genbank common name	|
+334914	|	Perca miniata Forsskal, 1775	|		|	authority	|
+334914	|	Perca miniata	|		|	synonym	|
+342439	|	Acanthurus marginatus	|		|	synonym	|
+342439	|	Acanthurus marginatus Valenciennes, 1835	|		|	authority	|
+342439	|	Ctenochaetus marginatus	|		|	scientific name	|
+342439	|	Ctenochaetus marginatus (Valenciennes, 1835)	|		|	authority	|
+342439	|	striped-fin surgeonfish	|		|	genbank common name	|
+379402	|	brownstripe red snapper	|		|	genbank common name	|
+379402	|	Lutjanus vitta (Quoy & Gaimard, 1824)	|		|	authority	|
+379402	|	Lutjanus vitta	|		|	scientific name	|
+379402	|	Serranus vitta Quoy & Gaimard, 1824	|		|	authority	|
+379402	|	Serranus vitta	|		|	synonym	|
+390296	|	Acanthurus japonicus (Schmidt, 1931)	|		|	authority	|
+390296	|	Acanthurus japonicus	|		|	scientific name	|
+390296	|	Hepatus aliala japonicus Schmidt, 1931	|		|	authority	|
+390296	|	Hepatus aliala japonicus	|		|	synonym	|
+390296	|	Japan surgeonfish	|		|	genbank common name	|
+390296	|	ZIN:23351	|	ZIN:23351 <holotype>	|	type material	|
+390315	|	Ctenochaetus hawaiiensis Randall, 1955	|		|	authority	|
+390315	|	Ctenochaetus hawaiiensis	|		|	scientific name	|
+390329	|	Erythrocles	|		|	scientific name	|
+396783	|	Diacopus adetii Castelnau, 1873	|		|	authority	|
+396783	|	Diacopus adetii	|		|	synonym	|
+396783	|	Lutjanus adetii (Castelnau, 1873)	|		|	authority	|
+396783	|	Lutjanus adetii	|		|	scientific name	|
+396783	|	yellow-banded snapper	|		|	genbank common name	|
+396784	|	Lutjanus bohar (Fabricius, 1775)	|		|	authority	|
+396784	|	Lutjanus bohar	|		|	scientific name	|
+396784	|	Sciaena bohar Fabricius, 1775	|		|	authority	|
+396784	|	Sciaena bohar	|		|	synonym	|
+396784	|	two-spotted red snapper	|		|	genbank common name	|
+396785	|	Lutjanus carponotatus (Richardson, 1842)	|		|	authority	|
+396785	|	Lutjanus carponotatus	|		|	scientific name	|
+396785	|	Mesoprion carponotatus Richardson, 1842	|		|	authority	|
+396785	|	Mesoprion carponotatus	|		|	synonym	|
+396785	|	Spanish flag snapper	|		|	genbank common name	|
+396786	|	humpback red snapper	|		|	genbank common name	|
+396786	|	Lutjanus gibbus (Fabricius, 1775)	|		|	authority	|
+396786	|	Lutjanus gibbus	|		|	scientific name	|
+396786	|	Sciaena gibba Forsskal, 1775	|		|	authority	|
+396786	|	Sciaena gibba	|		|	synonym	|
+396787	|	common bluestripe snapper	|		|	genbank common name	|
+396787	|	Lutjanus kasmira (Fabricius, 1775)	|		|	authority	|
+396787	|	Lutjanus kasmira	|		|	scientific name	|
+396787	|	Sciaena kasmira Fabricius, 1775	|		|	authority	|
+396787	|	Sciaena kasmira	|		|	synonym	|
+396788	|	Lutjanus monostigma (Cuvier, 1828)	|		|	authority	|
+396788	|	Lutjanus monostigma	|		|	scientific name	|
+396788	|	Lutjanus monostigmus	|		|	synonym	|
+396788	|	Mesoprion monostigma Cuvier, 1828	|		|	authority	|
+396788	|	Mesoprion monostigma	|		|	synonym	|
+396788	|	onespot snapper	|		|	genbank common name	|
+396789	|	five-lined snapper	|		|	genbank common name	|
+396789	|	Holocentrus quinquelineatus Bloch, 1790	|		|	authority	|
+396789	|	Holocentrus quinquelineatus	|		|	synonym	|
+396789	|	Lutjanus quinquelineatus (Bloch, 1790)	|		|	authority	|
+396789	|	Lutjanus quinquelineatus	|		|	scientific name	|
+396790	|	Macolor	|		|	scientific name	|
+396791	|	black and white snapper	|		|	genbank common name	|
+396791	|	black beauty	|		|	common name	|
+396791	|	black snapper	|	black snapper <Macolor niger>	|	common name	|
+396791	|	Macolor niger (Fabricius, 1775)	|		|	authority	|
+396791	|	Macolor niger	|		|	scientific name	|
+396791	|	Sciaena nigra Forsskal, 1775	|		|	authority	|
+396791	|	Sciaena nigra	|		|	synonym	|
+396793	|	Marr's fusilier	|		|	genbank common name	|
+396793	|	Pterocaesio marri Schultz, 1953	|		|	authority	|
+396793	|	Pterocaesio marri	|		|	scientific name	|
+396793	|	USNM:FISH 140248	|	USNM:FISH 140248 <holotype>	|	type material	|
+396793	|	USNM:FISH-140248	|	USNM:FISH-140248 <holotype>	|	type material	|
+396793	|	USNM:FISH:140248	|	USNM:FISH:140248 <holotype>	|	type material	|
+396793	|	USNM:FISH140248	|	USNM:FISH140248 <holotype>	|	type material	|
+396794	|	banana fusilier	|		|	genbank common name	|
+396794	|	Caesio pisang Bleeker, 1853	|		|	authority	|
+396794	|	Caesio pisang	|		|	synonym	|
+396794	|	Pterocaesio pisang (Bleeker, 1853)	|		|	authority	|
+396794	|	Pterocaesio pisang	|		|	scientific name	|
+396794	|	RMNH:29576	|	RMNH:29576 <syntype>	|	type material	|
+396794	|	RMNH:5710	|	RMNH:5710 <syntype>	|	type material	|
+425378	|	Lutjanus ophuysenii (Bleeker, 1860)	|		|	authority	|
+425378	|	Lutjanus ophuysenii	|		|	scientific name	|
+425378	|	Mesoprion ophuysenii Bleeker, 1860	|		|	authority	|
+425378	|	Mesoprion ophuysenii	|		|	synonym	|
+425378	|	spotstripe snapper	|		|	genbank common name	|
+443703	|	Lutjanus lemniscatus	|		|	scientific name	|
+443703	|	Lutjanus lemniscatus (Valenciennes, 1828)	|		|	authority	|
+443703	|	Serranus lemniscatus	|		|	synonym	|
+443703	|	Serranus lemniscatus Valenciennes, 1828	|		|	authority	|
+443703	|	yellowstreaked snapper	|		|	genbank common name	|
+455479	|	Lutjanus guttatus	|		|	scientific name	|
+455479	|	Lutjanus guttatus (Steindachner, 1869)	|		|	authority	|
+455479	|	Mesoprion guttatus Steindachner, 1869	|		|	authority	|
+455479	|	Mesoprion guttatus	|		|	synonym	|
+455479	|	spotted rose snapper	|		|	genbank common name	|
+459747	|	Acanthurus leucosternon Bennett, 1833	|		|	authority	|
+459747	|	Acanthurus leucosternon	|		|	scientific name	|
+459747	|	powderblue surgeonfish	|		|	common name	|
+483362	|	Acanthurus lineatus (Linnaeus, 1758)	|		|	authority	|
+483362	|	Acanthurus lineatus	|		|	scientific name	|
+483362	|	Chaetodon lineatus Linnaeus, 1758	|		|	authority	|
+483362	|	Chaetodon lineatus	|		|	synonym	|
+483362	|	Ctenodon lineatus	|		|	synonym	|
+483362	|	Harpurus lineatus	|		|	synonym	|
+483362	|	Hepatus lineatus	|		|	synonym	|
+483362	|	lined surgeonfish	|		|	genbank common name	|
+483362	|	Rhombotides lineatus	|		|	synonym	|
+483362	|	Teuthis lineatus	|		|	synonym	|
+490331	|	Gymnocaesioninae	|		|	scientific name	|
+490875	|	Emmelichthys schlegelii Richardson, 1846	|		|	authority	|
+490875	|	Emmelichthys schlegelii	|		|	synonym	|
+490875	|	Erythrichthys schlegelii Gunther, 1859	|		|	authority	|
+490875	|	Erythrichthys schlegelii	|		|	synonym	|
+490875	|	Erythrocles schlegelii (Richardson, 1846)	|		|	authority	|
+490875	|	Erythrocles schlegelii	|		|	scientific name	|
+490875	|	Japanese rubyfish	|		|	genbank common name	|
+497154	|	Caesio diagramma	|		|	synonym	|
+497154	|	Caesio digramma Bleeker, 1864	|		|	authority	|
+497154	|	Caesio digramma	|		|	synonym	|
+497154	|	double-lined fusilier	|		|	genbank common name	|
+497154	|	Pterocaesio digramma (Bleeker, 1864)	|		|	authority	|
+497154	|	Pterocaesio digramma	|		|	scientific name	|
+497154	|	RMNH:5715	|	RMNH:5715 <holotype>	|	type material	|
+520515	|	Bengal snapper	|		|	genbank common name	|
+520515	|	Holocentrus bengalensis Bloch, 1790	|		|	authority	|
+520515	|	Holocentrus bengalensis	|		|	synonym	|
+520515	|	Lutjanus bengalensis (Bloch, 1790)	|		|	authority	|
+520515	|	Lutjanus bengalensis	|		|	scientific name	|
+544410	|	Bleeker's parrotfish	|		|	genbank common name	|
+544410	|	Callyodon bleekeri de Beaufort, 1940	|		|	authority	|
+544410	|	Callyodon bleekeri	|		|	synonym	|
+544410	|	Chlorurus bleekeri (de Beaufort, 1940)	|		|	authority	|
+544410	|	Chlorurus bleekeri	|		|	scientific name	|
+544411	|	Bower's parrotfish	|		|	genbank common name	|
+544411	|	Callyodon bowersi Snyder, 1909	|		|	authority	|
+544411	|	Callyodon bowersi	|		|	synonym	|
+544411	|	Chlorurus bowersi	|		|	scientific name	|
+544411	|	Chlorurus bowersi (Snyder, 1909)	|		|	authority	|
+544411	|	orange-blotch parrotfish	|		|	common name	|
+544411	|	USNM:FISH 62950	|	USNM:FISH 62950 <holotype>	|	type material	|
+544411	|	USNM:FISH-62950	|	USNM:FISH-62950 <holotype>	|	type material	|
+544411	|	USNM:FISH:62950	|	USNM:FISH:62950 <holotype>	|	type material	|
+544411	|	USNM:FISH62950	|	USNM:FISH62950 <holotype>	|	type material	|
+544412	|	Chlorurus capistratoides (Bleeker, 1847)	|		|	authority	|
+544412	|	Chlorurus capistratoides	|		|	scientific name	|
+544412	|	pink-margined parrotfish	|		|	genbank common name	|
+544412	|	Scarus capistratoides Bleeker, 1847	|		|	authority	|
+544412	|	Scarus capistratoides	|		|	synonym	|
+544413	|	Chlorurus japanensis (Bloch, 1789)	|		|	authority	|
+544413	|	Chlorurus japanensis	|		|	scientific name	|
+544413	|	Japanese parrotfish	|	Japanese parrotfish <Chlorurus japanensis>	|	common name	|
+544413	|	pale bullethead parrotfish	|		|	common name	|
+544413	|	palecheek parrotfish	|		|	genbank common name	|
+544413	|	Scarus japanensis Bloch, 1789	|		|	authority	|
+544413	|	Scarus japanensis	|		|	synonym	|
+544414	|	Chlorurus microrhinos (Bleeker, 1854)	|		|	authority	|
+544414	|	Chlorurus microrhinos	|		|	scientific name	|
+544414	|	Scarus microrhinos Bleeker, 1854	|		|	authority	|
+544414	|	Scarus microrhinos	|		|	synonym	|
+544414	|	steephead parrotfish	|	steephead parrotfish <Chlorurus microrhinos>	|	genbank common name	|
+544415	|	filament-finned parrotfish	|		|	genbank common name	|
+544415	|	highfinned parrotfish	|		|	common name	|
+544415	|	Pseudoscarus altipinnis Steindachner, 1879	|		|	authority	|
+544415	|	Pseudoscarus altipinnis	|		|	synonym	|
+544415	|	Scarus altipinnis	|		|	scientific name	|
+544415	|	Scarus altipinnis (Steindachner, 1879)	|		|	authority	|
+544416	|	Scarus hypselopterus Bleeker, 1853	|		|	authority	|
+544416	|	Scarus hypselopterus	|		|	scientific name	|
+544416	|	yellow-tail parrotfish	|		|	genbank common name	|
+544417	|	greensnout parrotfish	|		|	genbank common name	|
+544417	|	Pseudoscarus spinus Kner, 1868	|		|	authority	|
+544417	|	Pseudoscarus spinus	|		|	synonym	|
+544417	|	Scarus spinus (Kner, 1868)	|		|	authority	|
+544417	|	Scarus spinus	|		|	scientific name	|
+544418	|	princess parrotfish	|		|	genbank common name	|
+544418	|	Scarus taeniopterus Lesson, 1829	|		|	authority	|
+544418	|	Scarus taeniopterus	|		|	scientific name	|
+544419	|	Scarus tricolor Bleeker, 1847	|		|	authority	|
+544419	|	Scarus tricolor	|		|	scientific name	|
+544419	|	three-color parrotfish	|		|	genbank common name	|
+544419	|	tricolor parrotfish	|		|	common name	|
+546538	|	Apsilinae	|		|	scientific name	|
+586769	|	Acanthurus tennentii Guenther, 1861	|		|	authority	|
+586769	|	Acanthurus tennentii	|		|	scientific name	|
+586769	|	doubleband surgeonfish	|		|	genbank common name	|
+586812	|	Acanthurus strigosus Bennett, 1828	|		|	authority	|
+586812	|	Acanthurus strigosus	|		|	synonym	|
+586812	|	Ctenochaetus strigosus (Bennett, 1828)	|		|	authority	|
+586812	|	Ctenochaetus strigosus	|		|	scientific name	|
+586812	|	spotted surgeonfish	|		|	genbank common name	|
+586855	|	amethyst anthias	|		|	genbank common name	|
+586855	|	Entonanthias pascalus Jordan & Tanaka, 1927	|		|	authority	|
+586855	|	Entonanthias pascalus	|		|	synonym	|
+586855	|	Mirolabrichthys pascalus	|		|	synonym	|
+586855	|	Mirolabrichthys tuka pascalus	|		|	synonym	|
+586855	|	Pseudanthias pascalus (Jordan & Tanaka, 1927)	|		|	authority	|
+586855	|	Pseudanthias pascalus	|		|	scientific name	|
+626241	|	Chlorurus gibbus (Ruppell, 1829)	|		|	authority	|
+626241	|	Chlorurus gibbus	|		|	scientific name	|
+626241	|	heavybeak parrotfish	|	heavybeak parrotfish <Chlorurus gibbus>	|	genbank common name	|
+626241	|	Scarus gibbus Ruppell, 1829	|		|	authority	|
+626241	|	Scarus gibbus	|		|	synonym	|
+661170	|	Anthias tuka	|		|	synonym	|
+661170	|	Mirolabrichthys tuka Herre & Montalban, 1927	|		|	authority	|
+661170	|	Mirolabrichthys tuka	|		|	synonym	|
+661170	|	Mirolabrichthys tuka tuka Herre & Montalban, 1927	|		|	authority	|
+661170	|	Mirolabrichthys tuka tuka	|		|	synonym	|
+661170	|	Pseudanthias tuka (Herre & Montalban, 1927)	|		|	authority	|
+661170	|	Pseudanthias tuka	|		|	scientific name	|
+661170	|	yellowstriped fairy basslet	|		|	genbank common name	|
+697225	|	colorado snapper	|		|	genbank common name	|
+697225	|	Lutjanus colorado Jordan & Gilbert, 1882	|		|	authority	|
+697225	|	Lutjanus colorado	|		|	scientific name	|
+697225	|	pargo colorado	|		|	common name	|
+697225	|	pargo rojo	|		|	common name	|
+753643	|	Acanthurus achilles	|		|	scientific name	|
+753643	|	Acanthurus achilles Shaw, 1803	|		|	authority	|
+753643	|	Achilles tang	|		|	genbank common name	|
+753643	|	Hepatus achilles	|		|	synonym	|
+753643	|	redspot surgeonfish	|		|	common name	|
+753643	|	redtail surgeonfish	|		|	common name	|
+753643	|	Teuthis achilles	|		|	synonym	|
+753644	|	Acanthurus gahm nigricauda	|		|	synonym	|
+753644	|	Acanthurus nigricauda Duncker & Mohr, 1929	|		|	authority	|
+753644	|	Acanthurus nigricauda	|		|	scientific name	|
+753644	|	black-barred surgeonfish	|	black-barred surgeonfish <Acanthurus nigricauda>	|	common name	|
+753644	|	blackstreak surgeonfish	|		|	common name	|
+753644	|	epaulette surgeon	|		|	common name	|
+753644	|	epaulette surgeonfish	|		|	genbank common name	|
+753644	|	shoulderbar surgeonfish	|		|	common name	|
+909114	|	Cephalopholis hemistiktos (Rueppell, 1830)	|		|	authority	|
+909114	|	Cephalopholis hemistiktos	|		|	scientific name	|
+909114	|	halfspotted hind	|		|	common name	|
+909114	|	Serranus hemistiktos Rueppell, 1830	|		|	authority	|
+909114	|	Serranus hemistiktos Ruppell, 1830	|		|	authority	|
+909114	|	Serranus hemistiktos	|		|	synonym	|
+909114	|	yellofin hind	|		|	genbank common name	|
+909121	|	blackspot snapper	|		|	genbank common name	|
+909121	|	Lutianus ehrenbergii	|		|	synonym	|
+909121	|	Lutjanus ehrenbergii (Peters, 1869)	|		|	authority	|
+909121	|	Lutjanus ehrenbergii	|		|	scientific name	|
+909121	|	Mesoprion ehrenbergii Peters, 1869	|		|	authority	|
+909121	|	Mesoprion ehrenbergii	|		|	synonym	|
+990634	|	Caesio chrysozona Cuvier, 1830	|		|	authority	|
+990634	|	Caesio chrysozona	|		|	synonym	|
+990634	|	goldband fusilier	|		|	genbank common name	|
+990634	|	Pterocaesio chrysozona (Cuvier, 1830)	|		|	authority	|
+990634	|	Pterocaesio chrysozona	|		|	scientific name	|
+990996	|	Paracaesio	|		|	scientific name	|
+990997	|	dirty ordure snapper	|		|	genbank common name	|
+990997	|	Paracaesio sordida Abe & Shinohara, 1962	|		|	authority	|
+990997	|	Paracaesio sordida	|		|	scientific name	|
+1087062	|	Indian snapper	|		|	genbank common name	|
+1087062	|	Lutjanus madras	|		|	scientific name	|
+1087062	|	Lutjanus madras (Valenciennes, 1831)	|		|	authority	|
+1087062	|	Mesoprion madras	|		|	synonym	|
+1087062	|	Mesoprion madras Valenciennes, 1831	|		|	authority	|
+1099943	|	Macolor macularis Fowler, 1931	|		|	authority	|
+1099943	|	Macolor macularis	|		|	scientific name	|
+1099943	|	midnight snapper	|		|	genbank common name	|
+1099943	|	USNM:FISH 89996	|	USNM:FISH 89996 <holotype>	|	type material	|
+1099943	|	USNM:FISH-89996	|	USNM:FISH-89996 <holotype>	|	type material	|
+1099943	|	USNM:FISH:89996	|	USNM:FISH:89996 <holotype>	|	type material	|
+1099943	|	USNM:FISH89996	|	USNM:FISH89996 <holotype>	|	type material	|
+1146960	|	Cephalopholis spiloparaea	|		|	scientific name	|
+1146960	|	Cephalopholis spiloparaea (Valenciennes, 1828)	|		|	authority	|
+1146960	|	orange-red pigmy grouper	|		|	common name	|
+1146960	|	orange rock cod	|		|	common name	|
+1146960	|	Serranus spiloparaeus	|		|	synonym	|
+1146960	|	Serranus spiloparaeus Valenciennes, 1828	|		|	authority	|
+1146960	|	strawberry cod	|		|	common name	|
+1146960	|	strawberry grouper	|		|	common name	|
+1146960	|	strawberry hind	|		|	genbank common name	|
+1146960	|	strawberry rockcod	|		|	common name	|
+1146985	|	fivesaddle parrotfish	|		|	genbank common name	|
+1146985	|	Scarus scaber	|		|	scientific name	|
+1146985	|	Scarus scaber Valenciennes, 1840	|		|	authority	|
+1156098	|	Chlorurus frontalis	|		|	scientific name	|
+1156098	|	Chlorurus frontalis (Valenciennes, 1840)	|		|	authority	|
+1156098	|	Pacific slopehead parrotfish	|		|	genbank common name	|
+1156098	|	Scarus frontalis	|		|	synonym	|
+1156098	|	Scarus frontalis Valenciennes, 1840	|		|	authority	|
+1223551	|	lunartail snapper	|		|	common name	|
+1223551	|	Lutjanus lunulatus (Park, 1797)	|		|	authority	|
+1223551	|	Lutjanus lunulatus	|		|	scientific name	|
+1223551	|	Perca lunulata Park, 1797	|		|	authority	|
+1223551	|	Perca lunulata	|		|	synonym	|
+1236048	|	bluemoon parrotfish	|		|	genbank common name	|
+1236048	|	Chlorurus atrilunula (Randall & Bruce, 1983)	|		|	authority	|
+1236048	|	Chlorurus atrilunula	|		|	scientific name	|
+1236048	|	Scarus atrilunula Randall & Bruce, 1983	|		|	authority	|
+1236048	|	Scarus atrilunula	|		|	synonym	|
+1236049	|	Chlorurus cyanescens	|		|	scientific name	|
+1236049	|	Chlorurus cyanescens (Valenciennes, 1840)	|		|	authority	|
+1236049	|	saddled parrotfish	|		|	genbank common name	|
+1236049	|	Scarus cyanescens	|		|	synonym	|
+1236049	|	Scarus cyanescens Valenciennes, 1840	|		|	authority	|
+1236050	|	captain parrotfish	|		|	genbank common name	|
+1236050	|	Chlorurus enneacanthus (Lacepede, 1802)	|		|	authority	|
+1236050	|	Chlorurus enneacanthus	|		|	scientific name	|
+1236050	|	green parrotfish	|		|	common name	|
+1236050	|	Scarus enneacanthus Lacepede, 1802	|		|	authority	|
+1236050	|	Scarus enneacanthus	|		|	synonym	|
+1236052	|	Chlorurus perspicillatus	|		|	scientific name	|
+1236052	|	Chlorurus perspicillatus (Steindachner, 1879)	|		|	authority	|
+1236052	|	Scarus perspicillatus Steindachner, 1879	|		|	authority	|
+1236052	|	Scarus perspicillatus	|		|	synonym	|
+1236052	|	spectacled parrotfish	|		|	genbank common name	|
+1236053	|	Chlorurus rhakoura Randall & Anderson, 1997	|		|	authority	|
+1236053	|	Chlorurus rhakoura	|		|	scientific name	|
+1236053	|	ragged-tail parrotfish	|		|	genbank common name	|
+1236054	|	bullethead parrotfish	|		|	genbank common name	|
+1236054	|	Chlorurus spilurus	|		|	scientific name	|
+1236054	|	Chlorurus spilurus (Valenciennes, 1840)	|		|	authority	|
+1236054	|	Scarus spilurus	|		|	synonym	|
+1236054	|	Scarus spilurus Valenciennes, 1840	|		|	authority	|
+1236055	|	Chlorurus strongylocephalus	|		|	scientific name	|
+1236055	|	heavybeak parrotfish	|	heavybeak parrotfish <Chlorurus strongylocephalus>	|	genbank common name	|
+1236055	|	Scarus strongylocephalus Bleeker, 1855	|		|	authority	|
+1236055	|	Scarus strongylocephalus	|		|	synonym	|
+1236055	|	steephead parrotfish	|	steephead parrotfish <Chlorurus strongylocephalus>	|	common name	|
+1236057	|	Arabian parrotfish	|		|	genbank common name	|
+1236057	|	Pseudoscarus arabicus Steindachner, 1902	|		|	authority	|
+1236057	|	Pseudoscarus arabicus	|		|	synonym	|
+1236057	|	Scarus arabicus	|		|	scientific name	|
+1236057	|	Scarus arabicus (Steindachner, 1902)	|		|	authority	|
+1236058	|	blue parrotfish	|		|	genbank common name	|
+1236058	|	Coryphaena coerulea Edwards, 1771	|		|	authority	|
+1236058	|	Coryphaena coerulea	|		|	synonym	|
+1236058	|	Scarus coeruleus (Edwards, 1771)	|		|	authority	|
+1236058	|	Scarus coeruleus	|		|	scientific name	|
+1236059	|	greenband parrotfish	|		|	genbank common name	|
+1236059	|	Red Sea parrotfish	|		|	common name	|
+1236059	|	Scarus collana Rueppell, 1835	|		|	authority	|
+1236059	|	Scarus collana	|		|	scientific name	|
+1236060	|	azure parrotfish	|		|	genbank common name	|
+1236060	|	Callyodon compressus Osburn & Nichols, 1916	|		|	authority	|
+1236060	|	Callyodon compressus	|		|	synonym	|
+1236060	|	Scarus compressus (Osburn & Nichols, 1916)	|		|	authority	|
+1236060	|	Scarus compressus	|		|	scientific name	|
+1236060	|	USNM:FISH 87549	|	USNM:FISH 87549 <holotype>	|	type material	|
+1236060	|	USNM:FISH-87549	|	USNM:FISH-87549 <holotype>	|	type material	|
+1236060	|	USNM:FISH:87549	|	USNM:FISH:87549 <holotype>	|	type material	|
+1236060	|	USNM:FISH87549	|	USNM:FISH87549 <holotype>	|	type material	|
+1236061	|	regal parrotfish	|		|	genbank common name	|
+1236061	|	Scarus dubius Bennett, 1828	|		|	authority	|
+1236061	|	Scarus dubius	|		|	scientific name	|
+1236062	|	greenbelly parrotfish	|		|	common name	|
+1236062	|	Pseudoscarus falcipinnis Playfair, 1868	|		|	authority	|
+1236062	|	Pseudoscarus falcipinnis	|		|	synonym	|
+1236062	|	Scarus falcipinnis (Playfair, 1868)	|		|	authority	|
+1236062	|	Scarus falcipinnis	|		|	scientific name	|
+1236062	|	sicklefin parrotfish	|		|	genbank common name	|
+1236063	|	rusty parrotfish	|		|	genbank common name	|
+1236063	|	Scarus ferrugineus Forsskal, 1775	|		|	authority	|
+1236063	|	Scarus ferrugineus	|		|	scientific name	|
+1236064	|	Pseudoscarus forskalii fuscopurpureus Klunzinger, 1871	|		|	authority	|
+1236064	|	Pseudoscarus forskalii fuscopurpureus	|		|	synonym	|
+1236064	|	Pseudoscarus forskalii var. fuscopurpureus	|		|	synonym	|
+1236064	|	Pseudoscarus fuscopurpureus	|		|	synonym	|
+1236064	|	purple-brown parrotfish	|		|	genbank common name	|
+1236064	|	Scarus fuscopurpureus (Klunzinger, 1871)	|		|	authority	|
+1236064	|	Scarus fuscopurpureus	|		|	scientific name	|
+1236065	|	Scarus aff. ghobban EP	|		|	scientific name	|
+1236065	|	Scarus ghobbanEP	|		|	synonym	|
+1236066	|	Scarus aff. ghobban GBR	|		|	scientific name	|
+1236066	|	Scarus ghobbanGBR	|		|	synonym	|
+1236067	|	Scarus aff. ghobban OM	|		|	scientific name	|
+1236067	|	Scarus ghobbanOM	|		|	synonym	|
+1236068	|	Scarus aff. ghobban SY	|		|	scientific name	|
+1236068	|	Scarus ghobbanSY	|		|	synonym	|
+1236069	|	Marquesan parrotfish	|		|	genbank common name	|
+1236069	|	Scarus koputea Randall & Choat, 1980	|		|	authority	|
+1236069	|	Scarus koputea	|		|	scientific name	|
+1236070	|	highfin parrotfish	|		|	common name	|
+1236070	|	Scarus longipinnis Randall & Choat, 1980	|		|	authority	|
+1236070	|	Scarus longipinnis	|		|	scientific name	|
+1236071	|	bumphead parrotfish	|		|	genbank common name	|
+1236071	|	Scarus perrico Jordan & Gilbert, 1882	|		|	authority	|
+1236071	|	Scarus perrico	|		|	scientific name	|
+1236071	|	USNM:FISH 28328	|	USNM:FISH 28328 <holotype>	|	type material	|
+1236071	|	USNM:FISH-28328	|	USNM:FISH-28328 <holotype>	|	type material	|
+1236071	|	USNM:FISH:28328	|	USNM:FISH:28328 <holotype>	|	type material	|
+1236071	|	USNM:FISH28328	|	USNM:FISH28328 <holotype>	|	type material	|
+1236072	|	Gulf parrotfish	|		|	genbank common name	|
+1236072	|	Scarus persicus Randall & Bruce, 1983	|		|	authority	|
+1236072	|	Scarus persicus	|		|	scientific name	|
+1236074	|	Scarus aff. rubroviolaceus EP	|		|	scientific name	|
+1236074	|	Scarus rubroviolaceusEP	|		|	equivalent name	|
+1236075	|	Scarus aff. rubroviolaceus GBR	|		|	scientific name	|
+1236075	|	Scarus rubroviolaceusGBR	|		|	synonym	|
+1236076	|	Scarus aff. rubroviolaceus OM	|		|	scientific name	|
+1236076	|	Scarus rubroviolaceusOM	|		|	synonym	|
+1236077	|	Scarus aff. rubroviolaceus SY	|		|	scientific name	|
+1236077	|	Scarus rubroviolaceusSY	|		|	synonym	|
+1236078	|	eclipse parrotfish	|		|	genbank common name	|
+1236078	|	Russell's parrotfish	|		|	common name	|
+1236078	|	Scarus russelii	|		|	scientific name	|
+1236078	|	Scarus russelii Valenciennes, 1840	|		|	authority	|
+1236079	|	greenback parrotfish	|		|	genbank common name	|
+1236079	|	queen parrotfish	|	queen parrotfish <Scarus trispinosus>	|	common name	|
+1236079	|	Scarus trispinosus	|		|	scientific name	|
+1236079	|	Scarus trispinosus Valenciennes, 1840	|		|	authority	|
+1236080	|	Callyodon viridifucatus Smith, 1956	|		|	authority	|
+1236080	|	Callyodon viridifucatus	|		|	synonym	|
+1236080	|	greenlip parrotfish	|		|	common name	|
+1236080	|	roundhead parrotfish	|		|	genbank common name	|
+1236080	|	Scarus viridifucatus	|		|	scientific name	|
+1236080	|	Scarus viridifucatus (Smith, 1956)	|		|	authority	|
+1236081	|	bluechin parrotfish	|		|	common name	|
+1236081	|	red-latticed parrotfish	|		|	common name	|
+1236081	|	red parrotfish	|		|	genbank common name	|
+1236081	|	Scarus xanthopleura Bleeker, 1853	|		|	authority	|
+1236081	|	Scarus xanthopleura	|		|	scientific name	|
+1236082	|	Scarus zelindae Moura, Figueiredo & Sazima, 2001	|		|	authority	|
+1236082	|	Scarus zelindae	|		|	scientific name	|
+1236082	|	striped parrotfish	|	striped parrotfish <Scarus zelindae>	|	genbank common name	|
+1236082	|	Zelinda's parrotfish	|		|	common name	|
+1236083	|	Dhofar parrotfish	|		|	genbank common name	|
+1236083	|	Scarus zufar Randall & Hoover, 1995	|		|	authority	|
+1236083	|	Scarus zufar	|		|	scientific name	|
+1267419	|	Diacope bitaeniata	|		|	synonym	|
+1267419	|	Diacope bitaeniata Valenciennes, 1830	|		|	authority	|
+1267419	|	Indonesian snapper	|		|	genbank common name	|
+1267419	|	Lutjanus bitaeniatus	|		|	scientific name	|
+1267419	|	Lutjanus bitaeniatus (Valenciennes, 1830)	|		|	authority	|
+1311420	|	Caesio teres	|		|	scientific name	|
+1311420	|	Caesio teres Seale, 1906	|		|	authority	|
+1311420	|	yellow and blueback fusilier	|		|	genbank common name	|
+1314976	|	Scarus obishime Randall & Earle, 1993	|		|	authority	|
+1314976	|	Scarus obishime	|		|	scientific name	|
+1314976	|	yellowtail parrotfish	|		|	genbank common name	|
+1316013	|	Acanthurus tractus Poey, 1860	|		|	authority	|
+1316013	|	Acanthurus tractus	|		|	scientific name	|
+1316013	|	fiveband surgeonfish	|		|	genbank common name	|
+1316014	|	bristletooth tomini tang	|		|	genbank common name	|
+1316014	|	Ctenochaetus tominiensis Randall, 1955	|		|	authority	|
+1316014	|	Ctenochaetus tominiensis	|		|	scientific name	|
+1316014	|	Tomini surgeonfish	|		|	common name	|
+1316014	|	USNM:FISH 136112	|	USNM:FISH 136112 <holotype>	|	type material	|
+1316014	|	USNM:FISH-136112	|	USNM:FISH-136112 <holotype>	|	type material	|
+1316014	|	USNM:FISH:136112	|	USNM:FISH:136112 <holotype>	|	type material	|
+1316014	|	USNM:FISH136112	|	USNM:FISH136112 <holotype>	|	type material	|
+1484166	|	Acanthurus gahhm (Fabricius, 1775)	|		|	authority	|
+1484166	|	Acanthurus gahhm	|		|	scientific name	|
+1484166	|	Chaetodon nigrofuscus gahhm Forsskal, 1775	|		|	authority	|
+1484166	|	Chaetodon nigrofuscus gahhm	|		|	synonym	|
+1484167	|	Acanthurus sohal (Fabricius, 1775)	|		|	authority	|
+1484167	|	Acanthurus sohal	|		|	scientific name	|
+1484167	|	Chaetodon sohal Forsskal, 1775	|		|	authority	|
+1484167	|	Chaetodon sohal	|		|	synonym	|
+1489341	|	Osteoglossocephalai	|		|	scientific name	|
+1489388	|	Euteleosteomorpha	|		|	scientific name	|
+1489872	|	Percomorphaceae	|		|	scientific name	|
+1489872	|	Percomorpha	|		|	includes	|
+1489922	|	Eupercaria	|		|	scientific name	|
+1489922	|	Percomorpharia	|		|	synonym	|
+1489923	|	Eupercaria incertae sedis	|		|	scientific name	|
+1489923	|	Percomorpharia incertae sedis	|		|	synonym	|
+1489928	|	Labriformes	|		|	scientific name	|
+1489928	|	Labroidei	|		|	synonym	|
+1489928	|	wrasses	|	wrasses <Labriformes>	|	genbank common name	|
+1489937	|	Acanthuriformes	|		|	scientific name	|
+1489937	|	Acanthuroidei	|		|	synonym	|
+1489937	|	surgeonfishes and others	|		|	genbank common name	|
+1489943	|	Serranoidei	|		|	scientific name	|
+1505891	|	Epinephelini	|		|	scientific name	|
+1522394	|	Cephalopholis aurantia	|		|	scientific name	|
+1522394	|	Cephalopholis aurantia (Valenciennes, 1828)	|		|	authority	|
+1522394	|	golden hind	|		|	genbank common name	|
+1522394	|	golden rockcod	|		|	common name	|
+1522394	|	Serranus aurantius	|		|	synonym	|
+1522394	|	Serranus aurantius Valenciennes, 1828	|		|	authority	|
+1550411	|	Cephalopholis oligosticta Randall & Ben-Tuvia, 1983	|		|	authority	|
+1550411	|	Cephalopholis oligosticta	|		|	scientific name	|
+1550411	|	vermillion hind	|		|	genbank common name	|
+1697922	|	Lutjanus sp. FT-1	|		|	includes	|
+1697922	|	Lutjanus sp. FT-2	|		|	includes	|
+1697922	|	Lutjanus sp. FT-3	|		|	includes	|
+1697922	|	Lutjanus xanthopinnis Iwatsuki, Tanaka & Allen, 2015	|		|	authority	|
+1697922	|	Lutjanus xanthopinnis	|		|	scientific name	|
+1697922	|	MUFS 33019	|	MUFS 33019 <holotype>	|	type material	|
+1772181	|	Lutjanus sp. MS-2015	|		|	scientific name	|
+1828434	|	Diacope rufolineata	|		|	synonym	|
+1828434	|	Diacope rufolineata Valenciennes, 1830	|		|	authority	|
+1828434	|	Lutjanus rufolineatus	|		|	scientific name	|
+1828454	|	Acanthurus leucopareius	|		|	scientific name	|
+1828454	|	Teuthis leucopareius Jenkins, 1903	|		|	authority	|
+1828454	|	Teuthis leucopareius	|		|	synonym	|
+1917454	|	Acanthurus albipectoralis Allen & Ayling, 1987	|		|	authority	|
+1917454	|	Acanthurus albipectoralis	|		|	scientific name	|
+2024539	|	Lutjaniformes	|		|	scientific name	|
+2609487	|	Acanthurus grammoptilus Richardson, 1843	|		|	authority	|
+2609487	|	Acanthurus grammoptilus	|		|	scientific name	|
+2609487	|	finelined surgeonfish	|		|	genbank common name	|
+2619398	|	unclassified Lutjanus	|		|	scientific name	|
+2703934	|	golden African snapper	|		|	genbank common name	|
+2703934	|	Lutjanus fulgens	|		|	scientific name	|
+2703934	|	Lutjanus fulgens (Valenciennes, 1830)	|		|	authority	|
+2703934	|	Mesoprion fulgens	|		|	synonym	|
+2703934	|	Mesoprion fulgens Valenciennes, 1830	|		|	authority	|
+3043427	|	parrotfishes	|	parrotfishes <Scarines>	|	common name	|
+3043427	|	Scarines	|		|	scientific name	|
+3051910	|	Acropomatiformes	|		|	scientific name	|
+3358813	|	Apsilus xanthurus	|		|	synonym	|
+3358813	|	Caesio xanthurus Bleeker, 1869	|		|	authority	|
+3358813	|	Caesio xanthurus	|		|	synonym	|
+3358813	|	Paracaesio xanthura (Bleeker, 1869)	|		|	authority	|
+3358813	|	Paracaesio xanthura	|		|	synonym	|
+3358813	|	Paracaesio xanthurus (Bleeker, 1869)	|		|	authority	|
+3358813	|	Paracaesio xanthurus	|		|	scientific name	|
+3358813	|	yellowtail blue snapper	|		|	genbank common name	|
+3363800	|	Anthiadidae	|		|	scientific name	|
+3363800	|	Anthiadinae	|		|	synonym	|
+3363800	|	Anthiinae	|		|	synonym	|
