@@ -83,7 +83,14 @@
     		<element name="forwardExpectedError" value="forwardExpectedError.png" compare="sim_size"/>
 		<element name="reverseExpectedError" value="reverseExpectedError.png" compare="sim_size"/>
 	    </output_collection>
-	    <output name="logfile" file="figaro.log"/>
+	    <output name="logfile" file="figaro.log" compare="diff" lines_diff="110">
+		<assert_contents>
+                    <has_n_lines n="110"/>
+		    <has_line line="Forward read length: 295"/>
+		    <has_line line="Reverse read length: 295"/>
+		    <has_size value="12478" delta="100"/>
+                </assert_contents>
+	    </output>
         </test>
     </tests>
     <help><![CDATA[
@@ -99,7 +106,7 @@ Inputs
 - **Primer Lengths**: The exact lengths of the forward and reverse primers.
 
 Outputs
------
+-------
 - **png**: forwardExpectedError.png and reverseExpectedError.png. Figaro tool only produces the forward and reverse png of the final paired-end data.
 - **json**: trimParameters.json
 - **log**: standard output 
@@ -111,7 +118,6 @@ For more information please look at the `github repository`_ and tutorial_.
 .. _github repository: https://github.com/Zymo-Research/figaro
 .. _tutorial: https://nuriamw.github.io/micro4all/tutorial/package_workflow.html#figaro-selection-of-trimming-parameters
 .. _Creating a paired collection: https://training.galaxyproject.org/training-material/faqs/galaxy/collections_build_list_paired.html
-
 
    ]]></help>
    
