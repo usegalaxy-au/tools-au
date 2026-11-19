@@ -1,0 +1,92 @@
+<tool id="aquamaps_lookup" name="AquaMaps lookup" version="@TOOL_VERSION@+galaxy@VERSION_SUFFIX@" profile="23.0" license="MIT">
+    <description>probability that each species occurs at each sample location</description>
+    <macros>
+        <token name="@TOOL_VERSION@">1.3.4</token>
+        <token name="@VERSION_SUFFIX@">0</token>
+    </macros>
+    <requirements>
+        <!-- same pair as lca_with_fishbase, so the existing mulled container is used; the script needs pandas only -->
+        <requirement type="package" version="2.2.3">pandas</requirement>
+        <requirement type="package" version="18.0.0">pyarrow</requirement>
+    </requirements>
+    <command><![CDATA[
+python '$__tool_directory__/aquamaps_lookup.py'
+    '$aquamaps_db'
+    '$sample_sheet'
+    '$taxa_table'
+    aquamaps.csv
+&&
+## the script prints an error to standard output and writes no file when it cannot read an input
+if [ ! -s aquamaps.csv ]; then echo 'No AquaMaps table was written; the reason is in the tool standard output' >&2; exit 1; fi
+    ]]></command>
+    <inputs>
+        <param name="taxa_table" type="data" format="tabular" label="Taxa table" help="Tab-separated table with a header line and a column named 'species', for example final_taxa from the OceanOmics phyloseq step. Only two-word species names are looked up; 'dropped' and empty values are skipped"/>
+        <param name="sample_sheet" type="data" format="csv" label="Sample sheet" help="Comma-separated table with a header line and the columns samp_name, decimalLatitude and decimalLongitude (decimal degrees). Other columns are ignored"/>
+        <param name="aquamaps_db" type="data" format="sqlite" label="AquaMaps database" help="SQLite file with the AquaMaps tables speciesoccursum_r (SpeciesID, Genus, Species) and hcaf_species_native (SpeciesID, CenterLat, CenterLong, Probability), for example am.db of the OceanOmics pipeline or the database of the R package aquamapsdata"/>
+    </inputs>
+    <outputs>
+        <data name="aquamaps_table" format="csv" from_work_dir="aquamaps.csv" label="${tool.name} on ${on_string}: AquaMaps probabilities"/>
+    </outputs>
+    <tests>
+        <test expect_num_outputs="1">
+            <param name="taxa_table" value="taxa.tabular"/>
+            <param name="sample_sheet" value="samples.csv"/>
+            <param name="aquamaps_db" value="aquamaps_test.sqlite" ftype="sqlite"/>
+            <output name="aquamaps_table">
+                <assert_contents>
+                    <has_n_lines n="4"/>
+                    <has_line line=",S1,S2,S3,S4"/>
+                    <has_line line="Testus alpha,0.91,0.5,latitude and/or longitude is missing,species is missing data for this location"/>
+                    <has_line line="Testus gamma,0.12,species is missing data for this location,latitude and/or longitude is missing,species is missing data for this location"/>
+                    <has_line line="Testus beta,species not in Aquamaps,species not in Aquamaps,species not in Aquamaps,species not in Aquamaps"/>
+                    <not_has_text text="dropped"/>
+                </assert_contents>
+            </output>
+        </test>
+    </tests>
+    <help><![CDATA[
+**What it does**
+
+For each species in the taxa table and each sample in the sample sheet, looks up the AquaMaps probability (0 to 1) that the species occurs in the half-degree ocean cell of the sample location. It is the AQUAMAPS step of the OceanOmics amplicon pipeline (Minderoo Foundation OceanOmics Centre), release 1.3.4, unchanged except that the file names are command-line arguments.
+
+For each species and sample:
+
+1. The species name must have two words (genus and species). It is looked up in the table speciesoccursum_r. A species that is not there gets "species not in Aquamaps" for every sample.
+2. The latitude and longitude are rounded to the centre of their half-degree cell (x.25 or x.75), and the probability for that cell is read from the table hcaf_species_native.
+3. If that cell has no value, the next cell across the nearest whole-degree line is looked up. This is done only when both the latitude and the longitude are within 0.25 degrees of a whole degree. If there is still no value, the result is "species is missing data for this location".
+4. A sample without latitude or longitude gets "latitude and/or longitude is missing".
+
+**Inputs**
+
+- Taxa table: tab-separated, with a header line and a column named species.
+- Sample sheet: comma-separated, with the columns samp_name, decimalLatitude and decimalLongitude.
+- AquaMaps database: an SQLite file with the AquaMaps tables speciesoccursum_r and hcaf_species_native.
+
+**Output**
+
+A comma-separated table: one row per species, one column per sample, with the probability or a text that gives the reason why there is none. The order of the species rows is not fixed and can change from run to run.
+
+**AquaMaps data**
+
+AquaMaps data is licensed under Creative Commons Attribution-NonCommercial 3.0 (https://creativecommons.org/licenses/by-nc/3.0/). Cite AquaMaps when you use the results (see the citations of this tool).
+    ]]></help>
+    <citations>
+        <citation type="bibtex">
+@misc{oceanomics_amplicon_nf,
+  author = {Bennett, Adam and Mousavi, Mahsa and Rauschert, Sebastian and Bayer, Philipp and Pearce, Jessica},
+  title = {OceanOmics-amplicon-nf: a Nextflow pipeline for eDNA amplicon data},
+  note = {GitHub repository, release 1.3.4},
+  url = {https://github.com/Minderoo-OceanOmics-Centre-UWA/OceanOmics-amplicon-nf}
+}
+        </citation>
+        <citation type="bibtex">
+@misc{aquamaps_2019,
+  author = {Kaschner, K. and Kesner-Reyes, K. and Garilao, C. and Segschneider, J. and Rius-Barile, J. and Rees, T. and Froese, R.},
+  title = {AquaMaps: Predicted range maps for aquatic species},
+  year = {2019},
+  note = {World wide web electronic publication, Version 10/2019},
+  url = {https://www.aquamaps.org}
+}
+        </citation>
+    </citations>
+</tool>
