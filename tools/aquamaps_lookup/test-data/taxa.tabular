@@ -1,0 +1,6 @@
+ASV	domain	phylum	class	order	family	genus	species	LCA
+ASV_1	Eukaryota	Chordata	Actinopteri	Testiformes	Testidae	Testus	Testus alpha	Testus alpha
+ASV_2	Eukaryota	Chordata	Actinopteri	Testiformes	Testidae	Testus	Testus beta	Testus beta
+ASV_3	Eukaryota	Chordata	Actinopteri	Testiformes	Testidae	Testus	Testus gamma	Testus gamma
+ASV_4	Eukaryota	Chordata	Actinopteri	Testiformes	Testidae	Testus	dropped	Testus
+ASV_5	Eukaryota	Chordata	Actinopteri	Testiformes	Testidae			Testidae

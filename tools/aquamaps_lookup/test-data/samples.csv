@@ -1,0 +1,5 @@
+samp_name,decimalLongitude,decimalLatitude,site_id
+S1,115.6,-31.9,A
+S2,115.2,-32.1,B
+S3,115.6,,C
+S4,115.5,-33.5,D
