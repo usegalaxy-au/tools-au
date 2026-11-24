@@ -62,7 +62,6 @@
         <data name="align_log" from_work_dir="output_dir/align.log" format="txt" label="${tool.name} on ${on_string} : align log"/>
         <collection name="output_directory" type="list:list" label="UFCG tree results for ${tool.name} on ${on_string}">
                 <discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.fasta$" format="fasta" directory="output_dir/" recurse="true" match_relative_path="true"/>
-                <discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.fasta$" format="fasta" directory="output_dir/" recurse="true" match_relative_path="true"/>
         </collection>
 
     </outputs>
@@ -98,7 +97,7 @@
                         <has_text text="align"/>
                 </assert_contents>
             </output>
-            <output name="align_log" file="align/align.log" ftype="txt">
+            <output name="align_log" ftype="txt">
 	     <assert_contents>
         	    <has_n_lines n="14"/>
 	            <has_text text="Genomes included in the analysis"/>
@@ -153,7 +152,7 @@
                         <has_text text="align"/>
                 </assert_contents>
             </output>
-            <output name="align_log">
+            <output name="align_log" ftype="txt">
              <assert_contents>
                     <has_n_lines n="14"/>
                     <has_text text="Genomes included in the analysis"/>
