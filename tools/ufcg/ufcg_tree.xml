@@ -78,10 +78,6 @@
 	<collection name="output_directory" type="list:list" label="UFCG tree results for ${tool.name} on ${on_string}">
 		<discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.nwk$" format="newick" directory="output_dir/" recurse="true" match_relative_path="true"/>
 		<discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.fasta$" format="fasta" directory="output_dir/" recurse="true" match_relative_path="true"/>
-		<discover_datasets pattern="(?P&lt;identifier_0&gt;.*?)/(?P&lt;identifier_1&gt;.+)\.fasta$" format="fasta" directory="output_dir/" recurse="true" match_relative_path="true"/>
-		<!--	<discover_datasets pattern="(?P&lt;designation&gt;.+)\.nwk" directory="output_dir/tree/" recurse="true" format="newick"/>
-		<discover_datasets pattern="(?P&lt;designation&gt;.+)\.fasta" directory="output_dir/misc/" recurse="true" format="fasta" />
-		<discover_datasets pattern="(?P&lt;designation&gt;.+)\.fasta" directory="output_dir/align/" recurse="true" format="fasta" />-->
         </collection>
     </outputs>
     
@@ -105,11 +101,6 @@
 	    <output name="aligned_fasta" file="tree/aligned_concatenated.fasta" compare="diff" lines_diff="25" />
 	    <output name="concat_gsi_nwk" file="tree/concatenated_gsi_55.nwk" compare="diff" lines_diff="2" />
 	    <output name="concat_nwk" file="tree/concatenated.nwk" compare="diff" lines_diff="2" />
-	    <!-- <output_collection name="output_directory" type="list:list">
-		<element name="tree" count="56" />
-        	<element name="misc" count="56" />
-        	<element name="align" count="56" />
-	    </output_collection>-->
     	</test>
     </tests>
     
